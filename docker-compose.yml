@@ -14,18 +14,19 @@ services:
     networks:
       - backend_net
 
-  # springboot-app:
-  #   build: ./backend
-  #   depends_on:
-  #     - postgres
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dynamicnfc
-  #     SPRING_DATASOURCE_USERNAME: dynamicuser
-  #     SPRING_DATASOURCE_PASSWORD: dynamicpass
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     - backend_net
+  springboot-app:
+    image: dynamicnfc-springboot-app:latest # try to use existing image first
+    build: ./backend # if image not found locally, you can run `docker compose build`
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dynamicnfc
+      SPRING_DATASOURCE_USERNAME: dynamicuser
+      SPRING_DATASOURCE_PASSWORD: dynamicpass
+    ports:
+      - "8080:8080"
+    networks:
+      - backend_net
 
 volumes:
   postgres_data:

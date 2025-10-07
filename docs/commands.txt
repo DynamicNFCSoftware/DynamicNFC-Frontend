@@ -1,0 +1,78 @@
+Update backend server
+./mvnw clean install
+
+cd ../
+docker-compose build
+docker save -o springboot.tar dynamicnfc-springboot-app:latest
+scp -i dynamicNFC-key.pem springboot.tar ec2-user@3.128.244.219:/home/ec2-user/
+scp -i dynamicNFC-key.pem docker-compose.yml ec2-user@3.128.244.219:/home/ec2-user/ (eger degistiyse)
+
+On EC2
+ssh -i dynamicNFC-key.pem ec2-user@3.128.244.219
+docker load -i springboot.tar
+
+Running / Stopping docker containers
+docker-compose down
+docker image rm 634adbf001f7 (eski image sil)
+docker-compose up -d
+docker ps (container listele)
+
+Connect to DB on EC2
+docker exec -it 95b5e7c5e710 bash (container'a baglan)
+psql -U dynamicuser -D dynamicnfc
+
+
+
+curl -X POST http://localhost:8080/api/users/upload \
+  -F "name=Alice Doe" \
+  -F "jobTitle=Software Engineer" \
+  -F "department=IT" \
+  -F "companyName=Dynamic NFC" \
+  -F "email=alice@example.com" \
+  -F "phone=+123456789" \
+  -F "companyUrl=https://dynamicnfc.ca" \
+  -F "address=123 Toronto, Canada" \
+  -F 'socialLinks=[{"platform":"twitter","link":"https://twitter.com/alice"},{"platform":"linkedin","link":"https://linkedin.com/in/alice"}]' \
+  -F "profilePicture=@/c/Users/gulse/Desktop/profile.jpg" \
+  -F "coverPhoto=@/c/Users/gulse/Desktop/cover.jpg" \
+  -F "companyLogo=@/c/Users/gulse/Desktop/logo.png"
+
+curl -X POST http://dynamicnfc.ca:8080/api/users/upload \
+  -F "name=Alice Doe 2" \
+  -F "jobTitle=Software Engineer" \
+  -F "department=IT" \
+  -F "companyName=Dynamic NFC" \
+  -F "email=alice@example.com" \
+  -F "phone=+123456789" \
+  -F "companyUrl=https://dynamicnfc.ca" \
+  -F "address=123 Toronto, Canada" \
+  -F 'socialLinks=[{"platform":"twitter","link":"https://twitter.com/alice"},{"platform":"linkedin","link":"https://linkedin.com/in/alice"}]' \
+  -F "profilePicture=@/c/Users/gulse/Desktop/profile.jpg" \
+  -F "coverPhoto=@/c/Users/gulse/Desktop/cover.jpg" \
+  -F "companyLogo=@/c/Users/gulse/Desktop/logo.png"
+
+
+ curl -X GET http://localhost:8080/api/users/9
+ curl -X GET http://localhost:8080/api/users  
+ curl -X GET http://3.128.244.219:8080/api/users 
+ curl -X GET http://dynamicnfc.ca:8080/api/users/1
+ 
+ curl -i -X DELETE http://localhost:8080/api/users/123
+
+
+connect to ec2:
+ssh -i dynamicNFC-key.pem ec2-user@3.128.244.219
+
+
+Docker installation on Amazon linux 2023
+sudo dnf update -y
+sudo dnf install docker -y
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+newgrp docker
+
+Docker-compose installation
+COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
+sudo curl -SL https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose

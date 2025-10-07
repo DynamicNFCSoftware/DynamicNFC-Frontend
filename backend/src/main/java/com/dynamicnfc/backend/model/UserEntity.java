@@ -13,10 +13,19 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Media fields (image URLs or Base64 strings)
+    // Media fields (Base64 strings)
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String profilePicture;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String coverPhoto;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String companyLogo;
+
 
     // Personal & company info
     private String name;
