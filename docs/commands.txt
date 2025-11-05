@@ -1,25 +1,51 @@
-Update backend server
+Update backend project
 ./mvnw clean install
+mvn clean install
+./mvnw clean package -DskipTests (snapshot.jar olusturur)
+
+update front end:
+npm start //build yapmıyor, sadece bunu yapınca docker da eski versiyon kalır. localde yeni sayfa acılır ama 
+npm run build //docker-compose komutunda yeni front end projesi calışması için
+
+
+docker-compose down
+genel projede eski image varsa da siliyor yenisini olusturup calıştırıyor:
+docker-compose -f docker-compose-local.yml up -d
+
+
+docker ps -a //show all containers includes passive ones
+
+d
 
 cd ../
-docker-compose build
+docker images
+docker rmi dynamicnfc-frontend:latest
+docker-compose -f docker-compose-local.yml build frontend // cd anaproje klasörüne gel once
+cd "c:\Users\gulse\Desktop\DynamicNFC" && docker build -t dynamicnfc-springboot-app:latest ./backend  //docker backend imagei olusturma
+
 docker save -o springboot.tar dynamicnfc-springboot-app:latest
+docker save -o frontend.tar dynamicnfc-frontend:latest
 scp -i dynamicNFC-key.pem springboot.tar ec2-user@3.128.244.219:/home/ec2-user/
+scp -i dynamicNFC-key.pem frontend.tar ec2-user@3.128.244.219:/home/ec2-user/
 scp -i dynamicNFC-key.pem docker-compose.yml ec2-user@3.128.244.219:/home/ec2-user/ (eger degistiyse)
+scp -i dynamicNFC-key.pem nginx.conf  ec2-user@3.128.244.219:/home/ec2-user/
 
 On EC2
-ssh -i dynamicNFC-key.pem ec2-user@3.128.244.219
+ssh -i dynamicNFC-key.pem ec2-user@3.128.244.219-cls -
 docker load -i springboot.tar
+docker load -i frontend.tar
+"docker load -i springboot.tar && docker-compose restart springboot-app"
 
 Running / Stopping docker containers
 docker-compose down
 docker image rm 634adbf001f7 (eski image sil)
 docker-compose up -d
+docker-compose up -d nginx
 docker ps (container listele)
 
 Connect to DB on EC2
 docker exec -it 95b5e7c5e710 bash (container'a baglan)
-psql -U dynamicuser -D dynamicnfc
+psql -U dynamicuser -d dynamicnfc
 
 
 
