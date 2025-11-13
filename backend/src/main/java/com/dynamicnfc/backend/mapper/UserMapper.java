@@ -2,6 +2,7 @@ package com.dynamicnfc.backend.mapper;
 
 import com.dynamicnfc.backend.dto.*;
 import com.dynamicnfc.backend.model.*;
+import com.dynamicnfc.backend.util.HashIdUtil;
 
 import java.util.stream.Collectors;
 
@@ -32,6 +33,14 @@ public class UserMapper {
                     return sl;
                 }).collect(Collectors.toList())
             );
+        }
+        return dto;
+    }
+    
+    public static UserResponse toResponse(UserEntity entity, HashIdUtil hashIdUtil) {
+        UserResponse dto = toResponse(entity);
+        if (hashIdUtil != null && entity.getId() != null) {
+            dto.setHashId(hashIdUtil.encode(entity.getId()));
         }
         return dto;
     }

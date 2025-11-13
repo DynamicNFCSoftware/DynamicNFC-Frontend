@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug BackendApplication",
+            "request": "launch",
+            "mainClass": "com.dynamicnfc.backend.BackendApplication",
+            "projectName": "backend",
+            "cwd": "${workspaceFolder}/backend",
+            "args": "",
+            "vmArgs": "",
+            "env": {},
+            "console": "internalConsole"
+        },
+        {
+            "type": "java",
+            "name": "Launch BackendApplication",
+            "request": "launch",
+            "mainClass": "com.dynamicnfc.backend.BackendApplication",
+            "projectName": "backend",
+            "cwd": "${workspaceFolder}/backend"
+        }
+    ]
+}

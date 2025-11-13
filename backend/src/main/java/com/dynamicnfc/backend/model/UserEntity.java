@@ -15,6 +15,10 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // HashId for URL-safe ID obfuscation
+    @Column(unique = true, nullable = true)
+    private String hashId;
+
     //@Column(unique = false, nullable = true)
     //private String nfcSerialNumber; // Optional NFC serial number field
 

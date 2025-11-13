@@ -8,6 +8,7 @@ import java.util.List;
 @Setter
 public class UserResponse {
     private Long id;
+    private String hashId; // HashIds ile encode edilmiş ID
     private String profilePicture;
     private String coverPhoto;
     private String companyLogo;
