@@ -14,6 +14,7 @@ public class UserRequest {
     private String profilePicture; // Base64 string
     private String coverPhoto;     // Base64 string
     private String companyLogo;    // Base64 string
+    private String backgroundColor; // Hex color code
     private List<SocialLinkRequest> socialLinks;
 
     // Getter ve Setter metodları
@@ -49,6 +50,9 @@ public class UserRequest {
     
     public String getCompanyLogo() { return companyLogo; }
     public void setCompanyLogo(String companyLogo) { this.companyLogo = companyLogo; }
+    
+    public String getBackgroundColor() { return backgroundColor; }
+    public void setBackgroundColor(String backgroundColor) { this.backgroundColor = backgroundColor; }
     
     public List<SocialLinkRequest> getSocialLinks() { return socialLinks; }
     public void setSocialLinks(List<SocialLinkRequest> socialLinks) { this.socialLinks = socialLinks; }

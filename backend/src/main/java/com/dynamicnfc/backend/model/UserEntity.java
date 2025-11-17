@@ -47,6 +47,9 @@ public class UserEntity {
     private String phone;
     private String companyUrl;
     private String address;
+    
+    // Card customization
+    private String backgroundColor; // Hex color code for card background (e.g., #FFFFFF)
 
     // Relationships
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -22,6 +22,7 @@ public class UserMapper {
         dto.setPhone(entity.getPhone());
         dto.setCompanyUrl(entity.getCompanyUrl());
         dto.setAddress(entity.getAddress());
+        dto.setBackgroundColor(entity.getBackgroundColor());
 
         if (entity.getSocialLinks() != null) {
             dto.setSocialLinks(

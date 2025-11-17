@@ -119,6 +119,7 @@ public class UserController {
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "companyUrl", required = false) String companyUrl,
             @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "backgroundColor", required = false) String backgroundColor,
             @RequestParam(value = "socialLinks", required = false) String socialLinksJson
     ) {
         try {
@@ -131,6 +132,9 @@ public class UserController {
             entity.setPhone(phone);
             entity.setCompanyUrl(companyUrl);
             entity.setAddress(address);
+            System.out.println("DEBUG - Received backgroundColor: " + backgroundColor);
+            entity.setBackgroundColor(backgroundColor != null ? backgroundColor : "#FFFFFF"); // Default white
+            System.out.println("DEBUG - Set backgroundColor to entity: " + entity.getBackgroundColor());
 
             // Multipart dosyaları base64'e çevir
             if (companyLogo != null && !companyLogo.isEmpty()) {
@@ -186,6 +190,7 @@ public class UserController {
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "companyUrl", required = false) String companyUrl,
             @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "backgroundColor", required = false) String backgroundColor,
             @RequestParam(value = "socialLinks", required = false) String socialLinksJson
     ) {
         try {
@@ -209,6 +214,11 @@ public class UserController {
                 if (phone != null) entity.setPhone(phone);
                 if (companyUrl != null) entity.setCompanyUrl(companyUrl);
                 if (address != null) entity.setAddress(address);
+                if (backgroundColor != null) {
+                    System.out.println("DEBUG UPDATE - Received backgroundColor: " + backgroundColor);
+                    entity.setBackgroundColor(backgroundColor);
+                    System.out.println("DEBUG UPDATE - Set backgroundColor to entity: " + entity.getBackgroundColor());
+                }
 
                 // update files only when provided
                 try {

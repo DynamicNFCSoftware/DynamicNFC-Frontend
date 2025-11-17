@@ -22,6 +22,7 @@ public class UserResponse {
     private String phone;
     private String companyUrl;
     private String address;
+    private String backgroundColor; // Card background color
 
     private List<SocialLinkResponse> socialLinks;
 }
