@@ -92,6 +92,7 @@ multipart/form-data
 | phone          | string      | optional | Phone number                                                                    |
 | companyUrl     | string      | optional | Website URL                                                                     |
 | address        | string      | optional | Address                                                                         |
+| backgroundColor| string      | optional | Card background color (hex format, e.g., "#FFFFFF"). Default: "#FFFFFF"      |
 | companyLogo    | file        | optional | Image file                                                                      |
 | profilePicture | file        | optional | Image file                                                                      |
 | coverPhoto     | file        | optional | Image file                                                                      |
@@ -103,6 +104,7 @@ multipart/form-data
 | -------------- | -------------------------------------------------------------------- | ---- |
 | name           | John Doe                                                             | Text |
 | email          | [john@example.com](mailto:john@example.com)                          | Text |
+| backgroundColor| #E3F2FD                                                              | Text |
 | profilePicture | (choose file)                                                        | File |
 | socialLinks    | `[{"platform":"LinkedIn","link":"https://linkedin.com/in/johndoe"}]` | Text |
 
@@ -113,6 +115,7 @@ multipart/form-data
   "id": 15,
   "name": "John Doe",
   "email": "john@example.com",
+  "backgroundColor": "#E3F2FD",
   "profilePicture": "data:image/png;base64,...",
   "socialLinks": [
     { "platform": "LinkedIn", "link": "https://linkedin.com/in/johndoe" }
@@ -151,6 +154,7 @@ Same as **Save Card** endpoint. Only changed fields need to be sent.
 | Key            | Value                                                               | Type |
 | -------------- | ------------------------------------------------------------------- | ---- |
 | name           | Jane Doe                                                            | Text |
+| backgroundColor| #F3E5F5                                                             | Text |
 | profilePicture | (choose file)                                                       | File |
 | socialLinks    | `[{"platform":"Instagram","link":"https://instagram.com/janedoe"}]` | Text |
 
@@ -161,6 +165,7 @@ Same as **Save Card** endpoint. Only changed fields need to be sent.
   "id": 15,
   "name": "Jane Doe",
   "email": "john@example.com",
+  "backgroundColor": "#F3E5F5",
   "profilePicture": "data:image/png;base64,...",
   "socialLinks": [
     { "platform": "Instagram", "link": "https://instagram.com/janedoe" }
@@ -216,6 +221,7 @@ application/json
   "phone": "4374292711",
   "companyUrl": "www.dynamicnfc.ca",
   "address": "80 Massachusetts Lane",
+  "backgroundColor": "#F0FDF4",
   "profilePicture": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
   "coverPhoto": null,
   "companyLogo": "data:image/jpeg;base64,AAAAHGZ0eXBhdmlmAAAAAGF2aWZtaWYx...",
@@ -368,6 +374,59 @@ The system uses HashIDs to encode numeric database IDs into short, URL-safe stri
 - **Clean URLs:** Professional looking links
 - **Reversible:** Can decode back to original ID for database queries
 - **Consistent Length:** Predictable URL structure
+
+---
+
+## 🎨 Background Color Customization
+
+### Overview
+The backgroundColor field allows users to customize their digital business card's background color for better branding and visual appeal.
+
+### Implementation Details
+- **Field Name:** `backgroundColor`
+- **Format:** Hex color code (e.g., `#FFFFFF`, `#E3F2FD`)
+- **Default Value:** `#FFFFFF` (white)
+- **Frontend UI:** Color picker + 8 preset color options
+- **Storage:** String field in database
+- **API Support:** Available in both create and update endpoints
+
+### Preset Color Options (Frontend)
+| Color Name    | Hex Code  | Description    |
+| ------------- | --------- | -------------- |
+| White         | `#FFFFFF` | Default white  |
+| Light Gray    | `#F8FAFC` | Subtle gray    |
+| Light Blue    | `#EFF6FF` | Soft blue      |
+| Light Green   | `#F0FDF4` | Soft green     |
+| Light Red     | `#FEF3F2` | Soft red       |
+| Light Yellow  | `#FFFBEB` | Soft yellow    |
+| Light Purple  | `#F5F3FF` | Soft purple    |
+| Light Pink    | `#FDF2F8` | Soft pink      |
+
+### Usage Examples
+
+**Create Card with Background Color:**
+```
+POST /api/users/upload
+Content-Type: multipart/form-data
+
+backgroundColor: #E3F2FD
+name: John Doe
+email: john@example.com
+```
+
+**Update Background Color:**
+```
+PUT /api/users/24/upload
+Content-Type: multipart/form-data
+
+backgroundColor: #F0FDF4
+```
+
+### Frontend Integration
+- **CreateMyCard:** Color picker with live preview
+- **ViewMyCard:** Card background dynamically styled with selected color
+- **Real-time Preview:** Color changes reflect immediately in card preview
+- **Validation:** Frontend ensures valid hex color format
 
 ---
 
