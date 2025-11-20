@@ -15,6 +15,10 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // HashId for URL-safe ID obfuscation
+    @Column(unique = true, nullable = true)
+    private String hashId;
+
     //@Column(unique = false, nullable = true)
     //private String nfcSerialNumber; // Optional NFC serial number field
 
@@ -43,6 +47,9 @@ public class UserEntity {
     private String phone;
     private String companyUrl;
     private String address;
+    
+    // Card customization
+    private String backgroundColor; // Hex color code for card background (e.g., #FFFFFF)
 
     // Relationships
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

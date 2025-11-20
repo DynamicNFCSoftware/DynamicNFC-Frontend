@@ -8,6 +8,7 @@ import java.util.List;
 @Setter
 public class UserResponse {
     private Long id;
+    private String hashId; // HashIds ile encode edilmiş ID
     private String profilePicture;
     private String coverPhoto;
     private String companyLogo;
@@ -21,6 +22,7 @@ public class UserResponse {
     private String phone;
     private String companyUrl;
     private String address;
+    private String backgroundColor; // Card background color
 
     private List<SocialLinkResponse> socialLinks;
 }

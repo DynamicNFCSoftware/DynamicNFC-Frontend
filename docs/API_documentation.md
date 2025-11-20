@@ -1,5 +1,12 @@
 # DynamicNFC Backend API Documentation
 
+## 🆕 Recent Updates
+
+**HashID System Implemented** *(November 13, 2025)*
+- All user endpoints now support HashID (e.g., `WzBvz3`) alongside numeric IDs
+- QR codes and public URLs use secure HashIDs for better user experience
+- Backwards compatibility maintained for existing numeric ID usage
+
 ## 📩 1. Request Card API
 
 **Purpose:** User submits a card request form.
@@ -85,6 +92,7 @@ multipart/form-data
 | phone          | string      | optional | Phone number                                                                    |
 | companyUrl     | string      | optional | Website URL                                                                     |
 | address        | string      | optional | Address                                                                         |
+| backgroundColor| string      | optional | Card background color (hex format, e.g., "#FFFFFF"). Default: "#FFFFFF"      |
 | companyLogo    | file        | optional | Image file                                                                      |
 | profilePicture | file        | optional | Image file                                                                      |
 | coverPhoto     | file        | optional | Image file                                                                      |
@@ -96,6 +104,7 @@ multipart/form-data
 | -------------- | -------------------------------------------------------------------- | ---- |
 | name           | John Doe                                                             | Text |
 | email          | [john@example.com](mailto:john@example.com)                          | Text |
+| backgroundColor| #E3F2FD                                                              | Text |
 | profilePicture | (choose file)                                                        | File |
 | socialLinks    | `[{"platform":"LinkedIn","link":"https://linkedin.com/in/johndoe"}]` | Text |
 
@@ -106,6 +115,7 @@ multipart/form-data
   "id": 15,
   "name": "John Doe",
   "email": "john@example.com",
+  "backgroundColor": "#E3F2FD",
   "profilePicture": "data:image/png;base64,...",
   "socialLinks": [
     { "platform": "LinkedIn", "link": "https://linkedin.com/in/johndoe" }
@@ -144,6 +154,7 @@ Same as **Save Card** endpoint. Only changed fields need to be sent.
 | Key            | Value                                                               | Type |
 | -------------- | ------------------------------------------------------------------- | ---- |
 | name           | Jane Doe                                                            | Text |
+| backgroundColor| #F3E5F5                                                             | Text |
 | profilePicture | (choose file)                                                       | File |
 | socialLinks    | `[{"platform":"Instagram","link":"https://instagram.com/janedoe"}]` | Text |
 
@@ -154,6 +165,7 @@ Same as **Save Card** endpoint. Only changed fields need to be sent.
   "id": 15,
   "name": "Jane Doe",
   "email": "john@example.com",
+  "backgroundColor": "#F3E5F5",
   "profilePicture": "data:image/png;base64,...",
   "socialLinks": [
     { "platform": "Instagram", "link": "https://instagram.com/janedoe" }
@@ -163,7 +175,7 @@ Same as **Save Card** endpoint. Only changed fields need to be sent.
 
 ---
 
-## 👀 4. View Card API (New!)
+## 👀 4. View Card API (HashID Supported!)
 
 **Purpose:** Display a user's digital business card in view-only mode. This is used by the ViewMyCard page to show card information to visitors.
 
@@ -184,31 +196,51 @@ application/json
 
 ### URL Parameters
 
-| Parameter | Type | Required | Description           |
-| --------- | ---- | -------- | --------------------- |
-| id        | Long | yes      | User/Card ID to view  |
+| Parameter | Type        | Required | Description                                |
+| --------- | ----------- | -------- | ------------------------------------------ |
+| id        | String/Long | yes      | HashID (e.g., "WzBvz3") or numeric ID     |
+
+### HashID Support 🔐
+
+- **Primary Method:** Use encoded hashId (e.g., `WzBvz3`, `wzpaG8`) 
+- **Fallback:** Numeric ID still supported for backwards compatibility
+- **Security:** HashIDs prevent ID enumeration attacks
+- **URL Friendly:** Short, clean URLs for sharing
 
 ### Response Example
 
 ```json
 {
-  "id": 15,
-  "name": "John Doe",
-  "jobTitle": "Software Engineer",
-  "department": "Engineering",
-  "companyName": "Dynamic NFC",
-  "email": "john@example.com",
-  "phone": "+1 647-555-2211",
-  "companyUrl": "https://dynamicnfc.ca",
-  "address": "123 King Street, Toronto",
+  "id": 24,
+  "hashId": "WzBvz3",
+  "name": "Alice Doe",
+  "jobTitle": "Junior Software Engineer",
+  "department": "TT Department",
+  "companyName": "dynamicMed",
+  "email": "gulseren.fedakar@gmail.com",
+  "phone": "4374292711",
+  "companyUrl": "www.dynamicnfc.ca",
+  "address": "80 Massachusetts Lane",
+  "backgroundColor": "#F0FDF4",
   "profilePicture": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
-  "coverPhoto": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
-  "companyLogo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...",
+  "coverPhoto": null,
+  "companyLogo": "data:image/jpeg;base64,AAAAHGZ0eXBhdmlmAAAAAGF2aWZtaWYx...",
   "socialLinks": [
-    { "platform": "LinkedIn", "link": "https://linkedin.com/in/johndoe" },
-    { "platform": "Instagram", "link": "https://instagram.com/johndoe" }
+    { "id": 95, "platform": "facebook", "link": "www.facebook.com/alice" }
   ]
 }
+```
+
+### Example API Calls
+
+**Using HashID (Recommended):**
+```bash
+GET /api/users/WzBvz3
+```
+
+**Using Numeric ID (Backwards Compatibility):**
+```bash
+GET /api/users/24
 ```
 
 ### Frontend Features
@@ -280,30 +312,121 @@ Response:
 
 ## 🧬 Summary for Frontend Team
 
-| Operation    | Method | Endpoint                 | Content-Type          | Description             | Frontend Page    |
-| ------------ | ------ | ------------------------ | --------------------- | ----------------------- | ---------------- |
-| Request Card | `POST` | `/api/request-card`      | `application/json`    | Sends mail/logs request | Order Card       |
-| Save Card    | `POST` | `/api/users/upload`      | `multipart/form-data` | Create a new card       | Create My Card   |
-| Update Card  | `PUT`  | `/api/users/{id}/upload` | `multipart/form-data` | Update an existing card | Create My Card   |
-| **View Card**| `GET`  | `/api/users/{id}`        | `application/json`    | **Display card publicly**| **View My Card** |
-| Get User     | `GET`  | `/api/users/{id}`        | –                     | Fetch single user       | –                |
-| List Users   | `GET`  | `/api/users`             | –                     | Fetch all users         | –                |
+| Operation    | Method | Endpoint                 | Content-Type          | Description             | Frontend Page    | HashID Support |
+| ------------ | ------ | ------------------------ | --------------------- | ----------------------- | ---------------- | -------------- |
+| Request Card | `POST` | `/api/request-card`      | `application/json`    | Sends mail/logs request | Order Card       | ❌             |
+| Save Card    | `POST` | `/api/users/upload`      | `multipart/form-data` | Create a new card       | Create My Card   | ✅ (Returns)   |
+| Update Card  | `PUT`  | `/api/users/{id}/upload` | `multipart/form-data` | Update an existing card | Create My Card   | ✅ (Accepts)   |
+| **View Card**| `GET`  | `/api/users/{id}`        | `application/json`    | **Display card publicly**| **View My Card** | **✅ Primary** |
+| Get User     | `GET`  | `/api/users/{id}`        | –                     | Fetch single user       | –                | ✅ (Accepts)   |
+| List Users   | `GET`  | `/api/users`             | –                     | Fetch all users         | –                | ✅ (Returns)   |
 
 ---
 
-## 🎯 QR Code Integration
+## 🎯 QR Code Integration (HashID Enhanced!)
 
 ### QR Code Generation
 - **Service:** `https://api.qrserver.com/v1/create-qr-code/`
-- **Target URL:** `{domain}/view-my-card/{id}`
-- **Usage:** QR codes generated in CreateMyCard now point to ViewMyCard page instead of edit page
+- **Target URL:** `{domain}/view-my-card/{hashId}` (uses HashID for security)
+- **Usage:** QR codes generated with encoded HashIDs for clean, secure URLs
 - **Purpose:** Allow easy sharing of business cards via QR code scanning
 
-### QR Code Flow
+### QR Code Flow (Updated)
 1. User creates card in CreateMyCard (`/create-my-card`)
-2. QR code is generated pointing to ViewMyCard (`/view-my-card/{id}`)
-3. When scanned, QR code opens public view of the card
-4. Viewers can contact the card owner or save contact info
+2. Backend generates unique HashID (e.g., `WzBvz3`) for the user
+3. QR code is generated pointing to ViewMyCard (`/view-my-card/WzBvz3`)
+4. When scanned, QR code opens public view using secure HashID
+5. Viewers can contact the card owner or save contact info
+
+### HashID Benefits for QR Codes
+- **Clean URLs:** `/view-my-card/WzBvz3` instead of `/view-my-card/24`
+- **Security:** Prevents ID enumeration attacks
+- **Scalability:** No sequential ID exposure
+- **Professional:** Short, memorable codes for business cards
+
+---
+
+## 🔐 HashID System
+
+### Overview
+The system uses HashIDs to encode numeric database IDs into short, URL-safe strings for better security and user experience.
+
+### Configuration
+- **Salt:** `DynamicNFC-Secret-Salt-2024`
+- **Minimum Length:** 6 characters
+- **Alphabet:** `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890`
+
+### Example Conversions
+| Database ID | HashID   | Usage                                    |
+| ----------- | -------- | ---------------------------------------- |
+| 24          | `WzBvz3` | `/view-my-card/WzBvz3`                   |
+| 83          | `wzpaG8` | `/view-my-card/wzpaG8`                   |
+| 1           | `jR`     | `/view-my-card/jR` (shorter for small IDs) |
+
+### Implementation Details
+- **Generation:** Auto-generated when user is created/updated
+- **Storage:** Stored in `user_entity.hash_id` column
+- **API Support:** All user endpoints accept both HashID and numeric ID
+- **Frontend Priority:** Use HashID for all public URLs and QR codes
+
+### Security Benefits
+- **No ID Enumeration:** Cannot guess other user IDs
+- **Clean URLs:** Professional looking links
+- **Reversible:** Can decode back to original ID for database queries
+- **Consistent Length:** Predictable URL structure
+
+---
+
+## 🎨 Background Color Customization
+
+### Overview
+The backgroundColor field allows users to customize their digital business card's background color for better branding and visual appeal.
+
+### Implementation Details
+- **Field Name:** `backgroundColor`
+- **Format:** Hex color code (e.g., `#FFFFFF`, `#E3F2FD`)
+- **Default Value:** `#FFFFFF` (white)
+- **Frontend UI:** Color picker + 8 preset color options
+- **Storage:** String field in database
+- **API Support:** Available in both create and update endpoints
+
+### Preset Color Options (Frontend)
+| Color Name    | Hex Code  | Description    |
+| ------------- | --------- | -------------- |
+| White         | `#FFFFFF` | Default white  |
+| Light Gray    | `#F8FAFC` | Subtle gray    |
+| Light Blue    | `#EFF6FF` | Soft blue      |
+| Light Green   | `#F0FDF4` | Soft green     |
+| Light Red     | `#FEF3F2` | Soft red       |
+| Light Yellow  | `#FFFBEB` | Soft yellow    |
+| Light Purple  | `#F5F3FF` | Soft purple    |
+| Light Pink    | `#FDF2F8` | Soft pink      |
+
+### Usage Examples
+
+**Create Card with Background Color:**
+```
+POST /api/users/upload
+Content-Type: multipart/form-data
+
+backgroundColor: #E3F2FD
+name: John Doe
+email: john@example.com
+```
+
+**Update Background Color:**
+```
+PUT /api/users/24/upload
+Content-Type: multipart/form-data
+
+backgroundColor: #F0FDF4
+```
+
+### Frontend Integration
+- **CreateMyCard:** Color picker with live preview
+- **ViewMyCard:** Card background dynamically styled with selected color
+- **Real-time Preview:** Color changes reflect immediately in card preview
+- **Validation:** Frontend ensures valid hex color format
 
 ---
 

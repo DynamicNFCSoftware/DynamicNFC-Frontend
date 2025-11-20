@@ -4,8 +4,10 @@ import com.dynamicnfc.backend.repository.UserRepository;
 import com.dynamicnfc.backend.dto.*;
 import com.dynamicnfc.backend.mapper.UserMapper;
 import com.dynamicnfc.backend.model.*;
+import com.dynamicnfc.backend.util.HashIdUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,19 +29,38 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserRepository userRepository;
+    private final HashIdUtil hashIdUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, HashIdUtil hashIdUtil) {
         this.userRepository = userRepository;
+        this.hashIdUtil = hashIdUtil;
     }
 
     /**
-     * Get a single user by ID
+     * Get a single user by ID (accepts both hashId and numeric ID for backwards compatibility)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        return userRepository.findById(id)
-                .map(UserMapper::toResponse)
+    public ResponseEntity<UserResponse> getUserById(@PathVariable String id) {
+        Long actualId;
+        
+        // Önce hashId olarak decode etmeye çalış
+        actualId = hashIdUtil.decode(id);
+        
+        // Eğer decode edilemezse, numeric ID olarak parse etmeye çalış (backwards compatibility)
+        if (actualId == null) {
+            try {
+                actualId = Long.parseLong(id);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+        
+        return userRepository.findById(actualId)
+                .map(user -> {
+                    UserResponse response = UserMapper.toResponse(user, hashIdUtil);
+                    return response;
+                })
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -47,8 +68,38 @@ public class UserController {
     @GetMapping
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(UserMapper::toResponse)
+                .map(user -> {
+                    UserResponse response = UserMapper.toResponse(user, hashIdUtil);
+                    return response;
+                })
                 .toList();
+    }
+
+    /**
+     * Debug endpoint for HashId testing
+     */
+    @GetMapping("/debug/{hashId}")
+    public ResponseEntity<String> debugHashId(@PathVariable String hashId) {
+        Long decoded = hashIdUtil.decode(hashId);
+        String result = "HashId: " + hashId + "\n" +
+                       "Decoded: " + decoded + "\n" +
+                       "Is Valid: " + hashIdUtil.isValid(hashId);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Debug endpoint for encoding test
+     */
+    @GetMapping("/debug/encode/{id}")
+    public ResponseEntity<String> debugEncode(@PathVariable Long id) {
+        String encodedHashId = hashIdUtil.encode(id);
+        Long decodedBack = hashIdUtil.decode(encodedHashId);
+        
+        String result = "Original ID: " + id + "\n" +
+                       "Encoded HashId: " + encodedHashId + "\n" +
+                       "Decoded Back: " + decodedBack + "\n" +
+                       "Test Passed: " + id.equals(decodedBack);
+        return ResponseEntity.ok(result);
     }
 
 
@@ -68,6 +119,7 @@ public class UserController {
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "companyUrl", required = false) String companyUrl,
             @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "backgroundColor", required = false) String backgroundColor,
             @RequestParam(value = "socialLinks", required = false) String socialLinksJson
     ) {
         try {
@@ -80,6 +132,9 @@ public class UserController {
             entity.setPhone(phone);
             entity.setCompanyUrl(companyUrl);
             entity.setAddress(address);
+            System.out.println("DEBUG - Received backgroundColor: " + backgroundColor);
+            entity.setBackgroundColor(backgroundColor != null ? backgroundColor : "#FFFFFF"); // Default white
+            System.out.println("DEBUG - Set backgroundColor to entity: " + entity.getBackgroundColor());
 
             // Multipart dosyaları base64'e çevir
             if (companyLogo != null && !companyLogo.isEmpty()) {
@@ -109,7 +164,8 @@ public class UserController {
             }
 
             UserEntity saved = userRepository.save(entity);
-            return ResponseEntity.ok(UserMapper.toResponse(saved));
+            UserResponse response = UserMapper.toResponse(saved, hashIdUtil);
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             return ResponseEntity.status(500).header("X-Error-Message", e.getMessage()).build();
         } catch (Exception ex) {
@@ -122,7 +178,7 @@ public class UserController {
      */
     @RequestMapping(value = "/{id}/upload", method = {RequestMethod.PUT, RequestMethod.POST}, consumes = {"multipart/form-data"})
     public ResponseEntity<UserResponse> updateUserWithFiles(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam(value = "companyLogo", required = false) MultipartFile companyLogo,
             @RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture,
             @RequestParam(value = "coverPhoto", required = false) MultipartFile coverPhoto,
@@ -134,10 +190,21 @@ public class UserController {
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "companyUrl", required = false) String companyUrl,
             @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "backgroundColor", required = false) String backgroundColor,
             @RequestParam(value = "socialLinks", required = false) String socialLinksJson
     ) {
         try {
-            return userRepository.findById(id).map(entity -> {
+            // HashId'yi decode et
+            Long actualId = hashIdUtil.decode(id);
+            if (actualId == null) {
+                try {
+                    actualId = Long.parseLong(id);
+                } catch (NumberFormatException e) {
+                    return ResponseEntity.badRequest().build();
+                }
+            }
+            
+            return userRepository.findById(actualId).map(entity -> {
                 // update scalar fields only when provided (not null)
                 if (name != null) entity.setName(name);
                 if (jobTitle != null) entity.setJobTitle(jobTitle);
@@ -147,6 +214,11 @@ public class UserController {
                 if (phone != null) entity.setPhone(phone);
                 if (companyUrl != null) entity.setCompanyUrl(companyUrl);
                 if (address != null) entity.setAddress(address);
+                if (backgroundColor != null) {
+                    System.out.println("DEBUG UPDATE - Received backgroundColor: " + backgroundColor);
+                    entity.setBackgroundColor(backgroundColor);
+                    System.out.println("DEBUG UPDATE - Set backgroundColor to entity: " + entity.getBackgroundColor());
+                }
 
                 // update files only when provided
                 try {
@@ -193,12 +265,36 @@ public class UserController {
 
 
                 UserEntity saved = userRepository.save(entity);
-                return ResponseEntity.ok(UserMapper.toResponse(saved));
+                UserResponse response = UserMapper.toResponse(saved, hashIdUtil);
+                return ResponseEntity.ok(response);
             }).orElse(ResponseEntity.notFound().build());
         } catch (RuntimeException ex) {
             return ResponseEntity.status(500).header("X-Error-Message", ex.getMessage()).build();
         } catch (Exception ex) {
             return ResponseEntity.status(500).header("X-Error-Message", ex.getMessage()).build();
+        }
+    }
+
+    /**
+     * Tüm kullanıcıların hashId'lerini günceller
+     */
+    @PostMapping("/update-all-hashids")
+    public ResponseEntity<String> updateAllHashIds() {
+        try {
+            List<UserEntity> users = userRepository.findAll();
+            int updatedCount = 0;
+            
+            for (UserEntity user : users) {
+                String newHashId = hashIdUtil.encode(user.getId());
+                user.setHashId(newHashId);
+                userRepository.save(user);
+                updatedCount++;
+            }
+            
+            return ResponseEntity.ok("Successfully updated " + updatedCount + " user hash IDs");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error updating hash IDs: " + e.getMessage());
         }
     }
 
