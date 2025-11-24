@@ -474,18 +474,6 @@ function NFCCards() {
                             <div className="wrapper">
                                 <div className="footer-row">
                                     <div className="footer-col vertical">
-                                        <img
-                                            src="https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/642500383b49e124c851b0ea_logo-light.avif"
-                                            loading="lazy"
-                                            alt="DynamicNFC logo with white text"
-                                            className="logo w-variant-40e64df4-7ac3-6c46-0947-00da0b61d366 logo--white"
-                                        />
-                                        <img
-                                            src="https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/642500bb3135f91b8a637d38_logo-dark.avif"
-                                            loading="lazy"
-                                            alt="DynamicNFC logo with dark text"
-                                            className="logo w-variant-40e64df4-7ac3-6c46-0947-00da0b61d366 logo--black"
-                                        />
                                         <a href="#" className="brand footer w-inline-block" />
                                         <div className="footer-app-btn-wrapper">
                                             <a

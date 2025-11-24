@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react'
-import { loadCardScripts } from "./assets/js/allscripts.js"
 import Accordion from "../../components/Accordions/HomeAccordion.jsx"
 
 function Home() {
   useEffect(() => {
-    // Sayfa yüklendiğinde script’leri ekle
-    loadCardScripts()
+    const script = document.createElement("script");
+
+    script.src = "https://requsoft.com/assets/js/card-scripts.js";
+    script.async = true;
+
+    document.body.appendChild(script);
   }, [])
 
   const faqItems = [
@@ -112,14 +115,14 @@ function Home() {
         <div className="main-wrapper">
           <div className="section_home-hero">
             <div className="home-hero_image hide-mobile-landscape w-background-video w-background-video-atom">
-              <img src="./src/assets/images/1.png" alt="Hero Background" style={{
+              <img src="assets/images/1.png" alt="Hero Background" style={{
                 width: "100%",
                 height: "inherit",
                 opacity: 0.8
               }} />
             </div>
             <div className="home-hero_image hide-desktop w-background-video w-background-video-atom">
-              <img src="./src/assets/images/1.png" alt="Hero Background" style={{
+              <img src="assets/images/1.png" alt="Hero Background" style={{
                 width: "100%",
                 height: "inherit",
                 opacity: 0.8
@@ -1262,18 +1265,6 @@ function Home() {
                 <div className="wrapper">
                   <div className="footer-row">
                     <div className="footer-col vertical">
-                      <img
-                        src="https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/642500383b49e124c851b0ea_logo-light.avif"
-                        loading="lazy"
-                        alt="DynamicNFC logo with white text"
-                        className="logo w-variant-40e64df4-7ac3-6c46-0947-00da0b61d366 logo--white"
-                      />
-                      <img
-                        src="https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/642500bb3135f91b8a637d38_logo-dark.avif"
-                        loading="lazy"
-                        alt="DynamicNFC logo with dark text"
-                        className="logo w-variant-40e64df4-7ac3-6c46-0947-00da0b61d366 logo--black"
-                      />
                       <a href="#" className="brand footer w-inline-block" />
                       <div className="footer-app-btn-wrapper">
                         <a

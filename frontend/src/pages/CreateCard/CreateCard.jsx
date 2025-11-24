@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "./../../assets/css/f0be61666b9614df.css"
-import "./../../assets/css/f984sdf8q4q5qwq.css"
 
-export default function Create() {
+export default function CreateCard() {
   const ICONS = {
     name: `
     <svg aria-hidden="true" class="svg-inline--fa fa-user " data-icon="user" data-prefix="far" focusable="false" role="img" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464l349.5 0c-8.9-63.3-63.3-112-129-112l-91.4 0c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3z" fill="currentColor"></path></svg>
@@ -67,21 +65,42 @@ export default function Create() {
   const [pendingField, setPendingField] = useState(null);
 
   useEffect(() => {
-    import("./../../assets/js/card-create.js").then((module) => {
-      module.init();
-    });
-    // tüm link stylesheet'leri bul
+    const script = document.createElement("script");
+
+    script.src = "https://requsoft.com/assets/js/card-create.js";
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    // Tüm link stylesheet'leri bul
     const links = Array.from(document.querySelectorAll("link[rel='stylesheet']"));
 
     // sakla
-    const oldLinks = links.map(link => ({ link, href: link.href }));
+    const oldLinks = links.map((link) => ({ link, href: link.href }));
 
     // hepsini devre dışı bırak
-    links.forEach(link => (link.disabled = true));
+    links.forEach((link) => (link.disabled = true));
+    //css ekle
 
+
+    const link = document.createElement("link");
+
+    link.href = "https://requsoft.com/assets/css/f0be61666b9614df.css"; // CSS dosyanın URL'si
+    link.rel = "stylesheet";
+    link.type = "text/css";
+
+    document.head.appendChild(link); // CSS linkleri <head> içinde olmalı
+
+    const link2 = document.createElement("link");
+
+    link2.href = "https://requsoft.com/assets/css/f984sdf8q4q5qwq.css"; // CSS dosyanın URL'si
+    link2.rel = "stylesheet";
+    link2.type = "text/css";
+
+    document.head.appendChild(link2); // CSS linkleri <head> içinde olmalı
     return () => {
       // sayfadan çıkarken geri aç
-      oldLinks.forEach(item => (item.link.disabled = false));
+      oldLinks.forEach((item) => (item.link.disabled = false));
     };
   }, []);
 
@@ -349,7 +368,7 @@ export default function Create() {
                                 data-image-type="cover"
                                 data-mode="standalone"
                                 id="companyCircle"
-                                src="src/assets/images/empty-cover-photo.5e4f5f6e.png"
+                                src="assets/images/empty-cover-photo.5e4f5f6e.png"
                               />
                             </div>
                             <div
@@ -367,7 +386,7 @@ export default function Create() {
                                 alt="Profile"
                                 className="CardHeader_left-picture-img__yFgFE"
                                 id="profileCircle"
-                                src="src/assets/images/empty-profile-photo.5e4f5f6e.png"
+                                src="assets/images/empty-profile-photo.5e4f5f6e.png"
                               />
                             </div>
                             <div
@@ -384,7 +403,7 @@ export default function Create() {
                                 alt="Logo"
                                 className="CardHeader_right-picture-img__L0u2u"
                                 id="coverCircle"
-                                src="src/assets/images/empty-company-logo.5e4f5f6e.png"
+                                src="assets/images/empty-company-logo.5e4f5f6e.png"
                               />
                             </div>
                           </header>
