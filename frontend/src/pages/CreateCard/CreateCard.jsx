@@ -67,7 +67,7 @@ export default function CreateCard() {
   useEffect(() => {
     const script = document.createElement("script");
 
-    script.src = "https://requsoft.com/assets/js/card-create.js";
+    script.src = "https://dynamicnfc.ca/assets/js/card-create.js";
     script.async = true;
 
     document.body.appendChild(script);

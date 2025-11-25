@@ -6,7 +6,7 @@ function Home() {
   useEffect(() => {
     const script = document.createElement("script");
 
-    script.src = "https://requsoft.com/assets/js/card-scripts.js";
+    script.src = "https://dynamicnfc.ca/assets/js/card-scripts.js";
     script.async = true;
 
     document.body.appendChild(script);
