@@ -4,14 +4,18 @@ import com.dynamicnfc.backend.repository.UserRepository;
 import com.dynamicnfc.backend.dto.*;
 import com.dynamicnfc.backend.mapper.UserMapper;
 import com.dynamicnfc.backend.model.*;
+import com.dynamicnfc.backend.service.AccountService;
 import com.dynamicnfc.backend.util.HashIdUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -30,11 +34,13 @@ import java.util.List;
 public class UserController {
     private final UserRepository userRepository;
     private final HashIdUtil hashIdUtil;
+    private final AccountService accountService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public UserController(UserRepository userRepository, HashIdUtil hashIdUtil) {
+    public UserController(UserRepository userRepository, HashIdUtil hashIdUtil, AccountService accountService) {
         this.userRepository = userRepository;
         this.hashIdUtil = hashIdUtil;
+        this.accountService = accountService;
     }
 
     /**
@@ -120,10 +126,20 @@ public class UserController {
             @RequestParam(value = "companyUrl", required = false) String companyUrl,
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "backgroundColor", required = false) String backgroundColor,
-            @RequestParam(value = "socialLinks", required = false) String socialLinksJson
+            @RequestParam(value = "socialLinks", required = false) String socialLinksJson,
+            HttpServletRequest httpRequest
     ) {
         try {
+            // Get authenticated user's account
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+           Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+System.out.println("USER = " + auth);
+
+            String userEmail = authentication.getName();
+            Account account = accountService.findByEmail(userEmail);
+            
             UserEntity entity = new UserEntity();
+            entity.setAccount(account); // Set the account relationship
             entity.setName(name);
             entity.setJobTitle(jobTitle);
             entity.setDepartment(department);
@@ -135,6 +151,7 @@ public class UserController {
             System.out.println("DEBUG - Received backgroundColor: " + backgroundColor);
             entity.setBackgroundColor(backgroundColor != null ? backgroundColor : "#FFFFFF"); // Default white
             System.out.println("DEBUG - Set backgroundColor to entity: " + entity.getBackgroundColor());
+            System.out.println("DEBUG - Set account_id: " + account.getId());
 
             // Multipart dosyaları base64'e çevir
             if (companyLogo != null && !companyLogo.isEmpty()) {

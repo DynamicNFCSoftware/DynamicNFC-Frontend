@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 // Normal sayfalar
 import './assets/css/blinq-app.shared.423b915ad.min.css'
@@ -15,20 +17,40 @@ import CreateCard from "./pages/CreateCard/CreateCard";
 import NFCCards from "./pages/NFCCards/NFCCards";
 import Enterprise from "./pages/Enterprise/Enterprise";
 import Card from "./pages/Card/Card";
+import Login from "./pages/Login/Login";
 import Test from "./pages/test/test";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/create-card" element={<CreateCard />} /> 
-        <Route path="/nfc-cards" element={<NFCCards />} /> 
-        <Route path="/enterprise" element={<Enterprise />} /> 
-        <Route path="/card" element={<Card />} /> 
-        {/* <Route path="/test" element={<Test />} />  */}
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } />
+          <Route path="/create-card" element={
+            <ProtectedRoute>
+              <CreateCard />
+            </ProtectedRoute>
+          } /> 
+          <Route path="/nfc-cards" element={
+            <ProtectedRoute>
+              <NFCCards />
+            </ProtectedRoute>
+          } /> 
+          <Route path="/enterprise" element={
+            <ProtectedRoute>
+              <Enterprise />
+            </ProtectedRoute>
+          } /> 
+          <Route path="/card" element={<Card />} /> 
+          {/* <Route path="/test" element={<Test />} />  */}
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

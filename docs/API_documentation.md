@@ -2,10 +2,179 @@
 
 ## 🆕 Recent Updates
 
+**Authentication System Implemented** *(December 4, 2025)*
+- Login/Register system with Account table integration
+- Session-based authentication with Spring Security
+- Account-UserEntity relationship (one-to-many)
+- Protected endpoints requiring authentication
+
 **HashID System Implemented** *(November 13, 2025)*
 - All user endpoints now support HashID (e.g., `WzBvz3`) alongside numeric IDs
 - QR codes and public URLs use secure HashIDs for better user experience
 - Backwards compatibility maintained for existing numeric ID usage
+
+## 🔐 Authentication API
+
+**Purpose:** Handle user authentication, registration, and session management.
+
+**Controller:** `AuthController`
+
+### 1. User Login
+
+```
+POST /api/auth/login
+```
+
+**Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Login successful",
+  "accountId": 1,
+  "email": "user@example.com"
+}
+```
+
+**Error Response (401):**
+```json
+{
+  "error": "Invalid credentials"
+}
+```
+
+### 2. User Registration
+
+```
+POST /api/auth/register
+```
+
+**Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{
+  "email": "newuser@example.com",
+  "password": "password123"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "message": "Registration successful",
+  "accountId": 2,
+  "email": "newuser@example.com"
+}
+```
+
+**Error Response (400):**
+```json
+{
+  "error": "Email already exists"
+}
+```
+
+### 3. User Logout
+
+```
+POST /api/auth/logout
+```
+
+**Content-Type:** `application/json`
+
+**Success Response (200):**
+```json
+{
+  "message": "Logout successful"
+}
+```
+
+**Authentication Notes:**
+- Session-based authentication using cookies
+- Include `credentials: 'include'` in frontend requests
+- Protected endpoints return 401 if not authenticated
+- Account table stores user credentials with bcrypt password hashing
+
+## 📊 Database Schema
+
+### Account Table
+```sql
+CREATE TABLE account (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### UserEntity Table (Updated)
+```sql
+CREATE TABLE user_entity (
+    id BIGSERIAL PRIMARY KEY,
+    account_id BIGINT REFERENCES account(id),
+    hash_id VARCHAR(255) UNIQUE,
+    -- other existing fields...
+);
+```
+
+**Relationship:** Account (1) → UserEntity (Many)
+
+## 🔒 Protected Endpoints
+
+The following endpoints require authentication. Frontend must include session cookies in requests:
+
+- `POST /api/users` - Create new user profile
+- `GET /api/users/{id}` - Get user profile
+- `PUT /api/users/{id}` - Update user profile
+- `DELETE /api/users/{id}` - Delete user profile
+- `GET /api/users/search` - Search users
+- All UserEntity CRUD operations
+
+## 🌐 Frontend Integration Guide
+
+### Authentication Setup
+```javascript
+// Login request
+const loginResponse = await fetch('/api/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  credentials: 'include', // Important: includes session cookies
+  body: JSON.stringify({
+    email: 'user@example.com',
+    password: 'password123'
+  })
+});
+
+// For protected API calls
+const userResponse = await fetch('/api/users/1', {
+  method: 'GET',
+  credentials: 'include' // Always include for protected endpoints
+});
+```
+
+### Error Handling
+```javascript
+if (response.status === 401) {
+  // User not authenticated - redirect to login
+  window.location.href = '/login';
+}
+```
+
+### Session Management
+- Login successful: Store user info in localStorage/context
+- Session expires: Backend returns 401, frontend should redirect to login
+- Logout: Call `/api/auth/logout` then clear frontend state
 
 ## 📩 1. Request Card API
 

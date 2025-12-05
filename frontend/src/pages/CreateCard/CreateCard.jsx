@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function CreateCard() {
   const ICONS = {
@@ -175,6 +176,7 @@ export default function CreateCard() {
       const res = await fetch("/api/users/upload", {
         method: "POST",
         body: formData,
+        credentials: "include"
       });
 
       if (!res.ok) {

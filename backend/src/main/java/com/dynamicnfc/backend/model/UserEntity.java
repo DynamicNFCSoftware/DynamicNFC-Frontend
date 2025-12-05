@@ -48,6 +48,11 @@ public class UserEntity {
     private String companyUrl;
     private String address;
     
+    // Account relationship
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
+    
     // Card customization
     private String backgroundColor; // Hex color code for card background (e.g., #FFFFFF)
 
