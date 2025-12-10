@@ -22,35 +22,35 @@ import Test from "./pages/test/test";
 
 function App() {
   return (
-    <AuthProvider>
+    // <AuthProvider>
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={
-            <ProtectedRoute>
+           //   <ProtectedRoute>
               <Home />
-            </ProtectedRoute>
+             // </ProtectedRoute>
           } />
           <Route path="/create-card" element={
-            <ProtectedRoute>
+            //  <ProtectedRoute>
               <CreateCard />
-            </ProtectedRoute>
+           //   </ProtectedRoute>
           } /> 
           <Route path="/nfc-cards" element={
-            <ProtectedRoute>
+             // <ProtectedRoute>
               <NFCCards />
-            </ProtectedRoute>
+            //  </ProtectedRoute>
           } /> 
           <Route path="/enterprise" element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <Enterprise />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           } /> 
           <Route path="/card" element={<Card />} /> 
           {/* <Route path="/test" element={<Test />} />  */}
         </Routes>
       </Router>
-    </AuthProvider>
+    // </AuthProvider>
   );
 }
 

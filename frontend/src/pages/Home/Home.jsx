@@ -105,7 +105,7 @@ function Home() {
             </nav>
             <div className="navbar-cta-wrapper">
               <Link to="/create-card" className="button light white analytics w-button">
-                Create my card
+                Create digital card
               </Link>
             </div>
           </div>
@@ -134,7 +134,7 @@ function Home() {
                   <div className="home-hero-inner">
                     <div className="home-hero_text-comp left">
                       <div className="home-hero_heading-wrap">
-                        <h1 className="heading-style-h1 is-white left-mob">
+                        <h1 className="heading-style-h1 is-white left-mob"style={{ fontSize: "5rem" }}>
                           Your business card
                           <span className="break-span">just got an upgrade</span>
                         </h1>
@@ -151,7 +151,7 @@ function Home() {
                         className="button analytics w-inline-block"
                       >
                         <div className="text-size-intermediate text-color-white btn">
-                          Create my card
+                          Create digital card
                         </div>
                       </Link>
                       <Link to="/enterprise"
@@ -184,7 +184,7 @@ function Home() {
                           <div className="cta-button">
                             <Link to="/create-card" className="button analytics w-inline-block">
                               <div className="text-size-intermediate text-color-white btn">
-                                Create my card
+                                Create digital card
                               </div>
                             </Link>
                           </div>
@@ -249,7 +249,7 @@ function Home() {
                             Scan. Tap. Done. QR, NFC, or link - your details land instantly even if they don't have the app.
                           </div>
                           <Link to="/create-card" className="button analytics w-inline-block">
-                            <div className="text-size-intermediate text-color-white btn">Create my card</div>
+                            <div className="text-size-intermediate text-color-white btn">Create digital card</div>
                           </Link>
                         </div>
                       </div>
@@ -262,7 +262,7 @@ function Home() {
                             DynamicNFC keeps track of who you met and when. Add context to your contacts so you always have an edge.
                           </div>
                           <Link to="/create-card" className="button analytics w-inline-block">
-                            <div className="text-size-intermediate text-color-white btn">Create my card</div>
+                            <div className="text-size-intermediate text-color-white btn">Create digital card</div>
                           </Link>
                         </div>
 
@@ -313,7 +313,7 @@ function Home() {
                           </div>
                           <Link to="/create-card" className="button analytics w-inline-block">
                             <div className="text-size-regular text-color-white">
-                              Create my card
+                              Create digital card
                             </div>
                           </Link>
                         </div>
@@ -352,7 +352,7 @@ function Home() {
                           </div>
                           <Link to="/create-card" className="button analytics w-inline-block">
                             <div className="text-size-regular text-color-white">
-                              Create my card
+                              Create digital card
                             </div>
                           </Link>
                         </div>
@@ -367,7 +367,7 @@ function Home() {
                           </div>
                           <Link to="/create-card" className="button analytics w-inline-block">
                             <div className="text-size-regular text-color-white">
-                              Create my card
+                              Create digital card
                             </div>
                           </Link>
                         </div>
@@ -897,7 +897,7 @@ function Home() {
                             className="button analytics w-inline-block"
                           >
                             <div className="text-size-intermediate text-color-white btn">
-                              Create my card
+                              Create digital card
                             </div>
                           </Link>
                         </div>

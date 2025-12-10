@@ -1,4 +1,4 @@
-    const popup = document.getElementById('popupField');
+    //let popup = document.getElementById('popupField');
     let currentButton = null;
     const input = popup.querySelector('input');
     const inputName = document.getElementById('inputName');
@@ -6,7 +6,7 @@
     const cancelBtn = popup.querySelector('#cancel-btn');
     const cardList = document.querySelector('.Card_card-items__X_o8P');
 
-    // Tüm field butonlarıinputName
+    // Tüm field butonları inputName
     const buttons = document.querySelectorAll('.FieldButton_field-button__HMdrH');
 
     buttons.forEach(btn => {

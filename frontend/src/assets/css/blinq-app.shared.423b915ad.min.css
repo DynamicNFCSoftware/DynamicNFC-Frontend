@@ -6985,7 +6985,7 @@ strong {
 
 .card-front {
     backface-visibility: hidden;
-    background-image: url(https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/63796a66359e1d319685ef42_Blinq%20Essentials%20Back.webp);
+    background-image: url(../../../public/assets/images/kart.png);
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: contain;
@@ -7128,7 +7128,7 @@ strong {
 
 .card-image {
     backface-visibility: visible;
-    background-image: url(https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/63796a8ffaa874bef1ec351a_Blinq%20Essentials%20front.webp);
+    background-image: url(../../../public/assets/images/kart.png);
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: contain;
@@ -7138,12 +7138,12 @@ strong {
 }
 
 .card-image.coloured {
-    background-image: url(https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/6379731e359e1dc28d8676fc_B_Blinq%20Red.webp);
+    background-image: url(../../../public/assets/images/kart.png);
     background-size: cover;
 }
 
 .card-image.coloured._3d {
-    background-image: url(https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/63796a66359e1d319685ef42_Blinq%20Essentials%20Back.webp);
+    background-image: url(../../../public/assets/images/kart.png);
 }
 
 .highlight {

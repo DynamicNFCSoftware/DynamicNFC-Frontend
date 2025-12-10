@@ -48,7 +48,7 @@ function Enterprise() {
                         </nav>
                         <div className="navbar-cta-wrapper">
                             <Link to="/create-card" className="button analytics w-button">
-                                Create my card
+                                Create digital card
                             </Link>
                         </div>
                     </div>
@@ -130,7 +130,7 @@ function Enterprise() {
                                                     width="70"
                                                     height="auto"
                                                     style={{ "width": "100%" }}
-                                                    src="https://cdn.prod.website-files.com/617ac0d059899a9a3c8216e9/6811705c045234e62e9d9801_Cards%20dashboard%20(1).avif"
+                                                    src="../../../public/assets/images/enterprise-dashboard.avif"
                                                     alt="The DynamicNFC dashboard where an admin is viewing their team list."
                                                     loading="lazy"
                                                     className="large-image"
@@ -175,7 +175,7 @@ function Enterprise() {
                                                     Scan. Tap. Done. QR, NFC, or link - your details land instantly.
                                                 </div>
                                                 <Link to="/create-card" className="button">
-                                                    <div className="text-size-regular text-color-white">Create my card</div>
+                                                    <div className="text-size-regular text-color-white">Create digital card</div>
                                                 </Link>
                                             </div>
                                             <div className="home-card_item-right">
@@ -203,7 +203,7 @@ function Enterprise() {
                                                     iOS, Android, desktop, browser - your card shows up polished, every time. No app needed on their end.
                                                 </div>
                                                 <Link to="/create-card" className="button">
-                                                    <div className="text-size-regular text-color-white">Create my card</div>
+                                                    <div className="text-size-regular text-color-white">Create digital card</div>
                                                 </Link>
                                             </div>
                                         </div>
@@ -213,7 +213,7 @@ function Enterprise() {
                                                 <h5 className="heading-style-h5">Never forget a face - or a moment.</h5>
                                                 <div className="text-size-medium">DynamicNFC keeps track of who you met and when.</div>
                                                 <Link to="/create-card" className="button">
-                                                    <div className="text-size-regular text-color-white">Create my card</div>
+                                                    <div className="text-size-regular text-color-white">Create digital card</div>
                                                 </Link>
                                             </div>
                                             <div className="home-card_item-right">

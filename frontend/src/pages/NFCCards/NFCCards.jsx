@@ -81,7 +81,7 @@ function NFCCards() {
                         </nav>
                         <div className="navbar-cta-wrapper">
                             <Link to="/create-card" className="button light white analytics w-button">
-                                Create my card
+                                Create digital card
                             </Link>
                         </div>
                     </div>

@@ -151,10 +151,10 @@ export default function CreateCard() {
       }
 
       // Dosyaları ekle
-      if (collectedFields.companyLogoSrc) {
+      if (collectedFields.coverPhotoSrc) {
         formData.append(
           "companyLogo",
-          dataURLtoFile(collectedFields.companyLogoSrc, "company.png")
+          dataURLtoFile(collectedFields.coverPhotoSrc, "cover.png")
         );
       }
 
@@ -165,10 +165,10 @@ export default function CreateCard() {
         );
       }
 
-      if (collectedFields.coverPhotoSrc) {
+      if (collectedFields.companyLogoSrc) {
         formData.append(
           "coverPhoto",
-          dataURLtoFile(collectedFields.coverPhotoSrc, "cover.png")
+          dataURLtoFile(collectedFields.companyLogoSrc, "company.png")
         );
       }
 
@@ -176,7 +176,7 @@ export default function CreateCard() {
       const res = await fetch("/api/users/upload", {
         method: "POST",
         body: formData,
-        credentials: "include"
+        // credentials: "include"
       });
 
       if (!res.ok) {
@@ -468,10 +468,10 @@ export default function CreateCard() {
                               className="ColorSelector_color__OGoSm ColorSelector_color-btn__UO46H"
                               data-selected="false"
                               data-size="sm"
-                              data-color="#FB9241"
+                              data-color="#4a0f0fff"
                               style={{
-                                "--color": "#FB9241",
-                                "--outline": "#FB9241",
+                                "--color": "#4a0f0fff",
+                                "--outline": "#4a0f0fff",
                               }}
                               type="button"
                             />
@@ -494,10 +494,10 @@ export default function CreateCard() {
                               className="ColorSelector_color__OGoSm ColorSelector_color-btn__UO46H"
                               data-selected="false"
                               data-size="sm"
-                              data-color="#C8A358"
+                              data-color="#faff72ff"
                               style={{
-                                "--color": "#C8A358",
-                                "--outline": "#C8A358",
+                                "--color": "#faff72ff",
+                                "--outline": "#faff72ff",
                               }}
                               type="button"
                             />
@@ -507,10 +507,10 @@ export default function CreateCard() {
                               className="ColorSelector_color__OGoSm ColorSelector_color-btn__UO46H"
                               data-selected="false"
                               data-size="sm"
-                              data-color="#3DB512"
+                              data-color="#7cce5eff"
                               style={{
-                                "--color": "#3DB512",
-                                "--outline": "#3DB512",
+                                "--color": "#7cce5eff",
+                                "--outline": "#7cce5eff",
                               }}
                               type="button"
                             />
@@ -546,10 +546,10 @@ export default function CreateCard() {
                               className="ColorSelector_color__OGoSm ColorSelector_color-btn__UO46H"
                               data-selected="false"
                               data-size="sm"
-                              data-color="#3A4AF8"
+                              data-color="#0f187f"
                               style={{
-                                "--color": "#3A4AF8",
-                                "--outline": "#3A4AF8",
+                                "--color": "#0f187f",
+                                "--outline": "#0f187f",
                               }}
                               type="button"
                             />
@@ -572,10 +572,10 @@ export default function CreateCard() {
                               className="ColorSelector_color__OGoSm ColorSelector_color-btn__UO46H"
                               data-selected="false"
                               data-size="sm"
-                              data-color="#EB47DA"
+                              data-color="#1a1a1aff"
                               style={{
-                                "--color": "#EB47DA",
-                                "--outline": "#EB47DA",
+                                "--color": "#1a1a1aff",
+                                "--outline": "#1a1a1aff",
                               }}
                               type="button"
                             />
