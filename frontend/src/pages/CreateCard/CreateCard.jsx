@@ -86,7 +86,7 @@ export default function CreateCard() {
 
     const link = document.createElement("link");
 
-    link.href = "https://requsoft.com/assets/css/f0be61666b9614df.css"; // CSS dosyanın URL'si
+    link.href = "https://dynamicnfc.ca/assets/css/f0be61666b9614df.css"; // CSS dosyanın URL'si
     link.rel = "stylesheet";
     link.type = "text/css";
 
@@ -94,7 +94,7 @@ export default function CreateCard() {
 
     const link2 = document.createElement("link");
 
-    link2.href = "https://requsoft.com/assets/css/f984sdf8q4q5qwq.css"; // CSS dosyanın URL'si
+    link2.href = "https://dynamicnfc.ca/assets/css/f984sdf8q4q5qwq.css"; // CSS dosyanın URL'si
     link2.rel = "stylesheet";
     link2.type = "text/css";
 
