@@ -65,13 +65,9 @@ public class AuthController {
         account.setEmail(request.getEmail());
         account.setPassword(passwordEncoder.encode(request.getPassword()));
         
-        Account savedAccount = accountService.save(account);
+        accountService.save(account);
         
-        AuthResponse response = new AuthResponse();
-        response.setEmail(savedAccount.getEmail());
-        response.setAccountId(savedAccount.getId());
-        
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new AuthResponse());
     }
     
     @PostMapping("/logout")

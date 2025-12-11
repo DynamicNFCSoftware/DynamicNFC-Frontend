@@ -67,7 +67,7 @@ const Login = () => {
       }
     } catch (err) {
       setError('Network error. Please try again.');
-    } finally {
+    } finally { 
       setLoading(false);
     }
   };
