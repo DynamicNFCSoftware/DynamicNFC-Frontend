@@ -130,7 +130,7 @@ function Enterprise() {
                                                     width="70"
                                                     height="auto"
                                                     style={{ "width": "100%" }}
-                                                    src="../../../public/assets/images/enterprise-dashboard.avif"
+                                                    src="../../assets/images/enterprise-dashboard.avif"
                                                     alt="The DynamicNFC dashboard where an admin is viewing their team list."
                                                     loading="lazy"
                                                     className="large-image"

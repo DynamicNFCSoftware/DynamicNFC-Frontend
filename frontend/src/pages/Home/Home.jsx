@@ -3,14 +3,6 @@ import { useState, useEffect } from 'react'
 import Accordion from "../../components/Accordions/HomeAccordion.jsx"
 
 function Home() {
-  useEffect(() => {
-    const script = document.createElement("script");
-
-    script.src = "https://dynamicnfc.ca/assets/js/card-scripts.js";
-    script.async = true;
-
-    document.body.appendChild(script);
-  }, [])
 
   const faqItems = [
     {
