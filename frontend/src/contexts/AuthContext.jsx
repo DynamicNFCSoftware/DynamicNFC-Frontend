@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAuthenticated = () => {
-    return user !== null;
+    return !!user && !!user.sessionId;
   };
 
   const value = {
