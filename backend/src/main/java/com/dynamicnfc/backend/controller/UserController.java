@@ -136,10 +136,10 @@ public class UserController {
 System.out.println("USER = " + auth);
 
             String userEmail = authentication.getName();
-            Account account = accountService.findByEmail(userEmail);
+            //Account account = accountService.findByEmail(userEmail);
             
             UserEntity entity = new UserEntity();
-            entity.setAccount(account); // Set the account relationship
+            //entity.setAccount(account); // Set the account relationship
             entity.setName(name);
             entity.setJobTitle(jobTitle);
             entity.setDepartment(department);
@@ -151,7 +151,6 @@ System.out.println("USER = " + auth);
             System.out.println("DEBUG - Received backgroundColor: " + backgroundColor);
             entity.setBackgroundColor(backgroundColor != null ? backgroundColor : "#FFFFFF"); // Default white
             System.out.println("DEBUG - Set backgroundColor to entity: " + entity.getBackgroundColor());
-            System.out.println("DEBUG - Set account_id: " + account.getId());
 
             // Multipart dosyaları base64'e çevir
             if (companyLogo != null && !companyLogo.isEmpty()) {

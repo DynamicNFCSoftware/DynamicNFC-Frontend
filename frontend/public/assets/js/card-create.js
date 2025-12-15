@@ -1,4 +1,4 @@
-    //let popup = document.getElementById('popupField');
+    let popup = document.getElementById('popupField');
     let currentButton = null;
     const input = popup.querySelector('input');
     const inputName = document.getElementById('inputName');
