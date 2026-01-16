@@ -21,39 +21,37 @@ import Card from "./pages/Card/Card";
 import Login from "./pages/Login/Login";
 import OrderCard from "./pages/OrderCard/OrderCard";
 import Test from "./pages/test/test";
+import CreatePhysicalCard from "./pages/CreatePhysicalCard/CreatePhysicalCard";
 
 function App() {
   return (
-    // <AuthProvider>
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={
-          //   <ProtectedRoute>
-          <Home />
-          // </ProtectedRoute>
-        } />
-        <Route path="/create-card" element={
-          //  <ProtectedRoute>
-          <CreateCard />
-          //   </ProtectedRoute>
-        } />
-        <Route path="/nfc-cards" element={
-          // <ProtectedRoute>
-          <NFCCards />
-          //  </ProtectedRoute>
-        } />
-        <Route path="/enterprise" element={
-          // <ProtectedRoute>
-          <Enterprise />
-          // </ProtectedRoute>
-        } />
-        <Route path="/card" element={<Card />} />
-        <Route path="/order-card" element={<OrderCard />} />
-        {/* <Route path="/test" element={<Test />} />  */}
-      </Routes>
-    </Router>
-    // </AuthProvider>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={
+            //   <ProtectedRoute>
+            <Home />
+            // </ProtectedRoute>
+          } />
+          <Route path="/create-card" element={
+            <ProtectedRoute>
+              <CreateCard />
+            </ProtectedRoute>
+          } />
+          <Route path="/nfc-cards" element={
+            <NFCCards />
+          } />
+          <Route path="/enterprise" element={
+            <Enterprise />
+          } />
+          <Route path="/card" element={<Card />} />
+          <Route path="/order-card" element={<OrderCard />} />
+          <Route path="/create-physical-card" element={<CreatePhysicalCard />} />
+          {/* <Route path="/test" element={<Test />} />  */}
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

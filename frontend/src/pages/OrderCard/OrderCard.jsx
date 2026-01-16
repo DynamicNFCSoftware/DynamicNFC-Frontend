@@ -2,6 +2,37 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function OrderCard() {
+    const cards = [
+        {
+            id: "white",
+            title: "White Digital Business Card",
+            price: "39,90 CAD",
+            front: "assets/images/beyaz-on.png",
+            back: "assets/images/beyaz-arka.png",
+            tertemiz: "assets/images/beyaz-tertemiz.png",
+            className: "flip-card--whie flip-card--color-black"
+        },
+        {
+            id: "gray",
+            title: "Black Digital Business Card",
+            price: "39,90 CAD",
+            front: "assets/images/gri-on.png",
+            back: "assets/images/gri-arka.png",
+            tertemiz: "assets/images/gri-tertemiz.png",
+            className: "flip-card--black flip-card--color-white"
+        },
+        {
+            id: "gold",
+            title: "Gold Digital Business Card",
+            price: "69,90 CAD",
+            front: "assets/images/sari-on.png",
+            back: "assets/images/sari-arka.png",
+            tertemiz: "assets/images/sari-tertemiz.png",
+            className: "flip-card--gold flip-card--color-black"
+        }
+    ];
+
+
     return (
         <>
             <div className="navbar_ab">
@@ -82,179 +113,45 @@ export default function OrderCard() {
                     </div>
                     <main className=" product-detail-page-x">
                         <div className="detail-top__right page-top">
-                                        <div className="circle">
-                                            <span className="circle__item circle__item--sm" />
-                                            <span className="circle__item circle__item--md" />
-                                            <span className="circle__item circle__item--lg" />
-                                            <span className="circle__item circle__item--xl" />
-                                        </div>
-                                    </div>
+                            <div className="circle">
+                                <span className="circle__item circle__item--sm" />
+                                <span className="circle__item circle__item--md" />
+                                <span className="circle__item circle__item--lg" />
+                                <span className="circle__item circle__item--xl" />
+                            </div>
+                        </div>
 
                         {/* PRODUCTS */}
                         <section className="detail-products">
                             <div className="container">
                                 <div className="detail-products__wrapper">
                                     {/* CARD ITEM */}
-                                    <div className="card-trowas__item">
-                                        <div className="card-trowas__img">
-                                            <Link
-                                                className="flip-card flip-card--whie flip-card--color-black"
-                                            >
-                                                <div
-                                                    className="flip-card__inner flip-card--image"
-                                                    style={{ height: 271 }}
-                                                >
-                                                    <div className="flip-card__front">
-                                                        <img
-                                                            className="flip-card__bg"
-                                                            src="https://trowas.com/storage/new/images/products/urun/1/trowas-dijital-kartvizit-beyaz-dijital-kartvizit-on.webp"
-                                                            alt="White Digital Business Card"
-                                                        />
-                                                    </div>
-                                                    <div className="flip-card__back">
-                                                        <img
-                                                            className="flip-card__bg"
-                                                            src="https://trowas.com/storage/new/images/products/urun/1/trowas-dijital-kartvizit-beyaz-dijital-kartvizit-arka.webp"
-                                                            alt="White Digital Business Card"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        </div>
-
-                                        <div className="card-trowas__content">
-                                            <div className="card-trowas__top">
+                                    {cards.map((card) => (
+                                        <div key={card.id} className="card-trowas__item">
+                                            <div className="card-trowas__img">
                                                 <Link
-                                                    className="card-trowas__txt txt txt--px22 txt--font400"
+                                                    to="/create-physical-card"
+                                                    state={{ card }}
+                                                    className={`flip-card ${card.className}`}
                                                 >
-                                                    <h2>White Digital Business Card</h2>
+                                                    <div className="flip-card__inner flip-card--image" style={{ height: 271 }}>
+                                                        <div className="flip-card__front">
+                                                            <img className="flip-card__bg" src={card.front} alt={card.title} />
+                                                        </div>
+                                                        <div className="flip-card__back">
+                                                            <img className="flip-card__bg" src={card.back} alt={card.title} />
+                                                        </div>
+                                                    </div>
                                                 </Link>
                                             </div>
 
-                                            <div className="card-trowas__price txt txt--px20 txt--font700">
-                                                <h5>39,90 USD</h5>
+                                            <div className="card-trowas__content">
+                                                <h2>{card.title}</h2>
+                                                <h5>{card.price}</h5>
                                             </div>
-
-                                            {/* <div className="card-trowas__buttons">
-                                                <Link
-                                                    to="/en/digital-business-cards/white-digital-business-card"
-                                                    className="btn btn--primary btn--green"
-                                                >
-                                                    <div className="btn-icon">
-                                                        <svg viewBox="0 0 21 14">
-                                                            <path d="M1.33333 6.29167L20 8.04167" />
-                                                        </svg>
-                                                    </div>
-                                                    <div className="btn-txt">Buy</div>
-                                                </Link>
-                                            </div> */}
                                         </div>
-                                    </div>
+                                    ))}
 
-                                    <div className="card-trowas__item">
-                                        <div className="card-trowas__img">
-                                            <Link
-                                                className="flip-card flip-card--black flip-card--color-white"
-                                            >
-                                                <div className="flip-card__inner flip-card--image" style={{ height: 271 }}>
-                                                    <div className="flip-card__front">
-                                                        <img
-                                                            className="flip-card__bg"
-                                                            src="https://trowas.com/storage/new/images/products/urun/2/trowas-dijital-kartvizit-siyah-dijital-kartvizit-on.webp"
-                                                            alt="Black Digital Business Card"
-                                                        />
-                                                    </div>
-                                                    <div className="flip-card__back">
-                                                        <img
-                                                            className="flip-card__bg"
-                                                            src="https://trowas.com/storage/new/images/products/urun/2/trowas-dijital-kartvizit-siyah-dijital-kartvizit-arka.webp"
-                                                            alt="Black Digital Business Card"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        </div>
-
-                                        <div className="card-trowas__content">
-                                            <div className="card-trowas__top">
-                                                <Link
-                                                    className="card-trowas__txt txt txt--px22 txt--font400"
-                                                >
-                                                    <h2>Black Digital Business Card</h2>
-                                                </Link>
-                                            </div>
-
-                                            <div className="card-trowas__price txt txt--px20 txt--font700">
-                                                <h5>39,90 USD</h5>
-                                            </div>
-
-                                            {/* <div className="card-trowas__buttons">
-                                                <Link
-                                                    to="/en/digital-business-cards/black-digital-business-card"
-                                                    className="btn btn--primary btn--green"
-                                                >
-                                                    <div className="btn-icon">
-                                                        <svg viewBox="0 0 21 14">
-                                                            <path d="M1.33333 6.29167L20 8.04167" />
-                                                        </svg>
-                                                    </div>
-                                                    <div className="btn-txt">Buy</div>
-                                                </Link>
-                                            </div> */}
-                                        </div>
-                                    </div>
-
-                                    <div className="card-trowas__item">
-                                        <div className="card-trowas__img">
-                                            <Link
-                                                className="flip-card flip-card--gold flip-card--color-black"
-                                            >
-                                                <div className="flip-card__inner flip-card--image" style={{ height: 271 }}>
-                                                    <div className="flip-card__front">
-                                                        <img
-                                                            className="flip-card__bg"
-                                                            src="https://trowas.com/storage/new/images/products/urun/3/trowas-dijital-kartvizit-altin-dijital-kartvizit-on.webp"
-                                                            alt="Gold Digital Business Card"
-                                                        />
-                                                    </div>
-                                                    <div className="flip-card__back">
-                                                        <img
-                                                            className="flip-card__bg"
-                                                            src="https://trowas.com/storage/new/images/products/urun/3/trowas-dijital-kartvizit-altin-dijital-kartvizit-arka.webp"
-                                                            alt="Gold Digital Business Card"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        </div>
-
-                                        <div className="card-trowas__content">
-                                            <div className="card-trowas__top">
-                                                <Link
-                                                    className="card-trowas__txt txt txt--px22 txt--font400"
-                                                >
-                                                    <h2>Gold Digital Business Card</h2>
-                                                </Link>
-                                            </div>
-
-                                            <div className="card-trowas__price txt txt--px20 txt--font700">
-                                                <h5>69,90 USD</h5>
-                                            </div>
-
-                                            {/* <div className="card-trowas__buttons">
-                                                <Link
-                                                    className="btn btn--primary btn--green"
-                                                >
-                                                    <div className="btn-icon">
-                                                        <svg viewBox="0 0 21 14">
-                                                            <path d="M1.33333 6.29167L20 8.04167" />
-                                                        </svg>
-                                                    </div>
-                                                    <div className="btn-txt">Buy</div>
-                                                </Link>
-                                            </div> */}
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </section>

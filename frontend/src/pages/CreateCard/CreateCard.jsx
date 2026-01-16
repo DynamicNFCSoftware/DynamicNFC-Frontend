@@ -10,19 +10,60 @@ export default function CreateCard() {
   const [selected, setSelected] = useState([]);
   const [positionModalOpen, setPositionModalOpen] = useState(false);
   const [pendingField, setPendingField] = useState(null);
+  const [isLoadingAssets, setIsLoadingAssets] = useState(true);
+
+  const styles = {
+    wrapper: {
+      position: "fixed",
+      inset: 0,
+      background: "#fff",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 9999,
+    },
+    spinner: {
+      width: 48,
+      height: 48,
+      border: "4px solid #e5e7eb",
+      borderTop: "4px solid #111827",
+      borderRadius: "50%",
+      animation: "spin 1s linear infinite",
+    },
+    text: {
+      marginTop: 12,
+      fontSize: 14,
+      color: "#374151",
+    },
+  };
 
   useEffect(() => {
-    loadScriptOnce("https://requsoft.com/assets/js/card-create.js?ver1235");
-    loadCssOnce("https://dynamicnfc.ca/assets/css/f0be61666b9614df.css");
-    loadCssOnce("https://dynamicnfc.ca/assets/css/f984sdf8q4q5qwq.css");
+    const acId = localStorage.getItem('accountId');
+    console.log("acId", acId);
+    loadCssOnce("https://requsoft.com/assets/css/f0be61666b9614df.css")
+    loadCssOnce("https://requsoft.com/assets/css/f984sdf8q4q5qwq.css")
+    loadScriptOnce("https://requsoft.com/assets/js/card-create.js?ver128")
+    const timer = setTimeout(() => {
+      setIsLoadingAssets(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
+
+  const Preloader = () => (
+    <div style={styles.wrapper}>
+      <div style={styles.spinner}></div>
+      <p style={styles.text}>Loading...</p>
+    </div>
+  );
 
   function loadScriptOnce(src) {
     if (document.querySelector(`script[src="${src}"]`)) return;
 
     const script = document.createElement("script");
     script.src = src;
-    script.async = true;
+    script.async = false;
     document.body.appendChild(script);
   }
 
@@ -51,15 +92,11 @@ export default function CreateCard() {
 
   const submitCardToAPI = async () => {
     try {
-      // if (!collectedFields) {
-      //   alert("No data collected from step 1.");
-      //   return;
-      // }
 
       setIsSaving(true);
 
       const formData = new FormData();
-
+      console.log("Collected Fields:", collectedFields);
       // Normal bilgiler
       if (collectedFields.name) formData.append("name", collectedFields.name);
       if (collectedFields.jobTitle) formData.append("jobTitle", collectedFields.jobTitle);
@@ -106,7 +143,7 @@ export default function CreateCard() {
       const res = await fetch("/api/users/upload", {
         method: "POST",
         body: formData,
-        // credentials: "include"
+        credentials: "include"
       });
 
       if (!res.ok) {
@@ -247,7 +284,7 @@ export default function CreateCard() {
   };
 
   return (
-    <>
+    <>  {isLoadingAssets && <Preloader />}
       <div>
         <div
           className="OnboardingLayout_onboarding-layout__tWpCH" style={{ "background": "white", minHeight: "100vh" }}>

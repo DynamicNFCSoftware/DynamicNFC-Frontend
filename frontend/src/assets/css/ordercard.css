@@ -362,7 +362,7 @@ html {
 }
 
 :root {
-    --c-primary: #005640;
+    --c-primary: #ac0704;
     --c-tertiary: #212121;
     --c-secondary: #898a8d;
     --c-auxiliary: #bc9557;
@@ -384,7 +384,7 @@ html {
 }
 
 .c-primary {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -850,7 +850,7 @@ dt {
 }
 
 .uikit__card {
-    border: 1px solid #005640;
+    border: 1px solid #ac0704;
     border: 1px solid var(--c-primary);
     padding: 20px;
     margin-bottom: 20px
@@ -1239,7 +1239,7 @@ body {
 body.with-bg:before {
     content: "";
     position: absolute;
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     z-index: -1;
     clip-path: circle(485.6px at 0 0);
@@ -1436,7 +1436,7 @@ body.with-bg.darkmode.clip-anim:before {
     flex-shrink: 0;
     width: 30px;
     height: 30px;
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     border-radius: 10px;
     cursor: pointer
@@ -1462,7 +1462,7 @@ body.with-bg.darkmode.clip-anim:before {
     border-radius: 5px;
     right: 40px;
     bottom: 115px;
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     color: #fff
 }
@@ -1503,8 +1503,8 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    -webkit-box-shadow: inset 0 0 10px 10px #005640;
-    box-shadow: inset 0 0 10px 10px #005640;
+    -webkit-box-shadow: inset 0 0 10px 10px #ac0704;
+    box-shadow: inset 0 0 10px 10px #ac0704;
     -webkit-box-shadow: inset 0 0 10px 10px var(--c-primary);
     box-shadow: inset 0 0 10px 10px var(--c-primary);
     border: 5px solid transparent;
@@ -1566,7 +1566,7 @@ body.with-bg.darkmode.clip-anim:before {
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary)
 }
 
@@ -1607,7 +1607,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .kvkk-list .icon {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     margin-right: 15px;
     height: 100%
@@ -1754,7 +1754,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .btn--default {
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     min-width: 280px
 }
@@ -1772,7 +1772,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .btn--default .btn-icon {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     margin-right: 15px;
     position: relative;
@@ -1786,7 +1786,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .btn--default:hover {
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary)
 }
 
@@ -1799,20 +1799,20 @@ body.with-bg.darkmode.clip-anim:before {
 .popup--light-green {
     background-color: #e6eeec;
     background-color: var(--c-primary-light);
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
 .btn--green.btn--primary .btn-icon,
 .btn--green.btn--secondary {
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     color: #fff
 }
 
 .btn--green.btn--primary .btn-txt,
 .btn--white.btn--primary .btn-icon {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -1970,7 +1970,7 @@ body.with-bg.darkmode.clip-anim:before {
     width: 24px;
     left: 7px;
     bottom: 5.5px;
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     border-radius: 50%
 }
@@ -1988,7 +1988,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .circle--bg .circle__item--sm {
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary)
 }
 
@@ -2658,7 +2658,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .breadcrump .icon {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     -ms-flex-negative: 0;
     flex-shrink: 0;
@@ -3034,7 +3034,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .input-item--focused {
-    border-color: #005640;
+    border-color: #ac0704;
     border-color: var(--c-primary)
 }
 
@@ -3064,7 +3064,7 @@ body.with-bg.darkmode.clip-anim:before {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     margin-top: 10px
 }
@@ -3154,7 +3154,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .custom-radio input:checked~.custom-radio__checkmark {
-    border-color: #005640;
+    border-color: #ac0704;
     border-color: var(--c-primary)
 }
 
@@ -3186,7 +3186,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .order-radio__checkmark {
     background-color: transparent;
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     border-radius: 10px;
     -ms-flex-negative: 0;
@@ -3196,7 +3196,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .checkbox input:checked~.checkbox__mark,
 .order-radio input:checked~.order-radio__checkmark {
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary)
 }
 
@@ -3293,7 +3293,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .main-table__row--head {
     border-radius: 20px 20px 0 0;
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary)
 }
 
@@ -3324,7 +3324,7 @@ body.with-bg.darkmode.clip-anim:before {
     margin-right: 20px;
     font-size: 18px;
     font-weight: 700;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     width: 150px;
     -ms-flex-negative: 0;
@@ -3443,7 +3443,7 @@ body.with-bg.darkmode.clip-anim:before {
 .header__switch.active .switch__slider:before {
     -webkit-transform: translateX(29px);
     transform: translateX(29px);
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary)
 }
 
@@ -3483,7 +3483,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .header__switch__icons .icon {
     font-size: 18px;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -3522,7 +3522,7 @@ body.with-bg.darkmode.clip-anim:before {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    border: 3px solid #005640;
+    border: 3px solid #ac0704;
     border: 3px solid var(--c-primary);
     position: relative
 }
@@ -3535,7 +3535,7 @@ body.with-bg.darkmode.clip-anim:before {
     width: 3px;
     height: 3px;
     border-radius: 50%;
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary)
 }
 
@@ -3553,7 +3553,7 @@ body.with-bg.darkmode.clip-anim:before {
     left: 5px;
     height: 12px;
     bottom: 3px;
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     border-radius: 50%;
     clip-path: inset(50% 0 0 0);
@@ -3583,7 +3583,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .header__language {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     display: -webkit-box;
     display: -ms-flexbox;
@@ -3685,7 +3685,7 @@ body.with-bg.darkmode.clip-anim:before {
 .header__menu .js-menu-magicline {
     width: 0;
     height: 3px;
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     position: absolute;
     bottom: -20px;
@@ -3783,7 +3783,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .header__basket .icon {
     font-size: 28px;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -3842,7 +3842,7 @@ body.with-bg.darkmode.clip-anim:before {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -3855,7 +3855,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .howto-work__item {
     width: 100%;
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     background-color: #e6eeec;
     background-color: var(--c-primary-light);
@@ -4080,7 +4080,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .footer__top__left--content a {
     padding: 7px 0;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -4169,7 +4169,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .footer__top__right--content ul li .icon {
     margin-right: 5px;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -4280,7 +4280,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .footer__bottom__right .buttons a {
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     border-radius: 10px;
     padding: 15px;
@@ -4288,7 +4288,7 @@ body.with-bg.darkmode.clip-anim:before {
     -ms-flex-pack: center;
     justify-content: center;
     background: 0 0;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     width: 100%;
     margin-right: 40px;
@@ -4296,7 +4296,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .footer__bottom__right .buttons a:hover {
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary);
     color: #fff
 }
@@ -4336,27 +4336,27 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .footer__bottom__right .input input::-webkit-input-placeholder {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
 .footer__bottom__right .input input::-moz-placeholder {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
 .footer__bottom__right .input input:-ms-input-placeholder {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
 .footer__bottom__right .input input::-ms-input-placeholder {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
 .footer__bottom__right .input input::placeholder {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -4370,7 +4370,7 @@ body.with-bg.darkmode.clip-anim:before {
     white-space: nowrap;
     color: #f3f3f4;
     color: var(--c-secondary-light);
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary);
     border-radius: 0 10px 10px 0;
     padding: 15px;
@@ -4423,7 +4423,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .footer__social--item .icon {
     font-size: 24px;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -4491,7 +4491,7 @@ body.with-bg.darkmode.clip-anim:before {
     transform: none;
     display: none;
     width: 100%;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -4641,7 +4641,7 @@ body.with-bg.darkmode.clip-anim:before {
 .hero .absolute .txt,
 .main-modal__basket__item .icon:hover,
 .main-modal__info a {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -5229,7 +5229,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .why-trowas__item {
     padding: 20px 10px;
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     display: -webkit-box;
     display: -ms-flexbox;
@@ -5254,7 +5254,7 @@ body.with-bg.darkmode.clip-anim:before {
     margin-right: 10px;
     -ms-flex-negative: 0;
     flex-shrink: 0;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     font-size: 40px
 }
@@ -5382,7 +5382,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .card-trowas__recommend--soon {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     background: #e6eeec;
     background: var(--c-primary-light)
@@ -5504,7 +5504,7 @@ body.with-bg.darkmode.clip-anim:before {
     height: 40px;
     background-color: #e6eeec;
     background-color: var(--c-primary-light);
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     display: -webkit-box;
     display: -ms-flexbox;
@@ -5537,7 +5537,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .features__arrows .swiper-button-next:hover,
 .features__arrows .swiper-button-prev:hover {
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     color: #fff
 }
@@ -5588,13 +5588,13 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .features__item:hover {
-    border-color: #005640;
+    border-color: #ac0704;
     border-color: var(--c-primary)
 }
 
 .features__item:hover .features__item__title,
 .features__item__icon {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -5765,7 +5765,7 @@ body.with-bg.darkmode.clip-anim:before {
     width: 1220px;
     height: 1220px;
     border-radius: 50%;
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     z-index: -1
 }
@@ -6016,7 +6016,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .about-content__left--image::before {
     content: "";
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary);
     width: 184px;
     height: 184px;
@@ -6117,13 +6117,13 @@ body.with-bg.darkmode.clip-anim:before {
 .about-values__item--icon {
     font-size: 62px;
     margin-bottom: 15px;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
 .about-values__item--icon svg path {
     stroke: #fff;
-    fill: #005640;
+    fill: #ac0704;
     fill: var(--c-primary)
 }
 
@@ -6238,7 +6238,7 @@ body.with-bg.darkmode.clip-anim:before {
     flex-shrink: 0;
     font-size: 26px;
     margin: 0 30px;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -6264,7 +6264,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .detail-sustainable-statistics__number span {
     font-size: 70px;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     font-weight: 700
 }
@@ -6473,7 +6473,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .product__slider-thumb .swiper-slide-thumb-active .product__slider-thumb-item {
-    border-color: #005640;
+    border-color: #ac0704;
     border-color: var(--c-primary)
 }
 
@@ -6507,12 +6507,12 @@ body.with-bg.darkmode.clip-anim:before {
 
 .product__slider-thumb-item--video .hero__play,
 .product__slider-thumb-item--video .hero__play::before {
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary)
 }
 
 .product__slider-thumb-item--video .hero__play::after {
-    border-color: #005640;
+    border-color: #ac0704;
     border-color: var(--c-primary)
 }
 
@@ -6570,7 +6570,7 @@ body.with-bg.darkmode.clip-anim:before {
 .product__right__button__count {
     border-radius: 10px;
     padding: 15px;
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     width: 100%;
     margin-right: 20px;
@@ -6604,7 +6604,7 @@ body.with-bg.darkmode.clip-anim:before {
     width: 30px;
     height: 30px;
     border-radius: 4px;
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary);
     color: #fff;
     -ms-flex-negative: 0;
@@ -6653,9 +6653,9 @@ body.with-bg.darkmode.clip-anim:before {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
     border-radius: 10px;
     -webkit-transition: .3s cubic-bezier(.29, .13, .27, .74);
@@ -6683,7 +6683,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .product__right__info:hover {
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary);
     color: #fff
 }
@@ -6754,7 +6754,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .product__other__icon .icon {
     font-size: 68px;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -6815,7 +6815,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .product__features__right ul .icon {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     margin-right: 5px
 }
@@ -6856,7 +6856,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .product__features__right__support-buttons .btn-txt {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     font-weight: 700
 }
@@ -6885,7 +6885,7 @@ body.with-bg.darkmode.clip-anim:before {
 .darkmode .after-sale__footer .btn:hover .btn-icon,
 .darkmode .after-sale__footer .btn:hover .btn-txt,
 .product__play .hero__play__icon {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -7491,7 +7491,7 @@ body.with-bg.darkmode.clip-anim:before {
     margin-right: 20px;
     -ms-flex-negative: 0;
     flex-shrink: 0;
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -7574,9 +7574,9 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .after-sale__footer--left .btn {
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
@@ -7588,7 +7588,7 @@ body.with-bg.darkmode.clip-anim:before {
 .after-sale__footer--right .btn,
 .darkmode .checkbox input:checked~.checkbox__mark,
 .darkmode .order-radio input:checked~.order-radio__checkmark {
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary)
 }
 
@@ -7816,7 +7816,7 @@ body.with-bg.darkmode.clip-anim:before {
 .blog-detail__share::after {
     content: "";
     position: absolute;
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary);
     width: 276px;
     height: 276px;
@@ -7971,7 +7971,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .corporate-order__slider .swiper-button-next,
 .corporate-order__slider .swiper-button-prev {
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     color: #fff;
     width: 40px;
@@ -8074,7 +8074,7 @@ body.with-bg.darkmode.clip-anim:before {
     left: 15px;
     width: calc(100% - 30px);
     height: auto;
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary);
     color: #fff;
     padding: 20px 0;
@@ -8329,7 +8329,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .referance-feedback__card__buttons--video .btn-icon {
     color: #fff;
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary)
 }
 
@@ -8947,14 +8947,14 @@ body.with-bg.darkmode.clip-anim:before {
 .darkmode .after-sale__footer--right .btn-icon,
 .darkmode .after-sale__footer--right .btn-txt,
 .darkmode .detail-sustainable-statistics__number small {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
 .darkmode .after-sale__footer--right .btn:hover {
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary);
-    background: #005640;
+    background: #ac0704;
     background: var(--c-primary)
 }
 
@@ -9072,7 +9072,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .darkmode .footer__bottom .buttons .txt--px20:hover {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary);
     background: #ccc;
     background: var(--c-dark-paragraph)
@@ -9150,7 +9150,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .darkmode .main-table__row--head {
-    background-color: #005640;
+    background-color: #ac0704;
     background-color: var(--c-primary)
 }
 
@@ -9256,7 +9256,7 @@ body.with-bg.darkmode.clip-anim:before {
 }
 
 .darkmode .features__item:hover {
-    border: 2px solid #005640;
+    border: 2px solid #ac0704;
     border: 2px solid var(--c-primary)
 }
 
@@ -9321,7 +9321,7 @@ body.with-bg.darkmode.clip-anim:before {
 
 .darkmode .product__features__right__support-buttons a:hover .btn-icon,
 .darkmode .product__features__right__support-buttons a:hover .btn-txt {
-    color: #005640;
+    color: #ac0704;
     color: var(--c-primary)
 }
 
