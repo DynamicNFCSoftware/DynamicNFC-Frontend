@@ -31,10 +31,10 @@ scp -i dynamicNFC-key.pem docker-compose.yml ec2-user@3.128.244.219:/home/ec2-us
 scp -i dynamicNFC-key.pem nginx.conf  ec2-user@3.128.244.219:/home/ec2-user/
 
 On EC2
-ssh -i dynamicNFC-key.pem ec2-user@3.128.244.219-cls -
+ssh -i dynamicNFC-key.pem ec2-user@3.128.244.219
 docker load -i springboot.tar
 docker load -i frontend.tar
-"docker load -i springboot.tar && docker-compose restart springboot-app"
+docker load -i springboot.tar && docker-compose restart springboot-app
 
 Running / Stopping docker containers
 docker-compose down

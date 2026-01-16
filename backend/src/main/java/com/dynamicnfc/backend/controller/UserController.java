@@ -136,10 +136,10 @@ public class UserController {
 System.out.println("USER = " + auth);
 
             String userEmail = authentication.getName();
-            //Account account = accountService.findByEmail(userEmail);
+            Account account = accountService.findByEmail(userEmail);
             
             UserEntity entity = new UserEntity();
-            //entity.setAccount(account); // Set the account relationship
+            entity.setAccount(account); // Set the account relationship
             entity.setName(name);
             entity.setJobTitle(jobTitle);
             entity.setDepartment(department);

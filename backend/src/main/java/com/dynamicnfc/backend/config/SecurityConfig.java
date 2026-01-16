@@ -46,27 +46,24 @@ public class SecurityConfig {
 
     // Security Filter Chain
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                    .anyRequest().permitAll()
-                )
-                .httpBasic(httpBasic -> httpBasic.disable());
-                // .authorizeHttpRequests(auth -> auth
-                //         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout", "/api/request-card").permitAll()
-                //         .anyRequest().authenticated()
-                // )
-                // .anonymous(anonymous -> anonymous.disable()) // Disable anonymous auth - gives 401 instead of 403
-                // .sessionManagement(sess -> sess
-                //         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                // ).
-                // exceptionHandling(ex -> ex
-                //     .authenticationEntryPoint((request, response, authException) -> {
-                //         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                //     })
-                // )
-                //.formLogin(form -> form.disable());
+            .csrf(csrf -> csrf.disable())
+            //.cors(cors -> {}) // CORS enable
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout", "/api/request-card").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .anonymous(anonymous -> anonymous.disable()) // Disable anonymous auth - gives 401 instead of 403
+            .sessionManagement(sess -> sess
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            ).
+            exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                })
+            )
+            .formLogin(form -> form.disable());
 
         http.authenticationProvider(authenticationProvider());
         return http.build();
