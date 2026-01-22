@@ -54,7 +54,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                     .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout", "/api/request-card").permitAll()
                     .anyRequest().authenticated()
             )
-            .anonymous(anonymous -> anonymous.disable()) // Disable anonymous auth - gives 401 instead of 403
+            //.anonymous(anonymous -> anonymous.disable()) // Disable anonymous auth - gives 401 instead of 403
             .sessionManagement(sess -> sess
                     .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             ).
