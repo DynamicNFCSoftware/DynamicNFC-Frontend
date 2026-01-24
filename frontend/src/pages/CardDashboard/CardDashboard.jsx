@@ -32,28 +32,31 @@ export default function CardDashboard() {
 
     return (
         <div style={{ padding: 40, maxWidth: 1200, margin: "0 auto" }}>
-            <h1 style={{ marginBottom: 8 }}>My Cards</h1>
-            <p style={{ marginBottom: 24, color: "#666" }}>Account email: {user?.email || "-"}</p>
-
-            <div style={{ display: "flex", justifyContent: "flex-start", gap: 12, marginBottom: 24 }}>
-                <Link
-                    to="/"
-                    className="button analytics w-inline-block"
-                    style={{ textDecoration: "none" }}
-                >
-                    <div className="text-size-intermediate text-color-white btn">
-                        Home
-                    </div>
-                </Link>
-                <Link
-                    to="/create-card"
-                    className="button analytics w-inline-block"
-                    style={{ textDecoration: "none" }}
-                >
-                    <div className="text-size-intermediate text-color-white btn">
-                        Create New Card
-                    </div>
-                </Link>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+                <div>
+                    <h1 style={{ marginBottom: 8, fontSize: 32, fontWeight: "bold" }}>My Cards</h1>
+                    <p style={{ color: "#666" }}>Account email: {user?.email || "-"}</p>
+                </div>
+                <div style={{ display: "flex", gap: 12 }}>
+                    <Link
+                        to="/"
+                        className="button analytics w-inline-block"
+                        style={{ textDecoration: "none" }}
+                    >
+                        <div className="text-size-intermediate text-color-white btn">
+                            Home
+                        </div>
+                    </Link>
+                    <Link
+                        to="/create-card"
+                        className="button analytics w-inline-block"
+                        style={{ textDecoration: "none" }}
+                    >
+                        <div className="text-size-intermediate text-color-white btn">
+                            Create New Card
+                        </div>
+                    </Link>
+                </div>
             </div>
 
             {cards.length === 0 ? (

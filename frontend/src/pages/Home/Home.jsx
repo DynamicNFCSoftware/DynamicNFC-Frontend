@@ -64,7 +64,7 @@ function Home() {
       <div className="navbar_ab">
         <div className="css w-embed"></div>
         <div role="banner" className="navbar black w-nav">
-          <div className="nav-container">
+          <div className="nav-container nav-container-mobile">
             <div className="brand-wrapper">
               <Link to="/"
                 aria-current="page"
@@ -103,20 +103,21 @@ function Home() {
                 </div>
               </Link>
             </nav>
-            <div className="navbar-cta-wrapper">
-              <Link to="/dashboard" className="button light white analytics w-button">
-                Dashboard
-              </Link>
+            <div className="navbar-auth-buttons">
+              {isAuthenticated && isAuthenticated() && (
+                <Link to="/dashboard" className="button light white analytics w-button">
+                  Dashboard
+                </Link>
+              )}
               {isAuthenticated && isAuthenticated() ? (
-                <button 
-                  onClick={handleLogout} 
-                  className="button light white analytics w-button" 
-                  style={{marginLeft: '10px'}}
+                <button
+                  onClick={handleLogout}
+                  className="button light white analytics w-button"
                 >
                   Logout
                 </button>
               ) : (
-                <Link to="/login" className="button light white analytics w-button" style={{marginLeft: '10px'}}>
+                <Link to="/login" className="button light white analytics w-button">
                   Login
                 </Link>
               )}

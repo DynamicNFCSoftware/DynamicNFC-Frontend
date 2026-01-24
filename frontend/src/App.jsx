@@ -12,6 +12,7 @@ import './assets/css/b7f8d2bdc90730a0.css'
 import './assets/css/c7df3fa510c5b153.css'
 import './assets/css/d63b62cee6aaba1c.css'
 import './assets/css/ordercard.css?ver=9'
+import './index.css'
 
 import Home from "./pages/Home/Home";
 import CreateCard from "./pages/CreateCard/CreateCard";
