@@ -7,6 +7,7 @@ export default function CardDashboard() {
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [deleting, setDeleting] = useState(null);
 
     useEffect(() => {
         const fetchCards = async () => {
@@ -26,6 +27,31 @@ export default function CardDashboard() {
 
         fetchCards();
     }, []);
+
+    const handleDelete = async (hashId) => {
+        if (!window.confirm("Are you sure you want to delete this card?")) {
+            return;
+        }
+
+        setDeleting(hashId);
+        try {
+            const response = await fetch(`/api/users/${hashId}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete card: ${response.status}`);
+            }
+
+            // Remove the card from the list
+            setCards(cards.filter(card => card.hashId !== hashId));
+        } catch (err) {
+            alert(`Error deleting card: ${err.message}`);
+        } finally {
+            setDeleting(null);
+        }
+    };
 
     if (loading) return <div style={{ padding: 40 }}>Loading...</div>;
     if (error) return <div style={{ padding: 40 }}>Error: {error}</div>;
@@ -79,7 +105,7 @@ export default function CardDashboard() {
                                 <td style={{ padding: 12 }}>{card.jobTitle || "-"}</td>
                                 <td style={{ padding: 12 }}>{card.department || "-"}</td>
                                 <td style={{ padding: 12 }}>{card.companyName || "-"}</td>
-                                <td style={{ padding: 12 }}>
+                                <td style={{ padding: 12, display: "flex", gap: 8 }}>
                                     <Link
                                         to={`/card/?hashId=${card.hashId}`}
                                         className="button analytics w-inline-block"
@@ -89,6 +115,21 @@ export default function CardDashboard() {
                                             View
                                         </div>
                                     </Link>
+                                    <button
+                                        onClick={() => handleDelete(card.hashId)}
+                                        disabled={deleting === card.hashId}
+                                        className="button analytics w-inline-block"
+                                        style={{
+                                            background: "#dc3545",
+                                            border: "none",
+                                            cursor: deleting === card.hashId ? "not-allowed" : "pointer",
+                                            opacity: deleting === card.hashId ? 0.6 : 1
+                                        }}
+                                    >
+                                        <div className="text-size-intermediate text-color-white btn">
+                                            {deleting === card.hashId ? "Deleting..." : "Delete"}
+                                        </div>
+                                    </button>
                                 </td>
                             </tr>
                         ))}

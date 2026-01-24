@@ -9,14 +9,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin(origins = {
-    "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
-    "https://localhost:3000", "https://localhost:3001", "https://localhost:3002",
-    "http://3.128.244.219:3000", "http://3.128.244.219:3001", "http://3.128.244.219:3002", 
-    "https://3.128.244.219:3000", "https://3.128.244.219:3001", "https://3.128.244.219:3002",
-    "http://dynamicnfc.ca", "https://dynamicnfc.ca", 
-    "http://www.dynamicnfc.ca", "https://www.dynamicnfc.ca"
-})
 @RestController
 @RequestMapping("/api")
 public class RequestCardController {

@@ -22,14 +22,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-@CrossOrigin(origins = {
-    "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
-    "https://localhost:3000", "https://localhost:3001", "https://localhost:3002",
-    "http://3.128.244.219:3000", "http://3.128.244.219:3001", "http://3.128.244.219:3002", 
-    "https://3.128.244.219:3000", "https://3.128.244.219:3001", "https://3.128.244.219:3002",
-    "http://dynamicnfc.ca", "https://dynamicnfc.ca", 
-    "http://www.dynamicnfc.ca", "https://www.dynamicnfc.ca"
-})
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -326,6 +318,44 @@ System.out.println("USER = " + auth);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error updating hash IDs: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Delete a card by its hashId. Only the owner can delete their own cards.
+     */
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Void> deleteCard(@PathVariable String id) {
+        try {
+            // Get authenticated user's account
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = authentication.getName();
+            Account account = accountService.findByEmail(userEmail);
+
+            // Decode hashId
+            Long actualId = hashIdUtil.decode(id);
+            if (actualId == null) {
+                try {
+                    actualId = Long.parseLong(id);
+                } catch (NumberFormatException e) {
+                    return ResponseEntity.badRequest().build();
+                }
+            }
+
+            // Find the card and verify ownership
+            return userRepository.findById(actualId)
+                .map(card -> {
+                    // Check if the card belongs to the authenticated user
+                    if (card.getAccount() == null || !card.getAccount().getId().equals(account.getId())) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).<Void>build();
+                    }
+                    userRepository.delete(card);
+                    return ResponseEntity.ok().<Void>build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
