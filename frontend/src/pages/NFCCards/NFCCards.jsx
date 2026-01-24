@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
 import NFCCardsAccordion from '../../components/Accordions/NFCCardsAccordion';
 
 function NFCCards() {
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
 
     const faqItems = [
@@ -83,6 +91,19 @@ function NFCCards() {
                             <Link to="/create-card" className="button light white analytics w-button">
                                 Create digital card
                             </Link>
+                            {isAuthenticated && isAuthenticated() ? (
+                              <button 
+                                onClick={handleLogout} 
+                                className="button light white analytics w-button" 
+                                style={{marginLeft: '10px'}}
+                              >
+                                Logout
+                              </button>
+                            ) : (
+                              <Link to="/login" className="button light white analytics w-button" style={{marginLeft: '10px'}}>
+                                Login
+                              </Link>
+                            )}
                         </div>
                     </div>
                 </div>

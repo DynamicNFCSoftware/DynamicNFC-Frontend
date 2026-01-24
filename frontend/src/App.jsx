@@ -15,12 +15,14 @@ import './assets/css/ordercard.css?ver=9'
 
 import Home from "./pages/Home/Home";
 import CreateCard from "./pages/CreateCard/CreateCard";
+//import MyAccount from "./pages/MyAccount/MyAccount";
 import NFCCards from "./pages/NFCCards/NFCCards";
 import Enterprise from "./pages/Enterprise/Enterprise";
 import Card from "./pages/Card/Card";
 import Login from "./pages/Login/Login";
 import OrderCard from "./pages/OrderCard/OrderCard";
 import Test from "./pages/test/test";
+
 import CreatePhysicalCard from "./pages/CreatePhysicalCard/CreatePhysicalCard";
 
 function App() {
@@ -37,6 +39,11 @@ function App() {
           <Route path="/create-card" element={
             <ProtectedRoute>
               <CreateCard />
+            </ProtectedRoute>
+          } />
+          <Route path="/my-account" element={
+            <ProtectedRoute>
+              {/* <MyAccount /> */}
             </ProtectedRoute>
           } />
           <Route path="/nfc-cards" element={

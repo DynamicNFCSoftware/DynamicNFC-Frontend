@@ -1,8 +1,17 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function CreatePhysicalCard() {
+    const { user, logout, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
     const { state } = useLocation();
+    
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+    
     const card = state?.card;
     const [fullName, setFullName] = useState("");
     const [logoPreview, setLogoPreview] = useState(null);
@@ -64,6 +73,19 @@ export default function CreatePhysicalCard() {
                             <Link to="/create-card" className="button analytics w-button">
                                 Create digital card
                             </Link>
+                            {isAuthenticated && isAuthenticated() ? (
+                              <button 
+                                onClick={handleLogout} 
+                                className="button analytics w-button" 
+                                style={{marginLeft: '10px'}}
+                              >
+                                Logout
+                              </button>
+                            ) : (
+                              <Link to="/login" className="button analytics w-button" style={{marginLeft: '10px'}}>
+                                Login
+                              </Link>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@ Update backend project
 ./mvnw clean install
 mvn clean install
 ./mvnw clean package -DskipTests (snapshot.jar olusturur)
+cd backend ; .\mvnw.cmd spring-boot:run
 
 update front end:
 npm start //build yapmıyor, sadece bunu yapınca docker da eski versiyon kalır. localde yeni sayfa acılır ama 

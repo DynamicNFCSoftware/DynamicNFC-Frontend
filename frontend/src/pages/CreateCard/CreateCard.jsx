@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../../contexts/AuthContext';
+import QRCodeDisplay from '../../components/QRCodeDisplay/QRCodeDisplay';
+import { initCardCreate, destroyCardCreate } from "./CreateCardHelper";
+
 
 export default function CreateCard() {
+  const navigate = useNavigate();
   const [qrUrl, setQrUrl] = useState('');
+  const [savedHashId, setSavedHashId] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isNext, setIsNext] = useState(false);
   const [collectedFields, setCollectedFields] = useState(null);
@@ -38,18 +43,36 @@ export default function CreateCard() {
     },
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     const acId = localStorage.getItem('accountId');
     console.log("acId", acId);
-    loadCssOnce("https://requsoft.com/assets/css/f0be61666b9614df.css")
-    loadCssOnce("https://requsoft.com/assets/css/f984sdf8q4q5qwq.css")
-    loadScriptOnce("https://requsoft.com/assets/js/card-create.js?ver128")
+    loadCssOnce("/assets/css/f0be61666b9614df.css")
+    loadCssOnce("/assets/css/f984sdf8q4q5qwq.css")
+    loadScriptOnce("/assets/js/card-create.js")
     const timer = setTimeout(() => {
       setIsLoadingAssets(false);
     }, 1000);
-
     return () => clearTimeout(timer);
+  }, []);*/
+  useEffect(() => {
+    const acId = localStorage.getItem("accountId");
+    console.log("acId", acId);
+
+    // Load CSS once
+    loadCssOnce("/assets/css/f0be61666b9614df.css");
+    loadCssOnce("/assets/css/f984sdf8q4q5qwq.css");
+
+    // Wait ONE render so DOM exists
+    requestAnimationFrame(() => {
+      initCardCreate();
+      setIsLoadingAssets(false);
+    });
+
+    return () => {
+      destroyCardCreate();
+    };
   }, []);
+
 
   const Preloader = () => (
     <div style={styles.wrapper}>
@@ -90,7 +113,7 @@ export default function CreateCard() {
     return new File([u8arr], filename, { type: mime });
   }
 
-  const submitCardToAPI = async () => {
+  const submitCardToAPI = async (collectedFields) => {
     try {
 
       setIsSaving(true);
@@ -118,21 +141,21 @@ export default function CreateCard() {
       }
 
       // Dosyaları ekle
-      if (collectedFields.coverPhotoSrc) {
+      if (collectedFields.coverPhotoSrc && collectedFields.coverPhotoSrc.startsWith('data:')) {
         formData.append(
           "companyLogo",
           dataURLtoFile(collectedFields.coverPhotoSrc, "cover.png")
         );
       }
 
-      if (collectedFields.profilePictureSrc) {
+      if (collectedFields.profilePictureSrc && collectedFields.profilePictureSrc.startsWith('data:')) {
         formData.append(
           "profilePicture",
           dataURLtoFile(collectedFields.profilePictureSrc, "profile.png")
         );
       }
 
-      if (collectedFields.companyLogoSrc) {
+      if (collectedFields.companyLogoSrc && collectedFields.companyLogoSrc.startsWith('data:')) {
         formData.append(
           "coverPhoto",
           dataURLtoFile(collectedFields.companyLogoSrc, "company.png")
@@ -169,8 +192,10 @@ export default function CreateCard() {
       )}`;
 
       setQrUrl(qrApi);
+      setSavedHashId(hashId);
 
-      alert("Card created successfully!");
+      // Navigate to the card page
+      navigate(`/card/?hashId=${encodeURIComponent(hashId)}`);
     } catch (err) {
       console.error(err);
       alert("Failed to submit card: " + err.message);
@@ -235,13 +260,13 @@ export default function CreateCard() {
 
     const total = normalFieldsCount + socialCount;
 
-    if (total < 4) {
+    /*if (total < 4) {
       alert("Please add at least 4 fields to proceed.");
       return;
-    }
+    }*/
 
     setCollectedFields(data);
-    submitCardToAPI(true);
+    submitCardToAPI(data);
   };
 
   const handleSelectField = (key, value) => {
@@ -299,50 +324,11 @@ export default function CreateCard() {
               <div className="OnboardingLayout_side-section-content__LwDmM">
 
                 {qrUrl ? (
-                  <div style={{ marginTop: 16, textAlign: 'center' }}>
-                    <p style={{ color: 'white' }}>QR Has been created successfully!</p>
-                    <h4 style={{ marginBottom: 8, color: 'white' }}>Your QR (scan to open)</h4>
-                    <img
-                      src={qrUrl}
-                      alt="QR Code"
-                      style={{
-                        width: 200,
-                        height: 200,
-                        display: 'block',
-                        margin: '0 auto',
-                        background: 'white',
-                        padding: 8,
-                        borderRadius: 8,
-                      }}
-                    />
-                    <div style={{ marginTop: 8 }}>
-                      <a
-                        href={qrUrl}
-                        download={`card-${Date.now()}.png`}
-                        style={{
-                          marginRight: 8,
-                          textDecoration: 'none',
-                          padding: '8px 12px',
-                          borderRadius: 8,
-                          background: '#10b981',
-                          color: 'white',
-                        }}
-                      >
-                        Download QR
-                      </a>
-                      <button style={{ color: 'white' }}
-                        onClick={() =>
-                          navigator.clipboard.writeText(
-                            `${window.location.origin}/card/?hashId=${encodeURIComponent(
-                              qrUrl.split('data=')[1] || ''
-                            )}`
-                          )
-                        }
-                      >
-                        Copy URL
-                      </button>
-                    </div>
-                  </div>
+                  <QRCodeDisplay
+                    qrUrl={qrUrl}
+                    hashId={savedHashId}
+                    successMessage="QR Has been created successfully!"
+                  />
                 ) : (
                   <div className="customize-card_side-section-content__DnTBV">
                     <div
@@ -671,7 +657,7 @@ export default function CreateCard() {
                                 fill="currentColor"></path>
                             </svg>
                           </div>
-                          <div>Company Logo</div>
+                          <div>Cover Photo</div>
                           <div className="CardHeaderPictures_required-label__7zTA1" />
                         </div>
                       </button>
@@ -733,7 +719,7 @@ export default function CreateCard() {
                                 fill="currentColor"></path>
                             </svg>
                           </div>
-                          <div>Cover Photo</div>
+                          <div>Company Logo</div>
                           <div className="CardHeaderPictures_required-label__7zTA1" />
                         </div>
                       </button>
@@ -1376,6 +1362,23 @@ export default function CreateCard() {
                         <span className="Popover_title-text__PKd8E">
                           Add profile photo
                         </span>
+                        <button
+                          className="Popover_title-close__qfXja"
+                          id="x-btn-profile">
+                          <svg
+                            aria-hidden="true"
+                            className="svg-inline--fa fa-xmark fa-lg "
+                            data-icon="xmark"
+                            data-prefix="fal"
+                            focusable="false"
+                            role="img"
+                            viewBox="0 0 384 512"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M324.5 411.1c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6L214.6 256 347.1 123.5c6.2-6.2 6.2-16.4 0-22.6s-16.4-6.2-22.6 0L192 233.4 59.6 100.9c-6.2-6.2-16.4-6.2-22.6 0s-6.2 16.4 0 22.6L169.4 256 36.9 388.5c-6.2 6.2-6.2 16.4 0 22.6s16.4 6.2 22.6 0L192 278.6 324.5 411.1z"
+                              fill="currentColor"></path>
+                          </svg>
+                        </button>
                       </div>
                     </div>
                     <div className="Popover_popover-content__PXmKI Popover_popover-content-base__WAqCO">
@@ -1467,6 +1470,23 @@ export default function CreateCard() {
                         <span className="Popover_title-text__PKd8E">
                           Add cover logo
                         </span>
+                        <button
+                          className="Popover_title-close__qfXja"
+                          id="x-btn-cover">
+                          <svg
+                            aria-hidden="true"
+                            className="svg-inline--fa fa-xmark fa-lg "
+                            data-icon="xmark"
+                            data-prefix="fal"
+                            focusable="false"
+                            role="img"
+                            viewBox="0 0 384 512"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M324.5 411.1c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6L214.6 256 347.1 123.5c6.2-6.2 6.2-16.4 0-22.6s-16.4-6.2-22.6 0L192 233.4 59.6 100.9c-6.2-6.2-16.4-6.2-22.6 0s-6.2 16.4 0 22.6L169.4 256 36.9 388.5c-6.2 6.2-6.2 16.4 0 22.6s16.4 6.2 22.6 0L192 278.6 324.5 411.1z"
+                              fill="currentColor"></path>
+                          </svg>
+                        </button>
                       </div>
                     </div>
                     <div className="Popover_popover-content__PXmKI Popover_popover-content-base__WAqCO">

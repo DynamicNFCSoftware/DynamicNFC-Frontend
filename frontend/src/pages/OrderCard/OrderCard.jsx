@@ -1,7 +1,16 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function OrderCard() {
+    const { user, logout, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+
     const cards = [
         {
             id: "white",
@@ -81,6 +90,19 @@ export default function OrderCard() {
                             <Link to="/create-card" className="button analytics w-button">
                                 Create digital card
                             </Link>
+                            {isAuthenticated && isAuthenticated() ? (
+                              <button 
+                                onClick={handleLogout} 
+                                className="button analytics w-button" 
+                                style={{marginLeft: '10px'}}
+                              >
+                                Logout
+                              </button>
+                            ) : (
+                              <Link to="/login" className="button analytics w-button" style={{marginLeft: '10px'}}>
+                                Login
+                              </Link>
+                            )}
                         </div>
                     </div>
                 </div>

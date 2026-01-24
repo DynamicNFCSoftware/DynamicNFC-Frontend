@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { User } from './User';
+import QRCodeDisplay from '../../components/QRCodeDisplay/QRCodeDisplay';
+
+function loadCssOnce(href) {
+    if (document.querySelector(`link[href="${href}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    document.head.appendChild(link);
+}
 
 function Card() {
     const [user, setUser] = useState(null);
@@ -8,6 +18,15 @@ function Card() {
 
     const params = new URLSearchParams(window.location.search);
     const hashId = params.get('hashId');
+
+    // Load CSS files
+    useEffect(() => {
+        loadCssOnce("/assets/css/card-page.css");
+    }, []);
+
+    // Generate QR URL for this card
+    const cardUrl = `${window.location.origin}/Card/?hashId=${encodeURIComponent(hashId || '')}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(cardUrl)}`;
 
     useEffect(() => {
         if (!hashId) return;
@@ -59,11 +78,59 @@ END:VCARD
 
     return (
         <>
+            <style>
+                {`
+                    .card-page-container {
+                        display: flex;
+                        flex-direction: row;
+                        min-height: 100vh;
+                        width: 100%;
+                    }
+                    .card-qr-section {
+                        flex: 1;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 24px;
+                    }
+                    .card-details-section {
+                        flex: 1;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    @media (max-width: 768px) {
+                        .card-page-container {
+                            flex-direction: column-reverse;
+                        }
+                        .card-qr-section {
+                            padding: 16px;
+                        }
+                    }
+                `}
+            </style>
+            <div className="card-page-container" style={{ background: user.backgroundColor === '#FFFFFF' ? '#fcd6d5' : user.backgroundColor, position: 'relative' }}>
+                <Link
+                    to="/"
+                    className="button analytics w-inline-block"
+                    style={{ textDecoration: 'none', position: 'absolute', top: 16, left: 16, zIndex: 10 }}
+                >
+                    <div className="text-size-intermediate text-color-white btn">
+                        Home
+                    </div>
+                </Link>
+                <div className="card-qr-section">
+                    <QRCodeDisplay
+                        qrUrl={qrUrl}
+                        hashId={hashId}
+                        successMessage="Scan to view this card"
+                    />
+                </div>
+                <div className="card-details-section">
             <div id="bg-card-bg">
                 <div
                     className="_1mwbo3a0 _1mwbo3a1"
                     style={{
-                        'background': `${user.backgroundColor === '#FFFFFF' ? '#fcd6d5' : user.backgroundColor}`,
                         '--tnkigl2c': '58,74,248',
                         '--tnkigl2d': '58,74,248, 0.14',
                         '--tnkigl2f': '255,255,255',
@@ -81,12 +148,18 @@ END:VCARD
                     }}
                 >
                     <div className="_15zfejk0 _15zfejk1">
-                        <header className="_114jae30">
-                            <div className="_114jae31 _114jae33 _114jae35">
-                                <img src={user.companyLogo} alt="Banner" className="_114jae37 _114jae39 _114jae3b _114jae3d _114jae3e" fetchPriority="high" />
+                        <header className="CardHeader_card-header__mOiLv"
+                            data-card-layout="1C"
+                            data-has-floating-images="false"
+                            data-image-type="cover">
+                            <div className="CardHeader_banner-image-container__6g0Pz">
+                                <img src={user.coverPhoto || "/assets/images/empty-cover-photo.5e4f5f6e.png"} alt="Cover" className="CardHeader_banner-image__2KOX9" />
                             </div>
-                            <div className="_114jae3k _114jae3l _114jae3n _114jae3q">
-                                <img src={user.profilePicture} alt="profile" className="_114jae3s" />
+                            <div className="CardHeader_left-picture__v05WN">
+                                <img src={user.profilePicture || "/assets/images/empty-profile-photo.5e4f5f6e.png"} alt="Profile" className="CardHeader_left-picture-img__yFgFE" />
+                            </div>
+                            <div className="CardHeader_right-picture__uGU1E">
+                                <img src={user.companyLogo || "/assets/images/empty-company-logo.5e4f5f6e.png"} alt="Logo" className="CardHeader_right-picture-img__L0u2u" />
                             </div>
                         </header>
                         <div className="_4p4yt30">
@@ -179,6 +252,8 @@ END:VCARD
                         </div>
 
                     </div>
+                </div>
+            </div>
                 </div>
             </div>
         </>

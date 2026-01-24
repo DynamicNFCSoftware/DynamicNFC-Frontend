@@ -30,7 +30,8 @@ const Login = () => {
     const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
     
     try {
-      const response = await fetch(`http://localhost:8080${endpoint}`, {
+      const response = await fetch(endpoint, {
+      //const response = await fetch(`http://localhost:8080${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
