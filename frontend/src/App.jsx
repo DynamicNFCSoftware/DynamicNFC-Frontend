@@ -22,6 +22,7 @@ import Card from "./pages/Card/Card";
 import Login from "./pages/Login/Login";
 import OrderCard from "./pages/OrderCard/OrderCard";
 import Test from "./pages/test/test";
+import CardDashboard from "./pages/CardDashboard/CardDashboard";
 
 import CreatePhysicalCard from "./pages/CreatePhysicalCard/CreatePhysicalCard";
 
@@ -39,6 +40,11 @@ function App() {
           <Route path="/create-card" element={
             <ProtectedRoute>
               <CreateCard />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <CardDashboard />
             </ProtectedRoute>
           } />
           <Route path="/my-account" element={

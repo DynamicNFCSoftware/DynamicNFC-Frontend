@@ -104,8 +104,8 @@ function Home() {
               </Link>
             </nav>
             <div className="navbar-cta-wrapper">
-              <Link to="/create-card" className="button light white analytics w-button">
-                Create digital card
+              <Link to="/dashboard" className="button light white analytics w-button">
+                Dashboard
               </Link>
               {isAuthenticated && isAuthenticated() ? (
                 <button 

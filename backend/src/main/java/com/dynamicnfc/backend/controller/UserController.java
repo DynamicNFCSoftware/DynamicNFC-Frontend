@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -79,6 +80,20 @@ public class UserController {
                     return response;
                 })
                 .toList();
+    }
+
+    @GetMapping("/my-cards")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<UserResponse>> getCardsForAccount() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        Account account = accountService.findByEmail(userEmail);
+
+        List<UserResponse> cards = userRepository.findByAccount(account).stream()
+                .map(user -> UserMapper.toResponse(user, hashIdUtil))
+                .toList();
+
+        return ResponseEntity.ok(cards);
     }
 
     /**

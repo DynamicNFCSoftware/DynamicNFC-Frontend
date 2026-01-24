@@ -119,6 +119,15 @@ END:VCARD
                         Home
                     </div>
                 </Link>
+                <Link
+                    to="/dashboard"
+                    className="button analytics w-inline-block"
+                    style={{ textDecoration: 'none', position: 'absolute', top: 16, left: 130, zIndex: 10 }}
+                >
+                    <div className="text-size-intermediate text-color-white btn">
+                        Dashboard
+                    </div>
+                </Link>
                 <div className="card-qr-section">
                     <QRCodeDisplay
                         qrUrl={qrUrl}
