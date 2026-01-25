@@ -8,8 +8,8 @@ export default defineConfig({
     port: 3000, // zorla 3000'de çalıştır
     proxy: {
       '/api': {
-        target: 'https://3.128.244.219', // canlı backend
-        //target: 'http://localhost:8080', // yerel backend
+        //target: 'https://3.128.244.219', // canlı backend
+        target: 'http://localhost:8080', // yerel backend
         changeOrigin: true,
         secure: false,
       }

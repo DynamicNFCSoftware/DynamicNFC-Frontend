@@ -186,7 +186,7 @@ export default function CreateCard() {
 
       // QR oluştur
       const domain = window.location.origin.replace(/:\d+$/, "");
-      const targetUrl = `${domain}/Card/?hashId=${encodeURIComponent(hashId)}`;
+      const targetUrl = `${domain}/card/?hashId=${encodeURIComponent(hashId)}`;
       const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
         targetUrl
       )}`;

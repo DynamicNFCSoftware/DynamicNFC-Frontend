@@ -25,7 +25,7 @@ function Card() {
     }, []);
 
     // Generate QR URL for this card
-    const cardUrl = `${window.location.origin}/Card/?hashId=${encodeURIComponent(hashId || '')}`;
+    const cardUrl = `${window.location.origin}/card/?hashId=${encodeURIComponent(hashId || '')}`;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(cardUrl)}`;
 
     useEffect(() => {

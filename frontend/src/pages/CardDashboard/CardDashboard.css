@@ -1,0 +1,176 @@
+.dashboard-container {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-loading {
+    padding: 40px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 16px;
+}
+
+.dashboard-header-info {
+    flex: 1;
+}
+
+.dashboard-title {
+    margin-bottom: 8px;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.dashboard-email {
+    color: #666;
+}
+
+.dashboard-header-buttons {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* Desktop Table */
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    padding: 12px;
+    text-align: left;
+}
+
+.dashboard-table thead tr {
+    border-bottom: 2px solid #ddd;
+}
+
+.dashboard-table tbody tr {
+    border-bottom: 1px solid #eee;
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.dashboard-delete-btn {
+    background: #dc3545 !important;
+    border: none !important;
+}
+
+/* Mobile Cards */
+.dashboard-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dashboard-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    background: #fff;
+}
+
+.dashboard-card-info {
+    margin-bottom: 12px;
+}
+
+.dashboard-card-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+}
+
+.dashboard-card-detail {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #444;
+}
+
+.dashboard-card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Show/Hide based on screen size */
+.desktop-only {
+    display: table;
+}
+
+.mobile-only {
+    display: none;
+}
+
+/* Tablet */
+@media screen and (max-width: 991px) {
+    .dashboard-container {
+        padding: 24px;
+    }
+
+    .dashboard-title {
+        font-size: 28px;
+    }
+}
+
+/* Mobile */
+@media screen and (max-width: 767px) {
+    .dashboard-container {
+        padding: 16px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-header-buttons {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-title {
+        font-size: 24px;
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-only {
+        display: flex !important;
+    }
+}
+
+/* Small Mobile */
+@media screen and (max-width: 479px) {
+    .dashboard-container {
+        padding: 12px;
+    }
+
+    .dashboard-header-buttons {
+        flex-direction: column;
+    }
+
+    .dashboard-header-buttons .button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .dashboard-card-actions {
+        flex-direction: column;
+    }
+
+    .dashboard-card-actions .button {
+        width: 100%;
+        text-align: center;
+    }
+}

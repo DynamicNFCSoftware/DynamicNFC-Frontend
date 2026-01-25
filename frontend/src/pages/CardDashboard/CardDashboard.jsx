@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import "./CardDashboard.css";
 
 export default function CardDashboard() {
     const { user } = useAuth();
@@ -53,21 +54,20 @@ export default function CardDashboard() {
         }
     };
 
-    if (loading) return <div style={{ padding: 40 }}>Loading...</div>;
-    if (error) return <div style={{ padding: 40 }}>Error: {error}</div>;
+    if (loading) return <div className="dashboard-loading">Loading...</div>;
+    if (error) return <div className="dashboard-loading">Error: {error}</div>;
 
     return (
-        <div style={{ padding: 40, maxWidth: 1200, margin: "0 auto" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
-                <div>
-                    <h1 style={{ marginBottom: 8, fontSize: 32, fontWeight: "bold" }}>My Cards</h1>
-                    <p style={{ color: "#666" }}>Account email: {user?.email || "-"}</p>
+        <div className="dashboard-container">
+            <div className="dashboard-header">
+                <div className="dashboard-header-info">
+                    <h1 className="dashboard-title">My Cards</h1>
+                    <p className="dashboard-email">Account email: {user?.email || "-"}</p>
                 </div>
-                <div style={{ display: "flex", gap: 12 }}>
+                <div className="dashboard-header-buttons">
                     <Link
                         to="/"
                         className="button analytics w-inline-block"
-                        style={{ textDecoration: "none" }}
                     >
                         <div className="text-size-intermediate text-color-white btn">
                             Home
@@ -76,7 +76,6 @@ export default function CardDashboard() {
                     <Link
                         to="/create-card"
                         className="button analytics w-inline-block"
-                        style={{ textDecoration: "none" }}
                     >
                         <div className="text-size-intermediate text-color-white btn">
                             Create New Card
@@ -88,28 +87,67 @@ export default function CardDashboard() {
             {cards.length === 0 ? (
                 <p>No cards found. Create your first card!</p>
             ) : (
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <thead>
-                        <tr style={{ borderBottom: "2px solid #ddd", textAlign: "left" }}>
-                            <th style={{ padding: 12 }}>Name</th>
-                            <th style={{ padding: 12 }}>Job Title</th>
-                            <th style={{ padding: 12 }}>Department</th>
-                            <th style={{ padding: 12 }}>Company</th>
-                            <th style={{ padding: 12 }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <>
+                    {/* Desktop Table */}
+                    <table className="dashboard-table desktop-only">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Job Title</th>
+                                <th>Department</th>
+                                <th>Company</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {cards.map((card) => (
+                                <tr key={card.hashId}>
+                                    <td>{card.name || "-"}</td>
+                                    <td>{card.jobTitle || "-"}</td>
+                                    <td>{card.department || "-"}</td>
+                                    <td>{card.companyName || "-"}</td>
+                                    <td className="dashboard-actions">
+                                        <Link
+                                            to={`/card/?hashId=${card.hashId}`}
+                                            className="button analytics w-inline-block"
+                                        >
+                                            <div className="text-size-intermediate text-color-white btn">
+                                                View
+                                            </div>
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(card.hashId)}
+                                            disabled={deleting === card.hashId}
+                                            className="button analytics w-inline-block dashboard-delete-btn"
+                                            style={{
+                                                opacity: deleting === card.hashId ? 0.6 : 1,
+                                                cursor: deleting === card.hashId ? "not-allowed" : "pointer"
+                                            }}
+                                        >
+                                            <div className="text-size-intermediate text-color-white btn">
+                                                {deleting === card.hashId ? "Deleting..." : "Delete"}
+                                            </div>
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    {/* Mobile Cards */}
+                    <div className="dashboard-cards mobile-only">
                         {cards.map((card) => (
-                            <tr key={card.hashId} style={{ borderBottom: "1px solid #eee" }}>
-                                <td style={{ padding: 12 }}>{card.name || "-"}</td>
-                                <td style={{ padding: 12 }}>{card.jobTitle || "-"}</td>
-                                <td style={{ padding: 12 }}>{card.department || "-"}</td>
-                                <td style={{ padding: 12 }}>{card.companyName || "-"}</td>
-                                <td style={{ padding: 12, display: "flex", gap: 8 }}>
+                            <div key={card.hashId} className="dashboard-card">
+                                <div className="dashboard-card-info">
+                                    <h3 className="dashboard-card-name">{card.name || "-"}</h3>
+                                    <p className="dashboard-card-detail"><strong>Job:</strong> {card.jobTitle || "-"}</p>
+                                    <p className="dashboard-card-detail"><strong>Dept:</strong> {card.department || "-"}</p>
+                                    <p className="dashboard-card-detail"><strong>Company:</strong> {card.companyName || "-"}</p>
+                                </div>
+                                <div className="dashboard-card-actions">
                                     <Link
                                         to={`/card/?hashId=${card.hashId}`}
                                         className="button analytics w-inline-block"
-                                        style={{ textDecoration: "none" }}
                                     >
                                         <div className="text-size-intermediate text-color-white btn">
                                             View
@@ -118,23 +156,21 @@ export default function CardDashboard() {
                                     <button
                                         onClick={() => handleDelete(card.hashId)}
                                         disabled={deleting === card.hashId}
-                                        className="button analytics w-inline-block"
+                                        className="button analytics w-inline-block dashboard-delete-btn"
                                         style={{
-                                            background: "#dc3545",
-                                            border: "none",
-                                            cursor: deleting === card.hashId ? "not-allowed" : "pointer",
-                                            opacity: deleting === card.hashId ? 0.6 : 1
+                                            opacity: deleting === card.hashId ? 0.6 : 1,
+                                            cursor: deleting === card.hashId ? "not-allowed" : "pointer"
                                         }}
                                     >
                                         <div className="text-size-intermediate text-color-white btn">
                                             {deleting === card.hashId ? "Deleting..." : "Delete"}
                                         </div>
                                     </button>
-                                </td>
-                            </tr>
+                                </div>
+                            </div>
                         ))}
-                    </tbody>
-                </table>
+                    </div>
+                </>
             )}
         </div>
     );

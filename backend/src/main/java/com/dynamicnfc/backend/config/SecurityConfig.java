@@ -52,6 +52,13 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             //.cors(cors -> {}) // CORS enable
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout", "/api/request-card").permitAll()
+                    
+                    // 🔒 LOGIN GEREKEN
+                    .requestMatchers(HttpMethod.GET, "/api/users/my-cards").authenticated()
+
+                    // 🌍 PUBLIC (card görüntüleme)
+                    .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
+                    
                     .anyRequest().authenticated()
             )
             //.anonymous(anonymous -> anonymous.disable()) // Disable anonymous auth - gives 401 instead of 403

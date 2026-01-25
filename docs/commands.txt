@@ -1,3 +1,9 @@
+local'de test:
+docker-compose up -d postgres //local'de database calistirma komutu
+visual studio code->run and debug section->launch backend application //local'de backend calistirma komutu
+npm run dev //local'de yeni frontend calistirma komutu
+
+
 Update backend project
 ./mvnw clean install
 mvn clean install
@@ -8,11 +14,11 @@ update front end:
 npm start //build yapmıyor, sadece bunu yapınca docker da eski versiyon kalır. localde yeni sayfa acılır ama 
 npm run build //docker-compose komutunda yeni front end projesi calışması için
 
-
 docker-compose down
 genel projede eski image varsa da siliyor yenisini olusturup calıştırıyor:
 docker-compose -f docker-compose-local.yml up -d
 
+docker-compose up -d postgres //local'de database calistirma komutu
 
 docker ps -a //show all containers includes passive ones
 
@@ -42,6 +48,7 @@ docker-compose down
 docker image rm 634adbf001f7 (eski image sil)
 docker-compose up -d
 docker-compose up -d nginx
+docker-compose up -d postgres
 docker ps (container listele)
 
 Connect to DB on EC2
