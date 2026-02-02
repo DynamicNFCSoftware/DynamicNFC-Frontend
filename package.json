@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "jquery": "^4.0.0",
+    "paper": "^0.12.18"
+  }
+}

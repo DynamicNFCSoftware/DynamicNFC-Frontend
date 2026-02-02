@@ -21,6 +21,7 @@ import NFCCards from "./pages/NFCCards/NFCCards";
 import Enterprise from "./pages/Enterprise/Enterprise";
 import Card from "./pages/Card/Card";
 import Login from "./pages/Login/Login";
+import LoginTest from "./pages/Login/LoginTest";
 import OrderCard from "./pages/OrderCard/OrderCard";
 import Test from "./pages/test/test";
 import CardDashboard from "./pages/CardDashboard/CardDashboard";
@@ -44,9 +45,9 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/dashboard" element={
-            <ProtectedRoute>
+           
               <CardDashboard />
-            </ProtectedRoute>
+           
           } />
           <Route path="/my-account" element={
             <ProtectedRoute>
@@ -62,6 +63,7 @@ function App() {
           <Route path="/card" element={<Card />} />
           <Route path="/order-card" element={<OrderCard />} />
           <Route path="/create-physical-card" element={<CreatePhysicalCard />} />
+          <Route path="/logintest" element={<LoginTest />} />
           {/* <Route path="/test" element={<Test />} />  */}
         </Routes>
       </Router>

@@ -70,9 +70,9 @@ export default function CreatePhysicalCard() {
                             </Link>
                         </nav>
                         <div className="navbar-cta-wrapper">
-                            <Link to="/create-card" className="button analytics w-button">
+                            {/* <Link to="/create-card" className="button analytics w-button">
                                 Create digital card
-                            </Link>
+                            </Link> */}
                             {isAuthenticated && isAuthenticated() ? (
                               <button 
                                 onClick={handleLogout} 
