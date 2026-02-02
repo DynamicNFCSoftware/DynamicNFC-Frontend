@@ -4,13 +4,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import NFCCardsAccordion from '../../components/Accordions/NFCCardsAccordion';
 
 function NFCCards() {
-  const { user, logout, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+    const { user, logout, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
 
     const faqItems = [
@@ -48,7 +48,7 @@ function NFCCards() {
             <div className="navbar_ab">
                 <div className="css w-embed"></div>
                 <div role="banner" className="navbar black w-nav">
-                    <div className="nav-container">
+                    <div className="nav-container nav-container-mobile">
                         <div className="brand-wrapper">
                             <Link to="/"
                                 aria-current="page"
@@ -62,7 +62,7 @@ function NFCCards() {
                                         className="dropdown-text"
                                         style={{ color: "white !important" }}
                                     >
-                                        Home
+                                        <p style={{ color: "white" }}>Home</p>
                                     </div>
                                 </div>
                             </Link>
@@ -72,7 +72,7 @@ function NFCCards() {
                                         className="dropdown-text"
                                         style={{ color: "white !important" }}
                                     >
-                                        Enterpirse
+                                        <p style={{ color: "white" }}>Enterprise</p>
                                     </div>
                                 </div>
                             </Link>
@@ -82,27 +82,28 @@ function NFCCards() {
                                         className="dropdown-text"
                                         style={{ color: "white !important" }}
                                     >
-                                        NFC Cards
+                                        <p style={{ color: "white" }}> NFC Cards</p>
                                     </div>
                                 </div>
                             </Link>
                         </nav>
-                        <div className="navbar-cta-wrapper">
-                            {/* <Link to="/create-card" className="button light white analytics w-button">
-                                Create digital card
-                            </Link> */}
+                        <div className="navbar-auth-buttons">
+                            {isAuthenticated && isAuthenticated() && (
+                                <Link to="/dashboard" className="button light white analytics w-button">
+                                    Dashboard
+                                </Link>
+                            )}
                             {isAuthenticated && isAuthenticated() ? (
-                              <button 
-                                onClick={handleLogout} 
-                                className="button light white analytics w-button" 
-                                style={{marginLeft: '10px'}}
-                              >
-                                Logout
-                              </button>
+                                <button
+                                    onClick={handleLogout}
+                                    className="button light white analytics w-button"
+                                >
+                                    Logout
+                                </button>
                             ) : (
-                              <Link to="/login" className="button light white analytics w-button" style={{marginLeft: '10px'}}>
-                                Login
-                              </Link>
+                                <Link to="/login" className="button light white analytics w-button">
+                                    Login
+                                </Link>
                             )}
                         </div>
                     </div>

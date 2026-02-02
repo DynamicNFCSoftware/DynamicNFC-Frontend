@@ -78,7 +78,7 @@ function Home() {
                     className="dropdown-text"
                     style={{ color: "white !important" }}
                   >
-                    Home
+                   <p  style={{color:"white"}}>Home</p>
                   </div>
                 </div>
               </Link>
@@ -88,7 +88,7 @@ function Home() {
                     className="dropdown-text"
                     style={{ color: "white !important" }}
                   >
-                    Enterprise
+                  <p  style={{color:"white"}}>Enterprise</p> 
                   </div>
                 </div>
               </Link>
@@ -98,7 +98,7 @@ function Home() {
                     className="dropdown-text"
                     style={{ color: "white !important" }}
                   >
-                    NFC Cards
+                   <p  style={{color:"white"}}> NFC Cards</p>
                   </div>
                 </div>
               </Link>

@@ -25,7 +25,7 @@ import LoginTest from "./pages/Login/LoginTest";
 import OrderCard from "./pages/OrderCard/OrderCard";
 import Test from "./pages/test/test";
 import CardDashboard from "./pages/CardDashboard/CardDashboard";
-
+import CardDashboardTest from "./pages/CardDashboard/CardDashboardTest";
 import CreatePhysicalCard from "./pages/CreatePhysicalCard/CreatePhysicalCard";
 
 function App() {
@@ -47,6 +47,11 @@ function App() {
           <Route path="/dashboard" element={
            
               <CardDashboard />
+           
+          } />
+          <Route path="/dashboardtest" element={
+           
+              <CardDashboardTest />
            
           } />
           <Route path="/my-account" element={
