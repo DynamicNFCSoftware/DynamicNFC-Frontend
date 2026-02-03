@@ -12,10 +12,10 @@ function Enterprise() {
     };
     return (
         <>
-            <div className="navbar_ab">
+           <div className="navbar_ab">
                 <div className="css w-embed"></div>
                 <div role="banner" className="navbar black w-nav">
-                    <div className="nav-container">
+                    <div className="nav-container nav-container-mobile">
                         <div className="brand-wrapper">
                             <Link to="/"
                                 aria-current="page"
@@ -27,9 +27,8 @@ function Enterprise() {
                                 <div className="nav-link dropdown w-dropdown-toggle">
                                     <div
                                         className="dropdown-text"
-                                        style={{ color: "black" }}
                                     >
-                                        Home
+                                        <p>Home</p>
                                     </div>
                                 </div>
                             </Link>
@@ -37,9 +36,8 @@ function Enterprise() {
                                 <div className="nav-link dropdown w-dropdown-toggle">
                                     <div
                                         className="dropdown-text"
-                                        style={{ color: "black" }}
                                     >
-                                        Enterprise
+                                        <p>Enterprise</p>
                                     </div>
                                 </div>
                             </Link>
@@ -47,29 +45,29 @@ function Enterprise() {
                                 <div className="nav-link dropdown w-dropdown-toggle">
                                     <div
                                         className="dropdown-text"
-                                        style={{ color: "black" }}
                                     >
-                                        NFC Cards
+                                        <p>NFC Cards</p>
                                     </div>
                                 </div>
                             </Link>
                         </nav>
-                        <div className="navbar-cta-wrapper">
-                            <Link to="/create-card" className="button analytics w-button">
-                                Create digital card
-                            </Link>
+                        <div className="navbar-auth-buttons">
+                            {isAuthenticated && isAuthenticated() && (
+                                <Link to="/dashboard" className="button light white analytics w-button">
+                                    Dashboard
+                                </Link>
+                            )}
                             {isAuthenticated && isAuthenticated() ? (
-                              <button 
-                                onClick={handleLogout} 
-                                className="button analytics w-button" 
-                                style={{marginLeft: '10px'}}
-                              >
-                                Logout
-                              </button>
+                                <button
+                                    onClick={handleLogout}
+                                    className="button light white analytics w-button"
+                                >
+                                    Logout
+                                </button>
                             ) : (
-                              <Link to="/login" className="button analytics w-button" style={{marginLeft: '10px'}}>
-                                Login
-                              </Link>
+                                <Link to="/login" className="button light white analytics w-button">
+                                    Login
+                                </Link>
                             )}
                         </div>
                     </div>

@@ -78,7 +78,7 @@ function Home() {
                     className="dropdown-text"
                     style={{ color: "white !important" }}
                   >
-                    Home
+                   <p  style={{color:"white"}}>Home</p>
                   </div>
                 </div>
               </Link>
@@ -88,7 +88,7 @@ function Home() {
                     className="dropdown-text"
                     style={{ color: "white !important" }}
                   >
-                    Enterprise
+                  <p  style={{color:"white"}}>Enterprise</p> 
                   </div>
                 </div>
               </Link>
@@ -98,7 +98,7 @@ function Home() {
                     className="dropdown-text"
                     style={{ color: "white !important" }}
                   >
-                    NFC Cards
+                   <p  style={{color:"white"}}> NFC Cards</p>
                   </div>
                 </div>
               </Link>
@@ -146,9 +146,9 @@ function Home() {
               <div className="padding-global" style={{ textAlign: "end" }}>
                 <div className="container-large">
                   <div className="home-hero-inner">
-                    <div className="home-hero_text-comp left">
+                    <div className="home-hero_text-comp ">
                       <div className="home-hero_heading-wrap">
-                        <h1 className="heading-style-h1 is-white left-mob"style={{ fontSize: "5rem" }}>
+                        <h1 className="heading-style-h1 is-white left-mob" style={{ fontSize: "5rem" }}>
                           Your business card
                           <span className="break-span">just got an upgrade</span>
                         </h1>

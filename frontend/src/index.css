@@ -78,14 +78,14 @@ button:focus-visible {
 .navbar-auth-buttons .button {
     white-space: nowrap;
     text-decoration: none;
-    background-color: #dc3545 !important;
-    border-color: #dc3545 !important;
+    background-color: #ac0704 !important;
+    border-color: #ac0704 !important;
     color: white !important;
 }
 
 .navbar-auth-buttons .button:hover {
-    background-color: #c82333 !important;
-    border-color: #bd2130 !important;
+    background-color: #ac0704 !important;
+    border-color: #ac0704 !important;
 }
 
 /* Tablet */

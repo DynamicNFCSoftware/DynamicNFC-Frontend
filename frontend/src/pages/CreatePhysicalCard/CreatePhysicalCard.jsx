@@ -27,10 +27,10 @@ export default function CreatePhysicalCard() {
     };
     return (
         <>
-            <div className="navbar_ab">
+             <div className="navbar_ab">
                 <div className="css w-embed"></div>
                 <div role="banner" className="navbar black w-nav">
-                    <div className="nav-container">
+                    <div className="nav-container nav-container-mobile">
                         <div className="brand-wrapper">
                             <Link to="/"
                                 aria-current="page"
@@ -42,9 +42,8 @@ export default function CreatePhysicalCard() {
                                 <div className="nav-link dropdown w-dropdown-toggle">
                                     <div
                                         className="dropdown-text"
-                                        style={{ color: "black" }}
                                     >
-                                        Home
+                                        <p>Home</p>
                                     </div>
                                 </div>
                             </Link>
@@ -52,9 +51,8 @@ export default function CreatePhysicalCard() {
                                 <div className="nav-link dropdown w-dropdown-toggle">
                                     <div
                                         className="dropdown-text"
-                                        style={{ color: "black" }}
                                     >
-                                        Enterprise
+                                        <p>Enterprise</p>
                                     </div>
                                 </div>
                             </Link>
@@ -62,29 +60,29 @@ export default function CreatePhysicalCard() {
                                 <div className="nav-link dropdown w-dropdown-toggle">
                                     <div
                                         className="dropdown-text"
-                                        style={{ color: "black" }}
                                     >
-                                        NFC Cards
+                                        <p>NFC Cards</p>
                                     </div>
                                 </div>
                             </Link>
                         </nav>
-                        <div className="navbar-cta-wrapper">
-                            <Link to="/create-card" className="button analytics w-button">
-                                Create digital card
-                            </Link>
+                        <div className="navbar-auth-buttons">
+                            {isAuthenticated && isAuthenticated() && (
+                                <Link to="/dashboard" className="button light white analytics w-button">
+                                    Dashboard
+                                </Link>
+                            )}
                             {isAuthenticated && isAuthenticated() ? (
-                              <button 
-                                onClick={handleLogout} 
-                                className="button analytics w-button" 
-                                style={{marginLeft: '10px'}}
-                              >
-                                Logout
-                              </button>
+                                <button
+                                    onClick={handleLogout}
+                                    className="button light white analytics w-button"
+                                >
+                                    Logout
+                                </button>
                             ) : (
-                              <Link to="/login" className="button analytics w-button" style={{marginLeft: '10px'}}>
-                                Login
-                              </Link>
+                                <Link to="/login" className="button light white analytics w-button">
+                                    Login
+                                </Link>
                             )}
                         </div>
                     </div>
@@ -528,22 +526,6 @@ export default function CreatePhysicalCard() {
                                         <div className="accordion-header js-accordion-trigger active">
                                             <div className="accordion-header__title txt--px20 txt--font400">
                                                 Card Details
-                                            </div>
-                                            <div className="accordion-header__icon">
-                                                <span className="icon icon-font" data-icon-id="">
-                                                    <svg
-                                                        viewBox="0 0 17 8"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M16 1L13.379 3.64445C11.2889 5.75335 10.2438 6.80781 8.97 6.97017C8.65791 7.00994 8.34209 7.00995 8.03 6.97017C6.75621 6.80781 5.71113 5.75336 3.62096 3.64446L1 1"
-                                                            stroke="#212121"
-                                                            strokeWidth="1.5"
-                                                            strokeLinecap="round"
-                                                        />
-                                                    </svg>
-                                                </span>
                                             </div>
                                         </div>
                                         <div

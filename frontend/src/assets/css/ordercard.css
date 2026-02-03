@@ -1157,6 +1157,7 @@ html.is-animating .transition-fade {
 body,
 html {
     overflow-x: hidden;
+    overflow-y: auto;
     width: 100vw
 }
 
