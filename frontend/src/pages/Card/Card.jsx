@@ -109,7 +109,7 @@ END:VCARD
                     }
                 `}
             </style>
-            <div className="card-page-container" style={{ background: user.backgroundColor === '#FFFFFF' ? '#fcd6d5' : user.backgroundColor, position: 'relative' }}>
+            <div className="card-page-container" style={{ background: '#fcd6d5', position: 'relative' }}>
                 <Link
                     to="/"
                     className="button analytics w-inline-block"
@@ -182,7 +182,7 @@ END:VCARD
                                 <ul className="ttlgl00">
                                     <li>
                                         <a className="_8oxuwz0" href={"tel:" + user.phone} rel="noreferrer" target="_blank">
-                                            <div className="_11mr3km1">
+                                            <div className="_11mr3km1" style={{ backgroundColor: user.backgroundColor }}>
                                                 <svg data-prefix="fas" data-icon="phone" className="svg-inline--fa fa-phone _11mr3km0" role="img" viewBox="0 0 512 512" aria-hidden="true">
                                                     <path fill="white" d="M160.2 25C152.3 6.1 131.7-3.9 112.1 1.4l-5.5 1.5c-64.6 17.6-119.8 80.2-103.7 156.4 37.1 175 174.8 312.7 349.8 349.8 76.3 16.2 138.8-39.1 156.4-103.7l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2C233.9 335.4 177.3 277 144.8 205.3L189 169.3c13.9-11.3 18.6-30.4 11.8-47L160.2 25z"></path>
                                                 </svg>
@@ -194,7 +194,7 @@ END:VCARD
                                     </li>
                                     <li>
                                         <a className="_8oxuwz0" href={"mailto:" + user.email} rel="noreferrer" target="_blank">
-                                            <div className="_11mr3km1">
+                                            <div className="_11mr3km1" style={{ backgroundColor: user.backgroundColor }}>
                                                 <svg data-prefix="fas" data-icon="envelope" className="svg-inline--fa fa-envelope _11mr3km0" role="img" viewBox="0 0 512 512" aria-hidden="true">
                                                     <path fill="white" d="M48 64c-26.5 0-48 21.5-48 48 0 15.1 7.1 29.3 19.2 38.4l208 156c17.1 12.8 40.5 12.8 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48L48 64zM0 196L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-188-198.4 148.8c-34.1 25.6-81.1 25.6-115.2 0L0 196z"></path>
                                                 </svg>
@@ -206,7 +206,7 @@ END:VCARD
                                     </li>
                                     <li>
                                         <a className="_8oxuwz0" href={user.companyUrl} rel="noreferrer" target="_blank">
-                                            <div className="_11mr3km1">
+                                            <div className="_11mr3km1" style={{ backgroundColor: user.backgroundColor }}>
                                                 <svg aria-hidden="true" class="svg-inline--fa fa-link fa-w-16 " data-icon="link" data-prefix="far" focusable="false" role="img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M314.222 197.78c51.091 51.091 54.377 132.287 9.75 187.16-6.242 7.73-2.784 3.865-84.94 86.02-54.696 54.696-143.266 54.745-197.99 0-54.711-54.69-54.734-143.255 0-197.99 32.773-32.773 51.835-51.899 63.409-63.457 7.463-7.452 20.331-2.354 20.486 8.192a173.31 173.31 0 0 0 4.746 37.828c.966 4.029-.272 8.269-3.202 11.198L80.632 312.57c-32.755 32.775-32.887 85.892 0 118.8 32.775 32.755 85.892 32.887 118.8 0l75.19-75.2c32.718-32.725 32.777-86.013 0-118.79a83.722 83.722 0 0 0-22.814-16.229c-4.623-2.233-7.182-7.25-6.561-12.346 1.356-11.122 6.296-21.885 14.815-30.405l4.375-4.375c3.625-3.626 9.177-4.594 13.76-2.294 12.999 6.524 25.187 15.211 36.025 26.049zM470.958 41.04c-54.724-54.745-143.294-54.696-197.99 0-82.156 82.156-78.698 78.29-84.94 86.02-44.627 54.873-41.341 136.069 9.75 187.16 10.838 10.838 23.026 19.525 36.025 26.049 4.582 2.3 10.134 1.331 13.76-2.294l4.375-4.375c8.52-8.519 13.459-19.283 14.815-30.405.621-5.096-1.938-10.113-6.561-12.346a83.706 83.706 0 0 1-22.814-16.229c-32.777-32.777-32.718-86.065 0-118.79l75.19-75.2c32.908-32.887 86.025-32.755 118.8 0 32.887 32.908 32.755 86.025 0 118.8l-45.848 45.84c-2.93 2.929-4.168 7.169-3.202 11.198a173.31 173.31 0 0 1 4.746 37.828c.155 10.546 13.023 15.644 20.486 8.192 11.574-11.558 30.636-30.684 63.409-63.457 54.733-54.735 54.71-143.3-.001-197.991z" fill="white"></path></svg>
                                             </div>
                                             <div className="_8oxuwz1">
@@ -222,7 +222,7 @@ END:VCARD
                                                 target="_blank"
                                                 rel="noreferrer"
                                             >
-                                                <div className="_11mr3km1">
+                                                <div className="_11mr3km1" style={{ backgroundColor: user.backgroundColor }}>
                                                     {/* İkonu platforma göre gösterebiliriz */}
                                                     {link.platform === "facebook" && (
                                                         <svg aria-hidden="true" class="svg-inline--fa fa-facebook " data-icon="facebook" data-prefix="fab" focusable="false" role="img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z" fill="white"></path></svg>
@@ -255,7 +255,7 @@ END:VCARD
 
                                 <div className="_1b2pq070">
                                     <button onClick={() => downloadVCard(user)}
-                                        className="_1b2pq072">
+                                        className="_1b2pq072" style={{ backgroundColor: user.backgroundColor }}>
                                         <span>Save Contact</span>
                                     </button>
                                 </div>

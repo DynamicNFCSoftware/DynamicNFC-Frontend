@@ -54,6 +54,10 @@ export function initCardCreate(root = document) {
   const tabButtons = root.querySelectorAll('.tab-btn');
   const card = root.querySelector('.Card_card-measurer__87Mvw');
 
+  coverCircle.style.visibility = "hidden";
+  companyCircle.style.visibility = "hidden";
+  profileCircle.style.visibility = "hidden";
+
   // =======================
   // HELPERS
   // =======================
@@ -120,9 +124,15 @@ export function initCardCreate(root = document) {
 
   function handleColorClick(e) {
     const color = e.currentTarget.dataset.color;
-    const bg = root.getElementById('bg-card-bg');
-    if (bg) bg.style.backgroundColor = color;
+
+    // Tüm .Field_card-item-icon-circle__HH1IG elementlerini seç
+    const circles = root.querySelectorAll('.Field_card-item-icon-circle__HH1IG');
+
+    circles.forEach(circle => {
+      circle.style.backgroundColor = color;
+    });
   }
+
 
   function handleTabClick(e) {
     e.stopPropagation();
@@ -163,38 +173,112 @@ export function initCardCreate(root = document) {
 
     const apiKey = input.dataset.apiKey;
 
-    const exists = [...cardList.querySelectorAll('li')].some(li =>
-      li.querySelector('.category')?.dataset.apiKey === apiKey &&
-      li.querySelector('.Field_field-data-value__p3KXA')?.innerText === value
+    const validation = validateField(apiKey, value);
+    if (!validation.valid) {
+      return alert(validation.message);
+    }
+    // Eğer sabit alanlardan biriyse
+    if (['name', 'department', 'jobTitle', 'companyName'].includes(apiKey)) {
+      const fieldMap = {
+        name: 'cardName',
+        department: 'cardDepartment',
+        jobTitle: 'cardJobTitle',
+        companyName: 'cardCompany'
+      };
+      const elId = fieldMap[apiKey];
+      const el = document.getElementById(elId);
+      if (el) el.innerText = value; // sadece içini güncelle
+      popup.style.visibility = 'hidden';
+      return; // UL içine ekleme yapma
+    }
+
+    // Normal field ekleme
+    const existingLi = [...cardList.querySelectorAll('li')].find(li =>
+      li.querySelector('.category')?.dataset.apiKey === apiKey
     );
 
-    if (exists) {
-      alert("This field already exists.");
+    if (existingLi) {
+      const valueEl = existingLi.querySelector('.Field_field-data-value__p3KXA');
+      if (valueEl) valueEl.innerText = value;
       popup.style.visibility = 'hidden';
       return;
     }
 
     const li = document.createElement('li');
     li.innerHTML = `
-      <div class="Card_card-field__pWM1J">
-        <div class="Card_card-item__o4aNw">
-          <div class="Field_card-field__eA4QQ">
-            <div class="Field_card-item-icon-circle__HH1IG">
-              ${input.dataset.icon}
-              <p class="category" data-api-key="${apiKey}" style="display:none"></p>
-            </div>
-            <div class="Field_field-data__5aXfY">
-              <div class="Field_field-data-value__p3KXA">${value}</div>
-              <button class="remove-field-btn">×</button>
-            </div>
+    <div class="Card_card-field__pWM1J">
+      <div class="Card_card-item__o4aNw">
+        <div class="Field_card-field__eA4QQ">
+          <div class="Field_card-item-icon-circle__HH1IG">
+            ${input.dataset.icon}
+            <p class="category" data-api-key="${apiKey}" style="display:none"></p>
+          </div>
+          <div class="Field_field-data__5aXfY">
+            <div class="Field_field-data-value__p3KXA">${value}</div>
+            <button class="remove-field-btn">×</button>
           </div>
         </div>
       </div>
-    `;
-
+    </div>
+  `;
     li.querySelector('.remove-field-btn').addEventListener('click', () => li.remove());
     cardList.appendChild(li);
     popup.style.visibility = 'hidden';
+  }
+
+  function validateField(apiKey, value) {
+    value = value.trim();
+    if (!value) return { valid: false, message: "Field can't be empty" };
+
+    console.log("Validating", apiKey, value);
+    switch (apiKey) {
+      case "name":
+        // Sadece harf ve boşluk, rakam veya özel karakter yok
+        if (!/^[a-zA-ZğüşöçıİĞÜŞÖÇ\s]+$/.test(value)) {
+          return { valid: false, message: "Name can only contain letters" };
+        }
+        break;
+
+      case "email":
+        // Basit mail doğrulama
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          return { valid: false, message: "Please enter a valid email" };
+        }
+        break;
+
+      case "phone":
+        if (!/^\d+$/.test(value)) {
+          return { valid: false, message: "Phone can only contain numbers" };
+        }
+        break;
+
+      case "twitter":
+      case "instagram":
+      case "companyUrl":
+      case "youtube":
+      case "linkedin":
+      case "facebook":
+      case "other":
+        // Basit www doğrulama
+        if (!/^www\./.test(value)) {
+          return { valid: false, message: "Website must start with www." };
+        }
+        break;
+
+      case "companyName":
+      case "department":
+      case "jobTitle":
+        // Normal text, rakam olabilir ama çok kısa olamaz
+        if (value.length < 2) {
+          return { valid: false, message: "Value is too short" };
+        }
+        break;
+
+      default:
+        break; // Diğer field'lar için ek kontrol yok
+    }
+
+    return { valid: true };
   }
 
   // =======================
@@ -227,9 +311,18 @@ export function initCardCreate(root = document) {
   if (coverDropZone) coverDropZone.addEventListener('click', e => { e.stopPropagation(); coverUpload.click(); });
 
   // Image uploads
-  if (profileUpload) profileUpload.addEventListener('change', () => { previewImage(profileUpload, profileUploadPreview, profileCircle); hideAllPopups(); });
-  if (companyUpload) companyUpload.addEventListener('change', () => { previewImage(companyUpload, companyUploadPreview, companyCircle); hideAllPopups(); });
-  if (coverUpload) coverUpload.addEventListener('change', () => { previewImage(coverUpload, coverUploadPreview, coverCircle); hideAllPopups(); });
+  if (profileUpload) profileUpload.addEventListener('change', () => {
+    previewImage(profileUpload, profileUploadPreview, profileCircle); hideAllPopups();
+    profileCircle.style.visibility = "visible";
+  });
+  if (companyUpload) companyUpload.addEventListener('change', () => {
+    previewImage(companyUpload, companyUploadPreview, companyCircle); hideAllPopups();
+    companyCircle.style.visibility = "visible";
+  });
+  if (coverUpload) coverUpload.addEventListener('change', () => {
+    previewImage(coverUpload, coverUploadPreview, coverCircle); hideAllPopups();
+    coverCircle.style.visibility = "visible";
+  });
 }
 
 // =======================

@@ -41,19 +41,16 @@ export default function CreateCard() {
       fontSize: 14,
       color: "#374151",
     },
+    fieldName: {
+      fontSize: "26px",
+    },
+
+    fieldCompany: {
+      fontSize: "20px",
+    },
+
   };
 
-  /*useEffect(() => {
-    const acId = localStorage.getItem('accountId');
-    console.log("acId", acId);
-    loadCssOnce("/assets/css/f0be61666b9614df.css")
-    loadCssOnce("/assets/css/f984sdf8q4q5qwq.css")
-    loadScriptOnce("/assets/js/card-create.js")
-    const timer = setTimeout(() => {
-      setIsLoadingAssets(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);*/
   useEffect(() => {
     const acId = localStorage.getItem("accountId");
     console.log("acId", acId);
@@ -231,13 +228,26 @@ export default function CreateCard() {
       }
     });
 
+    const nameSpan = document.getElementById("cardName");
+    const companySpan = document.getElementById("cardCompany");
+    const departmentSpan = document.getElementById("cardDepartment");
+    const jobTitleSpan = document.getElementById("cardJobTitle");
+
+    if (nameSpan) fields.name = nameSpan.textContent.trim();
+    if (companySpan) fields.companyName = companySpan.textContent.trim();
+    if (departmentSpan) fields.department = departmentSpan.textContent.trim();
+    if (jobTitleSpan) fields.jobTitle = jobTitleSpan.textContent.trim();
+
+    const firstCircle = document.querySelector('.Field_card-item-icon-circle__HH1IG');
+    const backgroundColor = firstCircle ? getComputedStyle(firstCircle).backgroundColor : null;
+
     return {
       ...fields,
       socialLinks,
       profilePictureSrc: document.getElementById("profileCircle")?.src || null,
       coverPhotoSrc: document.getElementById("coverCircle")?.src || null,
       companyLogoSrc: document.getElementById("companyCircle")?.src || null,
-      backgroundColor: document.getElementById("bg-card-bg")?.style.background || null,
+      backgroundColor,
     };
   };
 
@@ -260,10 +270,10 @@ export default function CreateCard() {
 
     const total = normalFieldsCount + socialCount;
 
-    /*if (total < 4) {
+    if (total < 4) {
       alert("Please add at least 4 fields to proceed.");
       return;
-    }*/
+    }
 
     setCollectedFields(data);
     submitCardToAPI(data);
@@ -409,6 +419,12 @@ export default function CreateCard() {
                             </div>
                           </header>
                           <div className="Card_card-body__aO0rx">
+                            <div className="Card_fixed-fields" style={{ zIndex: 9999, position: "relative", margin: "20px", marginTop: "50px" }}>
+                              <div className="field fieldName" style={styles.fieldName}> <span id="cardName" style={{ fontSize: "26px;" }}></span></div>
+                              <div class="field fieldCompany" style={styles.fieldCompany}> <span id="cardCompany" style={{ fontSize: "26px;" }}></span></div>
+                              <div class="field field-department"> <span id="cardDepartment"></span></div>
+                              <div class="field field-job-title"> <span id="cardJobTitle"></span></div>
+                            </div>
                             <div className="Card_user-details__pnVPN" />
                             <div>
                               <ul
@@ -613,7 +629,7 @@ export default function CreateCard() {
               </div>
             </div>
           </div>
-          <div className="OnboardingLayout_main-section__8IX3X" style={{ position: "relative" }}>
+          <div className="OnboardingLayout_main-section__8IX3X" style={{ position: "relative", paddingTop: "100px" }}>
             <div className="OnboardingLayout_main-section-contents__2nidC">
               <div className="OnboardingLayout_main-section-header__rRqBL">
                 <h1 className="OnboardingLayout_main-section-header-heading__WQ5ju">
@@ -771,6 +787,34 @@ export default function CreateCard() {
                         <div
                           className="FieldButton_field-button__HMdrH FieldButton_base-field___CXj_"
                           data-disabled="false"
+                          id="org_name-field-btn"
+                          role="button"
+                          data-api-key="companyName"
+                          tabIndex="0">
+                          <div className="FieldButton_field-button-icon-container__R17_O">
+                            <svg
+                              aria-hidden="true"
+                              className="svg-inline--fa fa-building "
+                              data-icon="building"
+                              data-prefix="fas"
+                              focusable="false"
+                              role="img"
+                              viewBox="0 0 384 512"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                d="M48 0C21.5 0 0 21.5 0 48L0 464c0 26.5 21.5 48 48 48l96 0 0-80c0-26.5 21.5-48 48-48s48 21.5 48 48l0 80 96 0c26.5 0 48-21.5 48-48l0-416c0-26.5-21.5-48-48-48L48 0zM64 240c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32zm112-16l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32zM80 96l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32zM272 96l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32c0-8.8 7.2-16 16-16z"
+                                fill="currentColor"></path>
+                            </svg>
+                          </div>
+                          <div className="FieldButton_field-button-label__usbta">
+                            Company name
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div
+                          className="FieldButton_field-button__HMdrH FieldButton_base-field___CXj_"
+                          data-disabled="false"
                           id="job_title-field-btn"
                           data-api-key="jobTitle"
                           role="button"
@@ -820,34 +864,6 @@ export default function CreateCard() {
                           </div>
                           <div className="FieldButton_field-button-label__usbta">
                             Department
-                          </div>
-                        </div>
-                      </li>
-                      <li>
-                        <div
-                          className="FieldButton_field-button__HMdrH FieldButton_base-field___CXj_"
-                          data-disabled="false"
-                          id="org_name-field-btn"
-                          role="button"
-                          data-api-key="companyName"
-                          tabIndex="0">
-                          <div className="FieldButton_field-button-icon-container__R17_O">
-                            <svg
-                              aria-hidden="true"
-                              className="svg-inline--fa fa-building "
-                              data-icon="building"
-                              data-prefix="fas"
-                              focusable="false"
-                              role="img"
-                              viewBox="0 0 384 512"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                d="M48 0C21.5 0 0 21.5 0 48L0 464c0 26.5 21.5 48 48 48l96 0 0-80c0-26.5 21.5-48 48-48s48 21.5 48 48l0 80 96 0c26.5 0 48-21.5 48-48l0-416c0-26.5-21.5-48-48-48L48 0zM64 240c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32zm112-16l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32zM80 96l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32zM272 96l32 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-32c0-8.8 7.2-16 16-16z"
-                                fill="currentColor"></path>
-                            </svg>
-                          </div>
-                          <div className="FieldButton_field-button-label__usbta">
-                            Company name
                           </div>
                         </div>
                       </li>
@@ -1328,7 +1344,7 @@ export default function CreateCard() {
                                 }}>
                                 Drop your image here, or
                                 <span className="ImageSelector_browse-text__TKA9a">
-                                  browse
+                                  &nbsp;&nbsp;browse
                                 </span>
                               </p>
                               <p
@@ -1436,7 +1452,7 @@ export default function CreateCard() {
                                 }}>
                                 Drop your image here, or
                                 <span className="ImageSelector_browse-text__TKA9a">
-                                  browse
+                                  &nbsp;&nbsp;browse
                                 </span>
                               </p>
                               <p
@@ -1544,7 +1560,7 @@ export default function CreateCard() {
                                 }}>
                                 Drop your image here, or
                                 <span className="ImageSelector_browse-text__TKA9a">
-                                  browse
+                                  &nbsp;&nbsp;browse
                                 </span>
                               </p>
                               <p
