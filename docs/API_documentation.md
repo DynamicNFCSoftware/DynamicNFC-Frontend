@@ -2,6 +2,12 @@
 
 ## 🆕 Recent Updates
 
+**Edit Card API (JSON) Added** *(February 6, 2026)*
+- New `PUT /api/users/{id}` endpoint with JSON body support
+- Simpler alternative to multipart/form-data for text field updates
+- Supports base64 encoded images in JSON body
+- Ownership verification - only card owner can edit
+
 **Authentication System Implemented** *(December 4, 2025)*
 - Login/Register system with Account table integration
 - Session-based authentication with Spring Security
@@ -344,6 +350,160 @@ Same as **Save Card** endpoint. Only changed fields need to be sent.
 
 ---
 
+## ✏️ 3.1 Edit Card API (JSON)
+
+**Purpose:** Edit an existing user/card profile using JSON body. This is a simpler alternative to the multipart/form-data endpoint when you don't need to upload new files.
+
+**Controller:** `UserController.editCard`
+
+### Endpoint
+
+```
+PUT /api/users/{id}
+```
+
+### Content-Type
+
+```
+application/json
+```
+
+### URL Parameters
+
+| Parameter | Type   | Required | Description                            |
+| --------- | ------ | -------- | -------------------------------------- |
+| id        | String | yes      | HashID (e.g., "WzBvz3") or numeric ID |
+
+### Request Body
+
+All fields are optional. Only provided fields will be updated.
+
+```json
+{
+  "name": "Jane Doe",
+  "jobTitle": "Senior Developer",
+  "department": "Engineering",
+  "companyName": "Tech Corp",
+  "email": "jane@example.com",
+  "phone": "+1-555-1234",
+  "companyUrl": "https://techcorp.com",
+  "address": "123 Tech Street",
+  "backgroundColor": "#F0FDF4",
+  "profilePicture": "data:image/png;base64,...",
+  "coverPhoto": "data:image/jpeg;base64,...",
+  "companyLogo": "data:image/png;base64,...",
+  "socialLinks": [
+    { "platform": "LinkedIn", "link": "https://linkedin.com/in/janedoe" },
+    { "platform": "Twitter", "link": "https://twitter.com/janedoe" }
+  ]
+}
+```
+
+### Request Fields
+
+| Field           | Type              | Required | Description                                      |
+| --------------- | ----------------- | -------- | ------------------------------------------------ |
+| name            | string            | optional | Full name                                        |
+| jobTitle        | string            | optional | Job title                                        |
+| department      | string            | optional | Department name                                  |
+| companyName     | string            | optional | Company name                                     |
+| email           | string            | optional | Email address                                    |
+| phone           | string            | optional | Phone number                                     |
+| companyUrl      | string            | optional | Website URL                                      |
+| address         | string            | optional | Address                                          |
+| backgroundColor | string            | optional | Hex color code (e.g., "#FFFFFF")                |
+| profilePicture  | string            | optional | Base64 encoded image (data URL format)          |
+| coverPhoto      | string            | optional | Base64 encoded image (data URL format)          |
+| companyLogo     | string            | optional | Base64 encoded image (data URL format)          |
+| socialLinks     | array             | optional | List of social link objects                     |
+
+### Response Example
+
+```json
+{
+  "id": 15,
+  "hashId": "WzBvz3",
+  "name": "Jane Doe",
+  "jobTitle": "Senior Developer",
+  "email": "jane@example.com",
+  "backgroundColor": "#F0FDF4",
+  "profilePicture": "data:image/png;base64,...",
+  "socialLinks": [
+    { "id": 1, "platform": "LinkedIn", "link": "https://linkedin.com/in/janedoe" }
+  ]
+}
+```
+
+### Error Responses
+
+**Not authenticated (401):**
+```json
+{
+  "status": 401,
+  "error": "Unauthorized"
+}
+```
+
+**Card not owned by user (403):**
+```json
+{
+  "status": 403,
+  "error": "Forbidden"
+}
+```
+
+**Card not found (404):**
+```json
+{
+  "status": 404,
+  "error": "Not Found"
+}
+```
+
+### Example API Call (cURL)
+
+```bash
+curl -X PUT "http://localhost:8080/api/users/WzBvz3" \
+  -H "Content-Type: application/json" \
+  -H "Cookie: JSESSIONID=your-session-id" \
+  -d '{
+    "name": "Jane Doe Updated",
+    "jobTitle": "Lead Developer",
+    "backgroundColor": "#EFF6FF"
+  }'
+```
+
+### Example API Call (JavaScript)
+
+```javascript
+const response = await fetch('/api/users/WzBvz3', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  credentials: 'include',
+  body: JSON.stringify({
+    name: 'Jane Doe Updated',
+    jobTitle: 'Lead Developer',
+    backgroundColor: '#EFF6FF'
+  })
+});
+
+const updatedCard = await response.json();
+```
+
+### When to Use This vs Update Card API (3)
+
+| Use Case                              | Recommended Endpoint              |
+| ------------------------------------- | --------------------------------- |
+| Updating text fields only             | `PUT /api/users/{id}` (JSON)      |
+| Uploading new image files             | `PUT /api/users/{id}/upload` (multipart) |
+| Updating everything including images  | Either works                      |
+| Frontend with base64 images in state  | `PUT /api/users/{id}` (JSON)      |
+| Frontend with File objects            | `PUT /api/users/{id}/upload` (multipart) |
+
+---
+
 ## 👀 4. View Card API (HashID Supported!)
 
 **Purpose:** Display a user's digital business card in view-only mode. This is used by the ViewMyCard page to show card information to visitors.
@@ -481,14 +641,17 @@ Response:
 
 ## 🧬 Summary for Frontend Team
 
-| Operation    | Method | Endpoint                 | Content-Type          | Description             | Frontend Page    | HashID Support |
-| ------------ | ------ | ------------------------ | --------------------- | ----------------------- | ---------------- | -------------- |
-| Request Card | `POST` | `/api/request-card`      | `application/json`    | Sends mail/logs request | Order Card       | ❌             |
-| Save Card    | `POST` | `/api/users/upload`      | `multipart/form-data` | Create a new card       | Create My Card   | ✅ (Returns)   |
-| Update Card  | `PUT`  | `/api/users/{id}/upload` | `multipart/form-data` | Update an existing card | Create My Card   | ✅ (Accepts)   |
-| **View Card**| `GET`  | `/api/users/{id}`        | `application/json`    | **Display card publicly**| **View My Card** | **✅ Primary** |
-| Get User     | `GET`  | `/api/users/{id}`        | –                     | Fetch single user       | –                | ✅ (Accepts)   |
-| List Users   | `GET`  | `/api/users`             | –                     | Fetch all users         | –                | ✅ (Returns)   |
+| Operation    | Method   | Endpoint                 | Content-Type          | Description               | Frontend Page    | HashID Support |
+| ------------ | -------- | ------------------------ | --------------------- | ------------------------- | ---------------- | -------------- |
+| Request Card | `POST`   | `/api/request-card`      | `application/json`    | Sends mail/logs request   | Order Card       | ❌             |
+| Save Card    | `POST`   | `/api/users/upload`      | `multipart/form-data` | Create a new card         | Create My Card   | ✅ (Returns)   |
+| Update Card  | `PUT`    | `/api/users/{id}/upload` | `multipart/form-data` | Update card (with files)  | Create My Card   | ✅ (Accepts)   |
+| **Edit Card**| `PUT`    | `/api/users/{id}`        | `application/json`    | **Edit card (JSON body)** | Create My Card   | ✅ (Accepts)   |
+| **View Card**| `GET`    | `/api/users/{id}`        | `application/json`    | **Display card publicly** | **View My Card** | **✅ Primary** |
+| Delete Card  | `DELETE` | `/api/users/{id}`        | –                     | Delete a card             | My Cards         | ✅ (Accepts)   |
+| Get User     | `GET`    | `/api/users/{id}`        | –                     | Fetch single user         | –                | ✅ (Accepts)   |
+| List Users   | `GET`    | `/api/users`             | –                     | Fetch all users           | –                | ✅ (Returns)   |
+| My Cards     | `GET`    | `/api/users/my-cards`    | –                     | Get cards for account     | My Cards         | ✅ (Returns)   |
 
 ---
 

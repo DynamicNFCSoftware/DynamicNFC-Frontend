@@ -322,6 +322,78 @@ System.out.println("USER = " + auth);
     }
 
     /**
+     * Edit a card using JSON body. Only the owner can edit their own cards.
+     * This endpoint accepts application/json instead of multipart/form-data.
+     */
+    @PutMapping(value = "/{id}", consumes = "application/json")
+    @Transactional
+    public ResponseEntity<UserResponse> editCard(
+            @PathVariable String id,
+            @RequestBody UserRequest request) {
+        try {
+            // Get authenticated user's account
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = authentication.getName();
+            Account account = accountService.findByEmail(userEmail);
+
+            // Decode hashId
+            Long actualId = hashIdUtil.decode(id);
+            if (actualId == null) {
+                try {
+                    actualId = Long.parseLong(id);
+                } catch (NumberFormatException e) {
+                    return ResponseEntity.badRequest().build();
+                }
+            }
+
+            // Find the card and verify ownership
+            return userRepository.findById(actualId)
+                .map(entity -> {
+                    // Check if the card belongs to the authenticated user
+                    if (entity.getAccount() == null || !entity.getAccount().getId().equals(account.getId())) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).<UserResponse>build();
+                    }
+
+                    // Update fields only if provided (not null)
+                    if (request.getName() != null) entity.setName(request.getName());
+                    if (request.getJobTitle() != null) entity.setJobTitle(request.getJobTitle());
+                    if (request.getDepartment() != null) entity.setDepartment(request.getDepartment());
+                    if (request.getCompanyName() != null) entity.setCompanyName(request.getCompanyName());
+                    if (request.getEmail() != null) entity.setEmail(request.getEmail());
+                    if (request.getPhone() != null) entity.setPhone(request.getPhone());
+                    if (request.getCompanyUrl() != null) entity.setCompanyUrl(request.getCompanyUrl());
+                    if (request.getAddress() != null) entity.setAddress(request.getAddress());
+                    if (request.getBackgroundColor() != null) entity.setBackgroundColor(request.getBackgroundColor());
+
+                    // Update images if provided (base64 strings)
+                    if (request.getProfilePicture() != null) entity.setProfilePicture(request.getProfilePicture());
+                    if (request.getCoverPhoto() != null) entity.setCoverPhoto(request.getCoverPhoto());
+                    if (request.getCompanyLogo() != null) entity.setCompanyLogo(request.getCompanyLogo());
+
+                    // Update social links if provided
+                    if (request.getSocialLinks() != null) {
+                        entity.getSocialLinks().clear();
+                        for (SocialLinkRequest s : request.getSocialLinks()) {
+                            if (s.getLink() == null || s.getLink().trim().isEmpty()) continue;
+                            SocialLink sl = new SocialLink();
+                            sl.setPlatform(s.getPlatform());
+                            sl.setLink(s.getLink());
+                            sl.setUser(entity);
+                            entity.getSocialLinks().add(sl);
+                        }
+                    }
+
+                    UserEntity saved = userRepository.save(entity);
+                    UserResponse response = UserMapper.toResponse(saved, hashIdUtil);
+                    return ResponseEntity.ok(response);
+                })
+                .orElse(ResponseEntity.notFound().build());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
      * Delete a card by its hashId. Only the owner can delete their own cards.
      */
     @DeleteMapping("/{id}")
