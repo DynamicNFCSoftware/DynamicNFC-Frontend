@@ -100,8 +100,8 @@ const Login = () => {
         <div className="topLayer">
           <div className="left">
             <div className="content">
-              <img style={{ width: '10%' }}
-                src="assets/images/favicon.ico"
+              <img style={{ width: '50%', alignSelf: 'center' }}
+                src="assets/images/logo.png"
               />
               <h2>Sign Up</h2>
               <p style={{ color: 'white' }}>Sign Up for free and start the create your own digital cards!</p>
@@ -163,8 +163,8 @@ const Login = () => {
           </div>
           <div className="right">
             <div className="content">
-              <img style={{ width: '10%' }}
-                src="assets/images/favicon.ico"
+              <img style={{ width: '50%', alignSelf: 'center' }}
+                src="assets/images/logo.png"
               />
               <h2>Login</h2>
               <p>Login to your account and edit your cards from dashboard!</p>
