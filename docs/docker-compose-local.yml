@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: dynamicuser
+      POSTGRES_PASSWORD: dynamicpass
+      POSTGRES_DB: dynamicnfc
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_net
+
+  springboot-app:
+    build: ./backend # if image not found locally, you can run `docker compose build`
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dynamicnfc
+      SPRING_DATASOURCE_USERNAME: dynamicuser
+      SPRING_DATASOURCE_PASSWORD: dynamicpass
+    ports:
+      - "8080:8080"
+    networks:
+      - backend_net
+   
+  frontend:
+    build: ./frontend
+    depends_on:
+      - springboot-app
+    ports:
+      - "3000:80"
+    networks:
+      - backend_net
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot
+    depends_on:
+      - frontend
+      - springboot-app
+    networks:
+      - backend_net
+
+volumes:
+  postgres_data:
+
+networks:
+  backend_net:
