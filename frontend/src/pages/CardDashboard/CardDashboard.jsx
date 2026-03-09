@@ -1,256 +1,105 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import "./CardDashboard.css";
+import { db } from "../../firebase";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+.pd-wrapper { min-height: 100vh; background: #0D0D12; color: #E8E8EC; font-family: 'Outfit', sans-serif; padding-bottom: 5rem; }
+.pd-header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 3rem; background: rgba(13, 13, 18, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 50; }
+.pd-logo-text { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; color: #fff; }
+.pd-container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+.pd-stats { display: flex; gap: 2rem; background: rgba(255,255,255,0.02); padding: 1.25rem 2.5rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); min-width: 250px; justify-content: center; }
+.pd-stat-val { font-size: 1.75rem; font-weight: 600; color: #fff; display: block; text-align: center; }
+.pd-stat-lbl { font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+.pd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
+.pd-card { background: linear-gradient(145deg, #1c1c24, #121218); border-radius: 24px; padding: 2px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 340px; transition: 0.3s; }
+.pd-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+.pd-card-inner { background: #141419; border-radius: 22px; height: 100%; overflow: hidden; display: flex; flex-direction: column; }
+.pd-card-cover { height: 100px; background-size: cover; background-position: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.pd-card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.pd-card-name { font-size: 1.3rem; font-weight: 600; color: #fff; margin-bottom: 0.2rem; }
+.pd-card-title { font-size: 0.85rem; color: #e63946; margin-bottom: 1rem; }
+.pd-card-actions { display: flex; gap: 0.5rem; padding: 1.2rem; border-top: 1px solid rgba(255,255,255,0.05); }
+.pd-btn-action { flex: 1; padding: 0.6rem; border-radius: 10px; font-size: 0.75rem; font-weight: 500; cursor: pointer; text-align: center; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); color: #fff; background: rgba(255,255,255,0.05); transition: 0.2s; display: flex; align-items: center; justify-content: center;}
+.pd-btn-action:hover { background: rgba(255,255,255,0.12); }
+.pd-card-new { border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 340px; text-decoration: none; background: rgba(255,255,255,0.01); color: #fff; transition: 0.3s; }
+.pd-card-new:hover { border-color: #e63946; background: rgba(230, 57, 70, 0.05); }
+.btn-delete:hover { background: rgba(230,57,70,0.1) !important; border-color: rgba(230,57,70,0.5) !important; color: #e63946 !important; }
+`;
 
 export default function CardDashboard() {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
     const [cards, setCards] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [deleting, setDeleting] = useState(null);
 
     useEffect(() => {
-        loadCssOnce("/assets/css/card-page.css");
-    }, []);
+        const uid = user?.uid || user?.accountId;
+        if (!user || !uid) return;
 
-    function loadCssOnce(href) {
-        if (document.querySelector(`link[href="${href}"]`)) return;
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = href;
-        document.head.appendChild(link);
-    }
+        const q = query(collection(db, "cards"), where("userId", "==", uid));
+        
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setCards(data);
+        }, (err) => {
+            console.error("Firestore Error:", err);
+        });
 
-    useEffect(() => {
-        const fetchCards = async () => {
-            try {
-                console.log("Fetching cards for test dashboard...");
-                const response = await fetch("/api/users/my-cards", {
-                    credentials: "include"
-                });
-                console.log("Response received:", response);
-                if (!response.ok) throw new Error(`Error: ${response.status}`);
-                const data = await response.json();
-                setCards(data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+        return () => unsubscribe();
+    }, [user]);
 
-        fetchCards();
-    }, []);
-
-    const handleDelete = async (hashId) => {
-        if (!window.confirm("Are you sure you want to delete this card?")) {
-            return;
-        }
-
-        setDeleting(hashId);
-        try {
-            const response = await fetch(`/api/users/${hashId}`, {
-                method: "DELETE",
-                credentials: "include"
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to delete card: ${response.status}`);
-            }
-
-            // Remove the card from the list
-            setCards(cards.filter(card => card.hashId !== hashId));
-        } catch (err) {
-            alert(`Error deleting card: ${err.message}`);
-        } finally {
-            setDeleting(null);
-        }
-    };
-
-    if (loading) return <div className="dashboard-loading">Loading...</div>;
-    if (error) return <div className="dashboard-loading">Error: {error}</div>;
+    const totalScans = cards.reduce((s, c) => s + (Number(c.scans) || 0), 0);
 
     return (
-        <div className="dashboard-container">
-            <div className="dashboard-header">
-                <div className="dashboard-header-info">
-                    <h1 className="dashboard-title">My Cards</h1>
-                    <p className="dashboard-email">Account email: {user?.email || "-"}</p>
+        <div className="pd-wrapper">
+            <style>{CSS}</style>
+            <header className="pd-header">
+                <div className="pd-logo-text">DynamicNFC</div>
+                <button className="pd-btn-action" style={{maxWidth:'120px'}} onClick={async () => { await logout(); navigate("/login"); }}>Sign Out</button>
+            </header>
+            
+            <main className="pd-container">
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'3rem', flexWrap:'wrap', gap:'1rem'}}>
+                    <div>
+                        <h1 style={{fontFamily:"'Playfair Display'", fontSize:'2.5rem', marginBottom:'0.5rem'}}>Portfolio</h1>
+                        <p style={{color:'rgba(255,255,255,0.4)', fontWeight:300}}>Welcome back, {user?.email?.split('@')[0]}</p>
+                    </div>
+                    <div className="pd-stats">
+                        <div><span className="pd-stat-val">{cards.length}</span><span className="pd-stat-lbl">Active Cards</span></div>
+                        <div style={{width:'1px', height:'30px', background:'rgba(255,255,255,0.1)'}}></div>
+                        <div><span className="pd-stat-val" style={{color:'#e63946'}}>{totalScans}</span><span className="pd-stat-lbl">Real Scans</span></div>
+                    </div>
                 </div>
-                <div className="dashboard-header-buttons">
-                    <Link
-                        to="/"
-                        className="button analytics w-inline-block"
-                    >
-                        <div className="text-size-intermediate text-color-white btn">
-                            Home
-                        </div>
-                    </Link>
-                    <Link
-                        to="/create-card"
-                        className="button analytics w-inline-block"
-                    >
-                        <div className="text-size-intermediate text-color-white btn">
-                            Create New Card
-                        </div>
-                    </Link>
-                </div>
-            </div>
-            <hr></hr>
-            {cards.length === 0 ? (
-                <p>No cards found. Create your first card!</p>
-            ) : (
-                <>
-                    <div className="card-details-section">
-                        <div id="bg-card-bg">
-                            <div
-                                className="_1mwbo3a0 _1mwbo3a1"
-                                style={{
-                                    '--tnkigl2c': '58,74,248',
-                                    '--tnkigl2d': '58,74,248, 0.14',
-                                    '--tnkigl2f': '255,255,255',
-                                    '--tnkigl2e': '#fff',
-                                    '--tnkigl2g': 'CardCustomFont, var(--tnkigl0)',
-                                    'min-height': '100%',
-                                    'padding': 'var(--tnkiglt)',
-                                    'display': 'flex',
-                                    'align-items': 'center',
-                                    'flex-direction': 'row',
-                                    'gap': 'var(--tnkiglt)',
-                                    'flex-shrink': '0',
-                                    'width': '100%',
-                                    'flex-wrap': 'wrap',
-                                }}
-                            >
-                                {cards.map((card) => (
-                                    <div className="_15zfejk0 _15zfejk1" style={{ zoom: 0.7 }}>
-                                        <header className="CardHeader_card-header__mOiLv"
-                                            data-card-layout="1C"
-                                            data-has-floating-images="false"
-                                            data-image-type="cover">
-                                            <div className="CardHeader_banner-image-container__6g0Pz">
-                                                <img src={card.coverPhoto || "/assets/images/empty-cover-photo.5e4f5f6e.png"} alt="Cover" className="CardHeader_banner-image__2KOX9" />
-                                            </div>
-                                            <div className="CardHeader_left-picture__v05WN">
-                                                <img src={card.profilePicture || "/assets/images/empty-profile-photo.5e4f5f6e.png"} alt="Profile" className="CardHeader_left-picture-img__yFgFE" />
-                                            </div>
-                                            <div className="CardHeader_right-picture__uGU1E">
-                                                <img src={card.companyLogo || "/assets/images/empty-company-logo.5e4f5f6e.png"} alt="Logo" className="CardHeader_right-picture-img__L0u2u" />
-                                            </div>
-                                        </header>
-                                        <div className="_4p4yt30">
-                                            <div className="_4p4yt33">
-                                                <div className="_4p4yt31">{card.name}</div>
-                                            </div>
-                                            <div className="_4p4yt32">{card.jobTitle}</div>
-                                            <div className="_4p4yt32">{card.department}</div>
-                                            <div className="_4p4yt32">{card.companyName}</div>
-                                        </div>
-                                        <ul className="ttlgl00">
-                                            <li>
-                                                <a className="_8oxuwz0" href={"tel:" + card.phone} rel="noreferrer" target="_blank">
-                                                    <div className="_11mr3km1" style={{ backgroundColor: card.backgroundColor }}>
-                                                        <svg data-prefix="fas" data-icon="phone" className="svg-inline--fa fa-phone _11mr3km0" role="img" viewBox="0 0 512 512" aria-hidden="true">
-                                                            <path fill="white" d="M160.2 25C152.3 6.1 131.7-3.9 112.1 1.4l-5.5 1.5c-64.6 17.6-119.8 80.2-103.7 156.4 37.1 175 174.8 312.7 349.8 349.8 76.3 16.2 138.8-39.1 156.4-103.7l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2C233.9 335.4 177.3 277 144.8 205.3L189 169.3c13.9-11.3 18.6-30.4 11.8-47L160.2 25z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div className="_8oxuwz1">
-                                                        <div className="_8oxuwz2" data-type="phoneNumber" style={{ textTransform: "capitalize" }}>{card.phone}</div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a className="_8oxuwz0" href={"mailto:" + card.email} rel="noreferrer" target="_blank">
-                                                    <div className="_11mr3km1" style={{ backgroundColor: card.backgroundColor }}>
-                                                        <svg data-prefix="fas" data-icon="envelope" className="svg-inline--fa fa-envelope _11mr3km0" role="img" viewBox="0 0 512 512" aria-hidden="true">
-                                                            <path fill="white" d="M48 64c-26.5 0-48 21.5-48 48 0 15.1 7.1 29.3 19.2 38.4l208 156c17.1 12.8 40.5 12.8 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48L48 64zM0 196L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-188-198.4 148.8c-34.1 25.6-81.1 25.6-115.2 0L0 196z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div className="_8oxuwz1">
-                                                        <div className="_8oxuwz2" data-type="email">{card.email}</div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a className="_8oxuwz0" href={card.companyUrl} rel="noreferrer" target="_blank">
-                                                    <div className="_11mr3km1" style={{ backgroundColor: card.backgroundColor }}>
-                                                        <svg aria-hidden="true" class="svg-inline--fa fa-link fa-w-16 " data-icon="link" data-prefix="far" focusable="false" role="img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M314.222 197.78c51.091 51.091 54.377 132.287 9.75 187.16-6.242 7.73-2.784 3.865-84.94 86.02-54.696 54.696-143.266 54.745-197.99 0-54.711-54.69-54.734-143.255 0-197.99 32.773-32.773 51.835-51.899 63.409-63.457 7.463-7.452 20.331-2.354 20.486 8.192a173.31 173.31 0 0 0 4.746 37.828c.966 4.029-.272 8.269-3.202 11.198L80.632 312.57c-32.755 32.775-32.887 85.892 0 118.8 32.775 32.755 85.892 32.887 118.8 0l75.19-75.2c32.718-32.725 32.777-86.013 0-118.79a83.722 83.722 0 0 0-22.814-16.229c-4.623-2.233-7.182-7.25-6.561-12.346 1.356-11.122 6.296-21.885 14.815-30.405l4.375-4.375c3.625-3.626 9.177-4.594 13.76-2.294 12.999 6.524 25.187 15.211 36.025 26.049zM470.958 41.04c-54.724-54.745-143.294-54.696-197.99 0-82.156 82.156-78.698 78.29-84.94 86.02-44.627 54.873-41.341 136.069 9.75 187.16 10.838 10.838 23.026 19.525 36.025 26.049 4.582 2.3 10.134 1.331 13.76-2.294l4.375-4.375c8.52-8.519 13.459-19.283 14.815-30.405.621-5.096-1.938-10.113-6.561-12.346a83.706 83.706 0 0 1-22.814-16.229c-32.777-32.777-32.718-86.065 0-118.79l75.19-75.2c32.908-32.887 86.025-32.755 118.8 0 32.887 32.908 32.755 86.025 0 118.8l-45.848 45.84c-2.93 2.929-4.168 7.169-3.202 11.198a173.31 173.31 0 0 1 4.746 37.828c.155 10.546 13.023 15.644 20.486 8.192 11.574-11.558 30.636-30.684 63.409-63.457 54.733-54.735 54.71-143.3-.001-197.991z" fill="white"></path></svg>
-                                                    </div>
-                                                    <div className="_8oxuwz1">
-                                                        <div className="_8oxuwz2" data-type="email">{card.companyUrl}</div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            {card.socialLinks.map((link, index) => (
-                                                <li key={index}>
-                                                    <a
-                                                        className="_8oxuwz0"
-                                                        href={link.link}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                    >
-                                                        <div className="_11mr3km1" style={{ backgroundColor: link.backgroundColor }}>
-                                                            {/* İkonu platforma göre gösterebiliriz */}
-                                                            {link.platform === "facebook" && (
-                                                                <svg aria-hidden="true" class="svg-inline--fa fa-facebook " data-icon="facebook" data-prefix="fab" focusable="false" role="img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z" fill="white"></path></svg>
-                                                            )}
-                                                            {link.platform === "instagram" && (
-                                                                <svg aria-hidden="true" class="svg-inline--fa fa-instagram " data-icon="instagram" data-prefix="fab" focusable="false" role="img" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" fill="white"></path></svg>
-                                                            )}
-                                                            {link.platform === "linkedin" && (
-                                                                <svg aria-hidden="true" class="svg-inline--fa fa-linkedin-in " data-icon="linkedin-in" data-prefix="fab" focusable="false" role="img" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" fill="white"></path></svg>
-                                                            )}
-                                                            {link.platform === "twitter" && (
-                                                                <svg aria-hidden="true" class="svg-inline--fa fa-x-twitter " data-icon="x-twitter" data-prefix="fab" focusable="false" role="img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" fill="white"></path></svg>
-                                                            )}
-                                                            {link.platform === "youtube" && (
-                                                                <svg aria-hidden="true" class="svg-inline--fa fa-youtube " data-icon="youtube" data-prefix="fab" focusable="false" role="img" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z" fill="white"></path></svg>
-                                                            )}
-                                                            {link.platform === "other" && (
-                                                                <svg data-prefix="far" data-icon="link" role="img" viewBox="0 0 512 512" aria-hidden="true" class="svg-inline--fa fa-link fa-w-16 " focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M314.222 197.78c51.091 51.091 54.377 132.287 9.75 187.16-6.242 7.73-2.784 3.865-84.94 86.02-54.696 54.696-143.266 54.745-197.99 0-54.711-54.69-54.734-143.255 0-197.99 32.773-32.773 51.835-51.899 63.409-63.457 7.463-7.452 20.331-2.354 20.486 8.192a173.31 173.31 0 0 0 4.746 37.828c.966 4.029-.272 8.269-3.202 11.198L80.632 312.57c-32.755 32.775-32.887 85.892 0 118.8 32.775 32.755 85.892 32.887 118.8 0l75.19-75.2c32.718-32.725 32.777-86.013 0-118.79a83.722 83.722 0 0 0-22.814-16.229c-4.623-2.233-7.182-7.25-6.561-12.346 1.356-11.122 6.296-21.885 14.815-30.405l4.375-4.375c3.625-3.626 9.177-4.594 13.76-2.294 12.999 6.524 25.187 15.211 36.025 26.049zM470.958 41.04c-54.724-54.745-143.294-54.696-197.99 0-82.156 82.156-78.698 78.29-84.94 86.02-44.627 54.873-41.341 136.069 9.75 187.16 10.838 10.838 23.026 19.525 36.025 26.049 4.582 2.3 10.134 1.331 13.76-2.294l4.375-4.375c8.52-8.519 13.459-19.283 14.815-30.405.621-5.096-1.938-10.113-6.561-12.346a83.706 83.706 0 0 1-22.814-16.229c-32.777-32.777-32.718-86.065 0-118.79l75.19-75.2c32.908-32.887 86.025-32.755 118.8 0 32.887 32.908 32.755 86.025 0 118.8l-45.848 45.84c-2.93 2.929-4.168 7.169-3.202 11.198a173.31 173.31 0 0 1 4.746 37.828c.155 10.546 13.023 15.644 20.486 8.192 11.574-11.558 30.636-30.684 63.409-63.457 54.733-54.735 54.71-143.3-.001-197.991z"></path></svg>
-                                                            )}
-                                                        </div>
-                                                        <div className="_8oxuwz1">
-                                                            <div className="_8oxuwz2" data-type="url" style={{ textTransform: "capitalize" }}>
-                                                                {link.link}
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                        <div className="_1b2pq070" style={{ position: "relative" }}>
-                                            <Link
-                                                to={`/card/?hashId=${card.hashId}`}
-                                                className="button analytics w-inline-block" style={{ backgroundColor: card.backgroundColor }}
-                                            >
-                                                <div className="text-size-intermediate text-color-white btn" >
-                                                    View
-                                                </div>
-                                            </Link>
-                                            <button
-                                                onClick={() => handleDelete(card.hashId)}
-                                                disabled={deleting === card.hashId}
-                                                className="button analytics w-inline-block dashboard-delete-btn"
-                                                style={{
-                                                    opacity: deleting === card.hashId ? 0.6 : 1,
-                                                    cursor: deleting === card.hashId ? "not-allowed" : "pointer",
-                                                       backgroundColor: card.backgroundColor, // sadece bu kadar
-                                                }}
-                                            >
-                                                <div className="text-size-intermediate text-color-white btn" >
-                                                    {deleting === card.hashId ? "Deleting..." : "Delete"}
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
+
+                <div className="pd-grid">
+                    {cards.map(card => (
+                        <div className="pd-card" key={card.id}>
+                            <div className="pd-card-inner">
+                                <div className="pd-card-cover" style={{
+                                    backgroundImage: card.images?.cover ? `url(${card.images.cover})` : 'none',
+                                    backgroundColor: !card.images?.cover ? (card.accentColor || '#1c1c24') : 'transparent'
+                                }} />
+                                <div className="pd-card-body">
+                                    <div className="pd-card-name">{card.name || "Untitled Identity"}</div>
+                                    <div className="pd-card-title" style={{color: card.accentColor || '#e63946'}}>{card.title || "Card Holder"}</div>
+                                    <div style={{fontSize:'0.75rem', opacity:0.4}}>Scans: {card.scans || 0}</div>
+                                </div>
+                                <div className="pd-card-actions">
+                                    <Link to={`/card/?hashId=${card.id}`} target="_blank" className="pd-btn-action">Preview Live</Link>
+                                    <button className="pd-btn-action" onClick={() => navigate(`/edit-card?hashId=${card.id}`)}>Edit</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </>
-            )}
+                    ))}
+                    
+                    <Link to="/create-card" className="pd-card-new">
+                        <span style={{fontSize:'3.5rem', fontWeight:200, marginBottom:'1rem'}}>+</span>
+                        <span style={{fontSize:'0.8rem', letterSpacing:'1.5px', textTransform:'uppercase'}}>Create New Card</span>
+                    </Link>
+                </div>
+            </main>
         </div>
     );
 }

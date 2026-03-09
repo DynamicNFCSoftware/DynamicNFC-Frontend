@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,7 +37,8 @@ public class AuthController {
     @PostMapping("/login") 
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) { 
         
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()); 
+        String email = request.getEmail().trim().toLowerCase();
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, request.getPassword()); 
         Authentication authentication = authenticationManager.authenticate(token); 
         SecurityContextHolder.getContext().setAuthentication(authentication); 
         
@@ -49,10 +51,10 @@ public class AuthController {
         );
         
         // Get account to include accountId in response
-        Account account = accountService.findByEmail(request.getEmail());
+        Account account = accountService.findByEmail(email);
         
         AuthResponse response = new AuthResponse();
-        response.setEmail(request.getEmail());
+        response.setEmail(email);
         response.setAccountId(account.getId());
         response.setSessionId(session.getId());
         
@@ -60,14 +62,29 @@ public class AuthController {
     }
     
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        Account account = new Account();
-        account.setEmail(request.getEmail());
-        account.setPassword(passwordEncoder.encode(request.getPassword()));
-        
-        accountService.save(account);
-        
-        return ResponseEntity.ok(new AuthResponse());
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        // Validate email
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
+        }
+        // Validate password
+        if (request.getPassword() == null || request.getPassword().length() < 6) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Password must be at least 6 characters"));
+        }
+
+        try {
+            Account account = new Account();
+            account.setEmail(request.getEmail().trim().toLowerCase());
+            account.setPassword(passwordEncoder.encode(request.getPassword()));
+            Account saved = accountService.save(account);
+
+            AuthResponse response = new AuthResponse();
+            response.setEmail(saved.getEmail());
+            response.setAccountId(saved.getId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "An account with this email already exists"));
+        }
     }
     
     @PostMapping("/logout")

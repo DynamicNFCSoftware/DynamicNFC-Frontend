@@ -18269,3 +18269,50 @@ section.ai .post-category:hover {
     grid-template-columns: repeat(3, minmax(250px, 1fr));
     gap: 20px !important;
 }
+/* ═══════════════════════════════════════════════════════ */
+/* Language Switcher — marketplace format                  */
+/* ═══════════════════════════════════════════════════════ */
+.lang-btn-order {
+  width: 32px; height: 28px; border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.2); background: transparent;
+  color: rgba(255,255,255,0.5); font-size: 0.72rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif;
+}
+.lang-btn-order:hover {
+  border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.8);
+}
+.lang-btn-order.active {
+  background: rgba(69,123,157,0.15); border-color: rgba(69,123,157,0.4);
+  color: #6ba3c7;
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* RTL Support                                             */
+/* ═══════════════════════════════════════════════════════ */
+[dir="rtl"] .nav-menu { flex-direction: row-reverse; }
+[dir="rtl"] .card-trowas__content { text-align: right; }
+[dir="rtl"] .footer-col.horizontal { flex-direction: row-reverse; }
+[dir="rtl"] .footer-nav { margin-right: 0 !important; margin-left: 40px; }
+[dir="rtl"] .text-align-center { text-align: center; }
+
+/* 4-column grid for 12 cards */
+.product-detail-page-x .detail-products__wrapper {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
+  gap: 20px !important;
+}
+@media (max-width: 1024px) {
+  .product-detail-page-x .detail-products__wrapper {
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+  }
+}
+@media (max-width: 768px) {
+  .product-detail-page-x .detail-products__wrapper {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  .product-detail-page-x .detail-products__wrapper {
+    grid-template-columns: 1fr;
+  }
+}
