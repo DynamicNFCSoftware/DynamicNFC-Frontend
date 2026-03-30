@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: check if user is admin
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    // User-created digital cards — public read, owner write
+    match /cards/{cardId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+    }
+
+    // NFC smart cards — public read, admin-only write
+    match /smartcards/{cardId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Tap logs — public create with validation, admin-only read
+    match /taps/{tapId} {
+      allow read: if isAdmin();
+      allow create: if true;
+      allow update, delete: if false;
+    }
+
+    // Campaigns — admin only
+    match /campaigns/{campaignId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // Admin roster — admin read, console-only write
+    match /admins/{email} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Behavioral events — public create with validation, admin-only read
+    match /behaviors/{behaviorId} {
+      allow create: if true;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Settings — admin only
+    match /settings/{settingId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // Wallet pass requests — authenticated users
+    match /walletPassRequests/{docId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null;
+      allow update, delete: if false;
+    }
+
+    // Wallet passes — read only
+    match /walletPasses/{cardId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Testimonials — public read, admin write
+    match /testimonials/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Blog posts — public read, admin write
+    match /blog_posts/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Newsletter subscribers — public create, admin read
+    match /newsletter_subscribers/{docId} {
+      allow create: if true
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 100;
+      allow read: if request.auth != null;
+      allow update, delete: if isAdmin();
+    }
+  }
+}
