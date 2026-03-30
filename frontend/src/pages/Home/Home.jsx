@@ -381,6 +381,12 @@ export default function Home() {
       return;
     }
 
+    // Fallback: if IntersectionObserver is unavailable, reveal everything.
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('visible'));
+      return;
+    }
+
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.12 });
