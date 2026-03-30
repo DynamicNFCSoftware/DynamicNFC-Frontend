@@ -253,14 +253,20 @@ const ICONS = {
 
 /* ── Sub-components ── */
 function FAQItem({ question, answer, isOpen, onClick }) {
+  const contentId = React.useId();
   return (
-    <div className={`hp-faq-item${isOpen ? ' open' : ''}`} onClick={onClick}
-      role="button" tabIndex={0} aria-expanded={isOpen}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}>
-      <div className="hp-faq-q"><span>{question}</span>
+    <div className={`hp-faq-item${isOpen ? ' open' : ''}`}>
+      <button
+        type="button"
+        className="hp-faq-q"
+        onClick={onClick}
+        aria-expanded={isOpen}
+        aria-controls={contentId}
+      >
+        <span>{question}</span>
         <svg className="hp-faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div className="hp-faq-a"><p>{answer}</p></div>
+      </button>
+      <div className="hp-faq-a" id={contentId}><p>{answer}</p></div>
     </div>
   );
 }
