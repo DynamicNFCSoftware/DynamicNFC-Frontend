@@ -424,9 +424,13 @@
 .hp-hero.animate ~ .hp-showcase { opacity: 1; transform: translateY(0); }
 
 /* ═══ SCROLL REVEAL ═══ */
-.hp-reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+/* Fail-open: content is visible even if JS/observer fails. */
+.hp-reveal { opacity: 1; transform: none; }
 .hp-reveal.visible { opacity: 1; transform: translateY(0); }
-.hp-reveal-stagger > * { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+
+/* Stagger: default visible; only animate when .visible is present. */
+.hp-reveal-stagger > * { opacity: 1; transform: none; }
+.hp-reveal-stagger.visible > * { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
 .hp-reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: translateY(0); }
 .hp-reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
 .hp-reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.15s; opacity: 1; transform: translateY(0); }

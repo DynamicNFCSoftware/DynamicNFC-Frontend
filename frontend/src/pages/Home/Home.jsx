@@ -446,7 +446,7 @@ export default function Home() {
               onClick={() => setFlipped(f => !f)}
             >
               <div className="hp-card-face hp-card-front">
-                <img src={cardFrontImg} alt="DynamicNFC Card" loading="eager" decoding="async" fetchPriority="high" />
+                <img src={cardFrontImg} alt="DynamicNFC Card" loading="eager" decoding="async" />
               </div>
               <div className="hp-card-face hp-card-back">
                 <img src={cardBackImg} alt="DynamicNFC Card Back" loading="lazy" decoding="async" />
