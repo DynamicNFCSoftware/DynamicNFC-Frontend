@@ -387,11 +387,23 @@ export default function Home() {
       return;
     }
 
+    // Failsafe: even if the observer never fires (browser quirks / extensions),
+    // reveal everything shortly after first paint.
+    const forceRevealId = window.setTimeout(() => {
+      els.forEach(el => el.classList.add('visible'));
+    }, 1200);
+
     const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('visible');
+      });
     }, { threshold: 0.12 });
     els.forEach(el => obs.observe(el));
-    return () => obs.disconnect();
+    return () => {
+      window.clearTimeout(forceRevealId);
+      obs.disconnect();
+    };
   }, [prefersReducedMotion]);
 
   const faqsLeft = [
