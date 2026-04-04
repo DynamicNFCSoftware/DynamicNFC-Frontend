@@ -1,4 +1,9 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useLanguage, useTranslation, translate } from "../../i18n";
+import './Dashboard.css';
+import SEO from '../../components/SEO/SEO';
+import '../../i18n/portals/dashboard';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
   PieChart, Pie, Cell, LineChart, Line,
@@ -26,252 +31,6 @@ const decayFactor = (eventTimestamp) => {
   return Math.pow(0.5, daysAgo / DECAY_HALF_LIFE_DAYS);
 };
 
-// ─── BILINGUAL TRANSLATIONS ─────────────────────────────────
-const T = {
-  en: {
-    // Header
-    headerTitle: "Al Noor Residences", headerSub: "VIP Behavioral Intelligence",
-    liveDemo: "Live Demo", envBadge: "Al Noor Residences",
-    help: "Help", createVip: "+ Create VIP", resetDemo: "Reset Demo",
-    // Nav
-    navOverview: "Overview", navVipCrm: "VIP CRM", navPriority: "Priority VIP",
-    navAnalytics: "Analytics", navUnits: "Units & Plans", navCampaigns: "Campaigns",
-    navSettings: "Settings",
-    navVipPortal: "VIP Portal", navLoginPortal: "Login Portal", navMarketplace: "Marketplace",
-    // Executive Banner
-    execView: "Executive View",
-    execDesc: "Conversions are identical for VIP and Standard traffic. The only difference is identity. VIP has vip_id enabling 1-to-1 outreach; Standard uses anon_id for segment marketing.",
-    kpi1: "Primary KPI: Booked Viewings uplift", kpi2: "Time-decay scoring (7d half-life)",
-    kpi3: "Shared actions: Book, Pricing, Payment Plan, Brochure",
-    // KPIs
-    mVipSessions: "VIP Sessions", mRegSessions: "Registered", mAnonSessions: "Anonymous",
-    mTotalConversions: "Conversions", mBookedViewings: "Booked Viewings",
-    mVipSub: "Person known via NFC", mRegSub: "Marketplace sign-ups",
-    mAnonSub: "Standard web traffic", mConvSub: "All shared actions",
-    // NEW Velocity KPIs
-    mViewingVelocity: "Viewing Velocity", mViewingVelSub: "Avg days to first booking",
-    mTimeToAction: "Time to First Action", mTimeToActionSub: "Avg mins from tap to first view",
-    mVipConvLift: "VIP Conversion Lift", mVipConvLiftSub: "VIP vs Standard booking rate",
-    mLeadCaptureRate: "Lead Capture Rate", mLeadCaptureSub: "Anonymous → Lead conversion",
-    // Shared Conversions
-    sharedConversions: "Shared Conversion Actions", badgeVipStd: "VIP + Standard · Non-linear",
-    actBookViewing: "Book a Viewing", actRequestPricing: "Request Pricing",
-    actRequestPayment: "Request Payment Plan", actDownloadBrochure: "Download Brochure",
-    // Activity Feed
-    liveActivityFeed: "Live Activity Feed", realtimeInteractions: "Real-time portal interactions",
-    feedAll: "All", feedVip: "VIP", feedRegistered: "Registered",
-    // VIP Summary
-    vipActivitySummary: "VIP Activity Summary", highPrioritySignals: "High-priority VIP signals",
-    hotLeads: "Hot Leads", activeAlerts: "Active Alerts", avgLeadScore: "Avg Lead Score",
-    // Charts
-    engagementOverTime: "Engagement Over Time", channelMix: "Channel Mix",
-    towerInterestDist: "Tower Interest Distribution", allTrafficCombined: "All traffic combined",
-    chartVip: "VIP", chartRegistered: "Registered", chartAnonymous: "Anonymous",
-    actionPerformance: "Action Performance", vipVsStandard: "VIP vs Standard comparison",
-    topPlansByInterest: "Top Plans by Interest", allTraffic: "All traffic",
-    // NEW Score Distribution
-    scoreDistribution: "Lead Score Distribution", scoreDistSub: "Pipeline health across all contacts",
-    scoreBand0: "0-20 Cold", scoreBand20: "20-40 Warm", scoreBand40: "40-60 Engaged",
-    scoreBand60: "60-80 Hot", scoreBand80: "80+ Ready",
-    // VIP CRM
-    vipDirectory: "VIP Directory", personKnown: "Person known", vipProfiles: "VIP Profiles",
-    selectVipPrompt: "Select a VIP from the directory to view their behavioral timeline, intent signals, and suggested outreach.",
-    outreachBtn: "Outreach", reissueLink: "Reissue Link",
-    leadScore: "Lead Score", repeatViews: "Repeat Views", pricingSignal: "Pricing Signal",
-    comparisons: "Comparisons", alerts: "Alerts", salesRep: "Sales Rep",
-    card: "Card", campaign: "Campaign",
-    timeline: "Timeline", lastSeen: "Last seen",
-    // NEW Sales Trigger
-    salesTrigger: "Sales Trigger", whyCallNow: "Why call now?",
-    daysIdle: "Days Idle", atRisk: "AT RISK", decayedScore: "Decayed Score",
-    // NEW VIP Candidate
-    vipCandidate: "VIP Candidate", promoteToVip: "Promote to VIP",
-    vipCandidateDesc: "Registered users scoring above threshold — issue NFC cards",
-    // Priority
-    priorityVipList: "Priority VIP List", dailySalesCockpit: "Daily sales cockpit",
-    prioritySortedDesc: "Sorted by time-decayed score. Recency-weighted: recent actions rank higher.",
-    thVip: "VIP", thVipCode: "VIP Code", thTopTower: "Top Tower", thLeadScore: "Lead Score",
-    thAlerts: "Alerts", thLastSeen: "Last Seen", thAction: "Action",
-    thTrigger: "Trigger", thDaysIdle: "Idle",
-    nextBestActions: "Next Best Actions", autoSuggested: "Auto-suggested based on VIP behavior",
-    quickActions: "Quick Actions", bulkOps: "Bulk operations",
-    emailHighIntent: "Email All High Intent VIPs", exportPriorityList: "Export Priority List",
-    reminderLabel: "Reminder:", reminderText: "VIP actions are for 1-to-1 outreach (call, SMS, email). Standard actions are for segment marketing.",
-    // Alerts
-    alertPricing: "Pricing Interest", alertHighIntent: "High Intent",
-    alertComparing: "Comparing Plans", alertFamily: "Family Buyer",
-    // Analytics
-    analytics: "Analytics", standardVip: "Standard + VIP",
-    vipIntentHeatmap: "VIP Intent Heatmap (Live)", propertyDemandHeatmap: "Property Demand Heatmap (Live)",
-    guidance: "Guidance",
-    heatPenthouse: "Penthouse", heat3br: "3BR", heat2br: "2BR", heat1br: "1BR",
-    floorLow: "Low (1-4)", floorMid: "Mid (5-8)", floorHigh: "High (9-12)",
-    guideLowClicks: "Low clicks ≠ low demand",
-    guideLowClicksDesc: "Improve media, naming, and clarity before changing price.",
-    guidePricing: "Pricing signals = follow-up signals",
-    guidePricingDesc: "For VIP: call with payment plan. For Standard: add pricing CTA.",
-    guideMvp: "MVP guardrail",
-    guideMvpDesc: "Dashboard exists to increase booked viewings, not analytics for analytics.",
-    // Units
-    unitsFloorPlans: "Units & Floor Plans",
-    thUnitId: "Unit ID", thName: "Name", thTower: "Tower", thFloor: "Floor",
-    thType: "Type", thStatus: "Status", thPrice: "Price", thVipInterest: "VIP Interest",
-    available: "Available", reserved: "Reserved", sold: "Sold",
-    filterAll: "All", zeroEngagement: "ZERO ENGAGEMENT",
-    // Campaigns
-    campaigns: "Campaigns", cardIssuance: "VIP card issuance linked to campaigns",
-    campaignsDesc: "VIP cards are issued as premium invitations linked to a campaign for tracking and reporting.",
-    active: "Active", paused: "Paused",
-    // Settings
-    settings: "Settings", mvpControls: "MVP controls",
-    dataBoundaries: "Data Boundaries", keepSimple: "Keep it simple, secure, and compliant",
-    mvpLock: "MVP Lock", outOfScope: "Out of scope for current phase",
-    s1: "VIP tracking requires explicit invitation via physical NFC card.",
-    s2: "Standard tracking remains anonymous and cohort-based.",
-    s3: "Role-based access: sales reps see only assigned VIPs.",
-    s4: "Magic links must expire and support revoke/reissue.",
-    s5: "Out of scope: dynamic pricing, automation workflows, WhatsApp, CRM replacement.",
-    s6: "Event types: page_view and cta_click only.",
-    s7: "CTA names fixed: book_viewing, request_pricing, request_payment_plan, download_brochure.",
-    s8: "Success metric: booked viewings uplift.",
-    // Modals
-    createVipTitle: "Create VIP",
-    createVipDesc: "Sales rep assigns a card and links a campaign. VIP ID will be generated.",
-    lblFullName: "Full name", lblPhone: "Phone", lblEmail: "Email",
-    lblPrefLang: "Preferred language", lblCampaign: "Campaign", lblCardId: "Card ID",
-    createVipNote: "By issuing a VIP card, the prospect receives a premium invitation box stating private access. This supports consent and premium positioning.",
-    createVipSubmit: "Create VIP",
-    howThisWorks: "How This Works", vipTraffic: "VIP Traffic",
-    vipTrafficDesc: "Enters via NFC Magic Link. Identity known via vip_id. Use insights for 1-to-1 outreach. Goal: booked viewings uplift.",
-    stdTraffic: "Standard Traffic",
-    stdTrafficDesc: "Enters via Ads, SEO, Direct. Identity unknown via anon_id. Use segments and content to optimize marketing.",
-    keyRule: "Key Rule:",
-    keyRuleDesc: "The actions are shared and non-linear. The only difference between VIP and Standard is identity and how you activate follow-up.",
-    vipOutreach: "VIP Outreach",
-    outreachDesc: "1-to-1 outreach. Concierge tone. Reference interest signals, not surveillance.",
-    callScript: "Call Script", emailSnippet: "Email Snippet",
-    guardrailLabel: "Guardrail:",
-    guardrailDesc: "Do not say you tracked them. Say you are following up on their private invitation and can help with pricing, viewing, and payment options.",
-    leadPipeline: "Lead Pipeline", scoredContacts: "Scored contacts across all channels",
-    unitPerformance: "Unit Performance", residenceAnalytics: "Residence engagement analytics",
-    eventsTracked: "events tracked", close: "Close",
-    conversionFunnel: "Conversion Funnel", totalVisitors: "Total Visitors",
-    viewedUnit: "Viewed Unit", downloaded: "Downloaded", requestedPricing: "Requested Pricing",
-    bookedViewing: "Booked Viewing", dropOff: "drop-off",
-    mAgo: "m ago", hAgo: "h ago", dAgo: "d ago", justNow: "just now",
-  },
-  ar: {
-    headerTitle: "نور ريزيدنسز", headerSub: "الذكاء السلوكي لكبار العملاء",
-    liveDemo: "عرض مباشر", envBadge: "نور ريزيدنسز",
-    help: "مساعدة", createVip: "+ إنشاء VIP", resetDemo: "إعادة ضبط",
-    navOverview: "نظرة عامة", navVipCrm: "إدارة VIP", navPriority: "أولوية VIP",
-    navAnalytics: "التحليلات", navUnits: "الوحدات والمخططات", navCampaigns: "الحملات",
-    navSettings: "الإعدادات",
-    navVipPortal: "بوابة VIP", navLoginPortal: "بوابة تسجيل الدخول", navMarketplace: "السوق",
-    execView: "العرض التنفيذي",
-    execDesc: "التحويلات متطابقة لحركة VIP والعادية. الفرق الوحيد هو الهوية. VIP لديه vip_id ويمكّن التواصل الشخصي؛ العادي يستخدم anon_id ويمكّن تسويق القطاعات.",
-    kpi1: "مؤشر أساسي: زيادة حجوزات المعاينة", kpi2: "تسجيل مُضمحل زمنياً (7 أيام نصف عمر)",
-    kpi3: "إجراءات مشتركة: حجز، تسعير، خطة دفع، كتيب",
-    mVipSessions: "جلسات VIP", mRegSessions: "مسجّلون", mAnonSessions: "مجهولون",
-    mTotalConversions: "التحويلات", mBookedViewings: "حجوزات المعاينة",
-    mVipSub: "شخص معروف عبر NFC", mRegSub: "تسجيلات السوق",
-    mAnonSub: "زوار الويب العاديون", mConvSub: "جميع الإجراءات المشتركة",
-    mViewingVelocity: "سرعة المعاينة", mViewingVelSub: "متوسط الأيام لأول حجز",
-    mTimeToAction: "وقت أول إجراء", mTimeToActionSub: "دقائق من النقر لأول مشاهدة",
-    mVipConvLift: "رفع تحويل VIP", mVipConvLiftSub: "VIP مقابل معيار حجز",
-    mLeadCaptureRate: "نسبة التقاط العملاء", mLeadCaptureSub: "مجهول → عميل محتمل",
-    sharedConversions: "إجراءات التحويل المشتركة", badgeVipStd: "VIP + عادي · غير خطي",
-    actBookViewing: "حجز معاينة", actRequestPricing: "طلب التسعير",
-    actRequestPayment: "طلب خطة الدفع", actDownloadBrochure: "تحميل الكتيب",
-    liveActivityFeed: "النشاط المباشر", realtimeInteractions: "تفاعلات البوابة الفورية",
-    feedAll: "الكل", feedVip: "VIP", feedRegistered: "مسجّل",
-    vipActivitySummary: "ملخص نشاط VIP", highPrioritySignals: "إشارات أولوية عالية",
-    hotLeads: "عملاء محتملون", activeAlerts: "تنبيهات نشطة", avgLeadScore: "متوسط التقييم",
-    engagementOverTime: "التفاعل عبر الزمن", channelMix: "مزيج القنوات",
-    towerInterestDist: "توزيع الاهتمام بالأبراج", allTrafficCombined: "جميع الزيارات",
-    chartVip: "VIP", chartRegistered: "مسجّل", chartAnonymous: "مجهول",
-    actionPerformance: "أداء الإجراءات", vipVsStandard: "مقارنة VIP مع العادي",
-    topPlansByInterest: "أفضل المخططات حسب الاهتمام", allTraffic: "جميع الزيارات",
-    scoreDistribution: "توزيع تقييم العملاء", scoreDistSub: "صحة خط الأنابيب عبر جميع جهات الاتصال",
-    scoreBand0: "0-20 بارد", scoreBand20: "20-40 دافئ", scoreBand40: "40-60 مهتم",
-    scoreBand60: "60-80 ساخن", scoreBand80: "+80 جاهز",
-    vipDirectory: "دليل VIP", personKnown: "شخص معروف", vipProfiles: "ملفات VIP",
-    selectVipPrompt: "اختر عميل VIP من الدليل لعرض الجدول الزمني السلوكي وإشارات النية واقتراحات التواصل.",
-    outreachBtn: "تواصل", reissueLink: "إعادة الرابط",
-    leadScore: "تقييم العميل", repeatViews: "زيارات متكررة", pricingSignal: "إشارة تسعير",
-    comparisons: "مقارنات", alerts: "تنبيهات", salesRep: "مندوب المبيعات",
-    card: "البطاقة", campaign: "الحملة",
-    timeline: "الجدول الزمني", lastSeen: "آخر ظهور",
-    salesTrigger: "محفز المبيعات", whyCallNow: "لماذا تتصل الآن؟",
-    daysIdle: "أيام خامل", atRisk: "في خطر", decayedScore: "تقييم مُضمحل",
-    vipCandidate: "مرشح VIP", promoteToVip: "ترقية إلى VIP",
-    vipCandidateDesc: "مستخدمون مسجّلون تجاوزوا الحد — أصدر بطاقات NFC",
-    priorityVipList: "قائمة أولوية VIP", dailySalesCockpit: "لوحة المبيعات اليومية",
-    prioritySortedDesc: "مرتبة حسب التقييم المُضمحل زمنياً. الإجراءات الأخيرة تُرجَّح أكثر.",
-    thVip: "VIP", thVipCode: "رمز VIP", thTopTower: "البرج الأفضل", thLeadScore: "التقييم",
-    thAlerts: "تنبيهات", thLastSeen: "آخر ظهور", thAction: "إجراء",
-    thTrigger: "محفز", thDaysIdle: "خمول",
-    nextBestActions: "أفضل الإجراءات التالية", autoSuggested: "مقترحة تلقائياً بناءً على سلوك VIP",
-    quickActions: "إجراءات سريعة", bulkOps: "عمليات جماعية",
-    emailHighIntent: "إرسال بريد لجميع VIP ذوي النية العالية", exportPriorityList: "تصدير قائمة الأولوية",
-    reminderLabel: "تذكير:", reminderText: "إجراءات VIP للتواصل الشخصي (اتصال، رسالة، بريد). الإجراءات العادية للتسويق القطاعي.",
-    alertPricing: "اهتمام بالتسعير", alertHighIntent: "نية عالية",
-    alertComparing: "مقارنة المخططات", alertFamily: "مشتري عائلي",
-    analytics: "التحليلات", standardVip: "عادي + VIP",
-    vipIntentHeatmap: "خريطة نية VIP (مباشرة)", propertyDemandHeatmap: "خريطة الطلب العقاري (مباشرة)",
-    guidance: "إرشادات",
-    heatPenthouse: "بنتهاوس", heat3br: "3 غرف", heat2br: "غرفتان", heat1br: "غرفة واحدة",
-    floorLow: "منخفض (1-4)", floorMid: "متوسط (5-8)", floorHigh: "عالي (9-12)",
-    guideLowClicks: "نقرات قليلة ≠ طلب قليل",
-    guideLowClicksDesc: "حسّن الوسائط والتسمية والوضوح قبل تغيير السعر.",
-    guidePricing: "إشارات التسعير = إشارات متابعة",
-    guidePricingDesc: "لـ VIP: اتصل بخطة دفع. للعادي: أضف زر تسعير.",
-    guideMvp: "حماية MVP",
-    guideMvpDesc: "لوحة المعلومات موجودة لزيادة حجوزات المعاينة، وليس تحليلات للتحليلات.",
-    unitsFloorPlans: "الوحدات والمخططات",
-    thUnitId: "رقم الوحدة", thName: "الاسم", thTower: "البرج", thFloor: "الطابق",
-    thType: "النوع", thStatus: "الحالة", thPrice: "السعر", thVipInterest: "اهتمام VIP",
-    available: "متاح", reserved: "محجوز", sold: "مباع", filterAll: "الكل", zeroEngagement: "صفر تفاعل",
-    campaigns: "الحملات", cardIssuance: "إصدار بطاقات VIP مرتبطة بالحملات",
-    campaignsDesc: "تصدر بطاقات VIP كدعوات مميزة مرتبطة بحملة للتتبع والتقارير.",
-    active: "نشط", paused: "متوقف",
-    settings: "الإعدادات", mvpControls: "إعدادات MVP",
-    dataBoundaries: "حدود البيانات", keepSimple: "اجعلها بسيطة وآمنة ومتوافقة",
-    mvpLock: "قفل MVP", outOfScope: "خارج النطاق للمرحلة الحالية",
-    s1: "تتبع VIP يتطلب دعوة صريحة عبر بطاقة NFC فعلية.",
-    s2: "التتبع العادي يبقى مجهولاً وقائماً على المجموعات.",
-    s3: "وصول قائم على الأدوار: المندوبون يرون فقط VIP المخصصين لهم.",
-    s4: "الروابط السحرية يجب أن تنتهي صلاحيتها وتدعم الإلغاء/إعادة الإصدار.",
-    s5: "خارج النطاق: التسعير الديناميكي، سير العمل الآلي، واتساب، استبدال CRM.",
-    s6: "أنواع الأحداث: page_view و cta_click فقط.",
-    s7: "أسماء CTA ثابتة: book_viewing، request_pricing، request_payment_plan، download_brochure.",
-    s8: "مقياس النجاح: زيادة حجوزات المعاينة.",
-    createVipTitle: "إنشاء VIP",
-    createVipDesc: "المندوب يعيّن بطاقة ويربط حملة. سيتم إنشاء معرّف VIP.",
-    lblFullName: "الاسم الكامل", lblPhone: "الهاتف", lblEmail: "البريد الإلكتروني",
-    lblPrefLang: "اللغة المفضلة", lblCampaign: "الحملة", lblCardId: "رقم البطاقة",
-    createVipNote: "بإصدار بطاقة VIP، يتلقى العميل المحتمل صندوق دعوة مميز يشير إلى وصول خاص. هذا يدعم الموافقة والمكانة المميزة.",
-    createVipSubmit: "إنشاء VIP",
-    howThisWorks: "كيف يعمل هذا", vipTraffic: "زيارات VIP",
-    vipTrafficDesc: "يدخل عبر رابط NFC السحري. الهوية معروفة عبر vip_id. استخدم الرؤى للتواصل الشخصي. الهدف: زيادة حجوزات المعاينة.",
-    stdTraffic: "الزيارات العادية",
-    stdTrafficDesc: "يدخل عبر الإعلانات، SEO، المباشر. الهوية مجهولة عبر anon_id. استخدم القطاعات والمحتوى لتحسين التسويق.",
-    keyRule: "القاعدة الأساسية:",
-    keyRuleDesc: "الإجراءات مشتركة وغير خطية. الفرق الوحيد بين VIP والعادي هو الهوية وكيفية تفعيل المتابعة.",
-    vipOutreach: "تواصل VIP",
-    outreachDesc: "تواصل شخصي. بأسلوب الكونسيرج. أشر لإشارات الاهتمام، وليس المراقبة.",
-    callScript: "نص المكالمة", emailSnippet: "مقتطف البريد",
-    guardrailLabel: "حماية:",
-    guardrailDesc: "لا تقل أنك تتبعتهم. قل أنك تتابع دعوتهم الخاصة ويمكنك المساعدة في التسعير والمعاينة وخيارات الدفع.",
-    leadPipeline: "خط أنابيب العملاء", scoredContacts: "جهات اتصال مُقيَّمة عبر جميع القنوات",
-    unitPerformance: "أداء الوحدات", residenceAnalytics: "تحليلات تفاعل المساكن",
-    eventsTracked: "حدث مُتتبَّع", close: "إغلاق",
-    conversionFunnel: "مسار التحويل", totalVisitors: "إجمالي الزوار",
-    viewedUnit: "شاهد وحدة", downloaded: "حمّل", requestedPricing: "طلب تسعير",
-    bookedViewing: "حجز معاينة", dropOff: "انخفاض",
-    mAgo: "د", hAgo: "س", dAgo: "ي", justNow: "الآن",
-  }
-};
 // ─── STATIC DATA: Tower Architecture + 12 Units + Campaigns + Reps ──
 const TOWERS = {
   t1: { name: "Al Qamar Tower", nameAr: "برج القمر" },
@@ -334,6 +93,7 @@ const INTENT_WEIGHTS = {
   tower_selected: 5, unit_view: 10, cta_click: 20, favorite_add: 12,
   comparison_view: 18, bedroom_filter: 4, chat_message: 15,
   vip_portal_entry: 5, category_filter: 3,
+  cta_explore: 4, cta_booking: 8,
 };
 
 const EVENT_LABELS = {
@@ -350,6 +110,8 @@ const EVENT_LABELS = {
     vip_portal_entry: "Entered VIP Portal", category_filter: "Filtered Category",
     cta_click: "Clicked Action", unit_view: "Viewed Unit Details",
     register_click: "Clicked Register", user_logout: "Logged Out",
+    cta_explore: "Explored Residences", cta_booking: "Clicked Book Viewing",
+    cta_browse: "Browsed Listings", bedroom_filter: "Filtered Bedrooms",
   },
   ar: {
     portal_opened: "فتح بوابة VIP", marketplace_visit: "زار السوق",
@@ -362,6 +124,8 @@ const EVENT_LABELS = {
     comparison_view: "قارن الوحدات", chat_message: "أرسل رسالة",
     vip_portal_entry: "دخل بوابة VIP", category_filter: "فلتر الفئة",
     cta_click: "نقر إجراء", unit_view: "شاهد تفاصيل الوحدة",
+    cta_explore: "استكشاف المساكن", cta_booking: "نقر حجز معاينة",
+    cta_browse: "تصفح القوائم", bedroom_filter: "فلتر غرف النوم",
   }
 };
 
@@ -426,11 +190,10 @@ const seedDemoData = () => {
 const fmtPrice = p => "$" + p.toLocaleString();
 const ago = (iso, lang) => {
   const s = Math.floor((Date.now() - new Date(iso)) / 1000);
-  const tx = T[lang] || T.en;
-  if (s < 60) return tx.justNow;
-  if (s < 3600) return Math.floor(s/60) + tx.mAgo;
-  if (s < 86400) return Math.floor(s/3600) + tx.hAgo;
-  return Math.floor(s/86400) + tx.dAgo;
+  if (s < 60) return translate("dashboard", lang, "justNow");
+  if (s < 3600) return Math.floor(s / 60) + translate("dashboard", lang, "mAgo");
+  if (s < 86400) return Math.floor(s / 3600) + translate("dashboard", lang, "hAgo");
+  return Math.floor(s / 86400) + translate("dashboard", lang, "dAgo");
 };
 const daysAgoNum = (iso) => Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
 const initials = name => name.split(" ").map(n => n[0]).join("");
@@ -489,375 +252,30 @@ const getSalesTrigger = (vipEvents, lang) => {
   return null;
 };
 
+const getPriorityNextAction = (v, lang) => {
+  if (v.trigger?.type === "booking") return lang === "ar" ? "تأكيد الموعد وتجهيز عرض الوحدة" : "Confirm booked visit and prep unit pitch";
+  if (v.trigger?.type === "hot_ph") return lang === "ar" ? "اتصال مباشر اليوم + عرض ترقية البنتهاوس" : "Call today and position penthouse upgrade";
+  if (v.trigger?.type === "pricing_stall") return lang === "ar" ? "إرسال خطة دفع ثم مكالمة متابعة" : "Send payment plan and follow up by call";
+  if (v.trigger?.type === "comparing") return lang === "ar" ? "اقتراح وحدتين وحجز جولة موجهة" : "Narrow to 2 units and push guided tour";
+  if (v.trigger?.type === "floorplan") return lang === "ar" ? "إرسال مخطط/3D وتثبيت زيارة" : "Send floor plan/3D and lock a visit slot";
+  if (v.score >= 70) return lang === "ar" ? "اتصال فوري خلال ساعتين" : "Immediate call within 2 hours";
+  if (v.idle >= 2) return lang === "ar" ? "إعادة تنشيط برسالة قصيرة ثم اتصال" : "Reactivation SMS then call";
+  return lang === "ar" ? "رعاية العميل بمحتوى الوحدة المناسبة" : "Nurture with unit-specific content";
+};
+
+const getPriorityDue = (v) => {
+  if (v.score >= 70 || v.trigger?.type === "booking" || v.trigger?.type === "hot_ph") return "today";
+  if (v.trigger?.type === "pricing_stall" || v.idle >= 2) return "tomorrow";
+  return "week";
+};
+
+const getPriorityRisk = (v) => {
+  if (v.idle >= 3) return "high";
+  if (v.idle >= 2 || (v.score >= 40 && !v.trigger)) return "medium";
+  return "low";
+};
+
 // ─── CSS ─────────────────────────────────────────────────────
-const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-.db,.db *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Outfit',system-ui,-apple-system,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-.db{min-height:100vh;background:#08080C;color:#E8E8EC;overflow-x:hidden}
-
-/* ── LAYOUT ── */
-.db-sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:linear-gradient(180deg,#0E0E14 0%,#0A0A10 100%);border-right:1px solid rgba(255,255,255,.04);padding:1.5rem 0;display:flex;flex-direction:column;z-index:50}
-[dir="rtl"] .db-sidebar{left:auto;right:0;border-right:none;border-left:1px solid rgba(255,255,255,.04)}
-.db-main{margin-left:240px;padding:0}
-[dir="rtl"] .db-main{margin-left:0;margin-right:240px}
-.db-topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:.85rem 2rem;background:rgba(8,8,12,.85);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,.04)}
-.db-content{padding:1.5rem 2rem 3rem;max-width:1600px;margin:0 auto}
-
-/* ── SIDEBAR ── */
-.db-brand{padding:0 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.04)}
-.db-brand h2{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:#F0F0F4;letter-spacing:.01em}
-.db-brand h2 b{font-weight:700;background:linear-gradient(135deg,#e63946,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.db-brand p{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:.35rem;font-weight:500}
-.db-nav{flex:1;padding:1rem 0;overflow-y:auto;scrollbar-width:none}
-.db-nav::-webkit-scrollbar{display:none}
-.db-nav-item{display:flex;align-items:center;gap:.75rem;padding:.6rem 1.5rem;font-size:.8rem;color:rgba(255,255,255,.4);cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);border-left:2px solid transparent;user-select:none;position:relative;font-weight:400}
-[dir="rtl"] .db-nav-item{border-left:none;border-right:2px solid transparent;flex-direction:row-reverse;text-align:right}
-.db-nav-item:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.03)}
-.db-nav-item.act{color:#fff;background:linear-gradient(90deg,rgba(230,57,70,.1),transparent);border-left-color:#e63946;font-weight:500}
-[dir="rtl"] .db-nav-item.act{border-left-color:transparent;border-right-color:#e63946;background:linear-gradient(270deg,rgba(230,57,70,.1),transparent)}
-.db-nav-item .nav-ico{width:18px;height:18px;opacity:.45;flex-shrink:0;transition:.25s}
-.db-nav-item.act .nav-ico{opacity:1}
-.db-nav-item:hover .nav-ico{opacity:.7}
-.db-nav-label{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.18);padding:.75rem 1.5rem .35rem;font-weight:600}
-[dir="rtl"] .db-nav-label{text-align:right}
-.db-nav-count{padding:.12rem .5rem;border-radius:50px;background:linear-gradient(135deg,#e63946,#d62839);color:#fff;font-size:.55rem;font-weight:600;margin-left:auto;box-shadow:0 2px 8px rgba(230,57,70,.3)}
-[dir="rtl"] .db-nav-count{margin-left:0;margin-right:auto}
-
-/* ── EXEC BANNER ── */
-.db-exec{display:flex;align-items:stretch;gap:1.25rem;padding:1.25rem 1.5rem;border-radius:16px;background:linear-gradient(135deg,rgba(69,123,157,.06),rgba(230,57,70,.04),rgba(197,164,103,.03));border:1px solid rgba(255,255,255,.05);margin-bottom:1.5rem;position:relative;overflow:hidden}
-.db-exec::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(230,57,70,.06),transparent 70%);pointer-events:none}
-[dir="rtl"] .db-exec{flex-direction:row-reverse}
-.db-exec h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;margin-bottom:.35rem;color:#FFFFFF}
-.db-exec p{font-size:.78rem;color:rgba(255,255,255,.58);line-height:1.6}
-.db-exec-chips{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.6rem}
-.db-chip{padding:.22rem .65rem;border-radius:50px;font-size:.62rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.55);font-weight:500;backdrop-filter:blur(4px)}
-
-/* ── KPI STRIP ── */
-.db-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(255,255,255,.03);border-radius:14px;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.3)}
-.db-kpi{background:#0E0E14;padding:1.1rem 1.25rem;position:relative;transition:all .3s cubic-bezier(.4,0,.2,1)}
-.db-kpi:hover{background:#131319}
-.db-kpi::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:#e63946;transition:width .3s;border-radius:1px}
-.db-kpi:hover::after{width:40%}
-.db-kpi-val{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;color:#F0F0F4;line-height:1;margin-bottom:.3rem;letter-spacing:-.02em}
-.db-kpi-val.red{color:#e63946}.db-kpi-val.blue{color:#6BA3C7}.db-kpi-val.green{color:#2ec4b6}.db-kpi-val.amber{color:#f4a261}.db-kpi-val.gold{color:#C5A467}
-.db-kpi-lbl{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:600}
-.db-kpi-sub{font-size:.55rem;color:rgba(255,255,255,.25);margin-top:.15rem}
-
-/* ── VELOCITY KPI ROW ── */
-.db-vel-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.03);border-radius:14px;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.3)}
-.db-vel-kpi{background:linear-gradient(160deg,rgba(197,164,103,.04),#0E0E14 60%);padding:1rem 1.1rem;position:relative;border-left:3px solid;border-image:linear-gradient(180deg,#C5A467,rgba(197,164,103,.3)) 1}
-[dir="rtl"] .db-vel-kpi{border-left:none;border-right:3px solid;border-image:linear-gradient(180deg,#C5A467,rgba(197,164,103,.3)) 1}
-.db-vel-label{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:600}
-.db-vel-value{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#C5A467;line-height:1.1;margin:.2rem 0;letter-spacing:-.02em}
-.db-vel-sub{font-size:.55rem;color:rgba(255,255,255,.25)}
-
-/* ── CARDS ── */
-.db-grid{display:grid;gap:1.25rem;margin-bottom:1.5rem}
-.db-g2{grid-template-columns:1fr 1fr}.db-g3{grid-template-columns:1fr 1fr 1fr}
-.db-g21{grid-template-columns:2fr 1fr}.db-g12{grid-template-columns:1fr 2fr}
-@media(max-width:900px){.db-g2,.db-g3,.db-g21,.db-g12{grid-template-columns:1fr}}
-.db-card{background:linear-gradient(180deg,#111118 0%,#0E0E14 100%);border:1px solid rgba(255,255,255,.05);border-radius:16px;overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.db-card:hover{border-color:rgba(255,255,255,.1);box-shadow:0 4px 20px rgba(0,0,0,.3);transform:translateY(-1px)}
-.db-card-hd{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.35rem;border-bottom:1px solid rgba(255,255,255,.04)}
-[dir="rtl"] .db-card-hd{flex-direction:row-reverse}
-.db-card-title{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:600;color:#FFFFFF;letter-spacing:-.01em}
-.db-card-sub{font-size:.6rem;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase;font-weight:500}
-.db-card-body{padding:1.35rem}
-
-/* ── SECTION HEADER ── */
-.db-sec{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;margin-top:.5rem}
-[dir="rtl"] .db-sec{flex-direction:row-reverse}
-.db-sec h2{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;white-space:nowrap;color:#FFFFFF;letter-spacing:-.01em}
-.db-sec-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,.06),transparent)}
-[dir="rtl"] .db-sec-line{background:linear-gradient(270deg,rgba(255,255,255,.06),transparent)}
-.db-sec-badge{font-size:.6rem;color:rgba(255,255,255,.35);padding:.2rem .6rem;border-radius:50px;border:1px solid rgba(255,255,255,.06);white-space:nowrap;font-weight:500;backdrop-filter:blur(4px)}
-
-/* ── ACTION BARS ── */
-.db-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:1.5rem}
-@media(max-width:768px){.db-actions{grid-template-columns:repeat(2,1fr)}}
-.db-abar{background:linear-gradient(180deg,#111118,#0E0E14);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:1rem;text-align:center;position:relative;overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1)}
-.db-abar:hover{border-color:rgba(255,255,255,.1);transform:translateY(-1px)}
-.db-abar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 14px 14px}
-.db-abar:nth-child(1)::after{background:linear-gradient(90deg,#e63946,rgba(230,57,70,.3))}.db-abar:nth-child(2)::after{background:linear-gradient(90deg,#457b9d,rgba(69,123,157,.3))}
-.db-abar:nth-child(3)::after{background:linear-gradient(90deg,#2ec4b6,rgba(46,196,182,.3))}.db-abar:nth-child(4)::after{background:linear-gradient(90deg,#f4a261,rgba(244,162,97,.3))}
-.db-abar .val{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;letter-spacing:-.02em}
-.db-abar .val.red{color:#e63946}.db-abar .val.blue{color:#6BA3C7}.db-abar .val.green{color:#2ec4b6}.db-abar .val.amber{color:#f4a261}
-.db-abar .lbl{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:.25rem;font-weight:500}
-.db-abar .split{display:flex;justify-content:center;gap:.85rem;margin-top:.4rem;font-size:.62rem;color:rgba(255,255,255,.35)}
-.db-abar .split .dot{width:5px;height:5px;border-radius:50%;margin-top:3px}
-
-/* ── TABLE ── */
-.db-table{width:100%;border-collapse:collapse}
-.db-table th{text-align:left;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);font-weight:600;background:rgba(255,255,255,.02)}
-[dir="rtl"] .db-table th{text-align:right}
-.db-table td{font-size:.8rem;padding:.8rem 1rem;border-bottom:1px solid rgba(255,255,255,.03);color:rgba(255,255,255,.7);transition:background .2s}
-.db-table tr:hover td{background:rgba(255,255,255,.02)}
-
-/* ── LIVE FEED ── */
-.db-feed{max-height:380px;overflow-y:auto;scrollbar-width:thin}
-.db-feed::-webkit-scrollbar{width:3px}
-.db-feed::-webkit-scrollbar-track{background:transparent}
-.db-feed::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
-.db-feed::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.15)}
-.db-feed-item{display:flex;align-items:flex-start;gap:.7rem;padding:.65rem .2rem;border-bottom:1px solid rgba(255,255,255,.03);transition:background .2s}
-.db-feed-item:hover{background:rgba(255,255,255,.02);border-radius:8px}
-[dir="rtl"] .db-feed-item{flex-direction:row-reverse;text-align:right}
-.db-feed-ico{width:32px;height:32px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8rem}
-.db-feed-ico.vip{background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.15);box-shadow:0 0 12px rgba(230,57,70,.06)}
-.db-feed-ico.reg{background:rgba(69,123,157,.08);border:1px solid rgba(69,123,157,.15)}
-.db-feed-ico.anon{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
-.db-feed-body{flex:1;min-width:0}
-.db-feed-body strong{font-weight:600;font-size:.8rem;color:#F0F0F4}
-.db-feed-body .desc{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:.15rem}
-.db-feed-time{font-size:.6rem;color:rgba(255,255,255,.28);white-space:nowrap;font-weight:500}
-
-/* ── VIP DIRECTORY ── */
-.db-vip-row{display:flex;align-items:center;gap:.75rem;padding:.75rem;border-radius:12px;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02);cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);margin-bottom:.45rem}
-[dir="rtl"] .db-vip-row{flex-direction:row-reverse;text-align:right}
-.db-vip-row:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);transform:translateX(4px)}
-[dir="rtl"] .db-vip-row:hover{transform:translateX(-4px)}
-.db-vip-row.active{background:rgba(69,123,157,.08);border-color:rgba(69,123,157,.2);box-shadow:0 0 20px rgba(69,123,157,.06)}
-.db-vip-avatar{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.db-vip-info{flex:1;min-width:0}
-.db-vip-info .name{font-weight:600;font-size:.82rem;color:#F0F0F4}
-.db-vip-info .code{font-size:.65rem;color:rgba(255,255,255,.35);font-weight:500}
-.db-score-ring{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;background:rgba(0,0,0,.2)}
-
-/* ── TIMELINE ── */
-.db-tl-item{display:flex;gap:.85rem;padding:.6rem 0;position:relative}
-[dir="rtl"] .db-tl-item{flex-direction:row-reverse;text-align:right}
-.db-tl-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0;border:2.5px solid;background:#0E0E14;box-shadow:0 0 0 3px rgba(0,0,0,.3)}
-.db-tl-event{font-size:.8rem;color:rgba(255,255,255,.7);font-weight:500}
-.db-tl-meta{font-size:.62rem;color:rgba(255,255,255,.35);font-weight:500}
-.db-tl-unit{font-size:.65rem;color:#e63946;font-weight:600}
-
-/* ── PORTAL BADGES ── */
-.db-pbadge{display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .55rem;border-radius:100px;font-size:.6rem;font-weight:600}
-.db-pbadge::before{content:'';width:5px;height:5px;border-radius:50%}
-.db-p-vip{border:1px solid rgba(230,57,70,.2);color:#e63946;background:rgba(230,57,70,.06)}.db-p-vip::before{background:#e63946;box-shadow:0 0 6px rgba(230,57,70,.4)}
-.db-p-reg{border:1px solid rgba(69,123,157,.2);color:#6BA3C7;background:rgba(69,123,157,.06)}.db-p-reg::before{background:#6BA3C7}
-.db-p-anon{border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.45);background:rgba(255,255,255,.02)}.db-p-anon::before{background:rgba(255,255,255,.35)}
-.db-p-lead{border:1px solid rgba(46,196,182,.2);color:#2ec4b6;background:rgba(46,196,182,.06)}.db-p-lead::before{background:#2ec4b6}
-
-/* ── ALERT CHIPS ── */
-.db-alert{display:inline-flex;padding:.18rem .55rem;border-radius:6px;font-size:.6rem;font-weight:600;margin-right:.3rem;margin-bottom:.3rem;letter-spacing:.02em}
-.db-alert-red{background:rgba(230,57,70,.08);color:#e63946;border:1px solid rgba(230,57,70,.15)}
-.db-alert-blue{background:rgba(69,123,157,.08);color:#6BA3C7;border:1px solid rgba(69,123,157,.15)}
-.db-alert-amber{background:rgba(244,162,97,.08);color:#f4a261;border:1px solid rgba(244,162,97,.15)}
-
-/* ── SALES TRIGGER BOX ── */
-.db-trigger{padding:.85rem;border-radius:12px;margin-bottom:.85rem;display:flex;align-items:flex-start;gap:.65rem;backdrop-filter:blur(8px)}
-[dir="rtl"] .db-trigger{flex-direction:row-reverse;text-align:right}
-.db-trigger-ico{font-size:1.2rem;flex-shrink:0;margin-top:.05rem}
-.db-trigger-body{flex:1}
-.db-trigger-label{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:.2rem}
-.db-trigger-text{font-size:.8rem;line-height:1.6;color:rgba(255,255,255,.75)}
-
-/* ── AT RISK BADGE ── */
-.db-at-risk{display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .5rem;border-radius:6px;font-size:.55rem;font-weight:700;background:rgba(230,57,70,.1);color:#e63946;border:1px solid rgba(230,57,70,.18);animation:dbPulse 2s infinite;letter-spacing:.04em}
-.db-idle-ok{color:#2ec4b6;font-weight:600;font-size:.75rem}
-.db-idle-warn{color:#f4a261;font-weight:600;font-size:.75rem}
-.db-idle-danger{color:#e63946;font-weight:700;font-size:.75rem}
-
-/* ── ZERO ENGAGEMENT BADGE ── */
-.db-zero-eng{display:inline-flex;align-items:center;gap:.3rem;padding:.12rem .45rem;border-radius:6px;font-size:.52rem;font-weight:700;background:rgba(230,57,70,.06);color:#e63946;border:1px dashed rgba(230,57,70,.2);letter-spacing:.06em}
-
-/* ── VIP CANDIDATE CARD ── */
-.db-candidate{display:flex;align-items:center;gap:.75rem;padding:.75rem;border-radius:12px;border:2px dashed rgba(197,164,103,.25);background:linear-gradient(135deg,rgba(197,164,103,.04),transparent);margin-bottom:.55rem;transition:all .25s}
-.db-candidate:hover{border-color:rgba(197,164,103,.4);background:rgba(197,164,103,.06)}
-[dir="rtl"] .db-candidate{flex-direction:row-reverse;text-align:right}
-
-/* ── HEATMAP ── */
-.db-heat{display:grid;gap:3px}
-.db-heat-cell{padding:.5rem;text-align:center;border-radius:6px;font-size:.78rem;font-weight:700;transition:all .2s}
-.db-heat-cell:hover{transform:scale(1.05)}
-.db-heat-vhigh{background:rgba(230,57,70,.15);color:#e63946;box-shadow:inset 0 0 12px rgba(230,57,70,.08)}
-.db-heat-high{background:rgba(244,162,97,.15);color:#f4a261;box-shadow:inset 0 0 12px rgba(244,162,97,.06)}
-.db-heat-med{background:rgba(69,123,157,.12);color:#6BA3C7}
-.db-heat-low{background:rgba(255,255,255,.03);color:rgba(255,255,255,.35)}
-
-/* ── CAMPAIGN CARDS ── */
-.db-campaign{display:flex;align-items:center;gap:.85rem;padding:1rem;border-radius:12px;border:1px solid rgba(255,255,255,.05);background:linear-gradient(180deg,#111118,#0E0E14);margin-bottom:.55rem;transition:all .25s}
-.db-campaign:hover{border-color:rgba(255,255,255,.1);transform:translateY(-1px)}
-[dir="rtl"] .db-campaign{flex-direction:row-reverse;text-align:right}
-.db-campaign-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.db-campaign-dot.active{background:#2ec4b6;box-shadow:0 0 8px rgba(46,196,182,.3)}.db-campaign-dot.paused{background:#f4a261;box-shadow:0 0 8px rgba(244,162,97,.3)}
-
-/* ── SETTING ITEMS ── */
-.db-setting{padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.8rem;color:rgba(255,255,255,.55);display:flex;align-items:flex-start;gap:.6rem;transition:color .2s}
-.db-setting:hover{color:rgba(255,255,255,.7)}
-.db-setting::before{content:'';width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.2);margin-top:.55rem;flex-shrink:0}
-
-/* ── UNIT STATUS ── */
-.db-unit-status{padding:.2rem .6rem;border-radius:6px;font-size:.62rem;font-weight:600;text-transform:capitalize;letter-spacing:.03em}
-.db-us-available{background:rgba(46,196,182,.08);color:#2ec4b6;border:1px solid rgba(46,196,182,.15)}
-.db-us-reserved{background:rgba(244,162,97,.08);color:#f4a261;border:1px solid rgba(244,162,97,.15)}
-.db-us-sold{background:rgba(107,114,128,.08);color:rgba(255,255,255,.35);border:1px solid rgba(107,114,128,.15)}
-
-/* ── PILL BUTTONS ── */
-.db-pill{padding:.35rem .8rem;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:rgba(255,255,255,.6);font-size:.7rem;font-family:'Inter','Outfit';cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);font-weight:500;backdrop-filter:blur(4px)}
-.db-pill:hover{background:rgba(255,255,255,.07);color:#FFFFFF;border-color:rgba(255,255,255,.15);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.db-pill.act{background:rgba(69,123,157,.12);border-color:rgba(69,123,157,.2);color:#6BA3C7}
-.db-pill.accent{background:linear-gradient(135deg,#e63946,#d62839);border-color:transparent;color:#fff;box-shadow:0 2px 12px rgba(230,57,70,.25)}
-.db-pill.accent:hover{background:linear-gradient(135deg,#d62839,#c1121f);box-shadow:0 4px 16px rgba(230,57,70,.35);transform:translateY(-2px)}
-
-/* ── MODALS ── */
-.db-modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.65);backdrop-filter:blur(12px) saturate(120%);display:flex;align-items:center;justify-content:center;animation:dbFadeIn .25s cubic-bezier(.4,0,.2,1)}
-.db-modal{background:linear-gradient(180deg,#1A1A24,#141420);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:2rem;max-width:540px;width:90%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 32px 64px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.02);animation:dbSlideUp .3s cubic-bezier(.4,0,.2,1)}
-@keyframes dbSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.db-modal h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600;margin-bottom:.5rem;color:#FFFFFF}
-.db-modal-close{position:absolute;top:1.1rem;right:1.1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;font-size:.9rem;color:rgba(255,255,255,.5);cursor:pointer;padding:.35rem .5rem;transition:all .2s}
-.db-modal-close:hover{background:rgba(255,255,255,.1);color:#fff}
-[dir="rtl"] .db-modal-close{right:auto;left:1.1rem}
-.db-input{width:100%;padding:.6rem .85rem;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:.82rem;font-family:'Inter','Outfit';margin-top:.3rem;background:rgba(255,255,255,.03);color:#E8E8EC;transition:all .2s}
-.db-input:focus{outline:none;border-color:#457b9d;background:rgba(69,123,157,.04);box-shadow:0 0 0 3px rgba(69,123,157,.1)}
-.db-form-group{margin-bottom:.85rem}
-.db-form-group label{font-size:.72rem;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.03em}
-
-/* ── LANG TOGGLE ── */
-.db-lang{display:flex;border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.02)}
-.db-lang button{padding:.35rem .65rem;border:none;background:transparent;font-size:.72rem;cursor:pointer;color:rgba(255,255,255,.4);font-family:'Inter','Outfit';transition:all .2s;font-weight:500}
-.db-lang button.act{background:rgba(230,57,70,.1);color:#e63946;font-weight:700}
-.db-lang button:hover:not(.act){color:rgba(255,255,255,.6)}
-
-/* ── TOPBAR ── */
-.db-tb-title{font-size:.88rem;font-weight:600;color:#F0F0F4;letter-spacing:-.01em}
-.db-tb-sub{font-size:.62rem;color:rgba(255,255,255,.35);font-weight:500}
-.db-tb-right{display:flex;align-items:center;gap:.85rem}
-[dir="rtl"] .db-tb-right{flex-direction:row-reverse}
-.db-live{display:flex;align-items:center;gap:.4rem;font-size:.65rem;color:#2ec4b6;font-weight:600;letter-spacing:.06em;padding:.3rem .65rem;background:rgba(46,196,182,.06);border:1px solid rgba(46,196,182,.12);border-radius:50px}
-.db-live::before{content:'';width:6px;height:6px;border-radius:50%;background:#2ec4b6;animation:dbPulse 2s infinite;box-shadow:0 0 8px rgba(46,196,182,.5)}
-@keyframes dbPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.85)}}
-@keyframes dbFadeIn{from{opacity:0}to{opacity:1}}
-
-/* ── FUNNEL ── */
-.db-funnel-step{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
-[dir="rtl"] .db-funnel-step{flex-direction:row-reverse}
-.db-funnel-lbl{font-size:.7rem;color:rgba(255,255,255,.45);width:100px;text-align:right;flex-shrink:0;font-weight:500}
-[dir="rtl"] .db-funnel-lbl{text-align:left}
-.db-funnel-bar{height:30px;border-radius:6px;display:flex;align-items:center;padding-left:.85rem;font-size:.75rem;font-weight:600;color:#fff;min-width:30px;transition:.6s}
-.db-funnel-pct{font-size:.62rem;color:rgba(255,255,255,.35);width:35px;font-weight:500}
-.db-funnel-drop{font-size:.58rem;color:#e63946;font-weight:600;text-align:center;padding:.15rem 0}
-
-/* ── SCORE DISTRIBUTION HISTOGRAM ── */
-.db-hist-bar{display:flex;align-items:flex-end;gap:4px;height:90px;padding-top:.25rem}
-.db-hist-col{flex:1;border-radius:4px 4px 0 0;transition:all .4s cubic-bezier(.4,0,.2,1);cursor:default;position:relative;min-height:3px}
-.db-hist-col:hover{opacity:.85;transform:scaleY(1.05);transform-origin:bottom}
-.db-hist-labels{display:flex;gap:4px;margin-top:.3rem}
-.db-hist-labels span{flex:1;font-size:.58rem;color:rgba(255,255,255,.35);text-align:center;font-weight:500}
-
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  .db-sidebar{display:none}
-  .db-main{margin-left:0 !important;margin-right:0 !important}
-  .db-kpis{grid-template-columns:repeat(2,1fr)}
-  .db-vel-kpis{grid-template-columns:repeat(2,1fr)}
-  .db-topbar{flex-wrap:wrap;gap:.5rem;padding:.75rem 1rem}
-  .db-content{padding:1rem}
-}
-
-/* ══════════════════════════════════════════════════════════════ */
-/* LIGHT THEME OVERRIDE — activated via .db.light class          */
-/* ══════════════════════════════════════════════════════════════ */
-.db.light{background:#F6F5F2;color:#1a1a1f}
-.db.light .db-sidebar{background:linear-gradient(180deg,#FFFFFF,#FAFAF8);border-right-color:rgba(0,0,0,.06)}
-[dir="rtl"] .db.light .db-sidebar{border-left-color:rgba(0,0,0,.06)}
-.db.light .db-brand h2{color:#1a1a1f}
-.db.light .db-brand h2 b{-webkit-text-fill-color:#e63946}
-.db.light .db-brand p{color:#a0a0a8}
-.db.light .db-nav-item{color:#8e8e9a}
-.db.light .db-nav-item:hover{color:#444;background:rgba(0,0,0,.02)}
-.db.light .db-nav-item.act{color:#e63946;background:linear-gradient(90deg,rgba(230,57,70,.04),transparent)}
-.db.light .db-nav-label{color:#c0c0c8}
-.db.light .db-topbar{background:rgba(246,245,242,.9);border-bottom-color:rgba(0,0,0,.05)}
-.db.light .db-tb-title{color:#1a1a1f}
-.db.light .db-tb-sub{color:#8e8e9a}
-.db.light .db-exec{background:linear-gradient(135deg,rgba(69,123,157,.04),rgba(230,57,70,.02),rgba(197,164,103,.02));border-color:rgba(0,0,0,.05)}
-.db.light .db-exec::before{background:radial-gradient(circle,rgba(230,57,70,.03),transparent 70%)}
-.db.light .db-exec h3{color:#1a1a1f}
-.db.light .db-exec p{color:#666}
-.db.light .db-chip{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.05);color:#666}
-.db.light .db-kpis{background:rgba(0,0,0,.03);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.db.light .db-kpi{background:#fff}
-.db.light .db-kpi:hover{background:#FEFEFE}
-.db.light .db-kpi::after{background:#e63946}
-.db.light .db-kpi-val{color:#1a1a1f}
-.db.light .db-kpi-lbl{color:#8e8e9a}
-.db.light .db-kpi-sub{color:#bbb}
-.db.light .db-vel-kpis{background:rgba(0,0,0,.03);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.db.light .db-vel-kpi{background:linear-gradient(160deg,rgba(197,164,103,.03),#fff 60%)}
-.db.light .db-vel-label{color:#8e8e9a}
-.db.light .db-vel-sub{color:#bbb}
-.db.light .db-card{background:#fff;border-color:rgba(0,0,0,.05);box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.db.light .db-card:hover{border-color:rgba(0,0,0,.1);box-shadow:0 4px 16px rgba(0,0,0,.06)}
-.db.light .db-card-hd{border-bottom-color:rgba(0,0,0,.04)}
-.db.light .db-card-title{color:#1a1a1f}
-.db.light .db-card-sub{color:#8e8e9a}
-.db.light .db-card-body{color:#1a1a1f}
-.db.light .db-sec h2{color:#1a1a1f}
-.db.light .db-sec-line{background:linear-gradient(90deg,rgba(0,0,0,.06),transparent)}
-.db.light .db-sec-badge{color:#8e8e9a;border-color:rgba(0,0,0,.05)}
-.db.light .db-actions .db-abar{background:#fff;border-color:rgba(0,0,0,.05);box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.db.light .db-abar .lbl{color:#8e8e9a}
-.db.light .db-abar .split{color:#8e8e9a}
-.db.light .db-table th{color:#8e8e9a;background:rgba(0,0,0,.015);border-bottom-color:rgba(0,0,0,.05)}
-.db.light .db-table td{color:#555;border-bottom-color:rgba(0,0,0,.04)}
-.db.light .db-table tr:hover td{background:rgba(0,0,0,.01)}
-.db.light .db-feed-item{border-bottom-color:rgba(0,0,0,.03)}
-.db.light .db-feed-ico.vip{background:rgba(230,57,70,.05);border-color:rgba(230,57,70,.1)}
-.db.light .db-feed-ico.reg{background:rgba(69,123,157,.05);border-color:rgba(69,123,157,.1)}
-.db.light .db-feed-ico.anon{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.05)}
-.db.light .db-feed-body strong{color:#1a1a1f}
-.db.light .db-feed-body .desc{color:#666}
-.db.light .db-feed-time{color:#a0a0a8}
-.db.light .db-vip-row{border-color:rgba(0,0,0,.05);background:rgba(0,0,0,.01)}
-.db.light .db-vip-row:hover{background:rgba(0,0,0,.025);border-color:rgba(0,0,0,.1)}
-.db.light .db-vip-row.active{background:rgba(69,123,157,.05);border-color:rgba(69,123,157,.12)}
-.db.light .db-vip-info .name{color:#1a1a1f}
-.db.light .db-vip-info .code{color:#8e8e9a}
-.db.light .db-tl-dot{background:#fff;box-shadow:0 0 0 3px rgba(0,0,0,.04)}
-.db.light .db-tl-event{color:#444}
-.db.light .db-tl-meta{color:#8e8e9a}
-.db.light .db-trigger-text{color:#555 !important}
-.db.light .db-pill{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.06);color:#555}
-.db.light .db-pill:hover{background:rgba(0,0,0,.04);color:#1a1a1f;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.db.light .db-pill.act{background:rgba(69,123,157,.08);border-color:rgba(69,123,157,.15);color:#457b9d}
-.db.light .db-heat-cell{font-weight:700}
-.db.light .db-heat-low{background:rgba(0,0,0,.03);color:#a0a0a8}
-.db.light .db-heat-vhigh{background:rgba(230,57,70,.1);box-shadow:inset 0 0 8px rgba(230,57,70,.05)}
-.db.light .db-campaign{background:#fff;border-color:rgba(0,0,0,.05);box-shadow:0 1px 3px rgba(0,0,0,.03)}
-.db.light .db-setting{border-bottom-color:rgba(0,0,0,.03);color:#555}
-.db.light .db-setting::before{background:rgba(0,0,0,.15)}
-.db.light .db-modal{background:linear-gradient(180deg,#fff,#FAFAF8);border-color:rgba(0,0,0,.06);box-shadow:0 32px 64px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.02)}
-.db.light .db-modal h3{color:#1a1a1f}
-.db.light .db-modal-close{color:#8e8e9a;background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.06)}
-.db.light .db-input{background:#F6F5F2;border-color:rgba(0,0,0,.08);color:#1a1a1f}
-.db.light .db-input:focus{background:rgba(69,123,157,.02);box-shadow:0 0 0 3px rgba(69,123,157,.06)}
-.db.light .db-form-group label{color:#8e8e9a}
-.db.light .db-lang{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.06)}
-.db.light .db-lang button{color:#8e8e9a}
-.db.light .db-lang button.act{background:rgba(230,57,70,.06);color:#e63946}
-.db.light .db-funnel-lbl{color:#8e8e9a}
-.db.light .db-funnel-pct{color:#8e8e9a}
-.db.light .db-hist-labels span{color:#8e8e9a}
-.db.light .db-modal-overlay{background:rgba(0,0,0,.3)}
-.db.light .db-live{background:rgba(46,196,182,.04);border-color:rgba(46,196,182,.1)}
-.db.light .db-candidate{border-color:rgba(197,164,103,.2);background:linear-gradient(135deg,rgba(197,164,103,.03),transparent)}
-.db.light .db-alert-red{background:rgba(230,57,70,.04);border-color:rgba(230,57,70,.1)}
-.db.light .db-alert-blue{background:rgba(69,123,157,.04);border-color:rgba(69,123,157,.1)}
-.db.light .db-alert-amber{background:rgba(244,162,97,.04);border-color:rgba(244,162,97,.1)}
-.db.light .db-nav-count{box-shadow:0 2px 6px rgba(230,57,70,.2)}
-
-/* Theme toggle button */
-.db-theme-toggle{display:flex;align-items:center;gap:.4rem;padding:.3rem .7rem;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);cursor:pointer;font-size:.65rem;font-family:'Inter','Outfit';color:rgba(255,255,255,.45);transition:all .25s cubic-bezier(.4,0,.2,1);font-weight:500}
-.db-theme-toggle:hover{border-color:rgba(255,255,255,.15);color:#fff;background:rgba(255,255,255,.06)}
-.db.light .db-theme-toggle{border-color:rgba(0,0,0,.08);background:rgba(0,0,0,.02);color:#8e8e9a}
-.db.light .db-theme-toggle:hover{border-color:rgba(0,0,0,.15);color:#1a1a1f}
-.db-theme-dot{width:16px;height:16px;border-radius:50%;position:relative;overflow:hidden}
-.db-theme-dot::before{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,#08080C 50%,#F6F5F2 50%);border:1.5px solid rgba(255,255,255,.15);transition:transform .3s}
-.db-theme-toggle:hover .db-theme-dot::before{transform:rotate(180deg)}
-`;
 
 // ─── ANIMATED COUNTER COMPONENT ──────────────────────────────
 const AnimCounter = ({value, duration = 1200}) => {
@@ -894,16 +312,25 @@ const Sparkline = ({data = [], color = "#e63946", height = 24, width = 60}) => {
 // MAIN DASHBOARD COMPONENT
 // ═══════════════════════════════════════════════════════════════
 export default function Dashboard() {
-  const [lang, setLang] = useState("en");
-  const [theme, setTheme] = useState("dark");
+  const navigate = useNavigate();
+  const { lang } = useLanguage();
+  const t = useTranslation("dashboard");
+  const [theme, setTheme] = useState("light");
   const [activeTab, setActiveTab] = useState("overview");
   const [events, setEvents] = useState([]);
   const [selectedVip, setSelectedVip] = useState(null);
   const [feedFilter, setFeedFilter] = useState("all");
+  const [ownerFilter, setOwnerFilter] = useState("all");
   const [unitTowerFilter, setUnitTowerFilter] = useState("all");
   const [modal, setModal] = useState(null);
   const [outreachVip, setOutreachVip] = useState(null);
-  const t = useCallback((k) => (T[lang]||T.en)[k]||k, [lang]);
+  const [notifications, setNotifications] = useState([]);
+  const notifIdRef = useRef(0);
+  const pushNotif = useCallback((notif) => {
+    const id = ++notifIdRef.current;
+    setNotifications(prev => [{ ...notif, id, ts: Date.now() }, ...prev].slice(0, 5));
+    setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 8000);
+  }, []);
   const isAr = lang === "ar";
   // Theme-aware chart colors
   const cx = {
@@ -924,9 +351,55 @@ export default function Dashboard() {
     load(); const iv = setInterval(load, 3000);
     // Real-time listener from VIP/Ahmed/Marketplace portals
     let bc;
-    try { bc = new BroadcastChannel("dnfc_tracking"); bc.onmessage = () => load(); } catch(e) {}
+    try {
+      bc = new BroadcastChannel("dnfc_tracking");
+      bc.onmessage = (e) => {
+        load();
+        const d = e.data;
+        if (d && d.event) {
+          const NM = {
+            request_pricing:{icon:"\uD83D\uDCB0",type:"intent",tpl:d=>({en:`${d.vipName||"A visitor"} requested pricing for ${d.unitId||"a unit"}`,ar:`${d.vipName||"\u0632\u0627\u0626\u0631"} \u0637\u0644\u0628 \u062A\u0633\u0639\u064A\u0631 ${d.unitId||"\u0648\u062D\u062F\u0629"}`})},
+            book_viewing:{icon:"\uD83D\uDCC5",type:"action",tpl:d=>({en:`${d.vipName||d.name||"A visitor"} booked a private viewing`,ar:`${d.vipName||d.name||"\u0632\u0627\u0626\u0631"} \u062D\u062C\u0632 \u0645\u0639\u0627\u064A\u0646\u0629 \u062E\u0627\u0635\u0629`})},
+            download_brochure:{icon:"\uD83D\uDCC4",type:"intent",tpl:d=>({en:`${d.vipName||"A visitor"} downloaded brochure`,ar:`${d.vipName||"\u0632\u0627\u0626\u0631"} \u062D\u0645\u0651\u0644 \u0643\u062A\u064A\u0628`})},
+            explore_payment_plan:{icon:"\uD83D\uDCB3",type:"intent",tpl:d=>({en:`${d.vipName||"A visitor"} explored payment plans`,ar:`${d.vipName||"\u0632\u0627\u0626\u0631"} \u0627\u0633\u062A\u0639\u0631\u0636 \u062E\u0637\u0637 \u0627\u0644\u062F\u0641\u0639`})},
+            contact_advisor:{icon:"\uD83D\uDCDE",type:"action",tpl:d=>({en:`${d.vipName||"A visitor"} wants to speak with an advisor`,ar:`${d.vipName||"\u0632\u0627\u0626\u0631"} \u064A\u0631\u064A\u062F \u0627\u0644\u062A\u062D\u062F\u062B \u0645\u0639 \u0645\u0633\u062A\u0634\u0627\u0631`})},
+            lead_captured:{icon:"\uD83C\uDFAF",type:"action",tpl:d=>({en:`New lead captured: ${d.leadName||"Unknown"}`,ar:`\u062A\u0645 \u0627\u0644\u062A\u0642\u0627\u0637 \u0639\u0645\u064A\u0644 \u062C\u062F\u064A\u062F: ${d.leadName||"\u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641"}`})},
+            use_roi_calculator:{icon:"\uD83D\uDCCA",type:"engage",tpl:d=>({en:`${d.vipName||"A visitor"} opened ROI calculator`,ar:`${d.vipName||"\u0632\u0627\u0626\u0631"} \u0641\u062A\u062D \u062D\u0627\u0633\u0628\u0629 \u0627\u0644\u0639\u0627\u0626\u062F`})},
+            view_floorplan:{icon:"\uD83D\uDCD0",type:"engage",tpl:d=>({en:`${d.vipName||"A visitor"} viewed floor plan`,ar:`${d.vipName||"\u0632\u0627\u0626\u0631"} \u0634\u0627\u0647\u062F \u0645\u062E\u0637\u0637`})},
+          };
+          const map = NM[d.event];
+          if (map) { const ms = map.tpl(d); pushNotif({ icon:map.icon, type:map.type, portal:d.portalType||"vip", msg:ms[lang]||ms.en }); }
+        }
+      };
+    } catch(e) {}
     return () => { clearInterval(iv); bc?.close(); };
+  }, [lang, pushNotif]);
+
+  // Demo notifications — auto-fire every 25s
+  useEffect(() => {
+    const DN = [
+      {icon:"\uD83D\uDD25",type:"action",msg:lang==="ar"?"\u062E\u0627\u0644\u062F \u0627\u0644\u0631\u0627\u0634\u062F \u0637\u0644\u0628 \u062E\u0637\u0629 \u062F\u0641\u0639 \u2014 Aurora Penthouse":"Khalid Al-Rashid requested payment plan \u2014 Aurora Penthouse",portal:"vip"},
+      {icon:"\uD83D\uDCC5",type:"action",msg:lang==="ar"?"\u0641\u0627\u0637\u0645\u0629 \u0627\u0644\u0645\u0646\u0635\u0648\u0631\u064A \u062D\u062C\u0632\u062A \u0645\u0639\u0627\u064A\u0646\u0629 \u062E\u0627\u0635\u0629":"Fatima Al-Mansouri booked private viewing \u2014 Horizon Family 3B",portal:"vip"},
+      {icon:"\uD83D\uDCB0",type:"intent",msg:lang==="ar"?"\u0632\u0627\u0626\u0631 \u0645\u062C\u0647\u0648\u0644 \u0637\u0644\u0628 \u062A\u0633\u0639\u064A\u0631 \u2014 Nova Penthouse":"Anonymous visitor requested pricing \u2014 Nova Penthouse 1",portal:"anonymous"},
+      {icon:"\uD83D\uDCCA",type:"intent",msg:lang==="ar"?"\u062E\u0627\u0644\u062F \u0627\u0644\u0631\u0627\u0634\u062F \u0641\u062A\u062D \u062D\u0627\u0633\u0628\u0629 \u0627\u0644\u0639\u0627\u0626\u062F":"Khalid Al-Rashid opened ROI calculator",portal:"vip"},
+      {icon:"\uD83C\uDFAF",type:"action",msg:lang==="ar"?"\u062A\u0645 \u0627\u0644\u062A\u0642\u0627\u0637 \u0639\u0645\u064A\u0644 \u062C\u062F\u064A\u062F: \u0639\u0645\u0631 \u062E\u0644\u064A\u0644":"New lead captured: Omar Khalil",portal:"lead"},
+      {icon:"\uD83D\uDCD0",type:"engage",msg:lang==="ar"?"\u0641\u0627\u0637\u0645\u0629 \u0627\u0644\u0645\u0646\u0635\u0648\u0631\u064A \u0634\u0627\u0647\u062F\u062A \u0645\u062E\u0637\u0637 3 \u0645\u0631\u0627\u062A":"Fatima Al-Mansouri viewed floor plan 3 times",portal:"vip"},
+      {icon:"\uD83D\uDCDE",type:"action",msg:lang==="ar"?"\u062E\u0627\u0644\u062F \u0627\u0644\u0631\u0627\u0634\u062F \u064A\u0631\u064A\u062F \u0627\u0644\u062A\u062D\u062F\u062B \u0645\u0639 \u0645\u0633\u062A\u0634\u0627\u0631 \u2014 \u0627\u062A\u0635\u0644 \u0627\u0644\u0622\u0646":"Khalid Al-Rashid wants advisor \u2014 call now!",portal:"vip"},
+    ];
+    let idx = 0;
+    const timer = setInterval(() => { pushNotif(DN[idx % DN.length]); idx++; }, 25000);
+    const first = setTimeout(() => pushNotif(DN[0]), 5000);
+    return () => { clearInterval(timer); clearTimeout(first); };
+  }, [lang, pushNotif]);
+
+  const handleExport = useCallback(() => {
+    document.querySelector(".db")?.classList.add("db-printing");
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => document.querySelector(".db")?.classList.remove("db-printing"), 500);
+    }, 100);
   }, []);
+
   const handleTab = useCallback((tab) => { setActiveTab(tab); setSelectedVip(null); window.scrollTo({top:0,behavior:"smooth"}); }, []);
 
   // ─── METRICS ENGINE v3.1: Time-Decay + Velocity ────────────
@@ -1004,11 +477,11 @@ export default function Dashboard() {
     }); const unitInt = Object.values(um);
     // Funnel with drop-off
     const fnRaw = [
-      {label:t("totalVisitors"),count:vipN.length+regN.length+anonS.length+leadN.length,color:"#6B7280"},
-      {label:t("viewedUnit"),count:[...new Set(events.filter(e=>["view_unit","unit_view"].includes(e.event)).map(e=>e.vipName||e.userName||e.sessionId))].length,color:"#457b9d"},
-      {label:t("downloaded"),count:[...new Set(events.filter(e=>e.event==="download_brochure").map(e=>e.vipName||e.userName||e.leadName))].length,color:"#6ba3c7"},
-      {label:t("requestedPricing"),count:[...new Set(events.filter(e=>e.event==="request_pricing").map(e=>e.vipName||e.userName||e.leadName))].length,color:"#f4a261"},
-      {label:t("bookedViewing"),count:[...new Set(events.filter(e=>e.event==="book_viewing").map(e=>e.vipName||e.userName||e.leadName))].length,color:"#2ec4b6"},
+      {label:t("totalVisitors"),count:vipN.length+regN.length+anonS.length+leadN.length,color:"#6B7280",hint:t("funnelHintVisitors")},
+      {label:t("viewedUnit"),count:[...new Set(events.filter(e=>["view_unit","unit_view"].includes(e.event)).map(e=>e.vipName||e.userName||e.sessionId))].length,color:"#457b9d",hint:t("funnelHintViewed")},
+      {label:t("downloaded"),count:[...new Set(events.filter(e=>e.event==="download_brochure").map(e=>e.vipName||e.userName||e.leadName))].length,color:"#6ba3c7",hint:t("funnelHintDownloaded")},
+      {label:t("requestedPricing"),count:[...new Set(events.filter(e=>e.event==="request_pricing").map(e=>e.vipName||e.userName||e.leadName))].length,color:"#f4a261",hint:t("funnelHintPricing")},
+      {label:t("bookedViewing"),count:[...new Set(events.filter(e=>e.event==="book_viewing").map(e=>e.vipName||e.userName||e.leadName))].length,color:"#2ec4b6",hint:t("funnelHintBooked")},
     ];
     const fn = fnRaw.map((f,i)=>{const prev=i>0?fnRaw[i-1].count:null;return{...f,dropOff:(prev&&prev>0)?Math.round((1-f.count/prev)*100):null};});
     const ch = [{name:t("chartVip"),value:vipEv.length,color:"#e63946"},{name:t("chartRegistered"),value:regEv.length,color:"#457b9d"},{name:t("chartAnonymous"),value:anonEv.length+leadEv.length,color:cx.muted}];
@@ -1037,42 +510,127 @@ export default function Dashboard() {
   }, [events, t, lang]);
 
   const maxF = Math.max(...metrics.fn.map(f=>f.count),1);
+  const towerBarRows = useMemo(() => {
+    const towerColors = ["#e63946", "#457b9d", "#2ec4b6"];
+    return Object.entries(metrics.ti).map(([k, v], i) => ({
+      name: towerName(k, lang),
+      value: v,
+      fill: towerColors[i % towerColors.length],
+    }));
+  }, [metrics.ti, lang]);
+  const ownerWorkload = useMemo(() => {
+    const byOwner = {};
+    metrics.vipM.forEach((v) => {
+      const owner = repName(v.salesRepId) || t("noOwner");
+      if (!byOwner[owner]) byOwner[owner] = { owner, total: 0, dueToday: 0, highRisk: 0 };
+      byOwner[owner].total += 1;
+      if (getPriorityDue(v) === "today") byOwner[owner].dueToday += 1;
+      if (getPriorityRisk(v) === "high") byOwner[owner].highRisk += 1;
+    });
+    const rows = Object.values(byOwner).sort((a, b) => {
+      if (b.dueToday !== a.dueToday) return b.dueToday - a.dueToday;
+      if (b.highRisk !== a.highRisk) return b.highRisk - a.highRisk;
+      return b.total - a.total;
+    });
+    return {
+      rows,
+      dueToday: rows.reduce((sum, r) => sum + r.dueToday, 0),
+      highRisk: rows.reduce((sum, r) => sum + r.highRisk, 0),
+    };
+  }, [metrics.vipM, t]);
+  const filteredPriorityVips = useMemo(() => (
+    ownerFilter === "all"
+      ? metrics.vipM
+      : metrics.vipM.filter((v) => repName(v.salesRepId) === ownerFilter)
+  ), [metrics.vipM, ownerFilter]);
   const openOutreach = (vid) => { const v=VIP_PROFILES.find(x=>x.vipId===vid); if(v){setOutreachVip(v);setModal("outreach");} };
   const NAV = [
     {key:"overview",ico:"⊞",label:t("navOverview")},{key:"vipcrm",ico:"👤",label:t("navVipCrm"),count:metrics.vipM.length},
     {key:"priority",ico:"⭐",label:t("navPriority")},{key:"analytics",ico:"📊",label:t("navAnalytics")},
-    {key:"units",ico:"🏠",label:t("navUnits")},{key:"campaigns",ico:"✉",label:t("navCampaigns")},
+    {key:"pipeline",ico:"📋",label:t("navPipeline")},{key:"ai",ico:"🤖",label:t("navAI")},{key:"units",ico:"🏠",label:t("navUnits")},{key:"campaigns",ico:"✉",label:t("navCampaigns")},
     {key:"settings",ico:"⚙",label:t("navSettings")},
   ];
+  const portalStatus = useMemo(() => {
+    const labelMap = EVENT_LABELS[lang] || EVENT_LABELS.en;
+    const lastOf = (portalType) => {
+      const last = events
+        .filter((e) => e.portalType === portalType)
+        .slice()
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+      if (!last) return null;
+      let act = labelMap[last.event] || last.event;
+      if (last.unitName) act += ` — ${last.unitName}`;
+      return { act, time: ago(last.timestamp, lang) };
+    };
+    const lastVipByName = (vipName) => {
+      const last = events
+        .filter((e) => e.portalType === "vip" && e.vipName === vipName)
+        .slice()
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+      if (!last) return null;
+      let act = labelMap[last.event] || last.event;
+      if (last.unitName) act += ` — ${last.unitName}`;
+      return { act, time: ago(last.timestamp, lang) };
+    };
+    return {
+      khalid: lastVipByName("Khalid Al-Rashid"),
+      ahmed: lastVipByName("Ahmed Al-Fahad"),
+      registered: lastOf("registered"),
+      lead: lastOf("lead"),
+      anonymous: lastOf("anonymous"),
+    };
+  }, [events, lang]);
   const idleCls = d => d>=3?"db-idle-danger":d>=2?"db-idle-warn":"db-idle-ok";
   const maxSD = Math.max(...metrics.scoreDist.map(s=>s.count),1);
 
   return (
     <div className={`db ${theme === "light" ? "light" : ""}`} dir={isAr?"rtl":"ltr"}>
-      <style>{CSS}</style>
+      <SEO title="CRM Intelligence Dashboard" description="Real estate behavioral analytics — lead scoring, VIP outreach, and conversion optimization." path="/enterprise/crmdemo/dashboard" />
       <aside className="db-sidebar">
-        <div className="db-brand"><h2>{isAr?"نور":"Al Noor"} <b>{isAr?"ريزيدنسز":"CRM"}</b></h2><p>Dynamic NFC Intelligence</p></div>
+        <div className="db-brand"><h2>{t("headerTitle")}</h2><p style={{color:'rgba(255,255,255,.5)',fontSize:'.7rem',letterSpacing:'.08em',fontWeight:500}}>DYNAMIC NFC INTELLIGENCE</p></div>
         <nav className="db-nav">
-          <div className="db-nav-label">{isAr?"التحليلات":"Intelligence"}</div>
-          {NAV.map(n=>(<div key={n.key} className={`db-nav-item ${activeTab===n.key?"act":""}`} onClick={()=>handleTab(n.key)}>
+          <div className="db-nav-label db-nav-label-portals">{t("navLabelPortals")}</div>
+          <NavLink to="/enterprise/crmdemo/khalid" target="_blank" rel="noreferrer" className={({ isActive }) => `db-nav-item db-nav-portal${isActive ? " act" : ""}`}>
+            <span className="nav-ico">🔑</span>
+            <span className="db-nav-portal-main">
+              <span className="db-nav-portal-title">{t("navVipPortal")}</span>
+              <span className="db-nav-portal-sub">{portalStatus.khalid ? `${portalStatus.khalid.act} · ${portalStatus.khalid.time}` : (isAr ? "لا توجد بيانات بعد" : "No activity yet")}</span>
+            </span>
+          </NavLink>
+          <NavLink to="/enterprise/crmdemo/ahmed" target="_blank" rel="noreferrer" className={({ isActive }) => `db-nav-item db-nav-portal${isActive ? " act" : ""}`}>
+            <span className="nav-ico">🏠</span>
+            <span className="db-nav-portal-main">
+              <span className="db-nav-portal-title">{t("navAhmedPortal")}</span>
+              <span className="db-nav-portal-sub">{portalStatus.ahmed ? `${portalStatus.ahmed.act} · ${portalStatus.ahmed.time}` : (isAr ? "لا توجد بيانات بعد" : "No activity yet")}</span>
+            </span>
+          </NavLink>
+          <NavLink to="/enterprise/crmdemo/marketplace" target="_blank" rel="noreferrer" className={({ isActive }) => `db-nav-item db-nav-portal${isActive ? " act" : ""}`}>
+            <span className="nav-ico">🌐</span>
+            <span className="db-nav-portal-main">
+              <span className="db-nav-portal-title">{t("navMarketplace")}</span>
+              <span className="db-nav-portal-sub">{portalStatus.lead || portalStatus.anonymous ? `${(portalStatus.lead || portalStatus.anonymous).act} · ${(portalStatus.lead || portalStatus.anonymous).time}` : (isAr ? "لا توجد بيانات بعد" : "No activity yet")}</span>
+            </span>
+          </NavLink>
+          <div className="db-nav-label" style={{ marginTop: ".75rem" }}>{t("navLabelIntel")}</div>
+          {NAV.map(n=>(<div key={n.key} className={`db-nav-item ${activeTab===n.key?"act":""}`} onClick={()=>n.key==="ai"?navigate("/enterprise/crmdemo/ai-demo"):handleTab(n.key)}>
             <span className="nav-ico">{n.ico}</span>{n.label}{n.count?<span className="db-nav-count">{n.count}</span>:null}
           </div>))}
-          <div className="db-nav-label" style={{marginTop:".5rem"}}>{isAr?"البوابات":"Portals"}</div>
-          <div className="db-nav-item" onClick={()=>window.open("/vip-portal","_blank")}><span className="nav-ico">🔑</span>{t("navVipPortal")}</div>
-          <div className="db-nav-item" onClick={()=>window.open("/login-portal","_blank")}><span className="nav-ico">🔐</span>{t("navLoginPortal")}</div>
-          <div className="db-nav-item" onClick={()=>window.open("/marketplace","_blank")}><span className="nav-ico">🌐</span>{t("navMarketplace")}</div>
+          <div className="db-nav-label" style={{marginTop:".5rem"}}>{t("navLabelDemo")}</div>
+          <NavLink to="/enterprise/crmdemo/ai-demo" className={({ isActive }) => `db-nav-item${isActive ? " act" : ""}`}><span className="nav-ico">🤖</span>{t("navAiDemo")}</NavLink>
+          <NavLink to="/enterprise/crmdemo/roi-calculator" className={({ isActive }) => `db-nav-item${isActive ? " act" : ""}`}><span className="nav-ico">📊</span>{t("navRoiCalc")}</NavLink>
+          <Link to="/enterprise/crmdemo" className="db-nav-item" style={{opacity:.6,fontSize:".75rem"}}><span className="nav-ico">←</span>{t("navDemoGateway")}</Link>
         </nav>
         <div style={{padding:".75rem 1.25rem",borderTop:"1px solid rgba(255,255,255,.06)"}}><img src="/assets/images/dynamicnfc-logo-red.png" alt="Dynamic NFC" style={{height:16,opacity:.4}}/></div>
       </aside>
       <div className="db-main">
         <div className="db-topbar">
-          <div><div className="db-tb-title">{t("headerTitle")} — {t("headerSub")}</div><div className="db-tb-sub">{metrics.totalEvents} {t("eventsTracked")} · {isAr?"اضمحلال: 7 أيام":"Decay: 7d half-life"}</div></div>
+          <div><div className="db-tb-title">{t("headerTitle")} — {t("headerSub")}</div><div className="db-tb-sub">{metrics.totalEvents} {t("eventsTracked")} · {t("decayLabel")}</div><div style={{fontSize:".65rem",color:"var(--db-muted,#999)",fontStyle:"italic",marginTop:"2px"}}>{t("poweredBy")}</div></div>
           <div className="db-tb-right">
             <div className="db-live">LIVE</div>
             <button className="db-theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title={theme === "dark" ? "Switch to Light" : "Switch to Dark"}>
               <div className="db-theme-dot" />{theme === "dark" ? "Dark" : "Light"}
             </button>
-            <div className="db-lang"><button className={lang==="en"?"act":""} onClick={()=>setLang("en")}>EN</button><button className={lang==="ar"?"act":""} onClick={()=>setLang("ar")}>ع</button></div>
+
             <button className="db-pill" onClick={()=>setModal("help")}>{t("help")}</button>
             <button className="db-pill" onClick={()=>setModal("createVip")}>{t("createVip")}</button>
             <button className="db-pill" onClick={()=>{localStorage.removeItem("dnfc_events");seedDemoData();window.location.reload();}} style={{fontSize:".6rem"}}>{t("resetDemo")}</button>
@@ -1082,6 +640,138 @@ export default function Dashboard() {
 
 {/* ═══════════════ TAB 1: OVERVIEW ═══════════════ */}
 {activeTab==="overview"&&(<>
+  <div className="db-export-bar"><button className="db-export-btn" onClick={handleExport}>📥 {t("exportPdf")}</button></div>
+
+  {/* ── ACTION-FIRST HERO (Today → Proof) ─────────────────────── */}
+  <div className="db-hero-grid">
+    <div className="db-card db-card-hero">
+      <div className="db-card-hd">
+        <div>
+          <div className="db-card-title">{t("todayActionsTitle")}</div>
+          <div className="db-card-sub">{t("todayActionsSub")}</div>
+        </div>
+        <button className="db-pill" onClick={() => handleTab("priority")} style={{ color: "#e63946" }}>
+          {t("priorityListBtn")}
+        </button>
+      </div>
+      <div className="db-card-body">
+        <div className="db-demo-guide" role="region" aria-label={t("demoGuideTitle")}>
+          <div className="db-demo-guide-hd">
+            <span className="db-demo-guide-title">{t("demoGuideTitle")}</span>
+            <span className="db-demo-guide-sub">{t("demoGuideSubtitle")}</span>
+          </div>
+        <div className="db-demo-steps">
+          <div className="db-demo-step">
+            <span className="db-demo-step-num">1</span>
+            <span className="db-demo-step-text">{t("demoStep1")}</span>
+            <Link className="db-demo-step-cta" to="/enterprise/crmdemo/khalid" target="_blank" rel="noreferrer">{t("openPortalLink")}</Link>
+          </div>
+          <div className="db-demo-step">
+            <span className="db-demo-step-num">2</span>
+            <span className="db-demo-step-text">{t("demoStep2")}</span>
+          </div>
+          <div className="db-demo-step">
+            <span className="db-demo-step-num">3</span>
+            <span className="db-demo-step-text">{t("demoStep3")}</span>
+          </div>
+          <div className="db-demo-step">
+            <span className="db-demo-step-num">4</span>
+            <span className="db-demo-step-text">{t("demoStep4")}</span>
+            <Link className="db-demo-step-cta" to="/enterprise/crmdemo/ahmed" target="_blank" rel="noreferrer">{t("openPortalLink")}</Link>
+          </div>
+          <div className="db-demo-step">
+            <span className="db-demo-step-num">5</span>
+            <span className="db-demo-step-text">{t("demoStep5")}</span>
+            <Link className="db-demo-step-cta" to="/enterprise/crmdemo/marketplace" target="_blank" rel="noreferrer">{t("openPortalLink")}</Link>
+          </div>
+        </div>
+        </div>
+        <div className="db-today-list">
+          {metrics.vipM.slice(0, 3).map((v) => (
+            <div key={v.vipId} className="db-today-item">
+              <div className="db-vip-avatar" style={{ background: `linear-gradient(135deg,${scoreColor(v.score)},${v.score >= 70 ? "#c1121f" : "#2b6684"})`, width: 36, height: 36, fontSize: ".8rem" }}>
+                {initials(v.fullName)}
+              </div>
+              <div className="db-today-main">
+                <div className="db-today-top">
+                  <div className="db-today-name">
+                    {v.fullName} {v.idle >= 2 && <span className="db-at-risk">{t("atRisk")}</span>}
+                  </div>
+                  <div className="db-today-score" style={{ color: scoreColor(v.score) }}>{v.score}</div>
+                </div>
+                <div className="db-today-sub">
+                  <span>{towerName(v.topTower, lang)}</span>
+                  <span className="db-dot-sep">•</span>
+                  <span>{isAr ? `${v.idle} يوم بلا نشاط` : `${v.idle}d idle`}</span>
+                  {v.topUnit && (<>
+                    <span className="db-dot-sep">•</span>
+                    <span className="db-today-unit">{v.topUnit}</span>
+                  </>)}
+                </div>
+                {v.trigger && (
+                  <div className="db-today-trigger" style={{ borderColor: `${v.trigger.color}33`, background: `${v.trigger.color}0a` }}>
+                    <span className="db-today-trigger-label" style={{ color: v.trigger.color }}>
+                      {t("salesTrigger")}: {t("whyCallNow")}
+                    </span>
+                    <div className="db-today-trigger-text" style={{ color: cx.sub }}>
+                      {isAr ? v.trigger.ar : v.trigger.en}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <button className="db-pill db-today-cta" onClick={() => openOutreach(v.vipId)}>
+                📞 {t("outreachBtn")} →
+              </button>
+            </div>
+          ))}
+        </div>
+        <p className="db-today-footnote">{t("todayListFootnote")}</p>
+      </div>
+    </div>
+
+    <div className="db-card db-card-hero">
+      <div className="db-card-hd">
+        <div>
+          <div className="db-card-title">{t("liveActivityFeed")}</div>
+          <div className="db-card-sub">{t("realtimeInteractions")}</div>
+        </div>
+        <div style={{ display: "flex", gap: 4 }}>
+          {["all", "vip", "registered", "lead", "anonymous"].map((f) => (
+            <button key={f} className={`db-pill ${feedFilter === f ? "act" : ""}`} onClick={() => setFeedFilter(f)}>
+              {f === "all" ? t("feedAll") : f === "vip" ? t("feedVip") : f === "registered" ? t("feedRegistered") : f === "lead" ? t("feedLead") : t("feedAnonymous")}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="db-card-body" style={{ padding: 0 }}>
+        <div className="db-feed" style={{ padding: "0 1.25rem" }}>
+          {events
+            .slice()
+            .reverse()
+            .filter((e) => feedFilter === "all" || e.portalType === feedFilter)
+            .slice(0, 12)
+            .map((e, i) => {
+              const el = EVENT_LABELS[lang] || EVENT_LABELS.en;
+              let act = el[e.event] || e.event;
+              if (e.unitName) act += ` — ${e.unitName}`;
+              const cls = e.portalType === "vip" ? "vip" : e.portalType === "registered" ? "reg" : "anon";
+              return (
+                <div className="db-feed-item" key={i}>
+                  <div className={`db-feed-ico ${cls}`}>{e.portalType === "vip" ? "🔑" : e.portalType === "registered" ? "👤" : "🌐"}</div>
+                  <div className="db-feed-body">
+                    <strong>{e.vipName || e.userName || e.leadName || (isAr ? "مجهول" : "Anonymous")}</strong>
+                    {e.portalType === "vip" && <span className="db-mini-vip">VIP</span>}
+                    <div className="desc">{act}</div>
+                  </div>
+                  <span className="db-feed-time">{ago(e.timestamp, lang)}</span>
+                </div>
+              );
+            })}
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div className="db-exec"><div style={{flex:1}}><h3>{t("execView")}</h3><p>{t("execDesc")}</p>
     <div className="db-exec-chips"><span className="db-chip">{t("kpi1")}</span><span className="db-chip">{t("kpi2")}</span><span className="db-chip">{t("kpi3")}</span></div></div></div>
   {/* VELOCITY KPIs */}
@@ -1101,6 +791,7 @@ export default function Dashboard() {
   </div>
   {/* Shared Actions */}
   <div className="db-sec"><h2>{t("sharedConversions")}</h2><div className="db-sec-line"/><span className="db-sec-badge">{t("badgeVipStd")}</span></div>
+  <p className="db-conv-dots-legend">{t("convDotsLegend")}</p>
   <div className="db-actions">
     {[{k:"book_viewing",l:t("actBookViewing"),c:"red",sc:"#e63946"},{k:"request_pricing",l:t("actRequestPricing"),c:"blue",sc:"#457b9d"},{k:"explore_payment_plan",l:t("actRequestPayment"),c:"green",sc:"#2ec4b6"},{k:"download_brochure",l:t("actDownloadBrochure"),c:"amber",sc:"#f4a261"}].map(a=>{
       const dailyData = metrics.daily.map(d => {
@@ -1120,7 +811,7 @@ export default function Dashboard() {
   {/* Charts: Multi-line + Donut */}
   <div className="db-grid db-g2">
     <div className="db-card"><div className="db-card-hd"><div className="db-card-title">{t("engagementOverTime")}</div></div>
-      <div className="db-card-body" style={{height:220}}><ResponsiveContainer width="100%" height="100%"><LineChart data={metrics.daily}>
+      <div className="db-card-body" ><ResponsiveContainer width="100%" height={220}><LineChart data={metrics.daily}>
         <XAxis dataKey="day" stroke={cx.axis} tick={cx.tick} axisLine={false} tickLine={false}/>
         <YAxis stroke={cx.axis} tick={cx.tick} axisLine={false} tickLine={false}/>
         <Tooltip contentStyle={cx.tooltip}/>
@@ -1130,48 +821,17 @@ export default function Dashboard() {
         <Legend wrapperStyle={cx.legend}/>
       </LineChart></ResponsiveContainer></div></div>
     <div className="db-card"><div className="db-card-hd"><div className="db-card-title">{t("channelMix")}</div></div>
-      <div className="db-card-body" style={{height:220,display:"flex",alignItems:"center",justifyContent:"center"}}><ResponsiveContainer width="100%" height="100%"><PieChart>
+      <div className="db-card-body" style={{display:"flex",alignItems:"center",justifyContent:"center"}}><ResponsiveContainer width="100%" height={220}><PieChart>
         <Pie data={metrics.ch} cx="50%" cy="50%" innerRadius={48} outerRadius={68} paddingAngle={4} dataKey="value">{metrics.ch.map((d,i)=><Cell key={i} fill={d.color}/>)}</Pie>
         <Tooltip contentStyle={cx.tooltip}/>
       </PieChart></ResponsiveContainer></div>
       <div style={{padding:"0 1.25rem .5rem",textAlign:"center"}}><span style={{fontFamily:"'Playfair Display',serif",fontSize:"1.3rem",fontWeight:600}}>{metrics.totalEvents}</span><span style={{fontSize:".55rem",color:cx.muted,marginLeft:4}}>{isAr?"إجمالي":"total"}</span></div>
       <div style={{padding:"0 1.25rem .75rem",display:"flex",gap:"1rem",justifyContent:"center",flexWrap:"wrap"}}>{metrics.ch.map((d,i)=>(<span key={i} style={{display:"flex",alignItems:"center",gap:4,fontSize:".62rem",color:cx.muted}}><span style={{width:6,height:6,borderRadius:"50%",background:d.color}}/>{d.name} ({d.value})</span>))}</div></div>
   </div>
-  {/* Feed + VIP Summary */}
-  <div className="db-grid db-g2">
-    <div className="db-card"><div className="db-card-hd"><div><div className="db-card-title">{t("liveActivityFeed")}</div><div className="db-card-sub">{t("realtimeInteractions")}</div></div>
-      <div style={{display:"flex",gap:4}}>{["all","vip","registered"].map(f=>(<button key={f} className={`db-pill ${feedFilter===f?"act":""}`} onClick={()=>setFeedFilter(f)}>{f==="all"?t("feedAll"):f==="vip"?t("feedVip"):t("feedRegistered")}</button>))}</div></div>
-      <div className="db-card-body" style={{padding:0}}><div className="db-feed" style={{padding:"0 1.25rem"}}>
-        {events.slice().reverse().filter(e=>feedFilter==="all"||e.portalType===feedFilter).slice(0,18).map((e,i)=>{
-          const el=(EVENT_LABELS[lang]||EVENT_LABELS.en); let act=el[e.event]||e.event; if(e.unitName)act+=` — ${e.unitName}`;
-          const cls=e.portalType==="vip"?"vip":e.portalType==="registered"?"reg":"anon";
-          return(<div className="db-feed-item" key={i}><div className={`db-feed-ico ${cls}`}>{e.portalType==="vip"?"🔑":e.portalType==="registered"?"👤":"🌐"}</div>
-            <div className="db-feed-body"><strong>{e.vipName||e.userName||e.leadName||(isAr?"مجهول":"Anonymous")}</strong>{e.portalType==="vip"&&<span style={{color:"#e63946",fontSize:".55rem",marginLeft:4}}>VIP</span>}<div className="desc">{act}</div></div>
-            <span className="db-feed-time">{ago(e.timestamp,lang)}</span></div>);})}
-      </div></div></div>
-    <div className="db-card"><div className="db-card-hd"><div><div className="db-card-title">{t("vipActivitySummary")}</div><div className="db-card-sub">{t("highPrioritySignals")}</div></div></div>
-      <div className="db-card-body">
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:".5rem",marginBottom:"1rem"}}>
-          {[{v:metrics.vipM.filter(x=>x.score>=70).length,l:t("hotLeads"),bg:"rgba(230,57,70,.04)",bc:"rgba(230,57,70,.08)",c:"#e63946"},
-            {v:metrics.vipM.reduce((a,x)=>a+x.alerts.length,0),l:t("activeAlerts"),bg:"rgba(244,162,97,.04)",bc:"rgba(244,162,97,.08)",c:"#f4a261"},
-            {v:metrics.vipM.length>0?Math.round(metrics.vipM.reduce((a,x)=>a+x.score,0)/metrics.vipM.length):0,l:t("avgLeadScore")+" ⏳",bg:"rgba(69,123,157,.04)",bc:"rgba(69,123,157,.08)",c:"#457b9d"},
-          ].map((m,i)=>(<div key={i} style={{padding:".5rem",borderRadius:8,background:m.bg,border:`1px solid ${m.bc}`,textAlign:"center"}}><div style={{fontFamily:"'Playfair Display',serif",fontSize:"1.2rem",fontWeight:600,color:m.c}}>{m.v}</div><div style={{fontSize:".55rem",color:cx.muted,textTransform:"uppercase",letterSpacing:".08em"}}>{m.l}</div></div>))}
-        </div>
-        {metrics.vipM.map(v=>{
-          const last7 = Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);const dk=d.toISOString().slice(0,10);return v.events.filter(e=>e.timestamp&&e.timestamp.slice(0,10)===dk).length;});
-          return(<div key={v.vipId} style={{display:"flex",alignItems:"center",gap:".6rem",padding:".45rem 0",borderBottom:"1px solid rgba(255,255,255,.04)"}}>
-          <div className="db-vip-avatar" style={{background:`linear-gradient(135deg,${scoreColor(v.score)},${v.score>=70?"#c1121f":"#2b6684"})`,width:28,height:28,fontSize:".65rem"}}>{initials(v.fullName)}</div>
-          <div style={{flex:1}}><div style={{fontWeight:500,fontSize:".75rem",color:cx.text}}>{v.fullName} {v.idle>=2&&<span className="db-at-risk">{t("atRisk")}</span>}</div><div style={{fontSize:".58rem",color:cx.muted}}>{towerName(v.topTower,lang)} · {v.idle}d idle</div></div>
-          <Sparkline data={last7} color={scoreColor(v.score)} height={18} width={40}/>
-          <div style={{textAlign:"right"}}><div style={{fontWeight:600,fontSize:".82rem",color:scoreColor(v.score)}}>{v.score}<span style={{fontSize:".48rem",color:cx.muted}}> ⏳</span></div></div>
-        </div>);})}{metrics.vipCandidates.length>0&&(<div style={{marginTop:".5rem",padding:".45rem",borderRadius:6,background:"rgba(197,164,103,.04)",border:"1px dashed rgba(197,164,103,.2)"}}><div style={{fontSize:".55rem",color:"#C5A467",fontWeight:600,textTransform:"uppercase"}}>⭐ {t("vipCandidate")}</div>
-          {metrics.vipCandidates.map(c=>(<div key={c.name} style={{fontSize:".72rem",color:cx.sub,marginTop:".2rem"}}>{c.name} — score: <strong style={{color:"#C5A467"}}>{c.score}</strong></div>))}</div>)}
-        <button className="db-pill" style={{width:"100%",textAlign:"center",marginTop:".65rem"}} onClick={()=>handleTab("priority")}>{isAr?"عرض قائمة الأولوية →":"View Priority List →"}</button>
-      </div></div>
-  </div>
+
   {/* Funnel with drop-off + Tower */}
   <div className="db-grid db-g2">
-    <div className="db-card"><div className="db-card-hd"><div className="db-card-title">{t("conversionFunnel")}</div></div>
+    <div className="db-card"><div className="db-card-hd"><div className="db-card-title">{t("conversionFunnel")}<span className="db-ai-badge">AI</span></div></div>
       <div className="db-card-body" style={{display:"flex",flexDirection:"column",alignItems:"center",gap:0}}>
         {metrics.fn.map((f,i)=>{
           const widthPct = Math.max(20, (f.count/maxF)*100);
@@ -1193,19 +853,48 @@ export default function Dashboard() {
             </div>
           </div>);
         })}
+        <div className="db-funnel-legend">
+          <div className="db-funnel-legend-title">{t("funnelColorKey")}</div>
+          <ul className="db-funnel-legend-items">
+            {metrics.fn.map((f) => (
+              <li key={f.label} className="db-funnel-legend-item">
+                <span className="db-funnel-legend-swatch" style={{ background: f.color }} aria-hidden />
+                <div className="db-funnel-legend-text">
+                  <span className="db-funnel-legend-label">{f.label}</span>
+                  <span className="db-funnel-legend-hint">{f.hint}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div></div>
     <div className="db-card"><div className="db-card-hd"><div><div className="db-card-title">{t("towerInterestDist")}</div><div className="db-card-sub">{t("allTrafficCombined")}</div></div></div>
-      <div className="db-card-body" style={{height:200}}><ResponsiveContainer width="100%" height="100%"><BarChart data={Object.entries(metrics.ti).map(([k,v])=>({name:towerName(k,lang),value:v}))}>
+      <div className="db-card-body" >
+      <ResponsiveContainer width="100%" height={200}><BarChart data={towerBarRows}>
         <XAxis dataKey="name" stroke={cx.axis} tick={cx.tickSm} axisLine={false} tickLine={false}/>
         <YAxis stroke={cx.axis} tick={cx.tickSm} axisLine={false} tickLine={false}/>
         <Tooltip contentStyle={cx.tooltip}/>
-        <Bar dataKey="value" radius={[4,4,0,0]}><Cell fill="#e63946"/><Cell fill="#457b9d"/><Cell fill="#2ec4b6"/></Bar>
-      </BarChart></ResponsiveContainer></div></div>
+        <Bar dataKey="value" radius={[4,4,0,0]}>{towerBarRows.map((entry, i) => <Cell key={`${entry.name}-${i}`} fill={entry.fill} />)}</Bar>
+      </BarChart></ResponsiveContainer>
+      <div className="db-tower-legend">
+        <div className="db-tower-legend-title">{t("towerColorKey")}</div>
+        <p className="db-tower-legend-sub">{t("towerColorKeySub")}</p>
+        <div className="db-tower-legend-row">
+          {towerBarRows.map((d, i) => (
+            <span key={`${d.name}-${i}`} className="db-tower-legend-chip">
+              <span className="db-tower-legend-swatch" style={{ background: d.fill }} aria-hidden />
+              {d.name}
+            </span>
+          ))}
+        </div>
+      </div>
+      </div></div>
   </div>
 </>)}
 
 {/* ═══════════════ TAB 2: VIP CRM ═══════════════ */}
 {activeTab==="vipcrm"&&(<>
+  <div className="db-export-bar"><button className="db-export-btn" onClick={handleExport}>📥 {t("exportPdf")}</button></div>
   <div className="db-sec"><h2>{t("vipDirectory")}</h2><div className="db-sec-line"/><span className="db-sec-badge">{t("personKnown")} · ⏳ {isAr?"اضمحلال زمني":"time-decayed"}</span></div>
   <div className="db-grid db-g12">
     <div className="db-card"><div className="db-card-hd"><div className="db-card-title">{t("vipProfiles")}</div><button className="db-pill" onClick={()=>setModal("createVip")}>{t("createVip")}</button></div>
@@ -1226,7 +915,7 @@ export default function Dashboard() {
         {/* SALES TRIGGER */}
         {v.trigger&&(<div className="db-trigger" style={{background:`${v.trigger.color}0a`,border:`1px solid ${v.trigger.color}22`}}>
           <span className="db-trigger-ico">{v.trigger.icon}</span>
-          <div className="db-trigger-body"><div className="db-trigger-label" style={{color:v.trigger.color}}>💡 {t("salesTrigger")}: {t("whyCallNow")}</div><div className="db-trigger-text" style={{color:cx.sub}}>{isAr?v.trigger.ar:v.trigger.en}</div></div>
+          <div className="db-trigger-body"><div className="db-trigger-label" style={{color:v.trigger.color}}>💡 {t("salesTrigger")}: {t("whyCallNow")}<span className="db-ai-badge">AI</span></div><div className="db-trigger-text" style={{color:cx.sub}}>{isAr?v.trigger.ar:v.trigger.en}</div></div>
         </div>)}
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:".4rem",marginBottom:"1rem"}}>
           {[{l:t("decayedScore"),v2:v.score+"⏳",c:scoreColor(v.score)},{l:t("repeatViews"),v2:v.repeatViews,c:"#457b9d"},{l:t("pricingSignal"),v2:Math.floor(v.pricingTime/60)+"m",c:"#f4a261"},{l:t("daysIdle"),v2:v.idle+"d",c:v.idle>=2?"#e63946":"#2ec4b6"}].map((m,i)=>(
@@ -1234,7 +923,7 @@ export default function Dashboard() {
         </div>
         {v.ttfa!==null&&(<div style={{fontSize:".68rem",color:cx.muted,marginBottom:".5rem"}}>{t("mTimeToAction")}: <strong style={{color:"#C5A467"}}>{v.ttfa} min</strong>{v.viewVel!==null&&<> · {t("mViewingVelocity")}: <strong style={{color:"#C5A467"}}>{v.viewVel} days</strong></>}</div>)}
         <div style={{marginBottom:".75rem"}}><div style={{fontSize:".58rem",color:cx.muted,textTransform:"uppercase",letterSpacing:".06em",marginBottom:".25rem"}}>{t("alerts")}</div>
-          {v.alerts.map((a,i)=>{const cls=a.includes("pricing")||a.includes("high_intent")?"db-alert-red":a.includes("comparing")?"db-alert-blue":"db-alert-amber"; const label=T[lang]?.[`alert${a.includes("pricing")?"Pricing":a.includes("high_intent")?"HighIntent":a.includes("comparing")?"Comparing":"Family"}`]||a; return <span key={i} className={`db-alert ${cls}`}>{label}</span>;})}</div>
+          {v.alerts.map((a,i)=>{const cls=a.includes("pricing")||a.includes("high_intent")?"db-alert-red":a.includes("comparing")?"db-alert-blue":"db-alert-amber"; const ak=a.includes("pricing")?"alertPricing":a.includes("high_intent")?"alertHighIntent":a.includes("comparing")?"alertComparing":"alertFamily"; const label=t(ak)||a; return <span key={i} className={`db-alert ${cls}`}>{label}</span>;})}</div>
         <div style={{display:"flex",gap:".75rem",marginBottom:".75rem",fontSize:".72rem",color:cx.sub,flexWrap:"wrap"}}>
           <span>{t("salesRep")}: <strong style={{color:cx.text}}>{repName(v.salesRepId)}</strong></span>
           <span>{t("card")}: <strong style={{color:cx.text}}>{v.cardId}</strong></span>
@@ -1249,24 +938,76 @@ export default function Dashboard() {
 
 {/* ═══════════════ TAB 3: PRIORITY VIP ═══════════════ */}
 {activeTab==="priority"&&(<>
+  <div className="db-export-bar"><button className="db-export-btn" onClick={handleExport}>📥 {t("exportPdf")}</button></div>
   <div className="db-sec"><h2>{t("priorityVipList")}</h2><div className="db-sec-line"/><span className="db-sec-badge">{t("dailySalesCockpit")}</span></div>
   <p style={{fontSize:".78rem",color:cx.sub,marginBottom:".75rem"}}>{t("prioritySortedDesc")}</p>
+  <div className="db-card" style={{marginBottom:"1rem"}}>
+    <div className="db-card-hd">
+      <div>
+        <div className="db-card-title">{t("ownerWorkloadTitle")}</div>
+        <div className="db-card-sub">{t("ownerWorkloadSub")}</div>
+      </div>
+      <div className="db-pri-kpis">
+        <span className="db-pri-kpi"><b>{ownerWorkload.dueToday}</b> {t("totalDueToday")}</span>
+        <span className="db-pri-kpi"><b>{ownerWorkload.highRisk}</b> {t("highRiskNow")}</span>
+      </div>
+    </div>
+    <div className="db-card-body db-pri-owner-row">
+      <button
+        type="button"
+        className={`db-pri-owner-chip db-pri-owner-toggle ${ownerFilter === "all" ? "active" : ""}`}
+        onClick={() => setOwnerFilter("all")}
+        aria-label={t("allOwners")}
+      >
+        <div className="db-pri-owner-name">{t("allOwners")}</div>
+        <div className="db-pri-owner-metrics">
+          <span className="db-pri-chip db-pri-due-week">{metrics.vipM.length}</span>
+        </div>
+      </button>
+      {ownerWorkload.rows.map((r) => (
+        <button
+          type="button"
+          key={r.owner}
+          className={`db-pri-owner-chip db-pri-owner-toggle ${ownerFilter === r.owner ? "active" : ""}`}
+          onClick={() => setOwnerFilter(r.owner)}
+          aria-label={`${t("ownerFilterLabel")}: ${r.owner}`}
+        >
+          <div className="db-pri-owner-name">{r.owner}</div>
+          <div className="db-pri-owner-metrics">
+            <span className="db-pri-chip db-pri-due-today">{r.dueToday} {t("dueToday")}</span>
+            <span className={`db-pri-chip ${r.highRisk > 0 ? "db-pri-risk-high" : "db-pri-risk-low"}`}>{r.highRisk} {t("riskHigh")}</span>
+          </div>
+        </button>
+      ))}
+    </div>
+  </div>
   <div className="db-card" style={{marginBottom:"1.25rem"}}><div className="db-card-body" style={{padding:0}}>
-    <table className="db-table"><thead><tr><th>{t("thVip")}</th><th>{t("thLeadScore")} ⏳</th><th>{t("thTrigger")}</th><th>{t("thDaysIdle")}</th><th>{t("thAlerts")}</th><th>{t("thAction")}</th></tr></thead>
-      <tbody>{metrics.vipM.map(v=>(<tr key={v.vipId}>
-        <td><div style={{fontWeight:500,color:cx.text}}>{v.fullName}</div><div style={{fontSize:".6rem",color:cx.muted}}>{v.vipCode} · {towerName(v.topTower,lang)}</div></td>
-        <td><span style={{fontWeight:600,color:scoreColor(v.score)}}>{v.score}</span><span style={{fontSize:".52rem",color:cx.muted,marginLeft:3}}>({isAr?"خام":"raw"}: {v.rawScore})</span></td>
-        <td style={{maxWidth:200}}>{v.trigger?(<span style={{fontSize:".68rem",color:v.trigger.color}}>{v.trigger.icon} {(isAr?v.trigger.ar:v.trigger.en).slice(0,60)}...</span>):(<span style={{color:cx.muted}}>—</span>)}</td>
-        <td><span className={idleCls(v.idle)}>{v.idle}d</span> {v.idle>=2&&<span className="db-at-risk">{t("atRisk")}</span>}</td>
-        <td>{v.alerts.map((a,i)=>{const cls=a.includes("pricing")||a.includes("high_intent")?"db-alert-red":a.includes("comparing")?"db-alert-blue":"db-alert-amber"; return <span key={i} className={`db-alert ${cls}`}>{T[lang]?.[`alert${a.includes("pricing")?"Pricing":a.includes("high_intent")?"HighIntent":a.includes("comparing")?"Comparing":"Family"}`]||a}</span>;})}</td>
-        <td><button className="db-pill" onClick={()=>openOutreach(v.vipId)} style={{color:"#e63946"}}>{isAr?"تواصل →":"Outreach →"}</button></td>
-      </tr>))}</tbody></table>
+    <table className="db-table"><thead><tr><th>{t("thVip")}</th><th>{t("thOwner")}</th><th>{t("thUnitFocus")}</th><th>{t("thLeadScore")} ⏳<span className="db-ai-badge">AI</span></th><th>{t("thNextAction")}</th><th>{t("thDue")}</th><th>{t("thRisk")}</th><th>{t("thLastSeen")}</th><th>{t("thAction")}</th></tr></thead>
+      <tbody>{filteredPriorityVips.map(v=>{
+        const due = getPriorityDue(v);
+        const risk = getPriorityRisk(v);
+        const dueLabel = due === "today" ? t("dueToday") : due === "tomorrow" ? t("dueTomorrow") : t("dueThisWeek");
+        const riskLabel = risk === "high" ? t("riskHigh") : risk === "medium" ? t("riskMedium") : t("riskLow");
+        const riskCls = risk === "high" ? "db-pri-risk-high" : risk === "medium" ? "db-pri-risk-medium" : "db-pri-risk-low";
+        const dueCls = due === "today" ? "db-pri-due-today" : due === "tomorrow" ? "db-pri-due-tomorrow" : "db-pri-due-week";
+        return (<tr key={v.vipId}>
+          <td><div style={{fontWeight:500,color:cx.text}}>{v.fullName}</div><div style={{fontSize:".6rem",color:cx.muted}}>{v.vipCode}</div></td>
+          <td><div style={{fontSize:".72rem",fontWeight:600,color:cx.text}}>{repName(v.salesRepId)}</div><div style={{fontSize:".6rem",color:cx.muted}}>{campName(v.campaignId)}</div></td>
+          <td><div style={{fontSize:".72rem",color:cx.text}}>{v.topUnit || v.topPlans?.[0] || "—"}</div><div style={{fontSize:".6rem",color:cx.muted}}>{towerName(v.topTower,lang)}</div></td>
+          <td><span style={{fontWeight:600,color:scoreColor(v.score)}}>{v.score}</span><span style={{fontSize:".52rem",color:cx.muted,marginLeft:3}}>({isAr?"خام":"raw"}: {v.rawScore})</span></td>
+          <td style={{maxWidth:235}}><span style={{fontSize:".68rem",color:cx.sub}}>{getPriorityNextAction(v, lang)}</span></td>
+          <td><span className={`db-pri-chip ${dueCls}`}>{dueLabel}</span></td>
+          <td><span className={`db-pri-chip ${riskCls}`}>{riskLabel}</span></td>
+          <td><span style={{fontSize:".68rem",color:cx.sub}}>{ago(v.lastSeen,lang)}</span><div style={{fontSize:".58rem",color:cx.muted}}>{v.idle}{isAr?" يوم":"d"} {isAr?"بدون نشاط":"idle"}</div></td>
+          <td><button className="db-pill" onClick={()=>openOutreach(v.vipId)} style={{color:"#e63946"}}>{isAr?"تواصل →":"Outreach →"}</button></td>
+        </tr>);
+      })}</tbody></table>
   </div></div>
   {metrics.vipCandidates.length>0&&(<div className="db-card" style={{marginBottom:"1.25rem"}}><div className="db-card-hd"><div><div className="db-card-title">⭐ {t("vipCandidate")}</div><div className="db-card-sub">{t("vipCandidateDesc")}</div></div></div>
     <div className="db-card-body">{metrics.vipCandidates.map(c=>(<div className="db-candidate" key={c.name}>
       <div className="db-vip-avatar" style={{background:"linear-gradient(135deg,#C5A467,#a08542)"}}>{initials(c.name)}</div>
       <div style={{flex:1}}><div style={{fontWeight:500,fontSize:".82rem"}}>{c.name}</div><div style={{fontSize:".65rem",color:cx.muted}}>{isAr?"مسجّل":"Registered"} · Score: <strong style={{color:"#C5A467"}}>{c.score}</strong> · Top: {c.topUnit||"—"}</div></div>
-      <button className="db-pill" style={{color:"#C5A467",borderColor:"rgba(197,164,103,.3)"}}>{t("promoteToVip")} →</button>
+      <button className="db-pill" style={{color:"#C5A467",borderColor:"rgba(197,164,103,.3)"}} onClick={()=>alert(`VIP card issued for ${c.name}. Premium box will be sent.`)}>{t("promoteToVip")} →</button>
     </div>))}</div></div>)}
   <div className="db-grid db-g2">
     <div className="db-card"><div className="db-card-hd"><div><div className="db-card-title">{t("nextBestActions")}</div><div className="db-card-sub">{t("autoSuggested")}</div></div></div>
@@ -1277,8 +1018,8 @@ export default function Dashboard() {
       </div>))}</div></div>
     <div className="db-card"><div className="db-card-hd"><div><div className="db-card-title">{t("quickActions")}</div><div className="db-card-sub">{t("bulkOps")}</div></div></div>
       <div className="db-card-body">
-        <button className="db-pill" style={{width:"100%",textAlign:"center",marginBottom:".4rem"}}>📧 {t("emailHighIntent")}</button>
-        <button className="db-pill" style={{width:"100%",textAlign:"center"}}>📋 {t("exportPriorityList")}</button>
+        <button className="db-pill" style={{width:"100%",textAlign:"center",marginBottom:".4rem"}} onClick={()=>alert(`Email draft created for ${metrics.vipM.filter(v=>v.score>=70).length} high-intent VIPs`)}>📧 {t("emailHighIntent")}</button>
+        <button className="db-pill" style={{width:"100%",textAlign:"center"}} onClick={()=>alert("Priority list exported as CSV")}>📋 {t("exportPriorityList")}</button>
         <div style={{marginTop:".65rem",padding:".55rem",borderRadius:6,background:"rgba(244,162,97,.04)",border:"1px solid rgba(244,162,97,.1)",fontSize:".68rem",color:cx.muted}}><strong style={{color:"#f4a261"}}>{t("reminderLabel")}</strong> {t("reminderText")}</div>
       </div></div>
   </div>
@@ -1286,6 +1027,7 @@ export default function Dashboard() {
 
 {/* ═══════════════ TAB 4: ANALYTICS (+ Score Distribution + Live Heatmaps) ═══════════════ */}
 {activeTab==="analytics"&&(<>
+  <div className="db-export-bar"><button className="db-export-btn" onClick={handleExport}>📥 {t("exportPdf")}</button></div>
   <div className="db-sec"><h2>{t("analytics")}</h2><div className="db-sec-line"/><span className="db-sec-badge">{t("standardVip")} · ⏳</span></div>
   {/* Score Distribution Histogram */}
   <div className="db-card" style={{marginBottom:"1.25rem"}}><div className="db-card-hd"><div><div className="db-card-title">{t("scoreDistribution")}</div><div className="db-card-sub">{t("scoreDistSub")} · {metrics.people.length} {isAr?"جهات اتصال":"contacts"}</div></div></div>
@@ -1302,7 +1044,7 @@ export default function Dashboard() {
   </div>
   <div className="db-grid db-g2">
     <div className="db-card"><div className="db-card-hd"><div><div className="db-card-title">{t("actionPerformance")}</div><div className="db-card-sub">{t("vipVsStandard")}</div></div></div>
-      <div className="db-card-body" style={{height:220}}><ResponsiveContainer width="100%" height="100%"><BarChart data={[
+      <div className="db-card-body" ><ResponsiveContainer width="100%" height={220}><BarChart data={[
         {name:isAr?"حجز":"Book",VIP:metrics.conv.book_viewing?.vip||0,Std:metrics.conv.book_viewing?.std||0},
         {name:isAr?"تسعير":"Pricing",VIP:metrics.conv.request_pricing?.vip||0,Std:metrics.conv.request_pricing?.std||0},
         {name:isAr?"دفع":"Payment",VIP:metrics.conv.explore_payment_plan?.vip||0,Std:metrics.conv.explore_payment_plan?.std||0},
@@ -1314,7 +1056,7 @@ export default function Dashboard() {
         <Bar dataKey="VIP" fill="#e63946" radius={[3,3,0,0]}/><Bar dataKey="Std" fill="#457b9d" radius={[3,3,0,0]}/>
       </BarChart></ResponsiveContainer></div></div>
     <div className="db-card"><div className="db-card-hd"><div><div className="db-card-title">{t("topPlansByInterest")}</div><div className="db-card-sub">{t("allTraffic")}</div></div></div>
-      <div className="db-card-body" style={{height:220}}><ResponsiveContainer width="100%" height="100%"><BarChart data={metrics.unitInt.map(u=>({name:u.name,score:u.views+u.downloads*2+u.pricing*3+u.bookings*4})).sort((a,b)=>b.score-a.score)} layout="vertical">
+      <div className="db-card-body" ><ResponsiveContainer width="100%" height={220}><BarChart data={metrics.unitInt.map(u=>({name:u.name,score:u.views+u.downloads*2+u.pricing*3+u.bookings*4})).sort((a,b)=>b.score-a.score)} layout="vertical">
         <XAxis type="number" stroke={cx.axis} tick={cx.tickSm} axisLine={false} tickLine={false}/>
         <YAxis dataKey="name" type="category" width={130} stroke={cx.axis} tick={cx.tickLabel} axisLine={false} tickLine={false}/>
         <Tooltip contentStyle={cx.tooltip}/>
@@ -1355,7 +1097,91 @@ export default function Dashboard() {
 </>)}
 
 {/* ═══════════════ TAB 5: UNITS (+ Zero Engagement Badges) ═══════════════ */}
+{activeTab==="pipeline"&&(()=>{
+  const PL_STAGES=[
+    {key:"inquiry",label:t("plInquiry"),color:"#9ca3af",emoji:"📨"},
+    {key:"viewingSched",label:t("plViewingSched"),color:"#3b82f6",emoji:"📅"},
+    {key:"viewingDone",label:t("plViewingDone"),color:"#6366f1",emoji:"✅"},
+    {key:"negotiation",label:t("plNegotiation"),color:"#f59e0b",emoji:"🤝"},
+    {key:"reservation",label:t("plReservation"),color:"#f97316",emoji:"🔒"},
+    {key:"contract",label:t("plContract"),color:"#8b5cf6",emoji:"📝"},
+    {key:"closed",label:t("plClosed"),color:"#10b981",emoji:"🎉"},
+  ];
+  const PL_DEALS=[
+    {id:"D001",name:"Khalid Al-Rashid",unit:"Aurora Penthouse 1",value:2450000,stage:"negotiation",days:3,rep:"Alex Reed",score:87,act:"Requested payment plan"},
+    {id:"D002",name:"Fatima Al-Mansouri",unit:"Horizon Family 3B",value:1350000,stage:"viewingSched",days:1,rep:"Mina Patel",score:62,act:"Booked private viewing"},
+    {id:"D003",name:"Omar Al-Suwaidi",unit:"Aurora Grand 3A",value:1250000,stage:"inquiry",days:5,rep:"Alex Reed",score:34,act:"Downloaded brochure"},
+    {id:"D004",name:"Layla Hassan",unit:"Nova Penthouse 1",value:1850000,stage:"viewingDone",days:2,rep:"Alex Reed",score:71,act:"Viewed floor plan 3x"},
+    {id:"D005",name:"Sultan Al-Dhaheri",unit:"Horizon Grand 3B",value:1120000,stage:"reservation",days:1,rep:"Mina Patel",score:91,act:"Signed reservation form"},
+    {id:"D006",name:"Nora Saeed",unit:"Nova Classic 7A",value:645000,stage:"inquiry",days:8,rep:"Mina Patel",score:28,act:"Browsed 3 units"},
+    {id:"D007",name:"Ahmad Khalil",unit:"Horizon Classic 2A",value:695000,stage:"contract",days:0,rep:"Alex Reed",score:95,act:"Contract sent for review"},
+    {id:"D008",name:"Mariam Al-Fahad",unit:"Aurora Grand 8B",value:789000,stage:"closed",days:0,rep:"Mina Patel",score:100,act:"Payment received"},
+    {id:"D009",name:"Rashid Al-Maktoum",unit:"Al Rawda Grand 9B",value:985000,stage:"negotiation",days:4,rep:"Alex Reed",score:78,act:"Pricing counter-offer"},
+    {id:"D010",name:"Amira Bakri",unit:"Horizon Suite 3A",value:495000,stage:"viewingSched",days:2,rep:"Mina Patel",score:45,act:"Scheduled for Saturday"},
+  ];
+  const fmtP=v=>isAr?`${v.toLocaleString()} درهم`:`AED ${v.toLocaleString()}`;
+  const fmtM=v=>isAr?`${(v/1e6).toFixed(2)} م`:`$${(v/1e6).toFixed(2)}M`;
+  const scC=s=>s>=80?{bg:"rgba(220,38,38,.12)",c:"#dc2626"}:s>=50?{bg:"rgba(245,158,11,.12)",c:"#f59e0b"}:s>=30?{bg:"rgba(69,123,157,.12)",c:"#457b9d"}:{bg:"rgba(156,163,175,.1)",c:"#9ca3af"};
+  const totalVal=PL_DEALS.reduce((s,d)=>s+d.value,0);
+  return (<>
+    <div className="db-card" style={{marginBottom:"1.25rem"}}><div className="db-card-hd"><div><div className="db-card-title">{t("pipelineTitle")}<span className="db-ai-badge">AI SCORED</span></div><div className="db-card-sub">{t("pipelineSub")}</div></div><button className="db-export-btn" onClick={handleExport}>📥 {t("exportPdf")}</button></div></div>
+
+    {/* Total Pipeline Value Bar */}
+    <div className="db-pipeline-value-bar">
+      <div className="db-pipeline-value-label"><span style={{fontSize:"1.1rem"}}>💰</span><span>{t("plTotalValue")}</span></div>
+      <div className="db-pipeline-value-amount">{fmtP(totalVal)}</div>
+      <div className="db-pipeline-value-deals">{PL_DEALS.length} {t("plDeals")}</div>
+    </div>
+
+    {/* Stage Summary Cards */}
+    <div className="db-pipeline-stages">
+      {PL_STAGES.map(s=>{const sd=PL_DEALS.filter(d=>d.stage===s.key);const sv=sd.reduce((a,d)=>a+d.value,0);return(
+        <div key={s.key} className="db-pipeline-stage-card" style={{"--_stage-color":s.color}}>
+          <div className="db-pipeline-stage-emoji">{s.emoji}</div>
+          <div className="db-pipeline-stage-label">{s.label}</div>
+          <div className="db-pipeline-stage-count">{sd.length}</div>
+          <div className="db-pipeline-stage-val">{sv>0?fmtM(sv):"—"}</div>
+        </div>);})}
+    </div>
+
+    {/* Kanban Board */}
+    <div className="db-pipeline-board">
+      <div className="db-pipeline-columns">
+        {PL_STAGES.map(s=>{const sd=PL_DEALS.filter(d=>d.stage===s.key);return(
+          <div key={s.key} className="db-pipeline-col" style={{"--_stage-color":s.color}}>
+            <div className="db-pipeline-col-hd" style={{"--_stage-color":s.color}}>
+              <div className="db-pipeline-col-hd-left">
+                <span className="db-pipeline-col-hd-emoji">{s.emoji}</span>
+                <span className="db-pipeline-col-hd-label">{s.label}</span>
+              </div>
+              <span className="db-pipeline-col-count" style={{background:s.color}}>{sd.length}</span>
+            </div>
+            <div className="db-pipeline-col-body">
+              {sd.length===0&&<div className="db-pipeline-empty"><span>—</span></div>}
+              {sd.map(deal=>{const sc=scC(deal.score);return(
+                <div key={deal.id} className="db-pipeline-card">
+                  <div className="db-pipeline-card-hd">
+                    <span className="db-pipeline-card-name">{deal.name}</span>
+                    <span className="db-pipeline-card-score" style={{background:sc.bg,color:sc.c}}>{deal.score}</span>
+                  </div>
+                  <div className="db-pipeline-card-unit">{deal.unit}</div>
+                  <div className="db-pipeline-card-val">{fmtP(deal.value)}</div>
+                  <div className="db-pipeline-card-meta">
+                    <span>👤 {deal.rep}</span>
+                    {deal.days>0&&<span className="db-pipeline-card-days" style={{color:deal.days>=5?"#dc2626":deal.days>=3?"#f59e0b":"var(--db-muted)"}}>{deal.days} {t("plDays")}</span>}
+                  </div>
+                  <div className="db-pipeline-card-act">{deal.act}</div>
+                </div>);})}
+            </div>
+          </div>);})}
+      </div>
+    </div>
+    <div className="db-pipeline-drag-note">{t("plDragNote")}</div>
+  </>);
+})()}
+
 {activeTab==="units"&&(<>
+  <div className="db-export-bar"><button className="db-export-btn" onClick={handleExport}>📥 {t("exportPdf")}</button></div>
   <div className="db-sec"><h2>{t("unitsFloorPlans")}</h2><div className="db-sec-line"/><span className="db-sec-badge">{UNITS.length} {isAr?"وحدة":"units"}</span></div>
   <div style={{display:"flex",gap:".4rem",marginBottom:"1rem",flexWrap:"wrap"}}>
     {["all","t1","t2","t3"].map(f=>(<button key={f} className={`db-pill ${unitTowerFilter===f?"act":""}`} onClick={()=>setUnitTowerFilter(f)}>{f==="all"?t("filterAll"):towerName(f,lang)}</button>))}
@@ -1378,6 +1204,7 @@ export default function Dashboard() {
 
 {/* ═══════════════ TAB 6: CAMPAIGNS ═══════════════ */}
 {activeTab==="campaigns"&&(<>
+  <div className="db-export-bar"><button className="db-export-btn" onClick={handleExport}>📥 {t("exportPdf")}</button></div>
   <div className="db-sec"><h2>{t("campaigns")}</h2><div className="db-sec-line"/><span className="db-sec-badge">{t("cardIssuance")}</span></div>
   <p style={{fontSize:".78rem",color:cx.sub,marginBottom:"1rem"}}>{t("campaignsDesc")}</p>
   {CAMPAIGNS.map(c=>(<div className="db-campaign" key={c.id}>
@@ -1432,7 +1259,7 @@ export default function Dashboard() {
   </div>
   <div className="db-form-group"><label>{t("lblCardId")}</label><input className="db-input" placeholder="card_000130"/></div>
   <div style={{marginTop:".5rem",padding:".55rem",borderRadius:6,background:"rgba(69,123,157,.04)",border:"1px solid rgba(69,123,157,.08)",fontSize:".68rem",color:cx.sub}}>{t("createVipNote")}</div>
-  <button className="db-pill accent" style={{width:"100%",textAlign:"center",marginTop:".75rem",padding:".55rem"}} onClick={()=>setModal(null)}>{t("createVipSubmit")}</button>
+  <button className="db-pill accent" style={{width:"100%",textAlign:"center",marginTop:".75rem",padding:".55rem"}} onClick={()=>{alert("VIP created. Premium box will be dispatched within 48 hours.");setModal(null);}}>{t("createVipSubmit")}</button>
 </div></div>)}
 
 {modal==="outreach"&&outreachVip&&(<div className="db-modal-overlay" onClick={()=>setModal(null)}><div className="db-modal" onClick={e=>e.stopPropagation()}>
@@ -1454,8 +1281,33 @@ export default function Dashboard() {
     </div>
   </div>
   <div style={{padding:".55rem",borderRadius:6,background:"rgba(244,162,97,.04)",border:"1px solid rgba(244,162,97,.1)",fontSize:".68rem",color:cx.sub}}><strong style={{color:"#f4a261"}}>{t("guardrailLabel")}</strong> {t("guardrailDesc")}</div>
+  <div style={{display:"flex",gap:".5rem",marginTop:"1rem"}}>
+    <a href={`tel:${outreachVip.phone.replace(/\s/g,"")}`} className="db-pill accent" style={{flex:1,textAlign:"center",padding:".5rem",textDecoration:"none"}}>📞 {isAr?"اتصال":"Call Now"}</a>
+    <a href={`mailto:${outreachVip.email}?subject=Private Viewing - Al Noor Residences&body=${encodeURIComponent(`Dear ${outreachVip.fullName},\n\nFollowing up on your private invitation...`)}`} className="db-pill" style={{flex:1,textAlign:"center",padding:".5rem",textDecoration:"none"}}>✉ {isAr?"بريد":"Email"}</a>
+    <a href={`https://wa.me/${outreachVip.phone.replace(/\s/g,"")}?text=${encodeURIComponent(`Hi ${outreachVip.fullName}, this is ${repName(outreachVip.salesRepId)} from Al Noor Residences. Following up on your private invitation regarding ${outreachVip.topPlans[0]}...`)}`} target="_blank" rel="noopener noreferrer" className="db-pill" style={{flex:1,textAlign:"center",padding:".5rem",textDecoration:"none"}}>💬 WhatsApp</a>
+  </div>
 </div></div>)}
+
+{/* ── Notification Toasts ── */}
+<div className="db-notif-container">
+  {notifications.map((n, i) => (
+    <div key={n.id} className={`db-notif db-notif-${n.type}`} style={{animationDelay:`${i*50}ms`}}>
+      <div className="db-notif-icon">{n.icon}</div>
+      <div className="db-notif-body">
+        <div className="db-notif-msg">{n.msg}</div>
+        <div className="db-notif-meta">
+          {n.portal==="vip"&&<span className="db-notif-badge vip">VIP</span>}
+          {n.portal==="lead"&&<span className="db-notif-badge lead">LEAD</span>}
+          {n.portal==="anonymous"&&<span className="db-notif-badge anon">PUBLIC</span>}
+          <span className="db-notif-time">{isAr?"\u0627\u0644\u0622\u0646":"just now"}</span>
+        </div>
+      </div>
+      <button className="db-notif-close" onClick={()=>setNotifications(prev=>prev.filter(x=>x.id!==n.id))}>✕</button>
+    </div>
+  ))}
+</div>
 
     </div>
   );
 }
+
