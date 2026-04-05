@@ -36,7 +36,6 @@ import CreateCard from "./pages/CreateCard/CreateCard";
 import NFCCards from "./pages/NFCCards/NFCCards";
 import Enterprise from "./pages/Enterprise/Enterprise";
 import Login from "./pages/Login/Login";
-import login from "./pages/Login/login";
 import OrderCard from "./pages/OrderCard/OrderCard";
 import Test from "./pages/test/test";
 import CardDashboard from "./pages/CardDashboard/CardDashboard";
@@ -105,7 +104,7 @@ function App() {
           <Route path="/card" element={<Card />} />
           <Route path="/order-card" element={<OrderCardPage />} />
           <Route path="/create-physical-card" element={<CreatePhysicalCard />} />
-          <Route path="/login" element={<login />} />
+          <Route path="/login-legacy" element={<Login />} />
 <Route path="/create-physical-card-test" element={<CreatePhysicalCardTest />} />
 <Route path="/order-card-page" element={<OrderCardPage />} />
 <Route path="/contact-sales" element={<ContactSales />} />
