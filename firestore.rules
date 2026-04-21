@@ -48,7 +48,10 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Settings — admin only
+    // Settings — admin only write, authenticated read
+    // Includes:
+    //   - settings/cleanup-exempt: { uids: [...], emails: [...], reason: {...} }
+    //     → used by inactivity cleanup Cloud Function to skip protected accounts.
     match /settings/{settingId} {
       allow read: if request.auth != null;
       allow write: if isAdmin();
@@ -86,6 +89,37 @@ service cloud.firestore {
         && request.resource.data.email.size() <= 100;
       allow read: if request.auth != null;
       allow update, delete: if isAdmin();
+    }
+
+    // Tenant isolation for /unified workspace
+    // Owner-only read/write on tenants/{uid} and ALL subcollections.
+    //
+    // Reserved root-doc fields (managed by app + cleanup function):
+    //   - lastActivity:      Timestamp  → updated on login, heartbeat (12h), meaningful writes
+    //   - seedVersion:       number     → idempotent demo seed marker (first-login seed)
+    //   - seedComplete:      boolean    → true once initial seed finished
+    //   - schemaVersion:     number     → schema version for migrations
+    //   - cleanupEligible:   boolean    → false = permanent exempt (rare; prefer settings/cleanup-exempt)
+    //   - pendingDeletionAt: Timestamp  → soft-delete marker set by cleanup function
+    //                                     (auto-cleared by updateLastActivity on any write;
+    //                                      hard delete happens 7 days after this is set)
+    //
+    // NOTE: Cloud Functions (cleanup) use Admin SDK and bypass these rules.
+    match /tenants/{userId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == userId;
+
+      match /{subcollection}/{document} {
+        allow read: if request.auth != null
+          && request.auth.uid == userId;
+        allow delete: if request.auth != null
+          && request.auth.uid == userId;
+        // Allow create/update but block client from modifying server-managed 'aggregates' field
+        allow create, update: if request.auth != null
+          && request.auth.uid == userId
+          && (!('aggregates' in request.resource.data)
+              || (resource != null && request.resource.data.aggregates == resource.data.aggregates));
+      }
     }
   }
 }

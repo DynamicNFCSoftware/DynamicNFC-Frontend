@@ -6,9 +6,10 @@ import { useAuth } from "../contexts/AuthContext";
 import { useRegion } from "./useRegion";
 import { calculateDecayedScore, calculateVelocity, detectSalesTriggers, getSectorConfig } from "../config/sectorConfig";
 import { checkTenantExists, seedTenantData, updateLastActivity } from "../services/tenantService";
+import { normalizeSectorId } from "../utils/sectorId";
 
 const HEARTBEAT_MS = 12 * 60 * 60 * 1000;
-const CAMPAIGNS_PAGE_SIZE = 50;
+const CAMPAIGNS_PAGE_SIZE = 20;
 const EVENT_ALIAS = {
   comparison_view: "compare_units",
   explore_payment_plan: "payment_plan_viewed",
@@ -72,7 +73,8 @@ const toType = (eventName, sectorId) => {
 const toPersonKey = (event) => event.vipName || event.userName || event.leadName || event.sessionId || "anon";
 
 export default function useDashboardData() {
-  const { sectorId } = useSector();
+  const { sectorId: legacySectorId, activeSectorId } = useSector();
+  const sectorId = useMemo(() => normalizeSectorId(activeSectorId || legacySectorId), [activeSectorId, legacySectorId]);
   const { user } = useAuth();
   const { regionId, region, locale, currencySymbol } = useRegion();
   const sectorEvents = useMemo(() => getSectorConfig(sectorId).events, [sectorId]);
@@ -105,6 +107,10 @@ export default function useDashboardData() {
   const campaignPagesLoadedRef = useRef(false);
   const [campaignsHasMore, setCampaignsHasMore] = useState(true);
   const [campaignsLoadingMore, setCampaignsLoadingMore] = useState(false);
+  const filterBySector = useCallback(
+    (rows = []) => rows.filter((row) => normalizeSectorId(row?.sector) === sectorId),
+    [sectorId]
+  );
 
   useEffect(() => {
     if (!user?.uid) {
@@ -135,8 +141,8 @@ export default function useDashboardData() {
       }
       seedingRef.current = true;
       try {
-        const tenant = await checkTenantExists(user.uid);
-        if (!tenant.exists || !tenant.seedComplete) {
+        const tenant = await checkTenantExists(user.uid, regionId);
+        if (tenant.needsSeed) {
           setSeedingInProgress(true);
           await seedTenantData(user.uid, user, regionId);
           if (cancelled) return;
@@ -282,10 +288,16 @@ export default function useDashboardData() {
     return () => window.clearInterval(id);
   }, [user]);
 
+  const sectorRawEvents = useMemo(() => filterBySector(rawEvents), [rawEvents, filterBySector]);
+  const sectorRawLeads = useMemo(() => filterBySector(rawLeads), [rawLeads, filterBySector]);
+  const sectorRawDeals = useMemo(() => filterBySector(rawDeals), [rawDeals, filterBySector]);
+  const sectorRawCards = useMemo(() => filterBySector(rawCards), [rawCards, filterBySector]);
+  const sectorRawCampaigns = useMemo(() => filterBySector(rawCampaigns), [rawCampaigns, filterBySector]);
+
   const normalizedEvents = useMemo(() => {
     const config = getSectorConfig(sectorId);
     const allowed = new Set(Object.values(config.events));
-    return rawEvents
+    return sectorRawEvents
       .map((row) => {
         const mappedType = toType(row.event || row.type, sectorId);
         const actor = row.vipName || row.userName || row.leadName || row.sessionId || "Visitor";
@@ -327,7 +339,7 @@ export default function useDashboardData() {
       })
       .filter((e) => allowed.has(e.type) || e.portalType === "lead" || e.portalType === "registered" || e.portalType === "anonymous")
       .sort((a, b) => b.timestamp - a.timestamp);
-  }, [rawEvents, sectorId]);
+  }, [sectorRawEvents, sectorId]);
   // Alias for backward compat
   const events = normalizedEvents || [];
 
@@ -342,7 +354,7 @@ export default function useDashboardData() {
     return Object.entries(byVip)
       .map(([name, rows]) => {
         const sorted = [...rows].sort((a, b) => b.timestamp - a.timestamp);
-        const lead = rawLeads.find((l) => (l.name || "").toLowerCase() === name.toLowerCase());
+        const lead = sectorRawLeads.find((l) => (l.name || "").toLowerCase() === name.toLowerCase());
         const topCount = {};
         sorted.forEach((e) => {
           if (!e.unitName) return;
@@ -378,7 +390,7 @@ export default function useDashboardData() {
         };
       })
       .sort((a, b) => b.score - a.score);
-  }, [normalizedEvents, rawLeads, sectorId]);
+  }, [normalizedEvents, sectorRawLeads, sectorId]);
 
   // Build a name→VIP lookup so deals can pull real intent scores
   const vipByName = useMemo(() => {
@@ -389,7 +401,7 @@ export default function useDashboardData() {
 
   const deals = useMemo(
     () =>
-      rawDeals.map((d) => {
+      sectorRawDeals.map((d) => {
         const leadName = d.leadName || "";
         const matchedVip = vipByName[leadName.toLowerCase()] || null;
         const probScore = Math.round(Number(d.probability || 0) * 100);
@@ -421,7 +433,7 @@ export default function useDashboardData() {
           atRisk: matchedVip?.atRisk || false,
         };
       }),
-    [rawDeals, vipByName]
+    [sectorRawDeals, vipByName]
   );
 
   // Auto-suggested deals: VIPs with hot triggers who don't already have a deal
@@ -558,7 +570,7 @@ export default function useDashboardData() {
     });
 
     // Prefer real tenant card docs when available, then enrich with event aggregates.
-    const cardsFromDocs = (rawCards || []).map((docCard) => {
+    const cardsFromDocs = (sectorRawCards || []).map((docCard) => {
       const nameKey = norm(docCard.unitName || docCard.name || docCard.id);
       const altKey = norm(String(docCard.id || "").replace(/-/g, " "));
       const agg = byUnit[nameKey] || byUnit[altKey] || null;
@@ -585,16 +597,16 @@ export default function useDashboardData() {
       };
     });
 
-    if ((rawCards || []).length === 0) {
+    if ((sectorRawCards || []).length === 0) {
       return aggregateCards.sort((a, b) => b.views - a.views);
     }
 
     const docNames = new Set(cardsFromDocs.map((c) => norm(c.name)));
     const aggregateRemainder = aggregateCards.filter((c) => !docNames.has(norm(c.name)));
     return [...cardsFromDocs, ...aggregateRemainder].sort((a, b) => b.views - a.views);
-  }, [normalizedEvents, sectorEvents, vipByName, deals, rawCards]);
+  }, [normalizedEvents, sectorEvents, vipByName, deals, sectorRawCards]);
 
-  const campaigns = useMemo(() => rawCampaigns.map((c) => ({ id: c.id, ...c })), [rawCampaigns]);
+  const campaigns = useMemo(() => sectorRawCampaigns.map((c) => ({ id: c.id, ...c })), [sectorRawCampaigns]);
 
   // Campaign benchmark: avg conversion rate across all active campaigns
   const campaignBenchmark = useMemo(() => {
