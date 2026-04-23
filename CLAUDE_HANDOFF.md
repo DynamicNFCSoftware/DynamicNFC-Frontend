@@ -1,3 +1,21 @@
+
+## How This File Works
+
+This is the shared live-state document between three AI collaborators working on DynamicNFC:
+- **Claude (claude.ai)** — user pastes this at the start of each new chat session
+- **Claude Code (CC, terminal)** — reads this automatically via CLAUDE.md Session Startup
+- **Cursor Cloud Agent** — reads this automatically via .cursor/rules/00-core.mdc
+
+**Update protocol:**
+- After any deploy, append to "Infrastructure Snapshot" with date + source.
+- After any finished task, add one line to "Recently Completed".
+- Before starting a new task, move it from open items to "In-Flight Work" with owner tag ([Claude] / [CC] / [Cursor]).
+
+Keep entries short. This file is a live ledger, not a report.
+
+---
+
+
 # CLAUDE_HANDOFF.md
 
 Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
