@@ -51,7 +51,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> {}) // CORS enable - uses WebConfig CORS settings
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout", "/api/request-card", "/error").permitAll()
+                    .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout", "/api/request-card", "/api/docusign/**", "/error").permitAll()
                     
                     // 🔒 LOGIN GEREKEN
                     .requestMatchers(HttpMethod.GET, "/api/users/my-cards").authenticated()

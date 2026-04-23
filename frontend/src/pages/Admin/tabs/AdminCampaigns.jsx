@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { collection, doc, getDocs, query, where, orderBy, limit, Timestamp, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import './AdminCampaigns.css';
+import { useTranslation } from '../../../i18n';
+import '../../../i18n/pages/admin';
 
-function timeAgo(ts) {
-  if (!ts?.toDate) return 'Never';
+function timeAgo(ts, t) {
+  if (!ts?.toDate) return t('noActivity');
   const diff = Date.now() - ts.toDate().getTime();
-  if (diff < 60000) return 'just now';
+  if (diff < 60000) return t('justNow');
   if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
   if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
   return `${Math.floor(diff / 86400000)}d ago`;
@@ -22,6 +24,7 @@ function formatDate(ts) {
 const EMPTY_FORM = { id: '', name: '', client: '', description: '', totalCards: 0, startDate: '', endDate: '', sector: 'real_estate' };
 
 export default function AdminCampaigns() {
+  const t = useTranslation('admin');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [campaigns, setCampaigns] = useState([]);
@@ -99,9 +102,9 @@ export default function AdminCampaigns() {
   };
 
   const handleCreate = async () => {
-    if (!form.id.trim()) return setFormError('Campaign ID is required');
-    if (!form.name.trim()) return setFormError('Campaign name is required');
-    if (campaigns.some(c => c.id === form.id)) return setFormError('Campaign ID already exists');
+    if (!form.id.trim()) return setFormError(t('campaignIdRequired'));
+    if (!form.name.trim()) return setFormError(t('campaignNameRequired'));
+    if (campaigns.some(c => c.id === form.id)) return setFormError(t('campaignIdExists'));
     setSaving(true);
     try {
       await setDoc(doc(db, 'campaigns', form.id), {
@@ -116,14 +119,14 @@ export default function AdminCampaigns() {
         status: 'active',
         createdAt: serverTimestamp(),
       });
-      showToast(`Campaign "${form.name}" created`);
+      showToast(`${t('campaignCreated')}: "${form.name}"`);
       closeModal();
       await fetchData();
     } catch (e) { setFormError(e.message); } finally { setSaving(false); }
   };
 
   const handleEdit = async () => {
-    if (!form.name.trim()) return setFormError('Campaign name is required');
+    if (!form.name.trim()) return setFormError(t('campaignNameRequired'));
     setSaving(true);
     try {
       await updateDoc(doc(db, 'campaigns', editId), {
@@ -136,7 +139,7 @@ export default function AdminCampaigns() {
         sector: form.sector || 'real_estate',
         updatedAt: serverTimestamp(),
       });
-      showToast(`Campaign "${form.name}" updated`);
+      showToast(`${t('campaignUpdated')}: "${form.name}"`);
       closeModal();
       await fetchData();
     } catch (e) { setFormError(e.message); } finally { setSaving(false); }
@@ -149,7 +152,7 @@ export default function AdminCampaigns() {
         status: 'completed',
         updatedAt: serverTimestamp(),
       });
-      showToast('Campaign completed');
+      showToast(t('campaignCompleted'));
       closeModal();
       await fetchData();
     } catch (e) { showToast(e.message, true); } finally { setSaving(false); }
@@ -172,8 +175,9 @@ export default function AdminCampaigns() {
   };
 
   const statusClass = (s) => s === 'active' ? 'acmp-status-active' : s === 'paused' ? 'acmp-status-paused' : 'acmp-status-completed';
+  const statusLabel = (s) => s === 'active' ? t('statusActive') : s === 'paused' ? t('statusPaused') : t('statusCompleted');
   const sectorClass = (s) => s === 'automotive' ? 'acmp-sector-automotive' : 'acmp-sector-real_estate';
-  const sectorLabel = (s) => s === 'automotive' ? 'Automotive' : 'Real Estate';
+  const sectorLabel = (s) => s === 'automotive' ? t('navAutomotive') : t('navRealEstate');
 
   const toggleArchive = (id) => setExpandedArchive(prev => ({ ...prev, [id]: !prev[id] }));
 
@@ -199,42 +203,42 @@ export default function AdminCampaigns() {
     <>
       {modal === 'create' && (
         <div className="acmp-form-group">
-          <label className="acmp-form-label">Campaign ID</label>
-          <input className="acmp-form-input" value={form.id} onChange={e => handleChange('id', e.target.value)} placeholder="e.g. marina-tower-q2" />
+          <label className="acmp-form-label">{t('campaignId')}</label>
+          <input className="acmp-form-input" value={form.id} onChange={e => handleChange('id', e.target.value)} placeholder={t('campaignIdExample')} />
         </div>
       )}
       <div className="acmp-form-group">
-        <label className="acmp-form-label">Campaign Name</label>
-        <input className="acmp-form-input" value={form.name} onChange={e => handleChange('name', e.target.value)} placeholder="Display name" />
+        <label className="acmp-form-label">{t('campaignName')}</label>
+        <input className="acmp-form-input" value={form.name} onChange={e => handleChange('name', e.target.value)} placeholder={t('displayName')} />
       </div>
       <div className="acmp-form-group">
-        <label className="acmp-form-label">Client</label>
-        <input className="acmp-form-input" value={form.client} onChange={e => handleChange('client', e.target.value)} placeholder="Client name" />
+        <label className="acmp-form-label">{t('client')}</label>
+        <input className="acmp-form-input" value={form.client} onChange={e => handleChange('client', e.target.value)} placeholder={t('clientName')} />
       </div>
       <div className="acmp-form-group">
-        <label className="acmp-form-label">Sector</label>
+        <label className="acmp-form-label">{t('sector')}</label>
         <select className="acmp-form-input" value={form.sector} onChange={e => handleChange('sector', e.target.value)}>
-          <option value="real_estate">Real Estate</option>
-          <option value="automotive">Automotive</option>
+          <option value="real_estate">{t('navRealEstate')}</option>
+          <option value="automotive">{t('navAutomotive')}</option>
         </select>
       </div>
       <div className="acmp-form-group">
-        <label className="acmp-form-label">Description</label>
-        <textarea className="acmp-form-input acmp-textarea" value={form.description} onChange={e => handleChange('description', e.target.value)} placeholder="Campaign description (optional)" rows={3} />
+        <label className="acmp-form-label">{t('description')}</label>
+        <textarea className="acmp-form-input acmp-textarea" value={form.description} onChange={e => handleChange('description', e.target.value)} placeholder={t('campaignDescriptionOptional')} rows={3} />
       </div>
       <div className="acmp-form-row">
         <div className="acmp-form-group">
-          <label className="acmp-form-label">Total Cards (planned)</label>
+          <label className="acmp-form-label">{t('totalCardsPlanned')}</label>
           <input className="acmp-form-input" type="number" value={form.totalCards} onChange={e => handleChange('totalCards', e.target.value)} />
         </div>
       </div>
       <div className="acmp-form-row">
         <div className="acmp-form-group">
-          <label className="acmp-form-label">Start Date</label>
+          <label className="acmp-form-label">{t('startDate')}</label>
           <input className="acmp-form-input" type="date" value={form.startDate} onChange={e => handleChange('startDate', e.target.value)} />
         </div>
         <div className="acmp-form-group">
-          <label className="acmp-form-label">End Date (optional)</label>
+          <label className="acmp-form-label">{t('endDateOptional')}</label>
           <input className="acmp-form-input" type="date" value={form.endDate} onChange={e => handleChange('endDate', e.target.value)} />
         </div>
       </div>
@@ -245,17 +249,17 @@ export default function AdminCampaigns() {
     <div className="acmp-page">
       <div className="acmp-header">
         <div>
-          <h2 className="acmp-title">Campaigns</h2>
-          <p className="acmp-subtitle">Manage your NFC card campaigns and track performance</p>
+          <h2 className="acmp-title">{t('campaignsTitle')}</h2>
+          <p className="acmp-subtitle">{t('campaignsSubtitle')}</p>
         </div>
-        <button className="acmp-btn acmp-btn-primary" onClick={openCreate}>+ New Campaign</button>
+        <button className="acmp-btn acmp-btn-primary" onClick={openCreate}>+ {t('newCampaign')}</button>
       </div>
 
       {campaigns.length === 0 ? (
         <div className="acmp-empty">
           <div className="acmp-empty-icon">{'\u{1F680}'}</div>
-          <p>No campaigns yet. Create your first campaign to start organizing your NFC cards.</p>
-          <button className="acmp-btn acmp-btn-primary" onClick={openCreate} style={{ marginTop: '1rem' }}>+ Create Campaign</button>
+          <p>{t('noCampaignsYet')}</p>
+          <button className="acmp-btn acmp-btn-primary" onClick={openCreate} style={{ marginTop: '1rem' }}>+ {t('createCampaign')}</button>
         </div>
       ) : (
         <>
@@ -270,43 +274,43 @@ export default function AdminCampaigns() {
                       <div className="acmp-card-top">
                         <div>
                           <h3 className="acmp-card-name">{c.name}</h3>
-                          {c.client && <p className="acmp-card-client">Client: {c.client}</p>}
+                          {c.client && <p className="acmp-card-client">{t('client')}: {c.client}</p>}
                           {c.description && <p className="acmp-card-desc">{c.description}</p>}
                         </div>
                         <div className="acmp-badges">
                           <span className={`acmp-sector-badge ${sectorClass(c.sector)}`}>{sectorLabel(c.sector)}</span>
-                          <span className={`acmp-status ${statusClass(c.status)}`}>{c.status || 'active'}</span>
+                          <span className={`acmp-status ${statusClass(c.status)}`}>{statusLabel(c.status || 'active')}</span>
                         </div>
                       </div>
                     </div>
                     <div className="acmp-stats">
                       <div className="acmp-stat">
                         <div className="acmp-stat-value">{stats.totalCards}</div>
-                        <div className="acmp-stat-label">Total Cards</div>
+                        <div className="acmp-stat-label">{t('totalCards')}</div>
                       </div>
                       <div className="acmp-stat">
                         <div className="acmp-stat-value acmp-val-planned">{c.totalCards || 0}</div>
-                        <div className="acmp-stat-label">Planned</div>
+                        <div className="acmp-stat-label">{t('planned')}</div>
                       </div>
                       <div className="acmp-stat">
                         <div className="acmp-stat-value acmp-val-taps">{stats.totalTaps}</div>
-                        <div className="acmp-stat-label">Total Taps</div>
+                        <div className="acmp-stat-label">{t('totalTaps')}</div>
                       </div>
                       <div className="acmp-stat">
-                        <div className="acmp-stat-value acmp-val-time">{stats.lastTapTs ? timeAgo({ toDate: () => new Date(stats.lastTapTs) }) : 'Never'}</div>
-                        <div className="acmp-stat-label">Last Tap</div>
+                        <div className="acmp-stat-value acmp-val-time">{stats.lastTapTs ? timeAgo({ toDate: () => new Date(stats.lastTapTs) }, t) : t('noActivity')}</div>
+                        <div className="acmp-stat-label">{t('lastTap')}</div>
                       </div>
                     </div>
                     <div className="acmp-card-footer">
                       <div className="acmp-card-meta">
-                        <span>Started: {formatDate(c.startDate)}</span>
-                        {c.endDate && <span>Ends: {formatDate(c.endDate)}</span>}
-                        <span>ID: {c.id}</span>
+                        <span>{t('started')}: {formatDate(c.startDate)}</span>
+                        {c.endDate && <span>{t('ends')}: {formatDate(c.endDate)}</span>}
+                        <span>{t('idLabel')}: {c.id}</span>
                       </div>
                       <div className="acmp-actions">
-                        <button className="acmp-btn acmp-btn-view" onClick={() => navigate(`/admin/cards?campaign=${c.id}`)}>View Cards</button>
-                        <button className="acmp-btn" onClick={() => openEdit(c)}>Edit</button>
-                        <button className="acmp-btn acmp-btn-danger" onClick={() => openDeactivate(c.id)}>Complete</button>
+                        <button className="acmp-btn acmp-btn-view" onClick={() => navigate(`/admin/cards?campaign=${c.id}`)}>{t('viewCards')}</button>
+                        <button className="acmp-btn" onClick={() => openEdit(c)}>{t('edit')}</button>
+                        <button className="acmp-btn acmp-btn-danger" onClick={() => openDeactivate(c.id)}>{t('complete')}</button>
                       </div>
                     </div>
                   </div>
@@ -319,7 +323,7 @@ export default function AdminCampaigns() {
           {completedCampaigns.length > 0 && (
             <div className="acmp-archive">
               <div className="acmp-archive-header">
-                <span className="acmp-archive-label">Completed ({completedCampaigns.length})</span>
+                <span className="acmp-archive-label">{t('completed')} ({completedCampaigns.length})</span>
                 <div className="acmp-archive-line" />
               </div>
               <div className="acmp-archive-list">
@@ -334,12 +338,12 @@ export default function AdminCampaigns() {
                         {c.client && <span className="acmp-arc-client">{c.client}</span>}
                         <span className="acmp-arc-date">{formatDate(c.updatedAt || c.endDate || c.createdAt)}</span>
                         <div className="acmp-arc-mini-stats">
-                          <span>{stats.totalCards} cards</span>
-                          <span>{stats.totalTaps} taps</span>
+                          <span>{stats.totalCards} {t('cardsShort')}</span>
+                          <span>{stats.totalTaps} {t('tapsShort')}</span>
                         </div>
                         <div className="acmp-badges" style={{ marginLeft: 'auto' }}>
                           <span className={`acmp-sector-badge ${sectorClass(c.sector)}`}>{sectorLabel(c.sector)}</span>
-                          <span className="acmp-status acmp-status-completed">completed</span>
+                          <span className="acmp-status acmp-status-completed">{t('statusCompleted')}</span>
                         </div>
                       </div>
                       {isOpen && (
@@ -348,30 +352,30 @@ export default function AdminCampaigns() {
                           <div className="acmp-stats acmp-stats-muted">
                             <div className="acmp-stat">
                               <div className="acmp-stat-value">{stats.totalCards}</div>
-                              <div className="acmp-stat-label">Total Cards</div>
+                              <div className="acmp-stat-label">{t('totalCards')}</div>
                             </div>
                             <div className="acmp-stat">
                               <div className="acmp-stat-value" style={{ color: '#9ca3af' }}>{c.totalCards || 0}</div>
-                              <div className="acmp-stat-label">Planned</div>
+                              <div className="acmp-stat-label">{t('planned')}</div>
                             </div>
                             <div className="acmp-stat">
                               <div className="acmp-stat-value" style={{ color: '#9ca3af' }}>{stats.totalTaps}</div>
-                              <div className="acmp-stat-label">Total Taps</div>
+                              <div className="acmp-stat-label">{t('totalTaps')}</div>
                             </div>
                             <div className="acmp-stat">
-                              <div className="acmp-stat-value acmp-val-time">{stats.lastTapTs ? timeAgo({ toDate: () => new Date(stats.lastTapTs) }) : 'Never'}</div>
-                              <div className="acmp-stat-label">Last Tap</div>
+                              <div className="acmp-stat-value acmp-val-time">{stats.lastTapTs ? timeAgo({ toDate: () => new Date(stats.lastTapTs) }, t) : t('noActivity')}</div>
+                              <div className="acmp-stat-label">{t('lastTap')}</div>
                             </div>
                           </div>
                           <div className="acmp-arc-footer">
                             <div className="acmp-card-meta">
-                              <span>Started: {formatDate(c.startDate)}</span>
-                              {c.endDate && <span>Ended: {formatDate(c.endDate)}</span>}
-                              <span>ID: {c.id}</span>
+                              <span>{t('started')}: {formatDate(c.startDate)}</span>
+                              {c.endDate && <span>{t('ended')}: {formatDate(c.endDate)}</span>}
+                              <span>{t('idLabel')}: {c.id}</span>
                             </div>
                             <div className="acmp-actions">
-                              <button className="acmp-btn acmp-btn-view" onClick={(e) => { e.stopPropagation(); navigate(`/admin/cards?campaign=${c.id}`); }}>View Cards</button>
-                              <button className="acmp-btn" onClick={(e) => { e.stopPropagation(); openEdit(c); }}>Edit</button>
+                              <button className="acmp-btn acmp-btn-view" onClick={(e) => { e.stopPropagation(); navigate(`/admin/cards?campaign=${c.id}`); }}>{t('viewCards')}</button>
+                              <button className="acmp-btn" onClick={(e) => { e.stopPropagation(); openEdit(c); }}>{t('edit')}</button>
                             </div>
                           </div>
                         </div>
@@ -389,13 +393,13 @@ export default function AdminCampaigns() {
       {(modal === 'create' || modal === 'edit') && (
         <div className="acmp-modal-overlay" onClick={e => { if (e.target === e.currentTarget) closeModal(); }}>
           <div className="acmp-modal">
-            <h2 className="acmp-modal-title">{modal === 'create' ? 'Create Campaign' : `Edit: ${editId}`}</h2>
+            <h2 className="acmp-modal-title">{modal === 'create' ? t('createCampaignTitle') : `${t('editCampaignTitle')}: ${editId}`}</h2>
             {campaignForm()}
             {formError && <p className="acmp-form-error">{formError}</p>}
             <div className="acmp-modal-actions">
-              <button className="acmp-btn" onClick={closeModal}>Cancel</button>
+              <button className="acmp-btn" onClick={closeModal}>{t('cancel')}</button>
               <button className="acmp-btn acmp-btn-primary" onClick={modal === 'create' ? handleCreate : handleEdit} disabled={saving}>
-                {saving ? 'Saving...' : modal === 'create' ? 'Create Campaign' : 'Save Changes'}
+                {saving ? t('saving') : modal === 'create' ? t('createCampaign') : t('saveChanges')}
               </button>
             </div>
           </div>
@@ -406,14 +410,14 @@ export default function AdminCampaigns() {
       {modal === 'deactivate' && (
         <div className="acmp-modal-overlay" onClick={e => { if (e.target === e.currentTarget) closeModal(); }}>
           <div className="acmp-modal">
-            <h2 className="acmp-modal-title">Complete Campaign</h2>
+            <h2 className="acmp-modal-title">{t('completeCampaignTitle')}</h2>
             <p style={{ color: '#6b7280', margin: '1rem 0', lineHeight: 1.6 }}>
-              Mark <strong style={{ color: '#111827' }}>{deactivateId}</strong> as completed? Cards will remain active but the campaign will be archived.
+              {t('completeCampaignConfirm')} <strong style={{ color: '#111827' }}>{deactivateId}</strong>
             </p>
             <div className="acmp-modal-actions">
-              <button className="acmp-btn" onClick={closeModal}>Cancel</button>
+              <button className="acmp-btn" onClick={closeModal}>{t('cancel')}</button>
               <button className="acmp-btn acmp-btn-danger" onClick={handleDeactivate} disabled={saving}>
-                {saving ? 'Completing...' : 'Complete Campaign'}
+                {saving ? t('completing') : t('completeCampaignTitle')}
               </button>
             </div>
           </div>

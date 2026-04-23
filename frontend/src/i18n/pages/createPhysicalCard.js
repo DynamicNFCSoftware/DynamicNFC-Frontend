@@ -1,0 +1,253 @@
+import { registerTranslations } from "../index";
+
+const createPhysicalCard = {
+  en: {
+    /* ── Page Header ── */
+    badge: "Create Your Card",
+    pageTitle: "Design Your NFC Card",
+    pageSubtitle: "Choose your card material and style, then personalize with your name, logo, and QR link.",
+
+    /* ── Material & Card Selector ── */
+    materialFinish: "Material & Finish",
+    chooseCard: "Choose Your Card",
+    collection: "Collection",
+    cardWhite: "White Digital Business Card",
+    cardBlack: "Black Digital Business Card",
+    cardGolden: "Golden Digital Business Card",
+    cardSilver: "Silver Digital Business Card",
+    cardMetalGold: "Metal Golden Digital Business Card",
+    cardMetalSilver: "Metal Silver Digital Business Card",
+    cardMetalBlack: "Metal Black Digital Business Card",
+    cardRoseGold: "Metal Rose Gold Digital Business Card",
+    card24k: "24K Gold Digital Business Card",
+    cardBamboo: "Bambu Digital Business Card",
+    cardWood: "Wooden Digital Business Card",
+    cardTransparent: "Transparent PVC Digital Business Card",
+    shortWhite: "White",
+    shortBlack: "Black",
+    shortGolden: "Golden",
+    shortSilver: "Silver",
+    shortMetalGold: "Metal Gold",
+    shortMetalSilver: "Metal Silver",
+    shortMetalBlack: "Metal Black",
+    shortRoseGold: "Rose Gold",
+    short24k: "24K Gold",
+    shortBamboo: "Bamboo",
+    shortWood: "Walnut",
+    shortTransparent: "Transparent",
+    matPVC: "PVC",
+    matMetal: "Metal",
+    matEco: "Eco",
+
+    /* ── Card Preview ── */
+    namePlaceholder: "Name Surname",
+    yourLogo: "Your Logo",
+    uploadLogoBack: "Upload a logo to see it here",
+    flipToBack: "Tap card to see back side",
+    flipToFront: "Tap card again to see front",
+
+    /* ── Card Details Form ── */
+    cardDetails: "Card Details",
+    formSubtitle: "Enter your information below. Your card will be printed and shipped with NFC & QR enabled.",
+    nfcQr: "NFC + QR",
+    fullName: "Full Name",
+    enterName: "Enter your name",
+    nameHint: "Will appear on the front of the card.",
+    uploadLogo: "Upload Logo",
+    clickUpload: "Click to upload",
+    orDragDrop: "or drag & drop",
+    fileFormats: "Formats: SVG, PNG, JPG, PDF — appears on both sides.",
+    qrCodeLink: "QR Code Link",
+    yourWebsite: "your website or profile",
+    urlPlaceholder: "https://yourwebsite.com",
+    urlError: "Please enter a valid web link",
+    urlHint: "This URL will be encoded as a QR code on your card.",
+    continueBtn: "Continue",
+
+    /* ── Bulk Inquiry Modal ── */
+    inqTitle: "Love Your Design? Let's Scale It.",
+    inqSub: "DynamicNFC cards are built for teams and enterprises. Tell us about your order and we'll prepare a custom quote.",
+    inqDesignSummary: "Your Design",
+    inqCardType: "Card Type",
+    inqQrLink: "QR Link",
+    inqMinNote: "Minimum order: 25 cards. Custom NFC encoding, premium packaging, worldwide shipping included.",
+    inqQuantity: "How Many Cards?",
+    inqQty25: "25–49",
+    inqQty50: "50–99",
+    inqQty100: "100–249",
+    inqQty250: "250+",
+    inqCompany: "Company / Organization",
+    inqEmail: "Business Email",
+    inqPhone: "Phone (optional)",
+    inqNotes: "Additional Notes",
+    inqNotesHint: "Departments, roles, special encoding, branding requirements...",
+    inqSubmit: "Request Bulk Quote →",
+    inqSubmitting: "Submitting...",
+    inqSuccess: "Quote Request Sent!",
+    inqSuccessDesc: "Our enterprise team will prepare a custom quote based on your design and volume. Expect a response within 24 hours.",
+    inqClose: "Close",
+    inqOrSales: "Or talk to our team directly:",
+    inqCallSales: "Contact Sales",
+
+    /* ── Info Strip ── */
+    freeShipping: "Free Shipping",
+    qrIncluded: "QR Included",
+    nfcEnabled: "NFC Enabled",
+    noAppRequired: "No App Required",
+
+    /* ── About Product ── */
+    aboutProduct: "About Product",
+    aboutTitle: "DynamicNFC Digital Business Card with Durable and Prestigious Representation",
+    aboutP1: "DynamicNFC digital business card combines professional presence with advanced digital technology in one seamless solution.",
+    aboutP2: "With NFC and QR code support, DynamicNFC enables instant sharing at events, corporate meetings, and networking environments.",
+    aboutP3: "DynamicNFC is an AI-powered digital business card platform developed in Canada.",
+
+    /* ── Technical Features ── */
+    techFeatures: "Technical Features",
+    nfcChip: "NFC Chip (NTAG 216)",
+    nfcChipDesc: "High-frequency 13.56 MHz contactless chip. One-tap instant sharing.",
+    customQR: "Custom QR Code",
+    customQRDesc: "Encoded QR code printed on the card front. Scannable by any camera.",
+    premiumMaterials: "Premium Materials",
+    premiumMaterialsDesc: "PVC, brushed metal, 24K gold, bamboo, and wood. ISO 7810 standard.",
+    universalCompat: "Universal Compatibility",
+    universalCompatDesc: "iPhone XS+, all Android, any QR scanner. No app required.",
+    securePrivate: "Secure & Private",
+    securePrivateDesc: "Encrypted servers in Canada. GDPR and CCPA compliant.",
+    aiPlatform: "AI-Powered Platform",
+    aiPlatformDesc: "Real-time analytics and smart contact management.",
+
+    /* ── Auth (page-level) ── */
+    logout: "Logout",
+
+    /* ── Footer ── */
+    footerText: "AI-Powered Digital Business Cards. Developed in Canada.",
+  },
+
+  ar: {
+    /* ── Page Header ── */
+    badge: "صمّم بطاقتك",
+    pageTitle: "صمّم بطاقتك الرقمية NFC",
+    pageSubtitle: "اختر خامة بطاقتك وتصميمها، ثم خصّصها باسمك وشعارك ورابط QR.",
+
+    /* ── Material & Card Selector ── */
+    materialFinish: "الخامة والتشطيب",
+    chooseCard: "اختر بطاقتك",
+    collection: "المجموعة",
+    cardWhite: "بطاقة أعمال رقمية بيضاء",
+    cardBlack: "بطاقة أعمال رقمية سوداء",
+    cardGolden: "بطاقة أعمال رقمية ذهبية",
+    cardSilver: "بطاقة أعمال رقمية فضية",
+    cardMetalGold: "بطاقة أعمال رقمية معدنية ذهبية",
+    cardMetalSilver: "بطاقة أعمال رقمية معدنية فضية",
+    cardMetalBlack: "بطاقة أعمال رقمية معدنية سوداء",
+    cardRoseGold: "بطاقة أعمال رقمية بلون الذهب الوردي",
+    card24k: "بطاقة أعمال رقمية من ذهب عيار ٢٤",
+    cardBamboo: "بطاقة أعمال رقمية من الخيزران",
+    cardWood: "بطاقة أعمال رقمية من خشب الجوز",
+    cardTransparent: "بطاقة أعمال رقمية شفافة من PVC",
+    shortWhite: "أبيض",
+    shortBlack: "أسود",
+    shortGolden: "ذهبي",
+    shortSilver: "فضي",
+    shortMetalGold: "معدن ذهبي",
+    shortMetalSilver: "معدن فضي",
+    shortMetalBlack: "معدن أسود",
+    shortRoseGold: "ذهبي وردي",
+    short24k: "ذهب ٢٤",
+    shortBamboo: "خيزران",
+    shortWood: "جوز",
+    shortTransparent: "شفاف",
+    matPVC: "PVC",
+    matMetal: "معدن",
+    matEco: "طبيعي",
+
+    /* ── Card Preview ── */
+    namePlaceholder: "الاسم الكامل",
+    yourLogo: "شعارك",
+    uploadLogoBack: "ارفع شعارك ليظهر هنا",
+    flipToBack: "انقر على البطاقة لرؤية الوجه الخلفي",
+    flipToFront: "انقر مجددًا لرؤية الوجه الأمامي",
+
+    /* ── Card Details Form ── */
+    cardDetails: "تفاصيل البطاقة",
+    formSubtitle: "أدخل بياناتك أدناه. ستُطبع بطاقتك وتُشحن مزوّدة بتقنيتَي NFC وQR.",
+    nfcQr: "NFC + QR",
+    fullName: "الاسم الكامل",
+    enterName: "أدخل اسمك",
+    nameHint: "سيظهر على الوجه الأمامي للبطاقة.",
+    uploadLogo: "رفع الشعار",
+    clickUpload: "انقر للرفع",
+    orDragDrop: "أو اسحب وأفلت",
+    fileFormats: "الصيغ المدعومة: SVG وPNG وJPG وPDF — يظهر الشعار على كلا الوجهين.",
+    qrCodeLink: "رابط رمز QR",
+    yourWebsite: "موقعك الإلكتروني أو ملفك التعريفي",
+    urlPlaceholder: "https://yourwebsite.com",
+    urlError: "يُرجى إدخال رابط إلكتروني صالح",
+    urlHint: "سيُرمَّز هذا الرابط على هيئة رمز QR على بطاقتك.",
+    continueBtn: "متابعة",
+
+    /* ── Bulk Inquiry Modal ── */
+    inqTitle: "أعجبك التصميم؟ لنوسّعه لفريقك.",
+    inqSub: "بطاقات DynamicNFC مصمَّمة للفرق والمؤسسات. أخبرنا بتفاصيل طلبك وسنُعِدّ لك عرض سعر مخصصًا.",
+    inqDesignSummary: "تصميمك",
+    inqCardType: "نوع البطاقة",
+    inqQrLink: "رابط QR",
+    inqMinNote: "الحد الأدنى للطلب: ٢٥ بطاقة. يشمل الطلب ترميز NFC مخصصًا وتغليفًا فاخرًا وشحنًا دوليًا.",
+    inqQuantity: "كم عدد البطاقات المطلوبة؟",
+    inqQty25: "٢٥–٤٩",
+    inqQty50: "٥٠–٩٩",
+    inqQty100: "١٠٠–٢٤٩",
+    inqQty250: "٢٥٠+",
+    inqCompany: "الشركة / المؤسسة",
+    inqEmail: "البريد الإلكتروني المهني",
+    inqPhone: "رقم الهاتف (اختياري)",
+    inqNotes: "ملاحظات إضافية",
+    inqNotesHint: "الأقسام، والمسمّيات الوظيفية، وترميز خاص، ومتطلبات الهوية البصرية...",
+    inqSubmit: "طلب عرض سعر جماعي ←",
+    inqSubmitting: "جارٍ الإرسال...",
+    inqSuccess: "تم إرسال طلب عرض السعر!",
+    inqSuccessDesc: "سيُعِدّ فريق المؤسسات عرض سعر مخصصًا بناءً على تصميمك والكمية المطلوبة. يُتوقَّع الرد خلال ٢٤ ساعة.",
+    inqClose: "إغلاق",
+    inqOrSales: "أو تحدّث مع فريقنا مباشرةً:",
+    inqCallSales: "تواصل مع المبيعات",
+
+    /* ── Info Strip ── */
+    freeShipping: "شحن مجاني",
+    qrIncluded: "رمز QR مُضمَّن",
+    nfcEnabled: "تقنية NFC مُفعَّلة",
+    noAppRequired: "لا يتطلب تطبيقًا",
+
+    /* ── About Product ── */
+    aboutProduct: "عن المنتج",
+    aboutTitle: "بطاقة DynamicNFC الرقمية — حضور مهني متين وفاخر",
+    aboutP1: "تجمع بطاقة DynamicNFC الرقمية بين الحضور المهني الراقي والتقنية الرقمية المتقدمة في حلٍّ واحد متكامل.",
+    aboutP2: "بفضل دعم تقنيتَي NFC وQR، تتيح بطاقة DynamicNFC مشاركة بياناتك فوريًا في الفعاليات والاجتماعات المهنية وبيئات التواصل.",
+    aboutP3: "DynamicNFC منصة بطاقات أعمال رقمية مدعومة بالذكاء الاصطناعي، طُوِّرت في كندا.",
+
+    /* ── Technical Features ── */
+    techFeatures: "المواصفات التقنية",
+    nfcChip: "شريحة NFC (NTAG 216)",
+    nfcChipDesc: "شريحة لاتلامسية عالية التردد بمعدل 13.56 ميغاهرتز. مشاركة فورية بلمسة واحدة.",
+    customQR: "رمز QR مخصص",
+    customQRDesc: "رمز QR مُرمَّز ومطبوع على واجهة البطاقة، يمكن مسحه ضوئيًا بأي كاميرا.",
+    premiumMaterials: "خامات فاخرة",
+    premiumMaterialsDesc: "PVC ومعدن مصقول وذهب عيار ٢٤ وخيزران وخشب الجوز. متوافقة مع معيار ISO 7810.",
+    universalCompat: "توافق شامل",
+    universalCompatDesc: "تعمل مع iPhone XS والأحدث وجميع أجهزة Android وأي قارئ QR. لا تتطلب تطبيقًا.",
+    securePrivate: "أمان وخصوصية",
+    securePrivateDesc: "خوادم مشفَّرة في كندا. متوافقة مع معايير GDPR وCCPA.",
+    aiPlatform: "منصة مدعومة بالذكاء الاصطناعي",
+    aiPlatformDesc: "تحليلات لحظية وإدارة ذكية لجهات الاتصال.",
+
+    /* ── Auth (page-level) ── */
+    logout: "تسجيل الخروج",
+
+    /* ── Footer ── */
+    footerText: "بطاقات أعمال رقمية مدعومة بالذكاء الاصطناعي. طُوِّرت في كندا.",
+  },
+};
+
+registerTranslations("createPhysicalCard", createPhysicalCard);
+
+export default createPhysicalCard;

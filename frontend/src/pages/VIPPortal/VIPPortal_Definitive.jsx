@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-
+import { Link } from "react-router-dom";
+import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import './VIPPortal.css';
+import '../../i18n/portals/vipPortal';
+import SEO from '../../components/SEO/SEO';
 // ═══════════════════════════════════════════════════════════════════
 // VIP PORTAL — DEFINITIVE EDITION
 // ═══════════════════════════════════════════════════════════════════
@@ -10,23 +14,32 @@ import { useState, useEffect, useRef, useCallback } from "react";
 // Zero Dead Ends — every button does something meaningful
 // ═══════════════════════════════════════════════════════════════════
 
-// ─── TRACKING ENGINE (in-memory + BroadcastChannel) ──────────────
-const _events = [];
+// ─── TRACKING ENGINE (localStorage + BroadcastChannel) ──────────────
 const _bc = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("dnfc_tracking") : null;
+const _source = "nfc";
 
 const trackEvent = (event, data = {}) => {
+  const _deviceType = /Mobi|Android/i.test(navigator.userAgent) ? "mobile"
+    : /Tablet|iPad/i.test(navigator.userAgent) ? "tablet"
+    : "desktop";
   const ev = {
     id: `evt_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
     timestamp: new Date().toISOString(),
     portalType: "vip",
     vipId: "KR-001",
     vipName: "Khalid Al-Rashid",
+    source: _source,
+    deviceType: _deviceType,
     event,
     ...data,
   };
-  _events.push(ev);
+  try {
+    const events = JSON.parse(localStorage.getItem("dnfc_events") || "[]");
+    events.push(ev);
+    localStorage.setItem("dnfc_events", JSON.stringify(events));
+  } catch (e) {}
   _bc?.postMessage(ev);
-  console.log(`[DNFC] ${event}`, data);
+  bridgeEventToFirestore(ev);
   return ev;
 };
 
@@ -44,6 +57,11 @@ const LANG = {
       ctaSecondary: "Schedule Private Viewing",
     },
     stats: { units: "Premium Units", floors: "Floors of Luxury", roi: "Projected ROI", completion: "Completion" },
+    roiBanner: {
+      title: "Calculate Your Investment Returns",
+      desc: "Use our interactive ROI calculator to project your returns based on property value, rental income, appreciation rates, and financing options.",
+      cta: "Open ROI Calculator →",
+    },
     sections: {
       residences: "The Residences",
       residencesSub: "Where Vision Meets the Skyline",
@@ -139,67 +157,72 @@ const LANG = {
   },
   ar: {
     dir: "rtl",
-    nav: { vip: "وصول VIP", lang: "English", compare: "مقارنة" },
+    nav: { vip: "الوصول كبار الشخصيات", lang: "العربية", compare: "المقارنة" },
     hero: {
       badge: "دعوة خاصة",
-      greeting: "أهلاً وسهلاً،",
-      tagline: "مسكنك الحصري بانتظارك",
-      subtitle: "مجموعة مختارة من المساكن الفاخرة، مصممة خصيصاً للمستثمرين الذين لا يقبلون إلا بالاستثنائي.",
-      cta: "استكشف المساكن",
-      ctaSecondary: "حجز معاينة خاصة",
+      greeting: "مرحبًا،",
+      tagline: "وحدتك الحصرية في انتظارك",
+      subtitle: "هيكل دفع مرن مصمم للمستثمرين",
+      cta: "استكشاف الوحدات",
+      ctaSecondary: "جدولة زيارة خاصة",
     },
-    stats: { units: "وحدة فاخرة", floors: "طابقاً من الفخامة", roi: "عائد متوقع", completion: "التسليم" },
+    stats: { units: "الوحدات المميزة", floors: "طوابق من الفخامة", roi: "العائد المتوقع على الاستثمار", completion: "الانتهاء" },
+    roiBanner: {
+      title: "خطة الدفع",
+      desc: "تم إعداد كتيبك الرقمي المخصص مع تفاصيل حصرية.",
+      cta: "← افتح حاسبة العائد",
+    },
     sections: {
-      residences: "المساكن",
-      residencesSub: "حيث تلتقي الرؤية بالأفق",
-      residencesHint: "اختر أي مسكن لاستكشاف التفاصيل الكاملة",
+      residences: "الوحدات السكنية",
+      residencesSub: "حيث يلتقي الرؤية بأفق المدينة",
+      residencesHint: "اختر أي وحدة لاستكشاف التفاصيل الكاملة",
       amenities: "أسلوب الحياة",
-      amenitiesSub: "تجارب مُنتقاة تتجاوز المألوف",
-      investment: "الفرصة الاستثمارية",
-      investmentSub: "قيمة استراتيجية في كل تفصيل",
+      amenitiesSub: "تجارب مختارة تتجاوز المألوف",
+      investment: "الفرصة",
+      investmentSub: "القيمة الاستراتيجية في كل تفصيلة",
       contact: "استشارة خاصة",
-      contactSub: "احجز معاينتك الخاصة",
-      contactHint: "مستشارك المخصص سيرتب جولة حصرية",
+      contactSub: "جدولة زيارتك الخاصة",
+      contactHint: "سيقوم مستشارك المخصص بترتيب جولة حصرية",
     },
     unitActions: {
       viewDetails: "عرض التفاصيل",
-      floorPlan: "المخطط",
+      floorPlan: "مخطط الطابق",
       brochure: "الكتيب",
-      pricing: "طلب التسعير",
-      book: "حجز معاينة",
+      pricing: "طلب الأسعار",
+      book: "حجز زيارة",
       compare: "مقارنة",
       payment: "خطة الدفع",
-      callAdvisor: "اتصل بالمستشار",
+      callAdvisor: "الاتصال بالمستشار",
     },
     floorPlanModal: {
       title: "المخطط الطابقي",
-      bedrooms: "غرف النوم", living: "منطقة المعيشة", balcony: "الشرفة / التراس",
+      bedrooms: "غرف النوم", living: "غرفة المعيشة", balcony: "شرفة / تراس",
       kitchen: "المطبخ", master: "الجناح الرئيسي", bathrooms: "الحمامات",
-      totalArea: "المساحة الإجمالية", download: "تحميل المخطط PDF",
-      disclaimer: "المخططات استرشادية وقد تختلف. الأبعاد الفعلية تُؤكد عند التسليم.",
+      totalArea: "المساحة الإجمالية", download: "تحميل مخطط الطابق PDF",
+      disclaimer: "خطط الدفع خاضعة للموافقة. قد تختلف الشروط حسب اختيار الوحدة.",
     },
     brochureModal: {
       title: "الكتيب الرقمي",
-      downloading: "جاري تحضير الكتيب...",
+      downloading: "جارٍ إعداد كتيبك…",
       ready: "الكتيب جاهز",
       desc: "تم إعداد كتيبك الرقمي المخصص مع تفاصيل حصرية.",
-      download: "تحميل الكتيب PDF", email: "إرسال للبريد الإلكتروني",
-      includes: "يتضمن الكتيب:",
+      download: "تحميل الكتيب PDF", email: "إرسال إلى البريد الإلكتروني",
+      includes: "الكتيب يشمل:",
       items: ["مخططات تفصيلية ومواصفات", "كتالوج التشطيبات الفاخرة", "نظرة على المرافق ونمط الحياة", "تحليل استثماري وخطط الدفع", "خريطة الموقع والاتصال"],
     },
     paymentModal: {
       title: "خطة الدفع",
       subtitle: "هيكل دفع مرن مصمم للمستثمرين",
       totalPrice: "السعر الإجمالي",
-      plan6040: "خطة ٦٠/٤٠", plan6040Desc: "٦٠٪ خلال البناء · ٤٠٪ عند التسليم",
-      plan7030: "خطة ٧٠/٣٠", plan7030Desc: "٧٠٪ خلال البناء · ٣٠٪ بعد التسليم (١٢ شهر)",
-      milestones: "مراحل الدفع",
-      m1: "عربون الحجز", m1d: "عند الحجز",
-      m2: "القسط الأول", m2d: "خلال ٣٠ يوم",
-      m3: "البناء ٣٠٪", m3d: "عند إتمام ٣٠٪",
-      m4: "البناء ٦٠٪", m4d: "عند إتمام ٦٠٪",
+      plan6040: "خطة 60/40", plan6040Desc: "60٪ أثناء البناء · 40٪ عند التسليم",
+      plan7030: "خطة 70/30", plan7030Desc: "70٪ أثناء البناء · 30٪ بعد التسليم (12 شهرًا)",
+      milestones: "معالم الدفع",
+      m1: "دفعة الحجز", m1d: "عند الحجز",
+      m2: "الدفعة الأولى", m2d: "خلال 30 يومًا",
+      m3: "البناء 30٪", m3d: "عند اكتمال 30٪",
+      m4: "البناء 60٪", m4d: "عند اكتمال 60٪",
       m5: "التسليم", m5d: "عند تسليم المفتاح",
-      m6: "بعد التسليم", m6d: "١٢ شهر بعد التسليم",
+      m6: "ما بعد التسليم", m6d: "12 شهرًا بعد التسليم",
       requestCall: "طلب استشارة الدفع",
       disclaimer: "خطط الدفع تخضع للموافقة. قد تختلف الشروط حسب الوحدة المختارة.",
     },
@@ -207,32 +230,32 @@ const LANG = {
       title: "مقارنة المساكن",
       feature: "الميزة", remove: "إزالة",
       price: "السعر", floor: "الطابق", bedrooms: "غرف النوم",
-      size: "المساحة", view: "الإطلالة", category: "الفئة",
-      empty: "أضف مساكن للمقارنة بالنقر على أيقونة ⚖️ في بطاقات الوحدات.",
+      size: "الحجم", view: "عرض", category: "الفئة",
+      empty: "أضف وحدات للمقارنة بالنقر على أيقونة ⚖️ على بطاقات الوحدات.",
     },
     booking: {
       name: "الاسم الكامل", email: "البريد الإلكتروني", phone: "رقم الهاتف",
-      preferred: "المسكن المفضل", date: "التاريخ المفضل", time: "الوقت المفضل",
-      notes: "ملاحظات إضافية", submit: "طلب معاينة خاصة",
-      note: "معلوماتك محمية. سنتواصل معك خلال ٢٤ ساعة.",
-      morning: "صباحاً (٩-١٢)", afternoon: "ظهراً (١٢-٤)", evening: "مساءً (٤-٧)",
-      success: "تم تقديم طلب المعاينة",
-      successDesc: "شكراً لك! سيتواصل معك مستشارك المخصص خلال ٢٤ ساعة لتأكيد معاينتك الخاصة.",
+      preferred: "الإقامة المفضلة", date: "التاريخ المفضل", time: "الوقت المفضل",
+      notes: "ملاحظات إضافية", submit: "طلب زيارة خاصة",
+      note: "يتم حماية معلوماتك. سنتواصل معك خلال 24 ساعة.",
+      morning: "الصباح (9ص-12م)", afternoon: "بعد الظهر(12م - 4م)", evening: "المساء (4م-7م)",
+      success: "تم تقديم طلب الزيارة",
+      successDesc: "شكرًا لك! سيتواصل معك المستشار المخصص خلال 24 ساعة لتأكيد زيارتك الخاصة.",
       successRef: "المرجع",
     },
     toast: {
       floorPlan: "تم فتح المخطط",
       brochure: "تم تحميل الكتيب",
       pricing: "تم إرسال طلب التسعير — تحقق من بريدك",
-      booking: "تم تقديم طلب المعاينة الخاصة",
+      booking: "تم تقديم طلب زيارة خاصة",
       compare: "تمت الإضافة للمقارنة",
-      compareRemove: "تمت الإزالة من المقارنة",
-      emailSent: "تم إرسال الكتيب لبريدك",
-      advisorNotified: "تم إبلاغ مستشارك المخصص",
+      compareRemove: "تمت إزالته من المقارنة",
+      emailSent: "تم إرسال الكتيب إلى بريدك الإلكتروني",
+      advisorNotified: "تم إخطار مستشارك المخصص",
     },
-    footer: "هذه بوابة خاصة. المحتوى مخصص لوصولك الحصري.",
-    poweredBy: "مدعوم من",
-  },
+    footer: "هذا بوابة خاصة. المحتوى مخصص للوصول الحصري لك.",
+    poweredBy: "مشغل بواسطة",
+},
 };
 
 // ─── PROPERTY DATA (Rich: galleries, features, floor plans, payments) ──
@@ -404,269 +427,6 @@ const ROOM_COLORS = {
 };
 
 // ─── CSS (Dark Luxury, clean namespaced) ─────────────────────────
-const css = `
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600&display=swap');
-
-:root {
-  --vp-gold: #C5A467;
-  --vp-gold-lt: #D4B97A;
-  --vp-gold-glow: rgba(197,164,103,0.12);
-  --vp-gold-bdr: rgba(197,164,103,0.25);
-  --vp-ch: #0D0D0F;
-  --vp-ch2: #141416;
-  --vp-sl: #1C1C20;
-  --vp-t1: #FAFAF8;
-  --vp-t2: rgba(250,250,248,0.85);
-  --vp-t3: rgba(250,250,248,0.58);
-  --vp-gl: rgba(255,255,255,0.04);
-  --vp-glb: rgba(255,255,255,0.08);
-  --vp-serif: 'Cormorant Garamond', Georgia, serif;
-  --vp-sans: 'Outfit', system-ui, sans-serif;
-}
-
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
-
-.vp { min-height:100vh; background:var(--vp-ch); font-family:var(--vp-sans); color:var(--vp-t1); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
-
-/* Header */
-.vp-hd { position:fixed; top:0; left:0; right:0; z-index:100; padding:1.25rem 3rem; display:flex; align-items:center; justify-content:space-between; transition:all .5s; }
-.vp-hd.sc { background:rgba(13,13,15,.94); backdrop-filter:blur(20px); border-bottom:1px solid var(--vp-glb); padding:.85rem 3rem; }
-.vp-logo { font-family:var(--vp-serif); font-size:1.5rem; font-weight:400; letter-spacing:.15em; color:var(--vp-gold); text-transform:uppercase; }
-.vp-logo b { font-weight:600; color:var(--vp-t1); }
-.vp-nav { display:flex; align-items:center; gap:1rem; }
-.vp-badge { display:flex; align-items:center; gap:.5rem; padding:.45rem 1rem; border:1px solid var(--vp-gold-bdr); border-radius:100px; font-size:.72rem; letter-spacing:.1em; color:var(--vp-gold); text-transform:uppercase; }
-.vp-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--vp-gold); animation:vp-glow 2s infinite; }
-@keyframes vp-glow { 0%,100%{opacity:1;box-shadow:0 0 4px var(--vp-gold)} 50%{opacity:.4;box-shadow:0 0 14px var(--vp-gold)} }
-.vp-navbtn { background:none; border:1px solid var(--vp-glb); color:var(--vp-t2); padding:.4rem .9rem; border-radius:6px; font-family:var(--vp-sans); font-size:.78rem; cursor:pointer; transition:.3s; letter-spacing:.04em; }
-.vp-navbtn:hover { border-color:var(--vp-gold-bdr); color:var(--vp-gold); }
-.vp-cmp-count { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:var(--vp-gold); color:var(--vp-ch); font-size:.65rem; font-weight:600; border-radius:50%; margin-inline-start:.4rem; }
-
-/* Hero */
-.vp-hero { position:relative; height:100vh; min-height:700px; display:flex; align-items:flex-end; overflow:hidden; }
-.vp-hero-bg { position:absolute; inset:0; background-size:cover; background-position:center; transform:scale(1.05); animation:vp-hz 20s ease-in-out infinite alternate; }
-@keyframes vp-hz { from{transform:scale(1.05)} to{transform:scale(1.12)} }
-.vp-hero-ov { position:absolute; inset:0; background:linear-gradient(180deg,rgba(13,13,15,.3) 0%,rgba(13,13,15,.5) 40%,rgba(13,13,15,.93) 85%,var(--vp-ch) 100%); }
-.vp-hero-ct { position:relative; z-index:2; padding:0 4rem 5rem; max-width:900px; animation:vp-fu 1.2s ease-out; }
-@keyframes vp-fu { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
-.vp-pvt { display:inline-flex; align-items:center; gap:.7rem; padding:.55rem 1.4rem; border:1px solid var(--vp-gold-bdr); border-radius:100px; margin-bottom:2rem; font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--vp-gold); background:rgba(197,164,103,.07); backdrop-filter:blur(10px); }
-.vp-pvt::before { content:'◆'; font-size:.45rem; }
-.vp-greet { font-size:1.15rem; font-weight:400; color:var(--vp-t2); margin-bottom:.5rem; letter-spacing:.05em; text-shadow:0 1px 8px rgba(0,0,0,0.4); }
-.vp-greet span { color:var(--vp-gold); font-weight:500; }
-.vp-htitle { font-family:var(--vp-serif); font-size:clamp(2.8rem,6vw,5.5rem); font-weight:400; line-height:1.05; margin-bottom:1.5rem; text-shadow:0 2px 20px rgba(0,0,0,0.5); color:#FFFFFF; }
-.vp-htitle em { font-style:italic; color:var(--vp-gold); }
-.vp-hdesc { font-size:1.05rem; font-weight:400; line-height:1.7; color:var(--vp-t2); max-width:600px; margin-bottom:2.5rem; text-shadow:0 1px 8px rgba(0,0,0,0.4); }
-.vp-hacts { display:flex; gap:1rem; flex-wrap:wrap; }
-
-/* Buttons */
-.vp-btn-g { display:inline-flex; align-items:center; gap:.7rem; padding:1rem 2.5rem; background:linear-gradient(135deg,var(--vp-gold),var(--vp-gold-lt)); color:var(--vp-ch); font-family:var(--vp-sans); font-size:.85rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; border:none; border-radius:4px; cursor:pointer; transition:all .4s cubic-bezier(.4,0,.2,1); white-space:nowrap; }
-.vp-btn-g:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(197,164,103,.35); }
-.vp-btn-o { display:inline-flex; align-items:center; gap:.7rem; padding:1rem 2.5rem; background:transparent; color:var(--vp-gold); font-family:var(--vp-sans); font-size:.85rem; font-weight:400; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--vp-gold-bdr); border-radius:4px; cursor:pointer; transition:all .4s; white-space:nowrap; }
-.vp-btn-o:hover { background:var(--vp-gold-glow); border-color:var(--vp-gold); }
-.vp-btn-sm { padding:.5rem 1rem; font-size:.7rem; letter-spacing:.06em; }
-
-/* Stats */
-.vp-stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--vp-glb); border-bottom:1px solid var(--vp-glb); background:var(--vp-ch2); }
-.vp-stat { padding:2.5rem 2rem; text-align:center; border-inline-end:1px solid var(--vp-glb); transition:.3s; }
-.vp-stat:last-child { border:none; }
-.vp-stat:hover { background:var(--vp-gl); }
-.vp-stat-v { font-family:var(--vp-serif); font-size:2.5rem; font-weight:400; color:var(--vp-gold); line-height:1; margin-bottom:.5rem; }
-.vp-stat-l { font-size:.75rem; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--vp-t3); }
-
-/* Section */
-.vp-sec { padding:6rem 4rem; }
-.vp-sh { text-align:center; margin-bottom:4rem; }
-.vp-sl { font-size:.78rem; letter-spacing:.25em; text-transform:uppercase; color:var(--vp-gold); margin-bottom:1rem; display:block; font-weight:500; }
-.vp-st { font-family:var(--vp-serif); font-size:clamp(2rem,4vw,3.5rem); font-weight:400; margin-bottom:.6rem; color:var(--vp-t1); }
-.vp-ss { font-size:1rem; font-weight:400; color:var(--vp-t2); }
-
-/* Unit Cards (3-col grid with rich detail) */
-.vp-units { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; max-width:1200px; margin:0 auto; }
-.vp-card { background:var(--vp-ch2); border:1px solid var(--vp-glb); border-radius:8px; overflow:hidden; cursor:pointer; transition:all .5s; position:relative; }
-.vp-card:hover { border-color:var(--vp-gold-bdr); transform:translateY(-6px); box-shadow:0 20px 50px rgba(0,0,0,.4); }
-.vp-card-img { position:relative; height:220px; overflow:hidden; }
-.vp-card-img img { width:100%; height:100%; object-fit:cover; transition:transform .6s; }
-.vp-card:hover .vp-card-img img { transform:scale(1.08); }
-.vp-card-fbadge { position:absolute; top:1rem; inset-inline-start:1rem; padding:.35rem .8rem; background:rgba(13,13,15,.85); backdrop-filter:blur(8px); border:1px solid var(--vp-gold-bdr); border-radius:4px; font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--vp-gold); }
-.vp-card-status { position:absolute; top:1rem; inset-inline-end:1rem; padding:.35rem .8rem; border-radius:4px; font-size:.65rem; font-weight:600; color:#fff; }
-.vp-card-body { padding:1.5rem; }
-.vp-card-name { font-family:var(--vp-serif); font-size:1.5rem; font-weight:500; margin-bottom:.3rem; color:#FFFFFF; }
-.vp-card-floor { font-size:.8rem; color:var(--vp-gold); letter-spacing:.08em; text-transform:uppercase; margin-bottom:1rem; font-weight:500; }
-.vp-card-meta { display:flex; gap:1.5rem; margin-bottom:1rem; font-size:.88rem; color:var(--vp-t2); font-weight:400; }
-.vp-card-price { font-family:var(--vp-serif); font-size:1.6rem; font-weight:600; color:var(--vp-gold); margin-bottom:.25rem; }
-.vp-card-sqft { font-size:.8rem; color:var(--vp-t3); }
-.vp-card-acts { display:flex; gap:.4rem; padding:.75rem 1rem; border-top:1px solid var(--vp-glb); flex-wrap:wrap; }
-.vp-card-acts button { flex:none; }
-
-/* Amenities */
-.vp-am-sec { position:relative; overflow:hidden; }
-.vp-am-bg { position:absolute; inset:0; background-size:cover; background-position:center; opacity:.12; }
-.vp-am-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; max-width:1100px; margin:0 auto; background:var(--vp-glb); position:relative; z-index:2; }
-.vp-am { background:rgba(13,13,15,.88); backdrop-filter:blur(20px); padding:2.5rem; text-align:center; transition:.4s; }
-.vp-am:hover { background:rgba(197,164,103,.05); }
-.vp-am-icon { font-size:2rem; margin-bottom:1rem; }
-.vp-am-name { font-family:var(--vp-serif); font-size:1.2rem; font-weight:500; margin-bottom:.4rem; color:var(--vp-t1); }
-.vp-am-desc { font-size:.85rem; color:var(--vp-t2); line-height:1.6; }
-
-/* Investment */
-.vp-inv-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; max-width:1100px; margin:0 auto; }
-.vp-inv { text-align:center; padding:3rem 2rem; border:1px solid var(--vp-glb); border-radius:2px; transition:.4s; background:var(--vp-ch); }
-.vp-inv:hover { border-color:var(--vp-gold-bdr); background:var(--vp-gold-glow); }
-.vp-inv-v { font-family:var(--vp-serif); font-size:2.8rem; font-weight:400; color:var(--vp-gold); margin-bottom:.5rem; }
-.vp-inv-l { font-size:.9rem; font-weight:500; margin-bottom:.3rem; }
-.vp-inv-n { font-size:.8rem; color:var(--vp-t3); }
-
-/* Booking */
-.vp-contact { background:var(--vp-ch2); }
-.vp-form { max-width:580px; margin:0 auto; }
-.vp-fg { margin-bottom:1.5rem; }
-.vp-flabel { display:block; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--vp-t3); margin-bottom:.5rem; font-weight:500; }
-.vp-finput { width:100%; padding:1rem 0; background:transparent; border:none; border-bottom:1px solid var(--vp-glb); color:var(--vp-t1); font-family:var(--vp-sans); font-size:1rem; font-weight:400; transition:.3s; outline:none; }
-.vp-finput:focus { border-bottom-color:var(--vp-gold); }
-.vp-finput.vp-err { border-bottom-color:#C1121F; }
-.vp-fsel { width:100%; padding:1rem 0; background:transparent; border:none; border-bottom:1px solid var(--vp-glb); color:var(--vp-t1); font-family:var(--vp-sans); font-size:1rem; outline:none; cursor:pointer; appearance:none; }
-.vp-fsel option { background:var(--vp-ch); color:var(--vp-t1); }
-.vp-fnote { text-align:center; font-size:.78rem; color:var(--vp-t3); margin-top:1.5rem; }
-.vp-frow { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.vp-book-ok { text-align:center; padding:3rem; }
-.vp-book-ok h3 { font-family:var(--vp-serif); font-size:1.8rem; color:var(--vp-gold); margin-bottom:.75rem; }
-.vp-book-ok p { color:var(--vp-t2); font-size:.95rem; line-height:1.7; margin-bottom:1rem; }
-
-/* Divider */
-.vp-div { display:flex; align-items:center; padding:2rem 4rem; }
-.vp-div-l { flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--vp-gold-bdr),transparent); }
-.vp-div-d { padding:0 1.5rem; color:var(--vp-gold); font-size:.5rem; }
-
-/* Footer */
-.vp-ft { padding:3rem 4rem; text-align:center; border-top:1px solid var(--vp-glb); }
-.vp-ft p { font-size:.82rem; color:var(--vp-t3); margin-bottom:.75rem; }
-.vp-ft-brand { font-family:var(--vp-serif); color:var(--vp-gold); }
-
-/* Scroll Reveal */
-.vp-rv { opacity:0; transform:translateY(25px); transition:all .8s cubic-bezier(.4,0,.2,1); }
-.vp-rv.vis { opacity:1; transform:translateY(0); }
-
-/* Toast */
-.vp-toast { position:fixed; bottom:2rem; inset-inline-end:2rem; display:flex; align-items:center; gap:.75rem; padding:1rem 1.8rem; background:var(--vp-gold); color:var(--vp-ch); font-family:var(--vp-sans); font-size:.85rem; font-weight:500; border-radius:8px; z-index:300; animation:vp-tin .4s ease-out; box-shadow:0 8px 30px rgba(0,0,0,.4); }
-@keyframes vp-tin { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-.vp-toast.hiding { animation:vp-tout .3s ease-in forwards; }
-@keyframes vp-tout { to{transform:translateY(20px);opacity:0} }
-
-/* ── MODALS ── */
-.vp-modal-ov { position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(8px); z-index:200; display:flex; align-items:center; justify-content:center; padding:2rem; animation:vp-mf .3s; }
-@keyframes vp-mf { from{opacity:0} to{opacity:1} }
-.vp-modal { background:var(--vp-ch2); border:1px solid var(--vp-glb); border-radius:12px; max-width:1000px; width:100%; max-height:90vh; overflow-y:auto; position:relative; animation:vp-ms .4s ease-out; }
-@keyframes vp-ms { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
-.vp-modal-x { position:absolute; top:1.2rem; inset-inline-end:1.2rem; width:36px; height:36px; border-radius:50%; background:var(--vp-gl); border:1px solid var(--vp-glb); color:var(--vp-t2); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.3s; z-index:5; }
-.vp-modal-x:hover { background:var(--vp-gold-glow); color:var(--vp-gold); border-color:var(--vp-gold-bdr); }
-.vp-modal-body { padding:2.5rem; }
-
-/* Unit Detail Modal extras */
-.vp-md-gallery { display:flex; gap:2px; height:280px; overflow:hidden; }
-.vp-md-gallery img { flex:1; min-width:0; object-fit:cover; transition:.4s; }
-.vp-md-gallery img:hover { flex:1.5; }
-.vp-md-top { display:flex; justify-content:space-between; align-items:flex-start; gap:2rem; margin-bottom:2rem; flex-wrap:wrap; }
-.vp-md-title { font-family:var(--vp-serif); font-size:2.2rem; font-weight:500; margin-bottom:.3rem; color:#FFFFFF; }
-.vp-md-floor { font-size:.8rem; color:var(--vp-gold); letter-spacing:.1em; text-transform:uppercase; }
-.vp-md-price { font-family:var(--vp-serif); font-size:2rem; font-weight:500; color:var(--vp-gold); }
-.vp-md-sqft { font-size:.8rem; color:var(--vp-t3); }
-.vp-md-desc { font-size:1.05rem; font-weight:400; line-height:1.8; color:var(--vp-t2); margin-bottom:2rem; max-width:700px; }
-.vp-md-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:2rem; }
-.vp-md-gi { padding:1rem; border:1px solid var(--vp-glb); border-radius:6px; text-align:center; }
-.vp-md-gi-l { font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:var(--vp-t3); margin-bottom:.3rem; }
-.vp-md-gi-v { font-family:var(--vp-serif); font-size:1.2rem; color:#FFFFFF; }
-.vp-md-feats { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:2rem; }
-.vp-md-feat { padding:.4rem .9rem; background:var(--vp-gold-glow); border:1px solid var(--vp-gold-bdr); border-radius:4px; font-size:.78rem; color:var(--vp-gold); }
-
-/* Payment bar */
-.vp-pay-bar { display:flex; height:8px; border-radius:4px; overflow:hidden; margin-bottom:1rem; }
-.vp-pay-seg { transition:.3s; }
-.vp-pay-legend { display:flex; gap:1.5rem; flex-wrap:wrap; }
-.vp-pay-item { display:flex; align-items:center; gap:.5rem; font-size:.82rem; color:var(--vp-t2); }
-.vp-pay-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-.vp-pay-amt { font-family:var(--vp-serif); font-size:1.1rem; font-weight:500; color:#FFFFFF; }
-
-/* Floor Plan Modal */
-.vp-fp-svg { width:100%; aspect-ratio:16/10; border:1px solid var(--vp-glb); border-radius:8px; margin-bottom:1.5rem; }
-.vp-fp-specs { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
-.vp-fp-spec { padding:1rem; border:1px solid var(--vp-glb); border-radius:6px; text-align:center; }
-.vp-fp-spec-l { font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:var(--vp-t3); margin-bottom:.3rem; }
-.vp-fp-spec-v { font-family:var(--vp-serif); font-size:1.1rem; color:var(--vp-gold); }
-
-/* Brochure Modal */
-.vp-br-prog { height:4px; background:var(--vp-glb); border-radius:2px; overflow:hidden; margin-bottom:2rem; }
-.vp-br-fill { height:100%; background:var(--vp-gold); border-radius:2px; animation:vp-brfill 2s ease-out forwards; }
-@keyframes vp-brfill { from{width:0} to{width:100%} }
-.vp-br-items { display:flex; flex-direction:column; gap:.5rem; margin:1.5rem 0; }
-.vp-br-item { display:flex; align-items:center; gap:.6rem; font-size:.85rem; color:var(--vp-t2); }
-.vp-br-item::before { content:'✓'; color:var(--vp-gold); font-weight:600; }
-
-/* Payment Modal */
-.vp-pm-tabs { display:flex; gap:.5rem; margin-bottom:2rem; }
-.vp-pm-tab { flex:1; padding:.8rem; text-align:center; border:1px solid var(--vp-glb); border-radius:8px; cursor:pointer; transition:.3s; font-family:var(--vp-sans); font-size:.82rem; background:transparent; color:var(--vp-t2); }
-.vp-pm-tab.active { border-color:var(--vp-gold); background:var(--vp-gold-glow); color:var(--vp-gold); }
-.vp-pm-ms { display:flex; flex-direction:column; gap:1rem; margin-top:2rem; }
-.vp-pm-m { display:flex; align-items:center; gap:1rem; padding:1rem; border:1px solid var(--vp-glb); border-radius:8px; transition:.3s; }
-.vp-pm-m:hover { border-color:var(--vp-gold-bdr); background:var(--vp-gl); }
-.vp-pm-m-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
-.vp-pm-m-info { flex:1; }
-.vp-pm-m-label { font-size:.85rem; font-weight:500; margin-bottom:.15rem; }
-.vp-pm-m-desc { font-size:.72rem; color:var(--vp-t3); }
-.vp-pm-m-pct { font-size:.75rem; color:var(--vp-t3); }
-.vp-pm-m-val { font-family:var(--vp-serif); font-size:1.1rem; color:var(--vp-gold); }
-
-/* Compare Modal */
-.vp-cmp-grid { width:100%; overflow-x:auto; }
-.vp-cmp-row { display:grid; padding:.75rem 1rem; border-bottom:1px solid var(--vp-glb); align-items:center; font-size:.85rem; }
-.vp-cmp-row.hdr { font-weight:600; color:var(--vp-t3); font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; }
-.vp-cmp-label { font-weight:500; color:var(--vp-t3); font-size:.72rem; }
-.vp-cmp-val { text-align:center; }
-.vp-cmp-empty { text-align:center; padding:3rem; color:var(--vp-t3); font-size:.88rem; }
-.vp-cmp-rm { background:none; border:1px solid rgba(193,18,31,.3); color:#C1121F; padding:.25rem .5rem; border-radius:4px; font-size:.65rem; cursor:pointer; transition:.3s; font-family:var(--vp-sans); }
-.vp-cmp-rm:hover { background:rgba(193,18,31,.1); }
-
-/* Modal actions bar */
-.vp-md-acts { display:flex; gap:.6rem; flex-wrap:wrap; margin-top:2rem; padding-top:2rem; border-top:1px solid var(--vp-glb); }
-
-/* Responsive */
-@media(max-width:1024px) {
-  .vp-units { grid-template-columns:repeat(2,1fr); }
-  .vp-am-grid { grid-template-columns:repeat(2,1fr); }
-  .vp-inv-grid { grid-template-columns:repeat(2,1fr); }
-  .vp-stats { grid-template-columns:repeat(2,1fr); }
-  .vp-md-grid { grid-template-columns:repeat(2,1fr); }
-  .vp-md-gallery { height:220px; }
-}
-@media(max-width:768px) {
-  .vp-hd { padding:1rem 1.5rem; }
-  .vp-hd.sc { padding:.75rem 1.5rem; }
-  .vp-hero-ct { padding:0 1.5rem 3rem; }
-  .vp-sec { padding:4rem 1.5rem; }
-  .vp-htitle { font-size:2.5rem; }
-  .vp-units { grid-template-columns:1fr; }
-  .vp-am-grid { grid-template-columns:1fr 1fr; }
-  .vp-badge { display:none; }
-  .vp-hacts { flex-direction:column; }
-  .vp-btn-g,.vp-btn-o { width:100%; justify-content:center; }
-  .vp-modal { margin:1rem; max-height:95vh; }
-  .vp-modal-body { padding:1.5rem; }
-  .vp-md-top { flex-direction:column; }
-  .vp-md-gallery { height:180px; flex-direction:column; }
-  .vp-md-gallery img { height:180px; flex:none; }
-  .vp-frow { grid-template-columns:1fr; }
-  .vp-ft { padding:2rem 1.5rem; }
-  .vp-div { padding:1.5rem; }
-  .vp-fp-specs { grid-template-columns:1fr; }
-}
-@media(max-width:480px) {
-  .vp-stats { grid-template-columns:1fr 1fr; }
-  .vp-inv-grid { grid-template-columns:1fr; }
-  .vp-md-grid { grid-template-columns:1fr 1fr; }
-  .vp-md-acts { flex-direction:column; }
-  .vp-md-acts button { width:100%; }
-  .vp-pm-tabs { flex-direction:column; }
-}
-`;
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function VIPPortal() {
@@ -681,20 +441,12 @@ export default function VIPPortal() {
   const [toastHiding, setToastHiding] = useState(false);
   const [bookingOk, setBookingOk] = useState(false);
   const [bookingRef, setBookingRefVal] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", phone: "", unit: "", date: "", time: "", notes: "" });
+  const [form, setForm] = useState({ name: "Khalid Al-Rashid", email: "", phone: "", unit: "", date: "", time: "", notes: "" });
   const [formErr, setFormErr] = useState({});
 
   const resRef = useRef(null);
   const bookRef = useRef(null);
   const t = LANG[lang];
-
-  // Inject CSS
-  useEffect(() => {
-    const el = document.createElement("style");
-    el.textContent = css;
-    document.head.appendChild(el);
-    return () => document.head.removeChild(el);
-  }, []);
 
   // Scroll
   useEffect(() => {
@@ -741,12 +493,60 @@ export default function VIPPortal() {
   };
 
   // Modal openers
-  const openDetail = (unit) => { setSelectedUnit(unit); trackEvent("view_unit", { unitId: unit.id, unitName: unit.name.en, price: unit.price }); };
-  const openFloor = (unit) => { setModalUnit(unit); setModal("floorplan"); trackEvent("view_floorplan", { unitId: unit.id }); showToast(t.toast.floorPlan, "📐"); };
-  const openBrochure = (unit) => { setModalUnit(unit); setModal("brochure"); trackEvent("download_brochure", { unitId: unit.id }); showToast(t.toast.brochure, "📄"); };
-  const openPayment = (unit) => { setModalUnit(unit); setModal("payment"); setPayPlan("60/40"); trackEvent("explore_payment_plan", { unitId: unit.id }); };
+  const openDetail = (unit) => {
+    setSelectedUnit(unit);
+    trackEvent("view_unit", {
+      unitId: unit.id,
+      unitName: unit.name.en,
+      price: unit.price,
+      tower: unit.tower || "Al Qamar",
+      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+    });
+  };
+  const openFloor = (unit) => {
+    setModalUnit(unit);
+    setModal("floorplan");
+    trackEvent("view_floorplan", {
+      unitId: unit.id,
+      unitName: unit.name.en,
+      tower: unit.tower || "Al Qamar",
+      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+    });
+    showToast(t.toast.floorPlan, "📐");
+  };
+  const openBrochure = (unit) => {
+    setModalUnit(unit);
+    setModal("brochure");
+    trackEvent("download_brochure", {
+      unitId: unit.id,
+      unitName: unit.name.en,
+      tower: unit.tower || "Al Qamar",
+      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+    });
+    showToast(t.toast.brochure, "📄");
+  };
+  const openPayment = (unit) => {
+    setModalUnit(unit);
+    setModal("payment");
+    setPayPlan("60/40");
+    trackEvent("explore_payment_plan", {
+      unitId: unit.id,
+      unitName: unit.name.en,
+      tower: unit.tower || "Al Qamar",
+      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+    });
+  };
   const openCompare = () => { setModal("compare"); };
-  const reqPricing = (unit) => { trackEvent("request_pricing", { unitId: unit.id, price: unit.price }); showToast(t.toast.pricing, "💰"); };
+  const reqPricing = (unit) => {
+    trackEvent("request_pricing", {
+      unitId: unit.id,
+      unitName: unit.name.en,
+      price: unit.price,
+      tower: unit.tower || "Al Qamar",
+      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+    });
+    showToast(t.toast.pricing, "💰");
+  };
   const callAdvisor = () => { trackEvent("contact_advisor", { vipName }); showToast(t.toast.advisorNotified, "📞"); };
   const closeAll = () => { setModal(null); setModalUnit(null); setSelectedUnit(null); };
 
@@ -792,7 +592,21 @@ export default function VIPPortal() {
   // ═══════════════════════════════════════════════════════════════
   return (
     <div className="vp" dir={t.dir}>
+      <SEO
+        title="VIP Real Estate Portal"
+        description="Exclusive VIP real estate portal with personalized residences, floor plans, brochures, and booking."
+        path="/enterprise/crmdemo/khalid"
+      />
       {/* ── HEADER ── */}
+      <div className="vp-crossnav" style={{ top: scrolled ? "0" : "-40px" }}>
+        <Link to="/enterprise/crmdemo">← Demo Hub</Link>
+        <span className="active">VIP Portal</span>
+        <Link to="/enterprise/crmdemo/ahmed">Ahmed Portal</Link>
+        <Link to="/enterprise/crmdemo/marketplace">Marketplace</Link>
+        <Link to="/enterprise/crmdemo/dashboard">Dashboard</Link>
+        <Link to="/enterprise/crmdemo/ai-demo">AI Pipeline</Link>
+        <span className="crossnav-persona">👤 {vipName}</span>
+      </div>
       <header className={`vp-hd ${scrolled ? "sc" : ""}`}>
         <div className="vp-logo">Vista <b>Residences</b></div>
         <div className="vp-nav">
@@ -829,13 +643,21 @@ export default function VIPPortal() {
         {[
           { v: "248", l: t.stats.units },
           { v: "44", l: t.stats.floors },
-          { v: "8.2%", l: t.stats.roi },
+          { v: "8.2%", l: t.stats.roi, link: "/enterprise/crmdemo/roi-calculator" },
           { v: "Q4 '27", l: t.stats.completion },
         ].map((s, i) => (
-          <div className="vp-stat" key={i}>
-            <div className="vp-stat-v">{s.v}</div>
-            <div className="vp-stat-l">{s.l}</div>
-          </div>
+          s.link ? (
+            <Link to={s.link} className="vp-stat vp-stat-link" key={i} style={{ textDecoration: "none", cursor: "pointer" }}>
+              <div className="vp-stat-v">{s.v}</div>
+              <div className="vp-stat-l">{s.l}</div>
+              <div style={{ fontSize: "0.55rem", color: "rgba(184,134,11,0.7)", marginTop: "0.25rem", letterSpacing: "0.08em", textTransform: "uppercase" }}>{lang === "ar" ? "احسب العائد →" : "Calculate ROI →"}</div>
+            </Link>
+          ) : (
+            <div className="vp-stat" key={i}>
+              <div className="vp-stat-v">{s.v}</div>
+              <div className="vp-stat-l">{s.l}</div>
+            </div>
+          )
         ))}
       </div>
 
@@ -916,7 +738,18 @@ export default function VIPPortal() {
             </div>
           ))}
         </div>
+
       </section>
+
+      {/* ── ROI CALCULATOR BANNER ── */}
+      <Link to="/enterprise/crmdemo/roi-calculator" className="vp-roi-banner" onClick={() => { trackEvent("roi_calculator_click"); }}>
+        <div className="vp-roi-icon">📊</div>
+        <div className="vp-roi-content">
+          <h3 className="vp-roi-title">{t.roiBanner.title}</h3>
+          <p className="vp-roi-desc">{t.roiBanner.desc}</p>
+        </div>
+        <span className="vp-roi-cta">{t.roiBanner.cta}</span>
+      </Link>
 
       {/* ── DIVIDER ── */}
       <div className="vp-div"><div className="vp-div-l" /><div className="vp-div-d">◆</div><div className="vp-div-l" /></div>
@@ -947,12 +780,12 @@ export default function VIPPortal() {
             </div>
             <div className="vp-fg">
               <label className="vp-flabel">{t.booking.email}</label>
-              <input className={`vp-finput ${formErr.email ? "vp-err" : ""}`} type="email"
+              <input className={`vp-finput ${formErr.email ? "vp-err" : ""}`} type="text" inputMode="email"
                 onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
             <div className="vp-fg">
               <label className="vp-flabel">{t.booking.phone}</label>
-              <input className={`vp-finput ${formErr.phone ? "vp-err" : ""}`} type="tel"
+              <input className={`vp-finput ${formErr.phone ? "vp-err" : ""}`} type="text" inputMode="tel"
                 onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
             <div className="vp-fg">

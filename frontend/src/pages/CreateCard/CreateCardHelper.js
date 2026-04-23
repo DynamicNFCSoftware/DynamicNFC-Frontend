@@ -230,7 +230,6 @@ export function initCardCreate(root = document) {
     value = value.trim();
     if (!value) return { valid: false, message: "Field can't be empty" };
 
-    console.log("Validating", apiKey, value);
     switch (apiKey) {
       case "name":
         // Sadece harf ve boşluk, rakam veya özel karakter yok

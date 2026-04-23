@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../i18n';
 import './NFCCards.css';
+import SEO from '../../components/SEO/SEO';
+import '../../i18n/pages/nfcCards';
 
 /* ── Card images: update these paths to your actual assets ── */
 import cardFrontImg from './assets/card-front.jpg';
@@ -16,16 +18,16 @@ const TR = {
     home: 'Home', enterprise: 'Enterprise', nfcCards: 'NFC Cards', login: 'Login',
     /* Hero */
     badge: 'Premium NFC Technology',
-    heroTitle: 'The Last Business Card\nYou\'ll Ever Need',
+    heroTitle: 'Premium NFC Cards\nBuilt to Impress',
     heroSub: 'Handcrafted from brushed metal, 24K gold, bamboo, and premium PVC. Your entire professional identity — shared in one tap.',
     heroCta: 'Order Your Card',
     heroSecondary: 'Explore Materials',
     flipHint: 'Hover to flip · Tap on mobile',
     /* Stats */
-    stat1v: '12+', stat1l: 'Card Types',
-    stat2v: '40+', stat2l: 'Countries',
+    stat1v: 'Metal', stat1l: 'Gold · PVC · Eco',
+    stat2v: 'NFC+QR', stat2l: 'Dual Access',
     stat3v: '< 1s', stat3l: 'Tap to Share',
-    stat4v: '0', stat4l: 'Apps Required',
+    stat4v: 'Zero', stat4l: 'Apps Required',
     /* How it works */
     howTitle: 'How It Works',
     howSub: 'Three steps to your premium identity',
@@ -68,71 +70,73 @@ faq5a: 'Yes. DynamicNFC operates on a volume-based pricing model. Pricing is cal
 faq6q: 'Which phones are compatible?',
 faq6a: 'All iPhones from iPhone 7 onward and virtually all modern Android devices support NFC. Additionally, the integrated QR code ensures compatibility with any smartphone equipped with a camera.',
     /* CTA */
-    ctaTitle: 'Ready to Elevate Your Identity?',
-    ctaSub: 'Join thousands of professionals who have replaced paper cards with premium NFC technology.',
+    ctaTitle: 'Your card says more than your name.',
+    ctaSub: 'Premium materials. One-tap sharing. Real-time analytics. Built and shipped from Canada.',
     ctaBtn: 'Design Your Card Now',
+    matViewAll: 'View all →',
     /* Footer */
     footProduct: 'Product', footEnterprise: 'Enterprise', footNfcCards: 'NFC Business Cards',
-    footOrderCard: 'Order Card', footAccount: 'Account', footCreateCard: 'Create Card',
+    footOrderCard: 'Order Card', footDevAgents: 'Developers & Agents', footAccount: 'Account', footCreateCard: 'Create Card',
     footLogin: 'Log in', footSignup: 'Sign up',
-    footCopy: '© 2026 DynamicNFC Technologies Pty Ltd. All Rights Reserved.',
+    footCopy: '© 2026 DynamicNFC Card Inc. All Rights Reserved.',
   },
   ar: {
     home: 'الرئيسية', enterprise: 'المؤسسات', nfcCards: 'بطاقات NFC', login: 'تسجيل الدخول',
-    badge: 'تقنية NFC الفاخرة',
-    heroTitle: 'آخر بطاقة أعمال\nستحتاجها على الإطلاق',
-    heroSub: 'مصنوعة يدوياً من المعدن المصقول، والذهب عيار 24، والخيزران، وPVC الفاخر. هويتك المهنية بالكامل — مشاركة بلمسة واحدة.',
-    heroCta: 'اطلب بطاقتك',
-    heroSecondary: 'استكشف الخامات',
-    flipHint: 'مرّر للقلب',
-    stat1v: '+12', stat1l: 'نوع بطاقة',
-    stat2v: '+40', stat2l: 'دولة',
-    stat3v: '< 1ث', stat3l: 'انقر للمشاركة',
-    stat4v: '0', stat4l: 'تطبيقات مطلوبة',
-    howTitle: 'كيف يعمل',
-    howSub: 'ثلاث خطوات لهويتك الفاخرة',
-    step1t: 'اختر خامتك', step1d: 'اختر من PVC الفاخر، المعدن المصقول، الذهب عيار 24، الخيزران، أو الجوز. كل خامة مصممة لانطباع مميز.',
-    step2t: 'خصّص بطاقتك', step2d: 'أضف اسمك وشعارك ورابط QR. يقوم نظامنا بترميز شريحة NFC بملفك الرقمي الكامل.',
-    step3t: 'انقر وشارك فوراً', step3d: 'أمسك بطاقتك أمام أي هاتف ذكي. تفتح معلوماتك فوراً — بدون تطبيق.',
-    benTitle: 'لماذا DynamicNFC',
-    benSub: 'مصممة للمحترفين الذين يطلبون المزيد',
-    ben1t: 'وصول مزدوج NFC + QR', ben1d: 'كل بطاقة تحمل شريحة NFC ورمز QR. تعمل مع أي هاتف ذكي حديث.',
-    ben2t: 'خامات فاخرة', ben2d: 'معدن مصقول بلمسات ذهبية عيار 24، خيزران طبيعي، خشب الجوز، وPVC فاخر بـ5 تشطيبات.',
-    ben3t: 'تحليلات فورية', ben3d: 'تتبع كل نقرة ومسح وتفاعل. اعرف من شاهد ملفك ومتى وماذا نقر.',
-    ben4t: 'لا يتطلب تطبيقاً', ben4d: 'لا يحتاج المستلمون لتحميل أي شيء. نقرة واحدة تفتح ملفك في متصفحهم.',
-    ben5t: 'صُنع في كندا', ben5d: 'مصمم ومطوَّر ومشحون من كندا. جودة فاخرة مع شحن لأكثر من 40 دولة.',
-    ben6t: 'تكامل CRM', ben6d: 'اتصل بـ Salesforce أو HubSpot أو أي CRM. كل جهة اتصال تتدفق تلقائياً.',
-    matTitle: 'خامات مصنوعة بعناية',
-    matSub: 'اختر التشطيب الذي يحدد حضورك',
-    matPvc: 'PVC فاخر', matMetal: 'معدن مصقول', matEco: 'إيكو طبيعي',
-    matPvcDesc: 'خفيفة ومتينة ومتوفرة بـ5 تشطيبات — أبيض، أسود، ذهبي، فضي، وشفاف.',
-    matMetalDesc: 'وزن ملموس وملمس مصقول. متوفرة بالذهبي والفضي والأسود والوردي الذهبي و24 قيراط.',
-    matEcoDesc: 'خيزران مستدام وخشب الجوز. بيان طبيعي مع إمكانية NFC كاملة.',
-    faqTitle: 'الأسئلة الشائعة',
-    faq1q: 'ما هي مدة الإنتاج والتسليم؟',
-faq1a: 'تتخصص DynamicNFC في الطلبات الجماعية وطلبات الشركات فقط. يتم تحديد مدة الإنتاج والتسليم بعد مراجعة حجم الطلب ونوع المواد ومستوى التخصيص المطلوب. يتم تزويدكم بجدول زمني تقديري عند اعتماد العرض.',
+    badge: "تقنية الاتصال قريب المدى الفاخرة",
+    heroTitle: "بطاقات NFC فاخرة\nصُممت لتترك أثرًا",
+    heroSub: "مصنوعة يدويًا من المعدن المصقول، الذهب عيار 24 قيراط، الخيزران، وPVC فاخر. كل هويتك المهنية — مشتركة بنقرة واحدة.",
+    heroCta: "اطلب بطاقتك",
+    heroSecondary: "استكشف المواد",
+    flipHint: "مرّر للتقليب · انقر على الجوال",
+    stat1v: "معدن", stat1l: "ذهب · PVC · صديق للبيئة",
+    stat2v: "NFC+QR", stat2l: "وصول مزدوج",
+    stat3v: "< 1 ثانية", stat3l: "انقر للمشاركة",
+    stat4v: "صفر", stat4l: "تطبيقات مطلوبة",
+    howTitle: "كيف تعمل",
+    howSub: "ثلاث خطوات لهويتك الفاخرة",
+    step1t: "اختر مادتك", step1d: "اختر من بين PVC الفاخر، المعدن المصقول، الذهب عيار 24 قيراط، الخيزران، أو خشب الجوز. كل مادة مصممة لتترك انطباعًا مميزًا.",
+    step2t: "خصص بطاقتك", step2d: "أضف اسمك، شعارك، ورابط QR. يقوم نظامنا بترميز شريحة الاتصال قريب المدى الخاصة بك مع ملفك الرقمي الكامل.",
+    step3t: "انقر وشارك فورًا", step3d: "ضع بطاقتك بالقرب من أي هاتف ذكي. تفتح معلومات الاتصال الخاصة بك، محفظتك، أو موقعك فورًا — لا حاجة لتطبيق.",
+    benTitle: "لماذا DynamicNFC",
+    benSub: "مصممة للمحترفين الذين يطالبون بالمزيد",
+    ben1t: "الوصول المزدوج الاتصال قريب المدى + QR", ben1d: "كل بطاقة تحتوي على شريحة الاتصال قريب المدى ورمز QR. تعمل مع أي هاتف ذكي حديث — iPhone، Android، أو جهاز لوحي.",
+    ben2t: "مواد فاخرة", ben2d: "معادن مصقولة مع لمسات ذهبية عيار 24 قيراط، خشب خيزران طبيعي، خشب الجوز، وPVC فاخر بخمسة تشطيبات.",
+    ben3t: "تحليلات الوقت الحقيقي", ben3d: "تتبع كل نقرة، مسح، وتفاعل. اعرف من شاهد ملفك الشخصي، متى، وما الذي نقر عليه.",
+    ben4t: "لا حاجة لتطبيق", ben4d: "المستلمون لا يحتاجون لتنزيل أي شيء. نقرة واحدة تفتح ملفك مباشرة في المتصفح.",
+    ben5t: "صنع في كندا", ben5d: "مصممة، ومهندسة، وشحنت من كندا. جودة فائقة وشحن لأكثر من 40 دولة.",
+    ben6t: "تكامل إدارة علاقات العملاء", ben6d: "الاتصال بـ Salesforce أو HubSpot أو أي إدارة علاقات العملاء. كل جهة اتصال يتم التقاطها تتدفق تلقائيًا إلى خط أنابيب المبيعات الخاص بك.",
+    matTitle: "المواد المصممة",
+    matSub: "اختر التشطيب الذي يعكس حضورك",
+    matPvc: "PVC فاخر", matMetal: "معدن مصقول", matEco: "Eco طبيعي",
+    matPvcDesc: "خفيف الوزن، متين، ومتوافر بخمسة تشطيبات — أبيض، أسود، ذهب، فضة، وشفاف.",
+    matMetalDesc: "وزن ملموس وملمس مصقول. متوفر بالذهب، الفضة، الأسود، الوردي، و24 قيراط.",
+    matEcoDesc: "خيزران وخشب جوز مستدام. بيان طبيعي مع قدرة الاتصال قريب المدى كاملة.",
+    faqTitle: "الأسئلة المتكررة",
+    faq1q: "ما هي جداول الإنتاج والتسليم؟",
+faq1a: "تختص DynamicNFC بالطلبات الكبيرة والمؤسسية. يتم تأكيد جداول الإنتاج بعد مراجعة حجم الطلب، اختيار المواد، ومتطلبات التخصيص. يتم توفير تقديرات التسليم بعد الموافقة على العرض.",
 
-faq2q: 'هل يحتاج المستلم إلى تطبيق؟',
-faq2a: 'لا. عند النقر على البطاقة أو مسح رمز QR، يتم فتح الملف الرقمي مباشرة في متصفح الهاتف دون الحاجة إلى أي تطبيق أو تحميل.',
+faq2q: "هل يحتاج المستلمون لتطبيق؟",
+faq2a: "لا. عند نقر شخص على بطاقتك أو مسح رمز QR، يفتح ملفك الرقمي مباشرة في المتصفح. لا تطبيقات، لا تنزيلات، بدون أي عوائق.",
 
-faq3q: 'هل تعتمد DynamicNFC على نظام اشتراك؟',
-faq3a: 'لا يتطلب المنتج الأساسي أي اشتراك. يتم شراء البطاقات وفقاً للكمية المطلوبة. تتوفر مزايا متقدمة وخيارات إدارية إضافية لفرق العمل والشركات.',
+faq3q: "هل DynamicNFC يعتمد على الاشتراك؟",
+faq3a: "لا تتطلب البطاقات القياسية اشتراكًا. تشتري بطاقات الاتصال قريب المدى حسب الكمية المطلوبة. الميزات المتقدمة وأدوات إدارة الفريق اختيارية للعملاء المؤسسيين.",
 
-faq4q: 'هل يمكن تحديث المعلومات بعد الطباعة؟',
-faq4a: 'نعم. ترتبط كل بطاقة NFC بملف رقمي آمن يمكن تحديثه في أي وقت. يمكن تعديل بيانات الاتصال أو الروابط أو الهوية البصرية دون الحاجة لإعادة طباعة البطاقة.',
+faq4q: "هل يمكننا تحديث معلومات البطاقة بعد الطباعة؟",
+faq4a: "نعم. كل بطاقة الاتصال قريب المدى تتصل بملف رقمي آمن يمكن تحديثه في أي وقت. يمكنك تعديل بيانات الاتصال، الروابط، العلامة التجارية، أو المحتوى دون إعادة طباعة البطاقات.",
 
-faq5q: 'هل تقدمون تسعيراً للطلبات الجماعية؟',
-faq5a: 'نعم. تعتمد DynamicNFC نموذج تسعير قائم على حجم الطلب. يتم احتساب السعر بناءً على الكمية المطلوبة ونوع المواد ومستوى التخصيص. يرجى التواصل معنا للحصول على عرض سعر مخصص.',
+faq5q: "هل تقدمون أسعارًا للطلبات الكبيرة أو الفرق؟",
+faq5a: "نعم. تعمل DynamicNFC بنموذج تسعير يعتمد على الكمية. يتم حساب الأسعار وفقًا لكمية الطلب، اختيار المواد، ونطاق التخصيص. اتصل بـ info@dynamicnfc.help لعرض سعر مخصص.",
 
-faq6q: 'ما هي الأجهزة المتوافقة؟',
-faq6a: 'جميع أجهزة iPhone ابتداءً من iPhone 7 ومعظم أجهزة Android الحديثة تدعم تقنية NFC. كما يضمن رمز QR المدمج التوافق مع أي هاتف ذكي مزود بكاميرا.',
-    ctaTitle: 'مستعد لترقية هويتك؟',
-    ctaSub: 'انضم لآلاف المحترفين الذين استبدلوا البطاقات الورقية بتقنية NFC الفاخرة.',
-    ctaBtn: 'صمّم بطاقتك الآن',
+faq6q: "أي الهواتف متوافقة؟",
+faq6a: "جميع أجهزة iPhone من iPhone 7 وما بعده ومعظم أجهزة Android الحديثة تدعم الاتصال قريب المدى. بالإضافة إلى ذلك، يضمن رمز QR المدمج التوافق مع أي هاتف مزود بكاميرا.",
+    ctaTitle: "بطاقتك تقول أكثر من اسمك.",
+    ctaSub: "مواد فاخرة. مشاركة بنقرة واحدة. تحليلات فورية. صُنعت وشُحنت من كندا.",
+    ctaBtn: "صمم بطاقتك الآن",
+    matViewAll: 'عرض الكل →',
     footProduct: 'المنتج', footEnterprise: 'المؤسسات', footNfcCards: 'بطاقات NFC للأعمال',
-    footOrderCard: 'اطلب بطاقتك', footAccount: 'الحساب', footCreateCard: 'إنشاء بطاقة',
+    footOrderCard: "اطلب بطاقة", footDevAgents: 'المطورين والوكلاء', footAccount: 'الحساب', footCreateCard: 'إنشاء بطاقة',
     footLogin: 'تسجيل الدخول', footSignup: 'إنشاء حساب',
-    footCopy: '© 2026 DynamicNFC Technologies Pty Ltd. جميع الحقوق محفوظة.',
+    footCopy: '© 2026 DynamicNFC Card Inc. جميع الحقوق محفوظة.',
   },
 };
 
@@ -148,7 +152,9 @@ function detectLang() {
 /* ── FAQ Accordion ── */
 function FAQItem({ question, answer, isOpen, onClick }) {
   return (
-    <div className={`nfc-faq-item ${isOpen ? 'open' : ''}`} onClick={onClick}>
+    <div className={`nfc-faq-item ${isOpen ? 'open' : ''}`} onClick={onClick}
+      role="button" tabIndex={0} aria-expanded={isOpen}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}>
       <div className="nfc-faq-q">
         <span>{question}</span>
         <svg className="nfc-faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -194,14 +200,11 @@ function CardShowcase({ frontImg, backImg, hint, onCardClick }) {
    MAIN PAGE
    ═══════════════════════════════════════════ */
 function NFCCards() {
-  const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [lang, setLang] = useState(detectLang);
+  const { lang } = useLanguage();
   const [openFaq, setOpenFaq] = useState(null);
   const isRTL = lang === 'ar';
   const t = useCallback((k) => TR[lang]?.[k] || TR.en[k] || k, [lang]);
-
-  const handleLogout = () => { logout(); navigate('/'); };
 
   const faqs = [
     { q: 'faq1q', a: 'faq1a' },
@@ -229,27 +232,11 @@ function NFCCards() {
 
   return (
     <div className="nfc-page" dir={isRTL ? 'rtl' : 'ltr'}>
+      <SEO title="NFC Cards" description="Premium NFC VIP Access Keys — physical cards that unlock private digital experiences." path="/nfc-cards" />
       {/* Background */}
       <div className="nfc-bg-mesh" />
 
-      {/* ── Navbar ── */}
-      <nav className="nfc-nav">
-        <div className="nfc-nav-inner">
-          <Link to="/" className="nfc-logo">Dynamic<span>NFC</span></Link>
-          <div className="nfc-nav-links">
-            <Link to="/">{t('home')}</Link>
-            <Link to="/enterprise">{t('enterprise')}</Link>
-            <Link to="/nfc-cards" className="nfc-nav-active">{t('nfcCards')}</Link>
-          </div>
-          <div className="nfc-nav-right">
-            <div className="nfc-lang">
-              <button className={lang === 'en' ? 'active' : ''} onClick={() => setLang('en')}>EN</button>
-              <button className={lang === 'ar' ? 'active' : ''} onClick={() => setLang('ar')}>ع</button>
-            </div>
-            <Link to="/login" className="nfc-nav-btn">{t('login')}</Link>
-          </div>
-        </div>
-      </nav>
+      {/* Navbar is now global — rendered in App.jsx */}
 
       {/* ── Hero ── */}
       <section className="nfc-hero">
@@ -359,7 +346,7 @@ function NFCCards() {
               <h4>{t(mat.k)}</h4>
               <p>{t(mat.dk)}</p>
               <button className="nfc-mat-link" onClick={() => navigate('/create-physical-card')}>
-                View all →
+                {t('matViewAll')}
               </button>
             </div>
           ))}
@@ -400,7 +387,7 @@ function NFCCards() {
       <footer className="nfc-footer">
         <div className="nfc-footer-inner">
           <div className="nfc-footer-brand">
-            <Link to="/" className="nfc-logo">Dynamic<span>NFC</span></Link>
+            <Link to="/"><img src="/assets/images/logo.png" alt="DynamicNFC" className="nfc-footer-logo" /></Link>
           </div>
           <div className="nfc-footer-cols">
             <div className="nfc-footer-col">
@@ -408,6 +395,7 @@ function NFCCards() {
               <Link to="/enterprise">{t('footEnterprise')}</Link>
               <Link to="/nfc-cards">{t('footNfcCards')}</Link>
               <Link to="/order-card">{t('footOrderCard')}</Link>
+              <Link to="/developers">{t('footDevAgents')}</Link>
             </div>
             <div className="nfc-footer-col">
               <h5>{t('footAccount')}</h5>

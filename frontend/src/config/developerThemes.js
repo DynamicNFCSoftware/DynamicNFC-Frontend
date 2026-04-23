@@ -160,4 +160,77 @@ export function listThemes() {
   }));
 }
 
+export const sectorSchemas = {
+  realEstate: {
+    entityLabel: { en: "Unit", ar: "وحدة", es: "Unidad", fr: "Unité" },
+    entityLabelPlural: { en: "Units", ar: "الوحدات", es: "Unidades", fr: "Unités" },
+    parentLabel: { en: "Tower", ar: "برج", es: "Torre", fr: "Tour" },
+    parentLabelPlural: { en: "Towers", ar: "الأبراج", es: "Torres", fr: "Tours" },
+    idLabel: { en: "Unit #", ar: "رقم الوحدة", es: "N.º Unidad", fr: "N° Unité" },
+    priceLabel: { en: "Price", ar: "السعر", es: "Precio", fr: "Prix" },
+    columns: ["unitNumber", "tower", "type", "beds", "sqm", "price", "status"],
+    dealStages: ["new_lead", "contacted", "viewing_scheduled", "viewing_done", "negotiation", "offer_sent", "closed_won"],
+    emptyState: {
+      en: "No units in this tower yet",
+      ar: "لا توجد وحدات في هذا البرج بعد",
+      es: "Aún no hay unidades en esta torre",
+      fr: "Aucune unité dans cette tour",
+    },
+  },
+  automotive: {
+    entityLabel: { en: "Vehicle", ar: "مركبة", es: "Vehículo", fr: "Véhicule" },
+    entityLabelPlural: { en: "Vehicles", ar: "المركبات", es: "Vehículos", fr: "Véhicules" },
+    parentLabel: { en: "Dealership", ar: "معرض", es: "Concesionario", fr: "Concession" },
+    parentLabelPlural: { en: "Dealerships", ar: "المعارض", es: "Concesionarios", fr: "Concessions" },
+    idLabel: { en: "VIN", ar: "رقم الشاسيه", es: "VIN", fr: "VIN" },
+    priceLabel: { en: "Sticker Price", ar: "السعر", es: "Precio", fr: "Prix" },
+    columns: ["vin", "model", "dealership", "type", "year", "price", "status"],
+    dealStages: ["new_lead", "contacted", "test_drive", "quote_sent", "negotiation", "financing", "closed_won"],
+    emptyState: {
+      en: "No vehicles in this dealership yet",
+      ar: "لا توجد مركبات في هذا المعرض بعد",
+      es: "Aún no hay vehículos en este concesionario",
+      fr: "Aucun véhicule dans cette concession",
+    },
+  },
+  yacht: {
+    entityLabel: { en: "Yacht", ar: "يخت", es: "Yate", fr: "Yacht" },
+    entityLabelPlural: { en: "Yachts", ar: "اليخوت", es: "Yates", fr: "Yachts" },
+    parentLabel: { en: "Marina", ar: "مرسى", es: "Puerto", fr: "Port" },
+    parentLabelPlural: { en: "Marinas", ar: "المراسي", es: "Puertos", fr: "Ports" },
+    idLabel: { en: "Hull ID", ar: "رقم الهيكل", es: "ID Casco", fr: "N° Coque" },
+    priceLabel: { en: "Asking Price", ar: "السعر", es: "Precio", fr: "Prix" },
+    columns: ["hullId", "model", "marina", "length", "year", "price", "status"],
+    dealStages: ["new_lead", "contacted", "test_drive", "quote_sent", "negotiation", "financing", "closed_won"],
+    emptyState: {
+      en: "No yachts in this marina yet",
+      ar: "لا توجد يخوت في هذا المرسى بعد",
+      es: "Aún no hay yates en este puerto",
+      fr: "Aucun yacht dans ce port",
+    },
+  },
+};
+
+const sectorToSchemaId = (sectorId) => {
+  if (sectorId === "real_estate" || sectorId === "real-estate" || sectorId === "realEstate") return "realEstate";
+  if (sectorId === "automotive") return "automotive";
+  if (sectorId === "yacht") return "yacht";
+  return "realEstate";
+};
+
+export function getSectorSchema(sectorId, lang = "en") {
+  const schema = sectorSchemas[sectorToSchemaId(sectorId)] || sectorSchemas.realEstate;
+  return {
+    entityLabel: schema.entityLabel[lang] || schema.entityLabel.en,
+    entityLabelPlural: schema.entityLabelPlural[lang] || schema.entityLabelPlural.en,
+    parentLabel: schema.parentLabel[lang] || schema.parentLabel.en,
+    parentLabelPlural: schema.parentLabelPlural[lang] || schema.parentLabelPlural.en,
+    idLabel: schema.idLabel[lang] || schema.idLabel.en,
+    priceLabel: schema.priceLabel[lang] || schema.priceLabel.en,
+    columns: schema.columns,
+    dealStages: schema.dealStages,
+    emptyState: schema.emptyState[lang] || schema.emptyState.en,
+  };
+}
+
 export default DEVELOPER_THEMES;

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'sonner';
 import './Login.css';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../i18n';
 import { auth } from '../../firebase';
 import {
   signInWithPopup,
@@ -10,6 +12,8 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail
 } from 'firebase/auth';
+import SEO from '../../components/SEO/SEO';
+import '../../i18n/pages/login';
 
 /* ═══════════════════════════════════════════
    TRANSLATIONS (EN + AR)
@@ -48,41 +52,48 @@ const TR = {
     networkError: 'Network error. Please try again.',
     resetSent: 'Password reset email sent. Check your inbox.',
     resetError: 'Enter your email address first.',
+    trustLine: 'End-to-end encrypted · PIPEDA compliant · Data stays in Canada',
+    guestLine: 'Just exploring?',
+    guestCta: 'Try the live demo →',
   },
   ar: {
-    loginTitle: 'مرحباً بعودتك',
-    loginSub: 'سجل الدخول لإدارة بطاقات NFC الخاصة بك وعرض التحليلات والوصول إلى لوحة التحكم.',
-    signupTitle: 'أنشئ حسابك',
-    signupSub: 'ابدأ مع DynamicNFC — أنشئ وأدر بطاقات NFC الذكية لعملك.',
-    lblEmail: 'البريد الإلكتروني',
-    lblPassword: 'كلمة المرور',
-    lblConfirmPassword: 'تأكيد كلمة المرور',
-    btnLogin: 'تسجيل الدخول',
-    btnSignup: 'إنشاء حساب',
-    btnLoading: 'يرجى الانتظار...',
-    switchToSignup: 'ليس لديك حساب؟',
-    switchToLogin: 'لديك حساب بالفعل؟',
-    switchBtnSignup: 'أنشئ واحداً',
-    switchBtnLogin: 'سجل الدخول',
+    loginTitle: "مرحبًا بعودتك",
+    loginSub: "سجل الدخول لإدارة بطاقات الاتصال قريب المدى الخاصة بك، وعرض التحليلات، والوصول إلى لوحة التحكم الخاصة بك.",
+    signupTitle: "إنشاء حسابك",
+    signupSub: "ابدأ مع DynamicNFC — أنشئ وأدر بطاقات الاتصال قريب المدى الذكية لنشاطك التجاري.",
+    lblEmail: "البريد الإلكتروني",
+    lblPassword: "كلمة المرور",
+    lblConfirmPassword: "تأكيد كلمة المرور",
+    btnLogin: "تسجيل الدخول",
+    btnSignup: "إنشاء حساب",
+    btnLoading: "الرجاء الانتظار…",
+    switchToSignup: "لا تملك حسابًا؟",
+    switchToLogin: "هل لديك حساب بالفعل؟",
+    switchBtnSignup: "إنشاء واحد",
+    switchBtnLogin: "تسجيل الدخول",
     or: 'أو',
-    forgotPassword: 'نسيت كلمة المرور؟',
-    terms: 'بإنشاء حساب، فإنك توافق على',
-    termsLink: 'شروط الخدمة',
-    privacyLink: 'سياسة الخصوصية',
+    forgotPassword: "نسيت كلمة المرور؟",
+    terms: "بإنشاء حساب، فإنك توافق على",
+    termsLink: "شروط الخدمة",
+    privacyLink: "سياسة الخصوصية",
     and: 'و',
-    feature1Title: 'هوية ذكية',
-    feature1Desc: 'بطاقات NFC فاخرة تنشئ اتصالات رقمية فورية',
-    feature2Title: 'تحليلات لحظية',
-    feature2Desc: 'تتبع كل لمسة وعرض وتفاعل في لوحة التحكم',
-    feature3Title: 'تجارب VIP',
-    feature3Desc: 'بوابات مخصصة تحوّل العملاء المحتملين إلى عملاء فعليين',
-    tagline: 'هوية ذكية. حضور فاخر.',
-    orContinueWith: 'أو المتابعة عبر',
-    btnGoogle: 'المتابعة مع Google',
-    networkError: 'خطأ في الشبكة. يرجى المحاولة مرة أخرى.',
-    resetSent: 'تم إرسال بريد إعادة تعيين كلمة المرور. تحقق من صندوق الوارد.',
-    resetError: 'أدخل بريدك الإلكتروني أولاً.',
-  },
+    feature1Title: "هوية ذكية",
+    feature1Desc: "بطاقات الاتصال قريب المدى الفاخرة التي تخلق اتصالات رقمية فورية",
+    feature2Title: "تحليلات الوقت الحقيقي",
+    feature2Desc: "تتبع كل نقرة، عرض، وتفاعل على لوحة التحكم الخاصة بك",
+    feature3Title: "تجارب كبار الشخصيات",
+    feature3Desc: "بوابات مخصصة تحول العملاء المحتملين إلى عملاء فعليين",
+    tagline: "هوية ذكية. حضور فاخر.",
+    orContinueWith: "أو تابع باستخدام",
+    btnGoogle: "تابع باستخدام Google",
+    networkError: "خطأ في الشبكة. حاول مرة أخرى.",
+    resetSent: "تم إرسال بريد إعادة تعيين كلمة المرور. تحقق من صندوق الوارد الخاص بك.",
+    resetError: "أدخل بريدك الإلكتروني أولاً.",
+    passwordsMismatch: "كلمات المرور غير متطابقة",
+    trustLine: 'تشفير شامل · متوافق مع PIPEDA · البيانات تبقى في كندا',
+    guestLine: 'تستكشف فقط؟',
+    guestCta: 'جرّب العرض التجريبي ←',
+},
 };
 
 /* ═══════════════════════════════════════════
@@ -116,7 +127,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
-  const [lang, setLang] = useState('en');
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const { lang, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -158,26 +170,33 @@ const Login = () => {
         const user = userCredential.user;
         
         login({ sessionId: user.uid, email: user.email, accountId: user.uid });
-        navigate('/dashboard');
+        setLoginSuccess(true);
+        toast.success(lang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : 'Signed in successfully!');
+        setTimeout(() => navigate('/dashboard'), 800);
       } else {
         /* ── FIREBASE REGISTER ── */
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         const user = userCredential.user;
-        
+
         login({ sessionId: user.uid, email: user.email, accountId: user.uid });
-        navigate('/dashboard');
+        setLoginSuccess(true);
+        toast.success(lang === 'ar' ? 'تم إنشاء الحساب بنجاح!' : 'Account created successfully!');
+        setTimeout(() => navigate('/dashboard'), 800);
       }
     } catch (err) {
       console.error("Auth Error:", err);
+      let msg;
       if (err.code === 'auth/email-already-in-use') {
-         setError(lang === 'ar' ? 'البريد الإلكتروني مستخدم بالفعل' : 'Email is already in use.');
+         msg = lang === 'ar' ? 'البريد الإلكتروني مستخدم بالفعل' : 'Email is already in use.';
       } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-         setError(lang === 'ar' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة' : 'Invalid email or password.');
+         msg = lang === 'ar' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة' : 'Invalid email or password.';
       } else if (err.code === 'auth/weak-password') {
-         setError(lang === 'ar' ? 'كلمة المرور ضعيفة جداً' : 'Password is too weak. Use at least 6 characters.');
+         msg = lang === 'ar' ? 'كلمة المرور ضعيفة جداً' : 'Password is too weak. Use at least 6 characters.';
       } else {
-         setError(t('networkError'));
+         msg = t('networkError');
       }
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -188,15 +207,20 @@ const Login = () => {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       
       login({ sessionId: user.uid, email: user.email, accountId: user.uid });
-      navigate('/dashboard');
-      
+      setLoginSuccess(true);
+      toast.success(lang === 'ar' ? 'تم تسجيل الدخول عبر Google!' : 'Signed in with Google!');
+      setTimeout(() => navigate('/dashboard'), 800);
+
     } catch (err) {
       console.error("Google Auth Error:", err);
-      setError(lang === 'ar' ? 'فشل تسجيل الدخول عبر Google' : 'Google sign-in failed. Please try again.');
+      const msg = lang === 'ar' ? 'فشل تسجيل الدخول عبر Google' : 'Google sign-in failed. Please try again.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -212,6 +236,7 @@ const Login = () => {
     try {
       await sendPasswordResetEmail(auth, formData.email);
       setInfo(t('resetSent'));
+      toast.success(t('resetSent'));
     } catch (err) {
       if (err.code === 'auth/user-not-found') {
         setError(lang === 'ar' ? 'لم يتم العثور على حساب بهذا البريد' : 'No account found with this email.');
@@ -232,6 +257,7 @@ const Login = () => {
 
   return (
     <div className="auth-page" dir={isRTL ? 'rtl' : 'ltr'}>
+      <SEO title="Sign In" description="Sign in to your DynamicNFC account to manage cards and view analytics." path="/login" />
       {/* Particles */}
       <div className="auth-particles">
         {particles.map((p, i) => (
@@ -241,8 +267,8 @@ const Login = () => {
 
       {/* Language toggle */}
       <div className="auth-lang-toggle">
-        <button className={`auth-lang-btn${lang === 'en' ? ' active' : ''}`} onClick={() => setLang('en')}>EN</button>
-        <button className={`auth-lang-btn${lang === 'ar' ? ' active' : ''}`} onClick={() => setLang('ar')}>ع</button>
+        <button className={`auth-lang-btn${lang === 'en' ? ' active' : ''}`} onClick={() => setLanguage('en')}>EN</button>
+        <button className={`auth-lang-btn${lang === 'ar' ? ' active' : ''}`} onClick={() => setLanguage('ar')}>ع</button>
       </div>
 
       <div className="auth-container">
@@ -252,9 +278,25 @@ const Login = () => {
             <img src="/assets/images/logo.png" alt="DynamicNFC" className="auth-logo-img" />
           </Link>
 
+          {/* NFC Wave Animation */}
+          <div className="auth-nfc-visual">
+            <div className="auth-nfc-card-mini">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <path d="M6 8.32a7.43 7.43 0 0 1 0 7.36"/>
+                <path d="M9.46 6.21a11.76 11.76 0 0 1 0 11.58"/>
+                <path d="M12.91 4.1c3.85 4.7 3.85 11.1 0 15.8"/>
+              </svg>
+            </div>
+            <div className="auth-nfc-waves">
+              <div className="auth-nfc-wave" />
+              <div className="auth-nfc-wave" />
+              <div className="auth-nfc-wave" />
+            </div>
+            <div className="auth-nfc-label">{t('tagline')}</div>
+          </div>
+
           <div className="auth-brand-content">
-            <h2>{t('tagline')}</h2>
-            <div className="auth-features">
+            <div className="auth-features" style={{ marginTop: 0 }}>
               {[
                 { Icon: FeatureIcon1, title: t('feature1Title'), desc: t('feature1Desc') },
                 { Icon: FeatureIcon2, title: t('feature2Title'), desc: t('feature2Desc') },
@@ -349,19 +391,27 @@ const Login = () => {
                 </div>
               )}
 
-              <button type="submit" className="auth-submit" disabled={loading}>
-                {loading ? (
-                  <span className="auth-spinner" />
-                ) : null}
-                {loading ? t('btnLoading') : isLogin ? t('btnLogin') : t('btnSignup')}
+              <button type="submit" className={`auth-submit${loginSuccess ? ' success' : ''}`} disabled={loading || loginSuccess}>
+                {loginSuccess ? (
+                  <>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                    <span>{lang === 'ar' ? 'تم بنجاح!' : 'Success!'}</span>
+                  </>
+                ) : loading ? (
+                  <><span className="auth-spinner" />{t('btnLoading')}</>
+                ) : (
+                  isLogin ? t('btnLogin') : t('btnSignup')
+                )}
               </button>
 
               {!isLogin && (
                 <p className="auth-terms">
                   {t('terms')}{' '}
-                  <a href="#">{t('termsLink')}</a>{' '}
+                  <Link to="/terms">{t('termsLink')}</Link>{' '}
                   {t('and')}{' '}
-                  <a href="#">{t('privacyLink')}</a>
+                  <Link to="/privacy">{t('privacyLink')}</Link>
                 </p>
               )}
             </form>
@@ -394,6 +444,20 @@ const Login = () => {
             <button type="button" className="auth-switch-btn" onClick={switchMode}>
               {isLogin ? t('switchBtnSignup') : t('switchBtnLogin')}
             </button>
+
+            {/* Guest / Demo Link */}
+            <div className="auth-guest-link">
+              <span>{t('guestLine')}</span>
+              <Link to="/enterprise/crmdemo" className="auth-guest-cta">{t('guestCta')}</Link>
+            </div>
+
+            {/* Social Proof */}
+            <div className="auth-trust-bar">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--teal)', flexShrink: 0 }}>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>{t('trustLine')}</span>
+            </div>
           </div>
         </div>
       </div>

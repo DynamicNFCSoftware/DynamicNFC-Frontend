@@ -26,6 +26,7 @@ export default function CampaignDrawer({
   tx,
   onClose,
   onRename,
+  onEdit,
   onStatusChange,
   linkedDealsCount = 0,
   weightedDealsScore = 0,
@@ -61,6 +62,11 @@ export default function CampaignDrawer({
   const totalTaps = Number(tapMetrics?.taps || 0);
   const conversionRate = totalTaps > 0 ? ((weightedDealsScore / totalTaps) * 100).toFixed(1) : "0.0";
   const tapSeries = tapMetrics?.series || [];
+  const budget = Number(campaign.budget || 0);
+  const spent = Number(campaign.spent || 0);
+  const budgetPercentRaw = budget > 0 ? (spent / budget) * 100 : 0;
+  const budgetPercent = Math.max(0, Math.min(100, budgetPercentRaw));
+  const budgetBarColor = budgetPercentRaw > 80 ? "#e63946" : budgetPercentRaw >= 50 ? "#e9c46a" : "#2a9d8f";
 
   const auditLabel = (type) => {
     const labels = {
@@ -79,7 +85,11 @@ export default function CampaignDrawer({
           <div>
             <div className="ud-cmp-drawer__title">{campaign.name}</div>
             <span className="ud-cmp-status-badge" style={{ background: STATUS_COLORS[st] }}>
-              <span className="ud-cmp-status-badge__icon" aria-hidden="true">{STATUS_ICONS[st] || "•"}</span>
+              <span
+                className="ud-cmp-status-badge__icon"
+                aria-hidden="true"
+                dangerouslySetInnerHTML={{ __html: STATUS_ICONS[st] || "" }}
+              />
               <span>{tx[st] || st}</span>
             </span>
           </div>
@@ -90,8 +100,24 @@ export default function CampaignDrawer({
           <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.client}</span><span>{campaign.client || "—"}</span></div>
           <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.source}</span><span>{sourceLabel(campaign.source, tx)}</span></div>
           <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.cards}</span><span>{campaign.activeCards || 0} / {campaign.totalCards || 0}</span></div>
-          <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.budgetLabel}</span><span>{campaign.budget || 0}</span></div>
-          <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.spentLabel}</span><span>{campaign.spent || 0}</span></div>
+          <div className="ud-cmp-drawer__field">
+            <span className="ud-cmp-drawer__label">{tx.budgetLabel}</span>
+            {budget > 0 ? (
+              <div className="ud-cmp-budget-track">
+                <div className="ud-cmp-budget-track__bar">
+                  <span
+                    className="ud-cmp-budget-track__fill"
+                    style={{ width: `${budgetPercent}%`, background: budgetBarColor }}
+                  />
+                </div>
+                <span className="ud-cmp-budget-track__text">
+                  {`${spent.toLocaleString()} / ${budget.toLocaleString()} (%${Math.round(budgetPercentRaw)})`}
+                </span>
+              </div>
+            ) : (
+              <span>{tx.noBudgetSet}</span>
+            )}
+          </div>
           <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.taps}</span><span>{totalTaps}</span></div>
           <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.conversionRate}</span><span>{conversionRate}%</span></div>
           <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.linkedDealsCount}</span><span>{linkedDealsCount}</span></div>
@@ -132,6 +158,11 @@ export default function CampaignDrawer({
             <button className="ud-cmp-action-btn ud-cmp-action-btn--rename" onClick={() => onRename(campaign)}>
               {tx.rename}
             </button>
+            {onEdit && (
+              <button className="ud-cmp-action-btn ud-cmp-action-btn--rename" onClick={() => onEdit(campaign)}>
+                {tx.editDetails}
+              </button>
+            )}
           </div>
         )}
 
@@ -156,31 +187,41 @@ export default function CampaignDrawer({
                 <XAxis dataKey="day" tick={{ fontSize: 11 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                 <Tooltip />
-                <Area type="monotone" dataKey="taps" stroke="#457b9d" fill="rgba(69,123,157,0.25)" strokeWidth={2} />
+                <Area type="monotone" dataKey="taps" stroke="#457b9d" fill="rgba(69,123,157,0.15)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         ) : (
-          <div className="ud-cmp-drawer__empty">{tx.noPerformanceData}</div>
+          <div className="ud-cmp-drawer__empty">{tx.noTapData}</div>
         )}
 
+        {/* ── Audit Trail ──────────────── */}
         <div className="ud-cmp-drawer__section">{tx.auditTrail}</div>
         {auditLoading ? (
-          <div className="ud-cmp-drawer__empty">Loading...</div>
+          <div className="ud-cmp-drawer__empty">{tx.loading}</div>
         ) : audit.length > 0 ? (
-          <div className="ud-cmp-drawer__audit">
-            {audit.map((a) => (
-              <div key={a.id} className="ud-cmp-audit-row">
-                <span className="ud-cmp-audit-type">{auditLabel(a.type)}</span>
-                <span className="ud-cmp-audit-time">{timeAgo(a.timestamp)}</span>
-                {a.details?.newName && <span className="ud-cmp-audit-detail">→ {a.details.newName}</span>}
-                {a.details?.toStatus && <span className="ud-cmp-audit-detail">→ {a.details.toStatus}</span>}
-              </div>
+          <ul className="ud-cmp-drawer__audit">
+            {audit.map((entry, i) => (
+              <li key={i} className="ud-cmp-drawer__audit-item">
+                <span className="ud-cmp-drawer__audit-type">{auditLabel(entry.type)}</span>
+                {entry.from && entry.to && (
+                  <span className="ud-cmp-drawer__audit-detail">
+                    {entry.from} → {entry.to}
+                  </span>
+                )}
+                {entry.oldName && entry.newName && (
+                  <span className="ud-cmp-drawer__audit-detail">
+                    "{entry.oldName}" → "{entry.newName}"
+                  </span>
+                )}
+                <span className="ud-cmp-drawer__audit-time">{timeAgo(entry.timestamp)}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
           <div className="ud-cmp-drawer__empty">{tx.noAudit}</div>
         )}
+
       </div>
     </div>
   );

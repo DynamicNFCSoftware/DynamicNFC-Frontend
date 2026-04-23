@@ -1,0 +1,377 @@
+/* ═══════════════════════════════════════════════════════
+   Developers.css — Real Estate Developers page
+   Imports shared foundation, then adds Developers-specific rules
+   ═══════════════════════════════════════════════════════ */
+@import '../../styles/ent-base.css';
+
+
+/* ═══════════════════════
+   USE CASE GRID
+   ═══════════════════════ */
+.ent-page .dev-usecase-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  max-width: 960px;
+}
+@media (min-width: 900px) {
+  .ent-page .dev-usecase-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: none;
+  }
+}
+
+/* ─── Card base ─── */
+.ent-page .dev-usecase-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.25rem 2rem 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s;
+  box-shadow: var(--shadow);
+}
+.ent-page .dev-usecase-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--blue));
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.ent-page .dev-usecase-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(184, 134, 11, 0.2);
+  box-shadow: var(--shadow-lg);
+}
+.ent-page .dev-usecase-card:hover::before {
+  opacity: 1;
+}
+
+/* ─── Featured (full-width hero) ─── */
+.ent-page .dev-usecase-card.featured {
+  grid-column: 1 / -1;
+  padding: 2.75rem 2.5rem 2.25rem;
+  background: linear-gradient(135deg, rgba(184, 134, 11, 0.04), var(--card));
+  border-color: rgba(184, 134, 11, 0.15);
+}
+.ent-page .dev-usecase-card.featured::before {
+  opacity: 1;
+  background: linear-gradient(90deg, var(--red), var(--gold), var(--blue));
+}
+.ent-page .dev-usecase-card.featured h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+.ent-page .dev-usecase-card.featured p {
+  font-size: 1.02rem;
+  max-width: 780px;
+  margin: 0 0 1.75rem 0;
+}
+
+/* ─── Typography ─── */
+.ent-page .dev-usecase-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin: 0 0 0.85rem 0;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+.ent-page .dev-usecase-card p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.85;
+  margin: 0 0 1.5rem 0;
+  max-width: 520px;
+}
+
+/* ─── Tags ─── */
+.ent-page .dev-usecase-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+}
+.ent-page .dev-usecase-tag {
+  padding: 0.45rem 0.9rem;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 450;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+
+/* ═══════════════════════
+   DEMO GRID
+   ═══════════════════════ */
+.ent-page .dev-demo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  max-width: 960px;
+}
+@media (min-width: 900px) {
+  .ent-page .dev-demo-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: none;
+  }
+}
+
+/* ─── Portal card ─── */
+.ent-page .dev-demo-portal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.25rem 2rem 4rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: pointer;
+}
+.ent-page .dev-demo-portal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--red), var(--blue));
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.ent-page .dev-demo-portal:hover {
+  transform: translateY(-4px);
+  border-color: rgba(69, 123, 157, 0.2);
+  box-shadow: var(--shadow-lg);
+}
+.ent-page .dev-demo-portal:hover::before {
+  opacity: 1;
+}
+
+/* ─── Featured (full-width dashboard) ─── */
+.ent-page .dev-demo-portal.featured {
+  grid-column: 1 / -1;
+  padding: 2.5rem 2.5rem 4rem;
+  background: linear-gradient(135deg, rgba(193, 18, 31, 0.03), var(--card));
+}
+.ent-page .dev-demo-portal.featured::before {
+  opacity: 1;
+  background: linear-gradient(90deg, var(--red), var(--gold));
+}
+.ent-page .dev-demo-portal.featured h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+.ent-page .dev-demo-portal.featured p {
+  font-size: 0.98rem;
+  max-width: 700px;
+  margin: 0;
+  padding: 0 4rem 0 0;
+}
+
+/* ─── Badge ─── */
+.ent-page .dev-demo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 50px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 1.15rem 0;
+}
+.ent-page .dev-demo-badge.red {
+  background: var(--red-glow);
+  border: 1px solid rgba(193, 18, 31, 0.15);
+  color: var(--red);
+}
+.ent-page .dev-demo-badge.blue {
+  background: var(--blue-glow);
+  border: 1px solid rgba(43, 102, 132, 0.15);
+  color: var(--blue);
+}
+
+/* ─── Portal typography ─── */
+.ent-page .dev-demo-portal h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0 0 0.65rem 0;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+.ent-page .dev-demo-portal p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin: 0;
+  padding: 0 4rem 0 0;
+  max-width: 480px;
+}
+
+/* ─── Arrow button ─── */
+.ent-page .dev-demo-arrow {
+  position: absolute;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  margin: 0;
+  padding: 0;
+}
+.ent-page .dev-demo-arrow svg {
+  width: 18px;
+  height: 18px;
+  color: var(--blue);
+  transition: transform 0.3s;
+}
+.ent-page .dev-demo-portal:hover .dev-demo-arrow {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.ent-page .dev-demo-portal:hover .dev-demo-arrow svg {
+  color: white;
+  transform: translateX(2px);
+}
+
+
+/* ═══════════════════════
+   RTL
+   ═══════════════════════ */
+.ent-page[dir="rtl"] .dev-demo-arrow {
+  right: auto;
+  left: 1.75rem;
+}
+.ent-page[dir="rtl"] .dev-demo-portal p,
+.ent-page[dir="rtl"] .dev-demo-portal.featured p {
+  padding: 0 0 0 4rem;
+}
+.ent-page[dir="rtl"] .dev-demo-portal:hover .dev-demo-arrow svg {
+  transform: translateX(-2px);
+}
+.ent-page[dir="rtl"] .dev-demo-portal {
+  text-align: right;
+}
+.ent-page[dir="rtl"] .dev-usecase-card {
+  text-align: right;
+}
+
+
+/* ═══════════════════════
+   VIP vs ANONYMOUS GRID
+   (shared with RealEstate page)
+   ═══════════════════════ */
+.ent-page .re-diff-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+@media (min-width: 768px) {
+  .ent-page .re-diff-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
+.ent-page .re-diff-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem 2rem 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s;
+  box-shadow: var(--shadow);
+}
+.ent-page .re-diff-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+}
+.ent-page .re-diff-card.vip::before {
+  background: linear-gradient(90deg, var(--gold), var(--red));
+}
+.ent-page .re-diff-card.anon::before {
+  background: linear-gradient(90deg, var(--blue), var(--teal));
+}
+.ent-page .re-diff-card:hover {
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.ent-page .re-diff-indicator {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  letter-spacing: 0.05em;
+}
+.ent-page .re-diff-indicator.vip {
+  background: linear-gradient(135deg, rgba(184, 134, 11, 0.25), rgba(230, 57, 70, 0.15));
+  border: 2px solid rgba(184, 134, 11, 0.4);
+  color: var(--gold);
+}
+.ent-page .re-diff-indicator.anon {
+  background: linear-gradient(135deg, rgba(69, 123, 157, 0.2), rgba(69, 123, 157, 0.1));
+  border: 2px solid rgba(69, 123, 157, 0.3);
+  color: var(--blue);
+  font-size: 1.5rem;
+}
+
+.ent-page .re-diff-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; font-weight: 500;
+  margin: 0 0 0.75rem 0;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+.ent-page .re-diff-card p {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin: 0;
+}
+.ent-page[dir="rtl"] .re-diff-card {
+  text-align: right;
+}
+

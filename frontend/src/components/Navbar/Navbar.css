@@ -1,0 +1,516 @@
+/* ═══════════════════════════════════════════════════════
+   Navbar.css — Shared site-wide navigation
+   Scope: .nav-bar (prefixed nav- to avoid conflicts)
+   v2: Mobile My Card CTA + clean mobile menu
+   ═══════════════════════════════════════════════════════ */
+
+.nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  background: var(--nav-bg, rgba(250, 248, 245, 0.92));
+  border-bottom: 1px solid var(--nav-border, rgba(0, 0, 0, 0.06));
+  font-family: 'Outfit', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.nav-bar[dir="rtl"] {
+  font-family: 'Noto Kufi Arabic', 'Outfit', sans-serif;
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  padding: 0 2rem;
+}
+
+/* ── Brand / Logo ── */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-brand-img {
+  height: 52px;
+  width: auto;
+}
+
+/* ── Menu container ── */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  justify-content: space-between;
+  margin-inline-start: 2rem;
+}
+
+/* ── Nav links ── */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--muted, #6b7280);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--text, #1a1a1f);
+  background: var(--hover-bg, rgba(0, 0, 0, 0.03));
+}
+
+.nav-link.active {
+  color: var(--text, #1a1a1f);
+  font-weight: 600;
+}
+
+/* Live Demo CTA — accent pill in nav */
+.nav-demo-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  background: #e63946;
+  color: #fff !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-demo-btn:hover {
+  background: #c1121f;
+  box-shadow: 0 4px 16px rgba(230, 57, 70, 0.3);
+}
+
+/* AI Tap CTA — purple gradient pill in nav */
+.nav-ai-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4A7FB3, #365f8a);
+  color: #fff !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-ai-btn:hover {
+  background: linear-gradient(135deg, #365f8a, #2b4d72);
+  box-shadow: 0 4px 16px rgba(74, 127, 179, 0.35);
+}
+
+/* My Card link — highlighted in menu */
+.nav-link-card {
+  display: none; /* hidden on desktop, shown in mobile menu */
+}
+
+/* Industries dropdown trigger */
+.nav-dd-trigger {
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--muted, #6b7280);
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-dd-trigger:hover {
+  color: var(--text, #1a1a1f);
+  background: var(--hover-bg, rgba(0, 0, 0, 0.03));
+}
+
+/* ── Right side (lang + auth) ── */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Language switcher */
+.nav-lang {
+  display: flex;
+  gap: 3px;
+}
+
+.nav-lang-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--lang-btn-border, rgba(0, 0, 0, 0.06));
+  background: var(--lang-btn-bg, #ffffff);
+  color: var(--muted, #6b7280);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-lang-btn:hover {
+  border-color: var(--border-h, rgba(0, 0, 0, 0.1));
+  color: var(--text, #1a1a1f);
+}
+
+.nav-lang-btn.active {
+  background: rgba(69, 123, 157, 0.07);
+  border-color: rgba(69, 123, 157, 0.2);
+  color: #457b9d;
+}
+
+/* Auth button */
+.nav-auth-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  border: none;
+  background: #c1121f;
+  color: #fff !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.nav-auth-btn:hover {
+  background: #e63946;
+  box-shadow: 0 4px 16px rgba(193, 18, 31, 0.25);
+}
+
+.nav-auth-btn.ghost {
+  background: transparent;
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+  color: var(--text, #1a1a1f) !important;
+}
+
+.nav-auth-btn.ghost:hover {
+  border-color: var(--border-h, rgba(0, 0, 0, 0.1));
+}
+
+/* Admin badge */
+.nav-admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.15);
+  color: #c1121f;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.nav-admin-badge:hover {
+  background: rgba(230, 57, 70, 0.15);
+}
+
+/* ── Mobile "My Card" button (beside hamburger) ── */
+.nav-mobile-card-btn {
+  display: none; /* hidden on desktop */
+}
+
+/* ── Hamburger (mobile) ── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.nav-hamburger:hover {
+  background: var(--hover-bg, rgba(0, 0, 0, 0.03));
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--hamburger-color, #1a1a1f);
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.nav-hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── RTL adjustments ── */
+.nav-bar[dir="rtl"] .nav-inner {
+  flex-direction: row-reverse;
+}
+
+.nav-bar[dir="rtl"] .nav-links {
+  flex-direction: row-reverse;
+}
+
+.nav-bar[dir="rtl"] .nav-right {
+  flex-direction: row-reverse;
+}
+
+.nav-bar[dir="rtl"] .nav-menu {
+  flex-direction: row-reverse;
+}
+
+/* User email */
+.nav-user-email {
+  font-size: 0.78rem;
+  color: var(--muted, #6b7280);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 900px) {
+  .nav-inner {
+    padding: 0 1rem;
+  }
+
+  .nav-hamburger {
+    display: flex;
+  }
+
+  /* Mobile "My Card" — visible beside hamburger */
+  .nav-mobile-card-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #c1121f, #e63946);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    margin-inline-start: auto;
+    margin-inline-end: 0.75rem;
+    box-shadow: 0 2px 12px rgba(193, 18, 31, 0.2);
+    transition: all 0.3s;
+  }
+
+  .nav-mobile-card-btn:hover {
+    box-shadow: 0 4px 20px rgba(193, 18, 31, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .nav-mobile-card-btn svg {
+    flex-shrink: 0;
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    height: calc(100vh - 68px);
+    z-index: 999;
+    background: var(--nav-bg, rgba(250, 248, 245, 0.98));
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 1.5rem 1.5rem;
+    gap: 1.5rem;
+    margin-inline-start: 0;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+
+  .nav-bar[dir="rtl"] .nav-menu {
+    transform: translateX(-100%);
+    flex-direction: column;
+  }
+
+  .nav-menu.open {
+    transform: translateX(0);
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .nav-link {
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    background: var(--hover-bg, rgba(0, 0, 0, 0.04));
+  }
+
+  .nav-dd-trigger {
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+  }
+
+  /* Live Demo — full width in mobile menu */
+  .nav-demo-btn {
+    padding: 0.85rem 1.25rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .nav-ai-btn {
+    padding: 0.85rem 1.25rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* My Card link — prominent inside mobile menu */
+  .nav-link-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(193, 18, 31, 0.06), rgba(230, 57, 70, 0.04));
+    border: 1px solid rgba(193, 18, 31, 0.12);
+    border-radius: 14px;
+    color: #c1121f;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .nav-link-card svg {
+    flex-shrink: 0;
+    color: #c1121f;
+  }
+
+  .nav-right {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+    gap: 0.5rem;
+  }
+
+  .nav-user-email {
+    font-size: 0.72rem;
+    max-width: none;
+    order: -1;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 0.5rem;
+  }
+
+  .nav-bar[dir="rtl"] .nav-right {
+    flex-direction: row-reverse;
+  }
+
+  .nav-bar[dir="rtl"] .nav-links {
+    flex-direction: column;
+  }
+
+  .nav-bar[dir="rtl"] .nav-mobile-card-btn {
+    margin-inline-start: auto;
+    margin-inline-end: 0.75rem;
+  }
+}
+
+/* Extra small — tighter spacing */
+@media (max-width: 380px) {
+  .nav-mobile-card-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .nav-mobile-card-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .nav-brand-img {
+    height: 40px;
+  }
+}
+
+/* ── Theme Toggle Button ── */
+.nav-theme-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--lang-btn-border, rgba(0, 0, 0, 0.06));
+  background: var(--lang-btn-bg, #ffffff);
+  color: var(--muted, #6b7280);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.nav-theme-btn:hover {
+  border-color: var(--border-h, rgba(0, 0, 0, 0.1));
+  color: var(--text, #1a1a1f);
+  transform: rotate(15deg);
+}
+
+.nav-theme-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}

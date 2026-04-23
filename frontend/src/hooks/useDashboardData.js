@@ -107,9 +107,17 @@ export default function useDashboardData() {
   const campaignPagesLoadedRef = useRef(false);
   const [campaignsHasMore, setCampaignsHasMore] = useState(true);
   const [campaignsLoadingMore, setCampaignsLoadingMore] = useState(false);
-  const filterBySector = useCallback(
-    (rows = []) => rows.filter((row) => normalizeSectorId(row?.sector) === sectorId),
-    [sectorId]
+  const filterBySectorAndRegion = useCallback(
+    (rows = []) =>
+      rows.filter((row) => {
+        const sectorMatch = normalizeSectorId(row?.sector) === sectorId;
+        if (!sectorMatch) return false;
+        const rowRegion = String(row?.region || "").toLowerCase().trim();
+        // Backward compatibility: keep rows that predate region enrichment.
+        if (!rowRegion) return true;
+        return rowRegion === String(regionId || "").toLowerCase().trim();
+      }),
+    [sectorId, regionId]
   );
 
   useEffect(() => {
@@ -288,11 +296,11 @@ export default function useDashboardData() {
     return () => window.clearInterval(id);
   }, [user]);
 
-  const sectorRawEvents = useMemo(() => filterBySector(rawEvents), [rawEvents, filterBySector]);
-  const sectorRawLeads = useMemo(() => filterBySector(rawLeads), [rawLeads, filterBySector]);
-  const sectorRawDeals = useMemo(() => filterBySector(rawDeals), [rawDeals, filterBySector]);
-  const sectorRawCards = useMemo(() => filterBySector(rawCards), [rawCards, filterBySector]);
-  const sectorRawCampaigns = useMemo(() => filterBySector(rawCampaigns), [rawCampaigns, filterBySector]);
+  const sectorRawEvents = useMemo(() => filterBySectorAndRegion(rawEvents), [rawEvents, filterBySectorAndRegion]);
+  const sectorRawLeads = useMemo(() => filterBySectorAndRegion(rawLeads), [rawLeads, filterBySectorAndRegion]);
+  const sectorRawDeals = useMemo(() => filterBySectorAndRegion(rawDeals), [rawDeals, filterBySectorAndRegion]);
+  const sectorRawCards = useMemo(() => filterBySectorAndRegion(rawCards), [rawCards, filterBySectorAndRegion]);
+  const sectorRawCampaigns = useMemo(() => filterBySectorAndRegion(rawCampaigns), [rawCampaigns, filterBySectorAndRegion]);
 
   const normalizedEvents = useMemo(() => {
     const config = getSectorConfig(sectorId);

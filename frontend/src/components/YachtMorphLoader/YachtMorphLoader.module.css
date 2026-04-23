@@ -1,0 +1,350 @@
+.stage {
+  position: relative;
+  min-height: 440px;
+  background: #f8f5ec;
+  background-image:
+    linear-gradient(rgba(26, 26, 31, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 26, 31, 0.028) 1px, transparent 1px);
+  background-size: 24px 24px;
+  overflow: hidden;
+  border-radius: 14px;
+  transition: background-color 1s ease;
+}
+
+.metaBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 1.5rem;
+  gap: 1rem;
+}
+
+.metaLeft .headerLabel {
+  font-size: 10px;
+  color: rgba(26, 26, 31, 0.58);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.metaLeft .headerTitle {
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  color: rgba(26, 26, 31, 0.58);
+}
+
+.miniMap {
+  width: 200px;
+  background: #ffffff;
+  border: 0.5px solid rgba(26, 26, 31, 0.12);
+  border-radius: 8px;
+  padding: 10px 12px 8px;
+  flex-shrink: 0;
+}
+
+.miniMapLabel {
+  font-size: 9px;
+  color: rgba(26, 26, 31, 0.58);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.miniMapCoords {
+  font-family: "Courier New", monospace;
+  font-size: 9px;
+  transition: color 0.6s;
+}
+
+.miniMapSvg {
+  width: 100%;
+  height: 100px;
+  display: block;
+}
+
+.mmCountry {
+  fill: rgba(69, 123, 157, 0.15);
+  stroke: rgba(69, 123, 157, 0.35);
+  stroke-width: 0.4;
+  transition: fill 0.7s ease, stroke 0.7s ease;
+}
+
+.mmActive {
+  fill: rgba(184, 134, 11, 0.55);
+  stroke: #b8860b;
+  stroke-width: 0.7;
+}
+
+.mmPinAnim {
+  transition:
+    cx 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+    cy 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+    fill 0.6s,
+    stroke 0.6s;
+}
+
+.miniMapInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 0.5px solid rgba(26, 26, 31, 0.08);
+}
+
+.miniCity {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #1a1a1f;
+  transition: opacity 0.4s;
+}
+
+.miniCode {
+  font-family: "Courier New", monospace;
+  transition: color 0.6s;
+}
+
+.yachtArea {
+  padding: 0.5rem 2rem 1rem;
+  position: relative;
+}
+
+.filmBarTop,
+.filmBarBottom {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  height: 0;
+  background: #0a0f14;
+  z-index: 8;
+  transition: height 0.7s cubic-bezier(0.7, 0, 0.3, 1);
+  pointer-events: none;
+}
+
+.filmBarTop {
+  inset-block-start: 0;
+}
+
+.filmBarBottom {
+  inset-block-end: 0;
+}
+
+.active {
+  height: 22px;
+}
+
+.sceneTitle {
+  position: absolute;
+  inset-block-end: 52px;
+  inset-inline-start: 2rem;
+  z-index: 9;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  pointer-events: none;
+}
+
+.visible {
+  opacity: 1;
+}
+
+.regionName {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: #1a1a1f;
+}
+
+.tagline {
+  display: block;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #8e8776;
+  margin-top: 3px;
+}
+
+.phaseBadge {
+  position: absolute;
+  inset-block-start: 130px;
+  inset-inline-end: 2rem;
+  z-index: 9;
+  font-family: "Courier New", monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #8e8776;
+  opacity: 0;
+  transition: opacity 0.5s ease, color 0.6s ease;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 3px 8px;
+  border-radius: 8px;
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+.yachtSvg {
+  width: 100%;
+  height: 340px;
+  display: block;
+  overflow: hidden;
+}
+
+.yachtEl {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.yachtDetail {
+  fill: none;
+  stroke-width: 0.9;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.parallaxStroke {
+  fill: none;
+  stroke-width: 1;
+}
+
+.parallaxFill {
+  stroke-width: 0;
+}
+
+.waterRipple {
+  fill: none;
+  stroke-width: 0.8;
+}
+
+.yachtLabel {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.projectInfo {
+  text-align: center;
+  padding: 1rem 2rem 1.5rem;
+  border-top: 0.5px solid rgba(26, 26, 31, 0.06);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.proj {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: #1a1a1f;
+  transition: opacity 0.5s;
+}
+
+.model {
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(26, 26, 31, 0.58);
+  margin-top: 6px;
+}
+
+.reg {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  transition: color 0.8s, opacity 0.5s;
+}
+
+.status {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  color: rgba(26, 26, 31, 0.58);
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(26, 26, 31, 0.03);
+  border: 0.5px solid rgba(26, 26, 31, 0.08);
+}
+
+.statusDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-inline-end: 6px;
+  vertical-align: middle;
+  animation: pulseDot 2s infinite;
+  transition: background 0.8s;
+}
+
+.yachtBob {
+  animation: bob 4s ease-in-out infinite;
+  transform-origin: 300px 220px;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-0.3deg); }
+  50% { transform: translateY(-2px) rotate(0.3deg); }
+}
+
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yachtBob { animation: none; }
+  .mmPinAnim,
+  .mmCountry,
+  .miniMapCoords,
+  .miniCity,
+  .miniCode,
+  .proj,
+  .reg,
+  .statusDot {
+    transition: none !important;
+    animation: none !important;
+  }
+  .filmBarTop,
+  .filmBarBottom,
+  .sceneTitle,
+  .phaseBadge {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .miniMap {
+    display: none;
+  }
+
+  .metaBar {
+    padding: 0.75rem 1rem;
+  }
+
+  .sceneTitle {
+    inset-inline-start: 1rem;
+    inset-block-end: 40px;
+  }
+
+  .phaseBadge {
+    inset-inline-end: 1rem;
+    inset-block-start: 100px;
+  }
+
+  .yachtSvg { height: 280px; }
+  .stage { min-height: 380px; }
+  .proj { font-size: 20px; }
+  .yachtArea { padding: 0.5rem 1rem 1rem; }
+}

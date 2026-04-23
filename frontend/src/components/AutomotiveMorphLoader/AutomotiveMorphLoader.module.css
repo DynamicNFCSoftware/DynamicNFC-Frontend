@@ -1,0 +1,248 @@
+.stage {
+  position: relative;
+  min-height: 460px;
+  background: #f8f5ec;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.028) 1px, transparent 1px);
+  background-size: 24px 24px;
+  overflow: hidden;
+  border-radius: 14px;
+  transition: background-color 1s ease;
+}
+
+.metaBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 1.5rem;
+  gap: 1rem;
+}
+
+.metaLeft .headerLabel {
+  font-size: 10px;
+  color: #8e8776;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.metaLeft .headerTitle {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #8e8776;
+}
+
+.miniMap {
+  width: clamp(220px, 24vw, 290px);
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.18);
+  border-radius: 10px;
+  padding: 12px 14px 10px;
+  box-shadow: 0 6px 18px rgba(26, 26, 31, 0.08);
+  flex-shrink: 0;
+}
+
+.miniMapLabel {
+  font-size: 10px;
+  color: #8e8776;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.miniMapCoords {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  transition: color 0.6s;
+}
+
+.miniMapSvg {
+  width: 100%;
+  height: 124px;
+  display: block;
+}
+
+.mmCountry {
+  fill: rgba(69, 123, 157, 0.15);
+  stroke: rgba(69, 123, 157, 0.35);
+  stroke-width: 0.4;
+  transition: fill 0.7s ease, stroke 0.7s ease;
+}
+
+.mmActive {
+  fill: rgba(184, 134, 11, 0.55);
+  stroke: #b8860b;
+  stroke-width: 0.7;
+}
+
+.mmPinAnim {
+  transition: cx 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+              cy 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+              fill 0.6s, stroke 0.6s;
+}
+
+.miniMapInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 0.5px solid rgba(0,0,0,0.08);
+}
+
+.miniCity {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #1a1a1f;
+  transition: opacity 0.4s;
+}
+
+.miniCode {
+  font-family: 'Courier New', monospace;
+  transition: color 0.6s;
+}
+
+.autoArea {
+  padding: 0.5rem 2rem 1rem;
+  position: relative;
+}
+
+.autoSvg {
+  width: 100%;
+  height: 280px;
+  display: block;
+  overflow: hidden;
+}
+
+.backdropLine {
+  fill: none;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.backdropFill {
+  stroke-width: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.autoEl {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.autoDetail {
+  fill: none;
+  stroke-width: 0.9;
+}
+
+.autoLabel {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.projectInfo {
+  text-align: center;
+  padding: 1rem 2rem 1.5rem;
+  border-top: 0.5px solid rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.6);
+}
+
+.proj {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: #1a1a1f;
+  transition: opacity 0.5s;
+}
+
+.model {
+  font-size: 11px;
+  color: #8e8776;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+  font-family: 'Courier New', monospace;
+  transition: opacity 0.5s;
+}
+
+.reg {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  transition: color 0.8s, opacity 0.5s;
+}
+
+.status {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: #8e8776;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.03);
+  border: 0.5px solid rgba(0,0,0,0.08);
+}
+
+.statusDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: pulseDot 2s infinite;
+  transition: background 0.8s;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .miniMap { display: none; }
+  .metaBar { padding: 0.75rem 1rem; }
+  .autoArea { padding: 0.5rem 1rem 1rem; }
+  .proj { font-size: 20px; }
+  .stage { min-height: 360px; }
+  .autoSvg { height: 200px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .mmPinAnim,
+  .mmCountry,
+  .miniMapCoords,
+  .miniCity,
+  .miniCode,
+  .proj,
+  .model,
+  .reg,
+  .statusDot,
+  .backdropLine,
+  .backdropFill,
+  .autoLabel {
+    transition: none !important;
+    animation: none !important;
+  }
+  .autoLabel {
+    opacity: 1 !important;
+  }
+  .backdropLine,
+  .backdropFill {
+    opacity: 0.75 !important;
+  }
+}

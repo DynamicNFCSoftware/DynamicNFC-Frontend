@@ -1,29 +1,96 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../i18n';
+import { common } from '../../i18n/common';
+import '../Developers/Developers.css';
 import './RealEstate.css';
+import '../../i18n/pages/realEstate';
+import SEO from '../../components/SEO/SEO';
 
 /* ═══════════════════════════════════════════
    TRANSLATIONS (EN + AR)
    Real Estate Professionals — Sales Velocity Engine
    ═══════════════════════════════════════════ */
+function ReSvg({ children, size = 24, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      {children}
+    </svg>
+  );
+}
+
+const RE_CHALLENGE_ICONS = [
+  <ReSvg key="c1"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></ReSvg>,
+  <ReSvg key="c2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></ReSvg>,
+  <ReSvg key="c3"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><rect x="8" y="2" width="8" height="4" rx="1" ry="1" /></ReSvg>,
+];
+
+const RE_HOW_ICONS = [
+  <ReSvg key="h1"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></ReSvg>,
+  <ReSvg key="h2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21" /><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></ReSvg>,
+  <ReSvg key="h3"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></ReSvg>,
+  <ReSvg key="h4"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></ReSvg>,
+];
+
+const RE_PART_ICONS = [
+  <ReSvg key="pa1"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></ReSvg>,
+  <ReSvg key="pa2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></ReSvg>,
+  <ReSvg key="pa3"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 12 17.19 16.5 19.79" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></ReSvg>,
+  <ReSvg key="pa4"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></ReSvg>,
+];
+
+const RE_UC_ICONS = [
+  <ReSvg key="uc1"><path d="M3 21h18" /><path d="M6 21V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14" /><path d="M9 9h.01M12 9h.01M15 9h.01M9 12h.01M12 12h.01M15 12h.01M9 15h.01M12 15h.01M15 15h.01" /></ReSvg>,
+  <ReSvg key="uc2"><path d="M12 22s8-4 8-10V6l-8-4-8 4v6c0 6 8 10 8 10z" /><path d="M9 12l2 2 4-4" /></ReSvg>,
+  <ReSvg key="uc3"><path d="M12 21s-7-4.35-7-11a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 6.65-7 11-7 11z" /><path d="M9.5 10.5l5 5" /><path d="M14.5 10.5l-5 5" /></ReSvg>,
+  <ReSvg key="uc4"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></ReSvg>,
+];
+
+const RE_SECTION_NAV = [
+  { id: 'challenge', labelKey: 'navChallenge' },
+  { id: 'shift', labelKey: 'navShift' },
+  { id: 'how', labelKey: 'navHow' },
+  { id: 'diff', labelKey: 'navDiff' },
+  { id: 'demo', labelKey: 'navDemo' },
+  { id: 'usecases', labelKey: 'navUseCases' },
+  { id: 'partnership', labelKey: 'navPartnership' },
+  { id: 'roi', labelKey: 'navRoi' },
+  { id: 'faq', labelKey: 'navFaq' },
+  { id: 'cta', labelKey: 'navPilot' },
+];
+
 const TR = {
   en: {
+    seoTitle: 'Real Estate — VIP Buyer Experiences',
+    seoDesc: 'Named buyer intent, private portals, and real-time sales signals for brokerages and project sales teams. Book more viewings with DynamicNFC.',
+
     /* Nav */
-    navChallenge:'The Challenge', navHow:'How It Works', navDemo:'Live Demo', navUseCases:'Use Cases', navPilot:'Start a Pilot',
+    navChallenge: 'The Challenge',
+    navShift: 'The Shift',
+    navHow: 'How It Works',
+    navDiff: 'VIP vs Public',
+    navDemo: 'Live Demo',
+    navUseCases: 'Use Cases',
+    navPartnership: 'Partnership',
+    navRoi: 'Why It Matters',
+    navFaq: 'FAQ',
+    navPilot: 'Start a Pilot',
+
+    closeLabel: 'Close dialog',
 
     /* Hero */
     heroBadge:'VIP Digital Experience for Real Estate',
     heroTitle:'Turn Buyer Intent Into Booked Viewings.',
     heroSub:'DynamicNFC gives real estate sales teams a new weapon: VIP Access Keys that deliver private, personalized buyer experiences — and tell you exactly who is ready to act, what they care about, and when to call.',
-    stat1Val:'47%', stat1Label:'Higher Engagement', stat2Val:'3.2×', stat2Label:'Faster to Viewing', stat3Val:'Real-time', stat3Label:'Buyer Intelligence',
+    stat1Val:'Named', stat1Label:'Visitors', stat2Val:'Intent', stat2Label:'Scoring', stat3Val:'Real-Time', stat3Label:'Alerts',
     heroCtaPilot:'Start a Pilot →', heroCtaDemo:'See the Live Demo',
 
     /* Challenge (Pitch Deck p.2) */
     challLabel:'The Blind Spot', challTitle:'Your Sales Team Has Leads. They Don\'t Have Context.',
-    challQuote:'Your highest-intent buyers spend weeks exploring floor plans, pricing, and payment options online. Yet when your sales team picks up the phone, they often lack one critical thing: <strong>context</strong>. They don\'t know who is ready, what they care about most, or when to act. This leads to delayed follow-ups, generic conversations, and missed momentum.',
-    chall1Icon:'👥', chall1Title:'Anonymous Traffic', chall1Desc:'Hundreds of visitors browse your project website. You see page views — but you don\'t know who they are or what caught their attention.',
-    chall2Icon:'🕐', chall2Title:'Delayed Follow-Up', chall2Desc:'By the time your sales team reaches out, the buyer has cooled off. The window between peak interest and first contact is too wide.',
-    chall3Icon:'📋', chall3Title:'Generic Outreach', chall3Desc:'Every buyer gets the same email, the same call script, the same brochure. A penthouse investor and a first-time family buyer hear the same pitch.',
+    challQuote:'Your highest-intent buyers spend weeks exploring floor plans, pricing, and payment options online. Yet when your sales team picks up the phone, they often lack one critical thing: ', challQuoteHighlight:'context', challQuote2:'. They don\'t know who is ready, what they care about most, or when to act. This leads to delayed follow-ups, generic conversations, and missed momentum.',
+    chall1Icon:'👥', chall1Title:'Anonymous Traffic', chall1Desc:'Hundreds of visitors browse your project website. You see page views — but you don\'t know who they are or what caught their attention.', chall1Short:'You see page views, not people.',
+    chall2Icon:'🕐', chall2Title:'Delayed Follow-Up', chall2Desc:'By the time your sales team reaches out, the buyer has cooled off. The window between peak interest and first contact is too wide.', chall2Short:'Interest peaks before your team calls.',
+    chall3Icon:'📋', chall3Title:'Generic Outreach', chall3Desc:'Every buyer gets the same email, the same call script, the same brochure. A penthouse investor and a first-time family buyer hear the same pitch.', chall3Short:'Same pitch for every buyer.',
 
     /* The Shift (Pitch Deck p.3) */
     shiftLabel:'The Shift', shiftTitle:'From Public Website to Private Invitation',
@@ -36,16 +103,16 @@ const TR = {
     /* How It Works (Pitch Deck p.4-5) */
     howLabel:'How It Works', howTitle:'From Premium Box to Booked Viewing',
     howDesc:'Selected prospects receive a premium box with an NFC card and a personal message. The message is clear: "This card unlocks a private experience created specifically for you."',
-    how1Icon:'📦', how1Title:'VIP Campaign Selection', how1Desc:'Your sales team selects high-value prospects from the CRM — investors, repeat buyers, referrals, VIP waitlist members. Each gets a personalized VIP Access Key.',
-    how2Icon:'💳', how2Title:'Premium Box Delivery', how2Desc:'The NFC card arrives in a premium box with a personal message: "This unlocks your private experience." The physical touch creates exclusivity and trust.',
-    how3Icon:'📱', how3Title:'Tap to Private Portal', how3Desc:'When the buyer taps their card, they access a private digital experience — tailored to their preferences, interests, and stage in the journey. No app required.',
-    how4Icon:'📊', how4Title:'Behavioral Intelligence', how4Desc:'Every action inside the portal — floor plans viewed, pricing downloaded, viewings booked — feeds your sales dashboard in real time. Your team knows exactly when to act.',
+    how1Title:'VIP Campaign Selection', how1Desc:'Select high-value prospects from your CRM. Each gets a personalized VIP Access Key.',
+    how2Title:'Premium Box Delivery', how2Desc:'A premium box with a personalized invitation — not a flyer. Physical touch builds trust.',
+    how3Title:'Tap to Private Portal', how3Desc:'One tap opens a private portal — floor plans, pricing, booking. No app, no login.',
+    how4Title:'Behavioral Intelligence', how4Desc:'Every portal action feeds your dashboard in real time. Your team knows who is ready.',
 
     /* Key Difference (Pitch Deck p.6) */
     diffLabel:'The Key Difference', diffTitle:'Same Website. Same Actions. Different Intelligence.',
     diffDesc:'The actions are identical for everyone — book a viewing, request pricing, explore payment plans. The only difference is identity.',
-    diffVipTitle:'VIP Buyer (Known)', diffVipDesc:'We know who they are. That enables personal follow-ups, tailored incentives, and concierge-level sales. Your team calls with context: "I see you\'ve been looking at 2BR units on floors 30-40 — we have two left."',
-    diffAnonTitle:'Public Visitor (Anonymous)', diffAnonDesc:'We learn at a segment level and optimize marketing. Which floor plans get the most attention? What price range drives downloads? Data-driven campaign decisions.',
+    diffVipTitle:'VIP Buyer (Known)', diffVipDesc:'Personal follow-ups, tailored incentives, concierge-level sales. Your team calls with full buyer context.',
+    diffAnonTitle:'Public Visitor (Anonymous)', diffAnonDesc:'Segment-level insights that optimize marketing. Which floor plans get attention? What price range drives action?',
 
     /* Live Demo */
     demoLabel:'Live Demo', demoTitle:'See It In Action — Vista Residences',
@@ -76,17 +143,17 @@ const TR = {
     /* Partnership */
     partLabel:'Partnership Model', partTitle:'Launch in Weeks. Measure in Viewings.',
     partDesc:'We work alongside your sales team to design, deploy, and optimize the VIP buyer experience for your current project.',
-    part1Icon:'🎯', part1Title:'Select Your Prospects', part1Desc:'Choose 50–200 high-value prospects from your CRM or VIP waitlist. We help you segment by buyer profile.',
-    part2Icon:'🎨', part2Title:'Design the Experience', part2Desc:'We build a private buyer portal matched to your project branding — floor plans, pricing, amenities, and calls-to-action.',
-    part3Icon:'📦', part3Title:'Deliver VIP Access Keys', part3Desc:'Premium NFC cards ship in branded boxes with personalized messages. Your prospects receive a physical invitation.',
-    part4Icon:'📈', part4Title:'Track & Close', part4Desc:'Your sales dashboard lights up with buyer signals. Your team follows up with context — and books more viewings.',
+    part1Title:'Select Your Prospects', part1Desc:'Choose 50–200 high-value prospects from your CRM or VIP waitlist. We help you segment by buyer profile.', part1Short:'50–200 VIP prospects from your CRM.',
+    part2Title:'Design the Experience', part2Desc:'We build a private buyer portal matched to your project branding — floor plans, pricing, amenities, and calls-to-action.', part2Short:'Branded portal matching your project.',
+    part3Title:'Deliver VIP Access Keys', part3Desc:'Premium NFC cards ship in branded boxes with personalized messages. Your prospects receive a physical invitation.', part3Short:'Premium boxes with personalized invitations.',
+    part4Title:'Track & Close', part4Desc:'Your sales dashboard lights up with buyer signals. Your team follows up with context — and books more viewings.', part4Short:'Real-time signals, more booked viewings.',
 
     /* ROI (Pitch Deck p.7) */
     roiLabel:'Why This Matters', roiTitle:'Sales Velocity, Not Vanity Metrics.',
     roiDesc:'This is not about clicks or dashboards. It\'s about one thing: cutting the time from "Interested" to "Booked Viewing."',
-    roi1Val:'47%', roi1Label:'Higher Engagement', roi1Sub:'VIP portals vs. standard project websites',
-    roi2Val:'3.2×', roi2Label:'Conversion to Viewing', roi2Sub:'Among VIP invitees vs. anonymous leads',
-    roi3Val:'< 48hr', roi3Label:'Time to First Follow-Up', roi3Sub:'Triggered by real buyer signals, not cold lists',
+    roi1Val:'Named', roi1Label:'Every Visitor Identified', roi1Sub:'No anonymous traffic — every tap linked to a real person',
+    roi2Val:'Intent', roi2Label:'Behavioral Scoring', roi2Sub:'Know who is ready to buy, not just browsing',
+    roi3Val:'Real-Time', roi3Label:'Sales Triggers', roi3Sub:'Your team gets alerts the moment a prospect re-engages',
 
     /* FAQ */
     faqLabel:'Sales Team FAQ', faqTitle:'Questions Your Team Will Ask',
@@ -116,98 +183,151 @@ const TR = {
     successTitle:'Pilot Request Submitted', successDesc:'Thank you. Our real estate specialist will reach out within 24 hours with a customized pilot proposal.',
     successClose:'Close',
 
+    fldName:'Full Name', fldEmail:'Email', fldPhone:'Phone', fldCompany:'Company / Brokerage', fldRole:'Role',
+    fldSelectRole:'Select role', fldVpSales:'VP of Sales', fldDirSales:'Director of Sales', fldSalesMgr:'Sales Manager',
+    fldBroker:'Broker / Managing Broker', fldAgent:'Senior Agent', fldMktDir:'Marketing Director', fldOther:'Other',
+    fldTeamSize:'Team Size', fldSelectSize:'Select size', fldTeam15:'1 – 5 agents', fldTeam620:'6 – 20 agents', fldTeam2050:'20 – 50 agents', fldTeam50:'50+ agents',
+    fldMarket:'Market', fldMarketHint:'e.g. Vancouver, Toronto, Dubai',
+    fldProjectType:'Project or Listing Type', fldSelectType:'Select type',
+    fldPreCon:'Pre-Construction Tower', fldLuxResale:'Luxury Resale ($2M+)', fldNewDev:'New Development', fldBrokerage:'Brokerage Campaign', fldMixed:'Mixed Portfolio',
+    fldProspects:'VIP Prospects to Target', fldSelectRange:'Select range', fld50:'Under 50', fld50100:'50 – 100', fld100200:'100 – 200', fld200:'200+',
+    fldChallenge:'Biggest sales challenge right now?', fldSelectChallenge:'Select challenge',
+    fldCh1:'Anonymous website traffic — can\'t identify buyers', fldCh2:'Too slow from interest to first contact',
+    fldCh3:'Generic outreach — one pitch for all buyers', fldCh4:'Sales team lacks buyer context on calls',
+    fldCh5:'Low conversion from leads to booked viewings', fldCh6:'International buyers — hard to engage remotely',
+    fldNotes:'Notes', fldNotesHint:'Tell us about your current project, sales goals, or pilot ideas...',
+    fldError:'Something went wrong. Please try again.',
+
     footerText:'© 2026 DynamicNFC — Sales Velocity Engine for Real Estate Professionals',
   },
 
   ar: {
-    navChallenge:'التحدي', navHow:'كيف يعمل', navDemo:'عرض حي', navUseCases:'حالات الاستخدام', navPilot:'ابدأ تجربة',
-    heroBadge:'تجربة رقمية VIP للعقارات',
-    heroTitle:'حوّل نية المشتري إلى حجز معاينة.',
-    heroSub:'DynamicNFC يمنح فرق المبيعات العقارية سلاحاً جديداً: مفاتيح وصول VIP تقدم تجارب شخصية خاصة للمشترين — وتخبرك بالضبط من مستعد للتحرك، ما يهمه، ومتى تتصل.',
-    stat1Val:'٤٧٪', stat1Label:'تفاعل أعلى', stat2Val:'٣.٢×', stat2Label:'أسرع للمعاينة', stat3Val:'لحظي', stat3Label:'ذكاء المشتري',
-    heroCtaPilot:'ابدأ تجربة →', heroCtaDemo:'شاهد العرض الحي',
-    challLabel:'النقطة العمياء', challTitle:'فريق مبيعاتك لديه عملاء. ليس لديه سياق.',
-    challQuote:'أكثر المشترين اهتماماً يقضون أسابيع في استكشاف المخططات والأسعار وخطط الدفع عبر الإنترنت. لكن عندما يتواصل فريق المبيعات، ينقصه شيء واحد حاسم: <strong>السياق</strong>. لا يعرفون من مستعد، ما يهمهم أكثر، أو متى يتصرفون.',
-    chall1Icon:'👥', chall1Title:'زوار مجهولون', chall1Desc:'مئات الزوار يتصفحون موقع المشروع. ترى زيارات الصفحات — لكن لا تعرف من هم أو ما لفت انتباههم.',
-    chall2Icon:'🕐', chall2Title:'متابعة متأخرة', chall2Desc:'بحلول وقت تواصل فريق المبيعات، يكون المشتري قد فقد حماسه. الفجوة بين ذروة الاهتمام والاتصال الأول واسعة جداً.',
-    chall3Icon:'📋', chall3Title:'تواصل عام', chall3Desc:'كل مشترٍ يحصل على نفس البريد، نفس النص، نفس الكتيب. مستثمر البنتهاوس والعائلة المشترية لأول مرة يسمعون نفس العرض.',
-    shiftLabel:'التحوّل', shiftTitle:'من موقع عام إلى دعوة خاصة',
-    shiftDesc:'ماذا لو توقفت عن معاملة موقعك كنشرة إعلانية، وبدلاً من ذلك عاملته كتجربة خاصة لعملاء مختارين؟ ليس للجميع — فقط من تدعوهم عمداً.',
-    oldLabel:'الطريقة القديمة', oldTitle:'موقع عام', oldDesc:'موقع واحد للجميع. زوار مجهولون. لا هوية للمشتري.',
-    old1:'نفس التجربة لكل الزوار', old2:'لا طريقة لتحديد المشترين المهتمين', old3:'فريق المبيعات يتصل أعمى', old4:'متابعة مبنية على التخمين',
-    newLabel:'الطريقة الديناميكية', newTitle:'تجربة VIP خاصة', newDesc:'كل مشترٍ يحصل على مفتاح VIP يفتح بوابة مصممة له.',
-    new1:'محتوى مخصص لكل مشترٍ', new2:'الهوية معروفة قبل أول نقرة', new3:'فريق المبيعات لديه السياق الكامل', new4:'متابعة مؤقتة بإشارات المشتري',
-    howLabel:'كيف يعمل', howTitle:'من الصندوق الفاخر إلى حجز المعاينة',
-    howDesc:'العملاء المختارون يتلقون صندوقاً فاخراً مع بطاقة NFC ورسالة شخصية: "هذه البطاقة تفتح تجربة خاصة صُممت خصيصاً لك."',
-    how1Icon:'📦', how1Title:'اختيار حملة VIP', how1Desc:'فريق مبيعاتك يختار العملاء ذوي القيمة العالية — مستثمرين، مشترين متكررين، إحالات. كل واحد يحصل على مفتاح VIP مخصص.',
-    how2Icon:'💳', how2Title:'توصيل الصندوق الفاخر', how2Desc:'بطاقة NFC تصل في صندوق فاخر مع رسالة شخصية. اللمسة المادية تخلق الحصرية والثقة.',
-    how3Icon:'📱', how3Title:'لمس للبوابة الخاصة', how3Desc:'عندما يلمس المشتري بطاقته، يصل إلى تجربة رقمية خاصة — مصممة حسب تفضيلاته واهتماماته. بدون تطبيق.',
-    how4Icon:'📊', how4Title:'ذكاء سلوكي', how4Desc:'كل إجراء داخل البوابة — مخططات شوهدت، أسعار حُمّلت، معاينات حُجزت — يغذي لوحة المبيعات لحظياً.',
-    diffLabel:'الفرق الجوهري', diffTitle:'نفس الموقع. نفس الإجراءات. ذكاء مختلف.',
-    diffDesc:'الإجراءات متطابقة للجميع — حجز معاينة، طلب أسعار، استكشاف خطط الدفع. الفرق الوحيد هو الهوية.',
-    diffVipTitle:'مشتري VIP (معروف)', diffVipDesc:'نعرف من هم. هذا يمكّن المتابعة الشخصية والحوافز المخصصة والمبيعات على مستوى الكونسيرج.',
-    diffAnonTitle:'زائر عام (مجهول)', diffAnonDesc:'نتعلم على مستوى الشريحة ونحسّن التسويق. أي المخططات تحظى بأكبر اهتمام؟ أي نطاق سعري يحفز التحميل؟',
-    demoLabel:'عرض حي', demoTitle:'شاهده عملياً — فيستا ريزيدنسز',
-    demoDesc:'استكشف عرضاً حياً مبنياً لمشروع برج فاخر خيالي. شاهد كيف تحصل ملفات المشترين المختلفة على تجارب مختلفة تماماً.',
-    demoBadge1:'مستثمر VIP', demoBadge2:'مشتري عائلي', demoBadge3:'وصول عام', demoBadge4:'لوحة التحليلات',
-    demoCard1Title:'خالد الراشد — بوابة المستثمر', demoCard1Desc:'تجربة مستثمر نخبوية مع محتوى يركز على العائد، عروض البنتهاوس، وتحليلات الاستثمار.',
-    demoCard2Title:'أحمد الفهد — بوابة العائلة', demoCard2Desc:'تجربة مشتري عائلي تبرز وحدات 3 غرف، المدارس، الحدائق، والمرافق.',
-    demoCard3Title:'السوق العالمي', demoCard3Desc:'تجربة تصفح مجهول مع التقاط تدريجي — كيف يصبح الزوار العامون مشترين معروفين.',
-    demoCard4Title:'لوحة الشركة', demoCard4Desc:'لوحة CRM داخلية تعرض التفاعل اللحظي، تسجيل العملاء، تتبع السلوك، وقمع التحويل.',
-    demoCta:'زر بيئة العرض الكاملة →',
-    ucLabel:'حالات الاستخدام', ucTitle:'من إطلاق الأبراج إلى إعادة بيع الفاخر',
-    ucDesc:'DynamicNFC يتكيف مع كل سيناريو مبيعات في العقارات.',
-    uc1Title:'مبيعات ما قبل البناء',
-    uc1Desc:'أطلق برجاً من 500 وحدة مع مفاتيح VIP لأفضل 200 عميل. كل بطاقة تفتح بوابة تعرض الطابق المفضل واتجاه الإطلالة وخطة الدفع — قبل أي مكالمة هاتفية.',
-    uc1Tag1:'اختيار الطابق', uc1Tag2:'وصول ما قبل الإطلاق', uc1Tag3:'خطط الدفع', uc1Tag4:'تسجيل المشتري',
-    uc2Title:'إعادة بيع الفاخر',
-    uc2Desc:'للعقارات بقيمة 5 ملايين+، كل نقطة اتصال يجب أن تعكس مستوى العقار. بطاقة NFC معدنية في صندوق فاخر تضع العقار كحصري.',
-    uc2Tag1:'تجربة فاخرة', uc2Tag2:'عرض متميز', uc2Tag3:'وسائط خاصة', uc2Tag4:'مبيعات كونسيرج',
-    uc3Title:'حملات VIP للوساطات',
-    uc3Desc:'شن حملة على 50 عميلاً ذا قيمة عالية هذا الربع. كل واحد يتلقى مفتاح VIP مرتبطاً بمخزونك الحالي. تتبع من يتفاعل وأي عقارات يشاهدها مراراً.',
-    uc3Tag1:'تتبع الحملة', uc3Tag2:'عقارات متعددة', uc3Tag3:'تنبيهات التفاعل', uc3Tag4:'ذكاء الأنبوب',
-    uc4Title:'المشترون الدوليون',
-    uc4Desc:'للمستثمرين الخارجيين الذين لا يستطيعون زيارة مركز المبيعات، مفتاح VIP يجسر المسافة. بوابات متعددة اللغات مع جولات افتراضية ومخططات وأسعار.',
-    uc4Tag1:'متعدد اللغات', uc4Tag2:'جولات افتراضية', uc4Tag3:'وعي المنطقة الزمنية', uc4Tag4:'مبيعات عابرة للحدود',
-    partLabel:'نموذج الشراكة', partTitle:'أطلق في أسابيع. قِس بالمعاينات.',
-    partDesc:'نعمل مع فريق مبيعاتك لتصميم ونشر وتحسين تجربة المشتري VIP لمشروعك الحالي.',
-    part1Icon:'🎯', part1Title:'اختر عملاءك', part1Desc:'اختر 50-200 عميل ذوي قيمة عالية من CRM أو قائمة VIP. نساعدك في التقسيم حسب ملف المشتري.',
-    part2Icon:'🎨', part2Title:'صمم التجربة', part2Desc:'نبني بوابة مشتري خاصة تطابق علامة مشروعك — مخططات وأسعار ومرافق ودعوات للعمل.',
-    part3Icon:'📦', part3Title:'وصّل مفاتيح VIP', part3Desc:'بطاقات NFC تُشحن في صناديق فاخرة مع رسائل مخصصة. عملاؤك يتلقون دعوة مادية.',
-    part4Icon:'📈', part4Title:'تتبع وأغلق', part4Desc:'لوحة المبيعات تضيء بإشارات المشتري. فريقك يتابع بسياق — ويحجز المزيد من المعاينات.',
-    roiLabel:'لماذا هذا مهم', roiTitle:'سرعة المبيعات، ليس مقاييس التفاخر.',
-    roiDesc:'ليس عن النقرات أو اللوحات. عن شيء واحد: تقليص الوقت من "مهتم" إلى "معاينة محجوزة".',
-    roi1Val:'٤٧٪', roi1Label:'تفاعل أعلى', roi1Sub:'بوابات VIP مقابل مواقع المشاريع القياسية',
-    roi2Val:'٣.٢×', roi2Label:'تحويل للمعاينة', roi2Sub:'بين مدعوي VIP مقابل العملاء المجهولين',
-    roi3Val:'< ٤٨ ساعة', roi3Label:'وقت أول متابعة', roi3Sub:'مُفعّل بإشارات مشتري حقيقية، ليس قوائم باردة',
-    faqLabel:'أسئلة فريق المبيعات', faqTitle:'أسئلة سيطرحها فريقك',
-    faq1Q:'هل هذا يستبدل موقعنا أو CRM؟', faq1A:'لا. DynamicNFC يجلس فوق أنظمتكم الحالية ويعززها. موقعكم يبقى عاماً. بوابة VIP طبقة خاصة — متصلة بـ CRM.',
-    faq2Q:'كيف تُعالج الموافقة؟', faq2A:'الموافقة صريحة. العميل يتلقى بطاقة مادية برسالة واضحة. اللمس هو الموافقة. لا تتبع خفي.',
-    faq3Q:'ماذا يرى المشتري فعلاً؟', faq3A:'تجربة ويب مخصصة — بدون تطبيق. يرى مخططات وأسعار ومرافق ودعوات مصممة لملفه الشخصي.',
-    faq4Q:'كيف نقيس النجاح؟', faq4A:'مقياس واحد: زيادة المعاينات المحجوزة بين مدعوي VIP مقابل مجموعة المقارنة.',
-    faq5Q:'كم يستغرق الإعداد؟', faq5A:'2-4 أسابيع من البداية إلى تسليم أول البطاقات. نصمم البوابة ونبرمج البطاقات ونحزم ونشحن.',
-    faq6Q:'ما أنظمة CRM التي تتصلون بها؟', faq6A:'Salesforce وHubSpot وFollow Up Boss وkvCORE وتكاملات مخصصة عبر webhook.',
-    ctaLabel:'جاهز للتحرك', ctaTitle:'أنت لا توزع بطاقات. أنت تصدر دعوات خاصة.',
-    ctaDesc:'حوّل النية الرقمية إلى زخم مبيعات حقيقي. ابدأ بـ 50 مفتاح VIP لمشروعك الحالي وقِس الفرق.',
-    ctaPilot:'ابدأ تجربة →', ctaDemo:'شاهد العرض الحي',
-    modalTitle:'ابدأ تجربة مبيعات', modalSub:'أخبرنا عن مشروعك الحالي وسنصمم تجربة VIP تجريبية — عادة 50-200 مفتاح وصول مع بوابة مخصصة.',
-    modalSec1:'معلومات الاتصال', modalSec2:'ممارستك', modalSec3:'مشروع التجربة', modalSec4:'تحدي المبيعات',
-    modalSubmit:'إرسال طلب التجربة →', modalSubmitting:'جارٍ الإرسال...',
-    modalNote:'نرد خلال 24 ساعة. معلوماتك سرية تماماً.',
-    successTitle:'تم إرسال طلب التجربة', successDesc:'شكراً لك. سيتواصل أخصائي العقارات لدينا خلال 24 ساعة مع اقتراح تجربة مخصصة.',
-    successClose:'إغلاق',
-    footerText:'© 2026 DynamicNFC — محرك تسريع المبيعات لمحترفي العقارات',
+    seoTitle: 'العقارات — تجارب مشترٍ VIP',
+    seoDesc: 'نية المشترى المعرّفة، بوابات خاصة، وإشارات مبيعات لحظية للوسطاء وفرق مبيعات المشاريع. احجز المزيد من المعاينات مع DynamicNFC.',
+
+    navChallenge: 'التحدي',
+    navShift: 'التحول',
+    navHow: 'كيف تعمل',
+    navDiff: 'كبار الشخصيات والعامة',
+    navDemo: 'عرض مباشر',
+    navUseCases: 'حالات الاستخدام',
+    navPartnership: 'الشراكة',
+    navRoi: 'لماذا يهم',
+    navFaq: 'الأسئلة الشائعة',
+    navPilot: 'ابدأ تجربة',
+
+    closeLabel: 'إغلاق الحوار',
+
+    heroBadge:"تجربة كبار الشخصيات الرقمية للعقارات",
+    heroTitle:"حوّل نية المشترين إلى حجوزات.",
+    heroSub:"DynamicNFC يمنح فرق المبيعات العقارية أداة جديدة: مفاتيح كبار الشخصيات التي تقدم تجارب مشترٍ خاصة وشخصية — وتخبرك بالضبط من هو مستعد للتصرف، ما يهتم به، ومتى تتصل.",
+    stat1Val:"زوار", stat1Label:"معرّفون", stat2Val:"تقييم", stat2Label:"النية", stat3Val:"تنبيهات", stat3Label:"فورية",
+    heroCtaPilot:"ابدأ برنامج تجريبي →", heroCtaDemo:"شاهد العرض المباشر",
+
+    challLabel:"النقطة العمياء", challTitle:"فريق المبيعات لديك لديه عملاء محتملون. لكنهم بلا سياق.",
+    challQuote:"أعلى المشترين اهتمامًا يقضون أسابيع في استكشاف المخططات والأسعار وخيارات الدفع عبر الإنترنت. ومع ذلك، عندما يتواصل فريق المبيعات، غالبًا ما يفتقرون إلى أمر واحد حاسم: ", challQuoteHighlight:"السياق", challQuote2:". لا يعرفون من هو مستعد، وما يهتم به أكثر، ومتى يتصرف. هذا يؤدي إلى متابعة متأخرة، محادثات عامة، وفقدان الزخم.",
+    chall1Icon:"👥", chall1Title:"الزيارات المجهولة", chall1Desc:"مئات الزوار يتصفحون موقع مشروعك. ترى عدد المشاهدات — لكنك لا تعرف من هم أو ما الذي جذب اهتمامهم.", chall1Short:"ترى زيارات، لا أشخاص.",
+    chall2Icon:"🕐", chall2Title:"متابعة متأخرة", chall2Desc:"بحلول الوقت الذي يتواصل فيه فريق المبيعات، يكون اهتمام العميل قد تراجع. الفاصل بين ذروة الاهتمام وأول اتصال واسع جدًا.", chall2Short:"الاهتمام يبلغ ذروته قبل اتصال فريقك.",
+    chall3Icon:"📋", chall3Title:"تواصل عام", chall3Desc:"كل مشتري يتلقى نفس البريد الإلكتروني، نفس نص المكالمة، ونفس الكتيب. المستثمر في البنتهاوس والعائلة لأول مرة يسمعون نفس العرض.", chall3Short:"نفس العرض لكل مشترٍ.",
+    shiftLabel:"التحول", shiftTitle:"من موقع عام إلى دعوة خاصة",
+    shiftDesc:"ماذا لو توقفت عن التعامل مع موقعك كبروشور — وبدأت معاملة الموقع كتجربة خاصة لمختارين فقط؟ ليس للجميع — فقط لأولئك الذين تدعوهم عمدًا.",
+    oldLabel:"الطريقة القديمة", oldTitle:"موقع عام", oldDesc:"موقع واحد للجميع. زيارات مجهولة. لا توجد هوية للمشتري.",
+    old1:"نفس التجربة لكل الزوار", old2:"لا توجد طريقة لتحديد المشترين ذوي النية العالية", old3:"فريق المبيعات يتصل بلا معلومات", old4:"المتابعة على التخمين",
+    newLabel:"الطريقة الديناميكية", newTitle:"تجربة كبار الشخصيات خاصة", newDesc:"يحصل كل مشتري على مفتاح وصول كبار الشخصيات يفتح بوابة مصممة خصيصًا له.",
+    new1:"محتوى مخصص لكل مشتري", new2:"الهوية معروفة قبل أول نقرة", new3:"فريق المبيعات لديه كامل السياق", new4:"المتابعة توقيت حسب إشارات المشتري",
+    howLabel:"كيف تعمل العملية", howTitle:"من الصندوق الفاخر إلى الحجز",
+    howDesc:"يتلقى العملاء المختارون صندوقًا فاخرًا يحتوي على بطاقة الاتصال قريب المدى ورسالة شخصية. الرسالة واضحة: \"تفتح هذه البطاقة تجربة خاصة مصممة خصيصًا لك.\"",
+    how1Title:"اختيار حملة كبار الشخصيات", how1Desc:"اختر عملاء ذوي قيمة عالية من نظامك. كل منهم يحصل على مفتاح وصول باسمه.",
+    how2Title:"تسليم الصندوق الفاخر", how2Desc:"صندوق فاخر مع دعوة شخصية — ليس منشورًا. اللمسة المادية تبني الثقة.",
+    how3Title:"انقر للبوابة الخاصة", how3Desc:"نقرة واحدة تفتح بوابة خاصة — مخططات، أسعار، حجز. بلا تطبيق أو تسجيل.",
+    how4Title:"الذكاء السلوكي", how4Desc:"كل إجراء يغذي لوحة التحكم لحظيًا. فريقك يعرف من الجاهز.",
+    diffLabel:"الفرق الرئيسي", diffTitle:"نفس الموقع. نفس الإجراءات. ذكاء مختلف.",
+    diffDesc:"الإجراءات متطابقة للجميع — حجز زيارة، طلب أسعار، استكشاف خطط الدفع. الاختلاف الوحيد هو الهوية.",
+    diffVipTitle:"المشتري من كبار الشخصيات (معروف)", diffVipDesc:"متابعات شخصية، حوافز مخصصة، مبيعات بمستوى خدمة خاص. فريقك يتصل ومعه السياق الكامل.",
+    diffAnonTitle:"زائر عام (مجهول)", diffAnonDesc:"رؤى على مستوى الفئات تُحسّن التسويق. أي المخططات تجذب الاهتمام؟ أي نطاق سعري يدفع للإجراء؟",
+    demoLabel:"عرض مباشر", demoTitle:"شاهد كيف يعمل — مساكن فيستا",
+    demoDesc:"استكشف عرضًا تجريبيًا مبنيًا لمشروع برج فاخر خيالي. شاهد كيف يتلقى ملفات تعريف المشترين المختلفة تجارب مختلفة تمامًا من نفس المنصة.",
+    demoBadge1:"مستثمر كبار الشخصيات", demoBadge2:"مشتري عائلي", demoBadge3:"الوصول العام", demoBadge4:"لوحة تحليلات",
+    demoCard1Title:"بوابة خالد الرشيد — المستثمر", demoCard1Desc:"تجربة المستثمرين المميزة مع محتوى مخصص للعائد على الاستثمار، عرض بنتهاوس في الطوابق العليا، وتحليلات الاستثمار.",
+    demoCard2Title:"بوابة أحمد الفهد — العائلة", demoCard2Desc:"تجربة مشتري عائلي تسلط الضوء على وحدات 3 غرف نوم، المناطق المدرسية، الحدائق، والمرافق المجتمعية.",
+    demoCard3Title:"السوق العالمي", demoCard3Desc:"تجربة تصفح مجهولة مع التقاط تدريجي للعملاء المحتملين — كيف يتحول الزوار العامون إلى مشترين معروفين.",
+    demoCard4Title:"لوحة تحكم الشركة", demoCard4Desc:"لوحة إدارة علاقات العملاء داخلية تعرض التفاعل في الوقت الفعلي، تقييم العملاء، تتبع السلوك، ومسارات التحويل.",
+    demoCta:"زيارة بيئة العرض التجريبي الكاملة →",
+    ucLabel:"حالات الاستخدام", ucTitle:"من إطلاق الأبراج إلى إعادة البيع الفاخر",
+    ucDesc:"تتكيف DynamicNFC مع كل سيناريو مبيعات في العقارات.",
+    uc1Title:"مبيعات ما قبل البناء",
+    uc1Desc:"أطلق برجًا من 500 وحدة مع مفاتيح كبار الشخصيات لأعلى 200 عميل محتمل. تفتح كل بطاقة بوابة تعرض الطابق المفضل، اتجاه الإطلالة، وخطة الدفع — قبل إجراء أي مكالمة هاتفية. يرى فريقك من فتح البوابة، ما الذي شاهده، ومن جاهز للمتابعة.",
+    uc1Tag1:"اختيار الطابق", uc1Tag2:"الوصول قبل الإطلاق", uc1Tag3:"خطط الدفع", uc1Tag4:"تقييم العملاء",
+    uc2Title:"إعادة بيع فاخر",
+    uc2Desc:"لعروض بقيمة 5 ملايين دولار أو أكثر، يجب أن تعكس كل نقطة تواصل جودة العقار. بطاقة الاتصال قريب المدى معدنية فاخرة في صندوق ذو علامة تجارية تعطي الانطباع بالخصوصية. تعرض بوابة المشتري صورًا خاصة، فيديوهات جولة، وبيانات الحي — جميعها مخصصة للمستلم.",
+    uc2Tag1:"تجربة فاخرة", uc2Tag2:"عرض فخم", uc2Tag3:"وسائط خاصة", uc2Tag4:"مبيعات الكونسييرج",
+    uc3Title:"حملات كبار الشخصيات للوسطاء",
+    uc3Desc:"نفّذ حملة على 50 عميلًا ذا قيمة عالية هذا الربع. كل منهم يتلقى مفتاح كبار الشخصيات مرتبط بمخزونك الحالي. تتبع أي العملاء يتفاعلون، أي العقارات يشاهدونها مرارًا، وفعّل تنبيهات المبيعات عند زيادة التفاعل. هذه متابعة مستهدفة مع ذكاء مدمج.",
+    uc3Tag1:"تتبع الحملة", uc3Tag2:"قائمة متعددة", uc3Tag3:"تنبيهات التفاعل", uc3Tag4:"ذكاء خط الأنابيب",
+    uc4Title:"المشترون الدوليون",
+    uc4Desc:"للمستثمرين الأجانب الذين لا يمكنهم زيارة مركز المبيعات، يجسر مفتاح كبار الشخصيات المسافة. بوابات متعددة اللغات مع جولات افتراضية، مخططات، وأسعار — كل ذلك يتم تتبعه. يعرف فريق المبيعات في فانكوفر متى يفتح مشتري في دبي بوابته الساعة 2 صباحًا بتوقيت محلي.",
+    uc4Tag1:"متعدد اللغات", uc4Tag2:"جولات افتراضية", uc4Tag3:"معرفة فرق التوقيت", uc4Tag4:"مبيعات عبر الحدود",
+    partLabel:"نموذج الشراكة", partTitle:"إطلاق خلال أسابيع. قياس حسب الحجوزات.",
+    partDesc:"نعمل جنبًا إلى جنب مع فريق المبيعات لتصميم ونشر وتحسين تجربة مشتري كبار الشخصيات لمشروعك الحالي.",
+    part1Title:"اختر عملاءك المحتملين", part1Desc:"اختر 50–200 عميل ذي قيمة عالية من إدارة علاقات العملاء أو قائمة انتظار كبار الشخصيات. نساعدك على تقسيمهم حسب الملف الشخصي للمشتري.", part1Short:"50–200 عميل VIP من نظامك.",
+    part2Title:"صمّم التجربة", part2Desc:"ننشئ بوابة مشتري خاصة متطابقة مع علامتك التجارية للمشروع — المخططات، الأسعار، المرافق، والدعوات للعمل.", part2Short:"بوابة تحمل هوية مشروعك.",
+    part3Title:"تسليم مفاتيح كبار الشخصيات", part3Desc:"يتم شحن بطاقات الاتصال قريب المدى الفاخرة في صناديق مخصصة مع رسائل شخصية. يتلقى عملاؤك دعوة مادية.", part3Short:"صناديق فاخرة مع دعوات شخصية.",
+    part4Title:"تتبع وإغلاق", part4Desc:"تضيء لوحة المبيعات الخاصة بك بإشارات العملاء. يتابع فريقك مع السياق — ويحجز المزيد من الزيارات.", part4Short:"إشارات فورية، حجوزات أكثر.",
+    roiLabel:"لماذا هذا مهم", roiTitle:"سرعة المبيعات، وليس أرقام فارغة.",
+    roiDesc:"ليس الأمر متعلقًا بالنقرات أو اللوحات — بل بتقليل الوقت من \"مهتم\" إلى \"حجز زيارة\".",
+    roi1Val:"معرّف", roi1Label:"كل زائر معروف", roi1Sub:"لا زوار مجهولون — كل نقرة مرتبطة بشخص حقيقي",
+    roi2Val:"نية", roi2Label:"تقييم سلوكي", roi2Sub:"اعرف من مستعد للشراء، ليس فقط التصفح",
+    roi3Val:"فوري", roi3Label:"محفزات مبيعات", roi3Sub:"فريقك يتلقى تنبيهات لحظة عودة العميل",
+    faqLabel:"الأسئلة الشائعة لفريق المبيعات", faqTitle:"الأسئلة التي سيطرحها فريقك",
+    faq1Q:"هل هذا يستبدل موقعنا أو إدارة علاقات العملاء؟", faq1A:"لا. DynamicNFC يعمل على تحسين أنظمتك الحالية. يظل موقعك عامًا. بوابة كبار الشخصيات طبقة خاصة للمستثمرين المختارين — مرتبطة بـ إدارة علاقات العملاء الخاص بك.",
+    faq2Q:"كيف تتم إدارة الموافقة؟", faq2A:"الموافقة صريحة. يتلقى العميل بطاقة مادية مع رسالة واضحة. النقر هو الموافقة. لا تتبع مخفي — العميل يدخل بوابته الخاصة بمعرفته.",
+    faq3Q:"ماذا يرى العميل فعليًا؟", faq3A:"تجربة ويب مخصصة — لا حاجة لتطبيق. يرون المخططات، الأسعار، المرافق، والدعوات للعمل مصممة خصيصًا لهم. فكر فيها كموقعهم الخاص بالمشروع.",
+    faq4Q:"كيف نقيس النجاح؟", faq4A:"مقياس واحد: زيادة الحجوزات بين دعوات كبار الشخصيات مقارنة بمجموعة التحكم. كما نتتبع التفاعل مع البوابة، تفاعل المحتوى، ومعدلات التحويل للاتصال.",
+    faq5Q:"كم يستغرق الإعداد؟", faq5A:"2–4 أسابيع من بدء المشروع حتى تسليم البطاقات الأولى. نصمّم البوابة، نبرمج بطاقات NFC، نغلف الصناديق، ونشحن — بينما يواصل فريق المبيعات العمل في خط أنابيبهم.",
+    faq6Q:"أي أنظمة إدارة علاقات العملاء نتصل بها؟", faq6A:"Salesforce، HubSpot، Follow Up Boss، kvCORE، والتكاملات المخصصة عبر webhook. إشارات العملاء تتدفق مباشرة إلى سير عمل فريق المبيعات.",
+    ctaLabel:"جاهز للتحرك", ctaTitle:"أنت لا توزع بطاقات. أنت تصدر دعوات خاصة.",
+    ctaDesc:"حوّل النية الرقمية إلى زخم مبيعات حقيقي. ابدأ بـ 50 مفتاح كبار الشخصيات للمشروع الحالي وقِس الفرق.",
+    ctaPilot:"ابدأ برنامج تجريبي →", ctaDemo:"شاهد العرض المباشر",
+    modalTitle:"ابدأ برنامج مبيعات تجريبي", modalSub:"أخبرنا عن مشروعك الحالي وسنصمّم تجربة مشترٍ من كبار الشخصيات تجريبية — عادةً من 50–200 مفتاح وصول مع بوابة شخصية.",
+    modalSec1:"معلومات الاتصال", modalSec2:"ممارستك", modalSec3:"مشروعك الحالي", modalSec4:"تحدي المبيعات",
+    modalSubmit:"إرسال طلب البرنامج التجريبي →", modalSubmitting:"جارٍ الإرسال...",
+    modalNote:"نرد خلال 24 ساعة. يتم الاحتفاظ بمعلوماتك بسرية تامة.",
+    successTitle:"تم إرسال طلب البرنامج التجريبي", successDesc:"شكرًا لك. سيتواصل معك أخصائي العقارات خلال 24 ساعة مع اقتراح برنامج تجريبي مخصص.",
+    successClose:"إغلاق",
+
+    fldName:'الاسم الكامل', fldEmail:'البريد الإلكتروني', fldPhone:'الهاتف', fldCompany:'الشركة / الوساطة', fldRole:'الدور',
+    fldSelectRole:'اختر الدور', fldVpSales:'نائب رئيس المبيعات', fldDirSales:'مدير المبيعات', fldSalesMgr:'مدير مبيعات',
+    fldBroker:'وسيط / وسيط إداري', fldAgent:'وكيل أول', fldMktDir:'مدير التسويق', fldOther:'أخرى',
+    fldTeamSize:'حجم الفريق', fldSelectSize:'اختر الحجم', fldTeam15:'1 – 5 وكلاء', fldTeam620:'6 – 20 وكيل', fldTeam2050:'20 – 50 وكيل', fldTeam50:'50+ وكيل',
+    fldMarket:'السوق', fldMarketHint:'مثال: فانكوفر، تورنتو، دبي',
+    fldProjectType:'نوع المشروع أو العقار', fldSelectType:'اختر النوع',
+    fldPreCon:'برج ما قبل البناء', fldLuxResale:'إعادة بيع فاخر ($2M+)', fldNewDev:'مشروع جديد', fldBrokerage:'حملة وساطة', fldMixed:'محفظة متنوعة',
+    fldProspects:'عملاء VIP المستهدفون', fldSelectRange:'اختر النطاق', fld50:'أقل من 50', fld50100:'50 – 100', fld100200:'100 – 200', fld200:'200+',
+    fldChallenge:'أكبر تحدٍّ في المبيعات الآن؟', fldSelectChallenge:'اختر التحدي',
+    fldCh1:'زيارات مجهولة — لا يمكن تحديد المشترين', fldCh2:'بطء من الاهتمام إلى أول تواصل',
+    fldCh3:'تواصل عام — عرض واحد للجميع', fldCh4:'فريق المبيعات يفتقر لسياق المشتري',
+    fldCh5:'تحويل منخفض من العملاء إلى حجوزات', fldCh6:'مشترون دوليون — صعوبة التواصل عن بعد',
+    fldNotes:'ملاحظات', fldNotesHint:'أخبرنا عن مشروعك الحالي وأهداف المبيعات...',
+    fldError:'حدث خطأ. يرجى المحاولة مرة أخرى.',
+
+    footerText:"© 2026 DynamicNFC — محرك سرعة المبيعات للمحترفين العقاريين",
   },
 };
 
 export default function RealEstate() {
-  const [lang, setLang] = useState('en');
+  const { lang } = useLanguage();
+  const [openUc, setOpenUc] = useState(null);
+  const [openFaq, setOpenFaq] = useState(null);
   const [pilotOpen, setPilotOpen] = useState(false);
   const [pilotSuccess, setPilotSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState(false);
   const formRef = useRef(null);
   const isRTL = lang === 'ar';
-  const t = useCallback((k) => TR[lang]?.[k] || TR.en[k] || k, [lang]);
+  const t = useCallback(
+    (k) => TR[lang]?.[k] ?? common[lang]?.[k] ?? TR.en[k] ?? common.en[k] ?? k,
+    [lang],
+  );
 
   useEffect(() => {
     const els = document.querySelectorAll('.ent-reveal');
@@ -239,12 +359,18 @@ export default function RealEstate() {
     data.submitted = new Date().toISOString();
     data._subject = `Real Estate Pilot — ${data.name} / ${data.company || 'Individual'}`;
     try {
-      await fetch('https://formsubmit.co/ajax/info@dynamicnfc.help', {
+      await fetch('/contact-form', {
         method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(data),
       });
       setPilotSuccess(true);
-    } catch { alert('Error submitting. Please try again.'); }
+      if (typeof gtag === 'function') {
+        gtag('event', 'generate_lead', {
+          event_category: 'realestate_pilot',
+          event_label: data.company || 'unknown',
+        });
+      }
+    } catch { setFormError(true); }
     setSubmitting(false);
   };
 
@@ -265,36 +391,13 @@ export default function RealEstate() {
 
   return (
     <div className="ent-page" dir={isRTL ? 'rtl' : 'ltr'}>
+      <SEO title={t('seoTitle')} description={t('seoDesc')} path="/real-estate" />
       <div className="ent-bg-mesh" />
       <div className="ent-particles">
         {particles.map((p, i) => <div key={i} className="ent-particle" style={p} />)}
       </div>
 
-      {/* NAV */}
-      <nav className="ent-nav">
-        <div className="ent-nav-inner">
-          <Link to="/" className="ent-nav-brand">
-            <div className="ent-nav-logo-mark">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M6 8.32a7.43 7.43 0 0 1 0 7.36" /><path d="M9.46 6.21a11.76 11.76 0 0 1 0 11.58" />
-                <path d="M12.91 4.1c3.85 4.7 3.85 11.1 0 15.8" />
-              </svg>
-            </div>
-            <span className="ent-nav-brand-text">Dynamic<span>NFC</span></span>
-          </Link>
-          <div className="ent-nav-links">
-            <button className="ent-nav-link" onClick={() => scrollTo('challenge')}>{t('navChallenge')}</button>
-            <button className="ent-nav-link" onClick={() => scrollTo('how')}>{t('navHow')}</button>
-            <button className="ent-nav-link" onClick={() => scrollTo('demo')}>{t('navDemo')}</button>
-            <button className="ent-nav-link" onClick={() => scrollTo('usecases')}>{t('navUseCases')}</button>
-            <button className="ent-nav-cta" onClick={openPilot}>{t('navPilot')}</button>
-            <div className="ent-lang">
-              <button className={`ent-lang-btn${lang === 'en' ? ' active' : ''}`} onClick={() => setLang('en')}>EN</button>
-              <button className={`ent-lang-btn${lang === 'ar' ? ' active' : ''}`} onClick={() => setLang('ar')}>ع</button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      {/* Navbar is now global — rendered in App.jsx */}
 
       {/* HERO */}
       <section className="ent-hero">
@@ -312,23 +415,37 @@ export default function RealEstate() {
         </div>
         <div className="ent-hero-ctas">
           <button className="ent-btn-primary" onClick={openPilot}>{t('heroCtaPilot')}</button>
-          <button className="ent-btn-secondary" onClick={() => scrollTo('demo')}>{t('heroCtaDemo')}</button>
+          <Link to="/enterprise/crmdemo/dashboard" className="ent-btn-secondary" style={{ textDecoration: 'none' }}>{t('heroCtaDemo')}</Link>
         </div>
       </section>
+
+      <nav className="dev-section-nav" aria-label={lang === 'ar' ? 'أقسام الصفحة' : 'Page sections'}>
+        <div className="dev-section-nav-inner">
+          {RE_SECTION_NAV.map(({ id, labelKey }) => (
+            <button type="button" key={id} className="dev-section-nav-btn" onClick={() => scrollTo(id)}>
+              {t(labelKey)}
+            </button>
+          ))}
+        </div>
+      </nav>
 
       <div className="ent-divider" />
 
       {/* THE BLIND SPOT */}
-      <section className="ent-section ent-problem ent-reveal" id="challenge">
+      <section className="ent-section ent-problem ent-reveal dev-scroll-target" id="challenge">
         <div className="ent-section-label red">{t('challLabel')}</div>
         <div className="ent-section-title">{t('challTitle')}</div>
-        <p className="ent-problem-quote" dangerouslySetInnerHTML={{ __html: t('challQuote') }} />
-        <div className="ent-problem-cards">
+        <p className="ent-section-desc re-chall-quote">
+          {t('challQuote')}
+          <strong style={{ color: 'var(--red)' }}>{t('challQuoteHighlight')}</strong>
+          {t('challQuote2')}
+        </p>
+        <div className="dev-blind-strip">
           {[1, 2, 3].map(i => (
-            <div className="ent-problem-card" key={i}>
-              <div className="ent-problem-card-icon">{t(`chall${i}Icon`)}</div>
+            <div className="dev-blind-item" key={i}>
+              <div className="dev-blind-icon">{RE_CHALLENGE_ICONS[i - 1]}</div>
               <h4>{t(`chall${i}Title`)}</h4>
-              <p>{t(`chall${i}Desc`)}</p>
+              <p>{t(`chall${i}Short`)}</p>
             </div>
           ))}
         </div>
@@ -336,8 +453,35 @@ export default function RealEstate() {
 
       <div className="ent-divider" />
 
+      {/* ═══ ROI CALCULATOR CTA — Premium Banner ═══ */}
+      <section className="re-roi-banner ent-reveal">
+        <div className="re-roi-banner-glow" />
+        <div className="re-roi-banner-content">
+          <div className="re-roi-banner-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 2v20M2 12h20" strokeLinecap="round" />
+              <path d="M17 7l-5 5-5-5" strokeLinecap="round" strokeLinejoin="round" />
+              <rect x="3" y="14" width="4" height="6" rx="1" fill="currentColor" opacity="0.2" />
+              <rect x="10" y="10" width="4" height="10" rx="1" fill="currentColor" opacity="0.3" />
+              <rect x="17" y="6" width="4" height="14" rx="1" fill="currentColor" opacity="0.4" />
+            </svg>
+          </div>
+          <div className="re-roi-banner-text">
+            <span className="re-roi-banner-badge">{t('roiBannerBadge')}</span>
+            <h3>{t('roiBannerTitleBefore')}<em>{t('roiBannerTitleEm')}</em>{t('roiBannerTitleAfter')}</h3>
+            <p>{t('roiBannerSub')}</p>
+          </div>
+          <Link to="/sales/roi-calculator?industry=real-estate" className="re-roi-banner-btn">
+            {t('roiBannerCta')}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+          </Link>
+        </div>
+      </section>
+
+      <div className="ent-divider" />
+
       {/* THE SHIFT */}
-      <section className="ent-section ent-reveal">
+      <section className="ent-section ent-reveal dev-scroll-target" id="shift">
         <div className="ent-section-label gold">{t('shiftLabel')}</div>
         <div className="ent-section-title">{t('shiftTitle')}</div>
         <p className="ent-section-desc">{t('shiftDesc')}</p>
@@ -345,14 +489,14 @@ export default function RealEstate() {
           <div className="ent-shift-box old">
             <div className="ent-shift-box-label">{t('oldLabel')}</div>
             <h3>{t('oldTitle')}</h3>
-            <p>{t('oldDesc')}</p>
+            <p className="ent-shift-box-desc">{t('oldDesc')}</p>
             <ul>{['old1','old2','old3','old4'].map(k => <li key={k}>{t(k)}</li>)}</ul>
           </div>
           <div className="ent-shift-arrow"><ArrowIcon /></div>
           <div className="ent-shift-box new">
             <div className="ent-shift-box-label">{t('newLabel')}</div>
             <h3>{t('newTitle')}</h3>
-            <p>{t('newDesc')}</p>
+            <p className="ent-shift-box-desc">{t('newDesc')}</p>
             <ul>{['new1','new2','new3','new4'].map(k => <li key={k}>{t(k)}</li>)}</ul>
           </div>
         </div>
@@ -361,14 +505,14 @@ export default function RealEstate() {
       <div className="ent-divider" />
 
       {/* HOW IT WORKS */}
-      <section className="ent-section ent-reveal" id="how">
+      <section className="ent-section ent-reveal dev-scroll-target" id="how">
         <div className="ent-section-label teal">{t('howLabel')}</div>
         <div className="ent-section-title">{t('howTitle')}</div>
         <p className="ent-section-desc">{t('howDesc')}</p>
         <div className="ent-steps-row">
           {[1, 2, 3, 4].map(i => (
             <div className="ent-step-card" key={i}>
-              <div className="ent-step-num">{t(`how${i}Icon`)}</div>
+              <div className="ent-step-num dev-step-num-icon">{RE_HOW_ICONS[i - 1]}</div>
               <h4>{t(`how${i}Title`)}</h4>
               <p>{t(`how${i}Desc`)}</p>
             </div>
@@ -379,7 +523,7 @@ export default function RealEstate() {
       <div className="ent-divider" />
 
       {/* VIP vs ANONYMOUS */}
-      <section className="ent-section ent-reveal">
+      <section className="ent-section ent-reveal dev-scroll-target" id="diff">
         <div className="ent-section-label blue">{t('diffLabel')}</div>
         <div className="ent-section-title">{t('diffTitle')}</div>
         <p className="ent-section-desc">{t('diffDesc')}</p>
@@ -400,70 +544,128 @@ export default function RealEstate() {
       <div className="ent-divider" />
 
       {/* LIVE DEMO */}
-      <section className="ent-section ent-reveal" id="demo">
-        <div className="ent-section-label red">{t('demoLabel')}</div>
+      <section className="ent-section ent-demo ent-reveal dev-scroll-target" id="demo">
+        <div className="ent-section-label blue">{t('demoLabel')}</div>
         <div className="ent-section-title">{t('demoTitle')}</div>
-        <p className="ent-section-desc">{t('demoDesc')}</p>
-        <div className="dev-demo-grid">
-          {[1, 2, 3, 4].map(i => {
-            const urls = [
-              '/enterprise/crmdemo/khalid',
-              '/enterprise/crmdemo/ahmed',
-              '/enterprise/crmdemo/marketplace',
-              '/enterprise/crmdemo/dashboard',
-            ];
-            return (
-              <Link to={urls[i - 1]} className={`dev-demo-portal${i === 4 ? ' featured' : ''}`} key={i}>
-                <div className={`dev-demo-badge${i === 1 || i === 4 ? ' red' : ' blue'}`}>{t(`demoBadge${i}`)}</div>
-                <h4>{t(`demoCard${i}Title`)}</h4>
-                <p>{t(`demoCard${i}Desc`)}</p>
-                <div className="dev-demo-arrow"><ArrowIcon /></div>
-              </Link>
-            );
-          })}
-        </div>
-        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <Link to="/enterprise/crmdemo" className="ent-btn-secondary" style={{ textDecoration: 'none' }}>
-            {t('demoCta')}
-          </Link>
+        <p className="ent-section-desc" style={{ margin: '0 auto' }}>{t('demoDesc')}</p>
+        <div className="ent-demo-showcase">
+          <div className="ent-demo-portals">
+            <a href="/enterprise/crmdemo/khalid" target="_blank" rel="noreferrer" className="ent-demo-portal">
+              <div className="ent-portal-badge red">{t('demoBadge1')}</div>
+              <div className="ent-portal-avatar red">KR</div>
+              <h4>{t('demoCard1Title')}</h4>
+              <p>{t('demoCard1Desc')}</p>
+              <div className="ent-portal-arrow"><ArrowIcon /></div>
+            </a>
+            <a href="/enterprise/crmdemo/ahmed" target="_blank" rel="noreferrer" className="ent-demo-portal">
+              <div className="ent-portal-badge blue">{t('demoBadge2')}</div>
+              <div className="ent-portal-avatar blue">AF</div>
+              <h4>{t('demoCard2Title')}</h4>
+              <p>{t('demoCard2Desc')}</p>
+              <div className="ent-portal-arrow"><ArrowIcon /></div>
+            </a>
+            <a href="/enterprise/crmdemo/marketplace" target="_blank" rel="noreferrer" className="ent-demo-portal">
+              <div className="ent-portal-badge teal">{t('demoBadge3')}</div>
+              <div className="ent-portal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--teal)' }}>
+                  <circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              </div>
+              <h4>{t('demoCard3Title')}</h4>
+              <p>{t('demoCard3Desc')}</p>
+              <div className="ent-portal-arrow"><ArrowIcon /></div>
+            </a>
+            <a href="/enterprise/crmdemo/dashboard" target="_blank" rel="noreferrer" className="ent-demo-portal ent-demo-portal-featured">
+              <div className="ent-portal-badge gold">{t('demoBadge4')}</div>
+              <div className="ent-portal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--gold)' }}>
+                  <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+              </div>
+              <div>
+                <h4>{t('demoCard4Title')}</h4>
+                <p>{t('demoCard4Desc')}</p>
+              </div>
+              <div className="ent-portal-arrow"><ArrowIcon /></div>
+            </a>
+          </div>
+          <div className="ent-demo-cta-row">
+            <Link to="/enterprise/crmdemo/" className="ent-btn-primary">{t('demoCta')}</Link>
+          </div>
         </div>
       </section>
 
       <div className="ent-divider" />
 
       {/* USE CASES */}
-      <section className="ent-section ent-reveal" id="usecases">
+      <section className="ent-section ent-reveal dev-scroll-target" id="usecases">
         <div className="ent-section-label gold">{t('ucLabel')}</div>
         <div className="ent-section-title">{t('ucTitle')}</div>
-        <p className="ent-section-desc">{t('ucDesc')}</p>
-        <div className="dev-usecase-grid">
-          {[1, 2, 3, 4].map(i => (
-            <div className={`dev-usecase-card${i === 1 ? ' featured' : ''}`} key={i}>
-              <h4>{t(`uc${i}Title`)}</h4>
-              <p>{t(`uc${i}Desc`)}</p>
-              <div className="dev-usecase-tags">
-                {[1, 2, 3, 4].map(j => (
-                  <span className="dev-usecase-tag" key={j}>{t(`uc${i}Tag${j}`)}</span>
-                ))}
+        <p className="ent-section-desc dev-uc-desc">{t('ucDesc')}</p>
+        <div className="dev-uc-accordion">
+          {[1, 2, 3, 4].map((i) => {
+            const expanded = openUc === i;
+            const tags = [1, 2, 3, 4].map((j) => t(`uc${i}Tag${j}`));
+            const visibleTags = tags.slice(0, 3);
+            const extraCount = Math.max(0, tags.length - visibleTags.length);
+            return (
+              <div className={`dev-uc-item${expanded ? ' open' : ''}`} key={i}>
+                <button
+                  type="button"
+                  id={`re-uc-q-${i}`}
+                  className="dev-uc-header"
+                  onClick={() => setOpenUc(expanded ? null : i)}
+                  aria-expanded={expanded}
+                  aria-controls={`re-uc-a-${i}`}
+                >
+                  <span className="dev-uc-icon" aria-hidden>{RE_UC_ICONS[i - 1]}</span>
+                  <span className="dev-uc-main">
+                    <h4 className="dev-uc-title">{t(`uc${i}Title`)}</h4>
+                    <span className="dev-uc-tags" aria-hidden>
+                      {visibleTags.map((label, idx) => (
+                        <span className="dev-uc-tag" key={idx}>{label}</span>
+                      ))}
+                      {extraCount > 0 && <span className="dev-uc-tag dev-uc-tag-more">{`+${extraCount}`}</span>}
+                    </span>
+                  </span>
+                  <span className="dev-uc-action" aria-hidden>
+                    <span className="dev-uc-action-icon">{expanded ? '−' : '+'}</span>
+                  </span>
+                </button>
+                <div
+                  id={`re-uc-a-${i}`}
+                  role="region"
+                  aria-labelledby={`re-uc-q-${i}`}
+                  className="dev-uc-body"
+                  hidden={!expanded}
+                >
+                  <p>{t(`uc${i}Desc`)}</p>
+                  <div className="dev-uc-tags dev-uc-tags-full">
+                    {tags.map((label, idx) => (
+                      <span className="dev-uc-tag" key={idx}>{label}</span>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
       <div className="ent-divider" />
 
       {/* PARTNERSHIP */}
-      <section className="ent-section ent-reveal" id="partnership">
+      <section className="ent-section ent-reveal dev-scroll-target" id="partnership">
         <div className="ent-section-label teal">{t('partLabel')}</div>
         <div className="ent-section-title">{t('partTitle')}</div>
         <p className="ent-section-desc">{t('partDesc')}</p>
-        <div className="ent-steps-row">
-          {[1, 2, 3, 4].map(i => (
-            <div className="ent-step-card" key={i}>
-              <div className="ent-step-num">{t(`part${i}Icon`)}</div>
-              <h4>{t(`part${i}Title`)}</h4>
-              <p>{t(`part${i}Desc`)}</p>
+        <div className="dev-part-grid" role="list">
+          {[1, 2, 3, 4].map((i) => (
+            <div className="dev-part-card" key={i} role="listitem">
+              <div className="dev-part-icon" aria-hidden>{RE_PART_ICONS[i - 1]}</div>
+              <h4 className="dev-part-title">{t(`part${i}Title`)}</h4>
+              <p className="dev-part-sub">{t(`part${i}Short`)}</p>
             </div>
           ))}
         </div>
@@ -472,7 +674,7 @@ export default function RealEstate() {
       <div className="ent-divider" />
 
       {/* ROI */}
-      <section className="ent-section ent-reveal">
+      <section className="ent-section ent-reveal dev-scroll-target" id="roi">
         <div className="ent-section-label red">{t('roiLabel')}</div>
         <div className="ent-section-title">{t('roiTitle')}</div>
         <p className="ent-section-desc">{t('roiDesc')}</p>
@@ -493,38 +695,64 @@ export default function RealEstate() {
       <div className="ent-divider" />
 
       {/* FAQ */}
-      <section className="ent-section ent-reveal">
+      <section className="ent-section ent-reveal dev-scroll-target" id="faq">
         <div className="ent-section-label teal">{t('faqLabel')}</div>
         <div className="ent-section-title">{t('faqTitle')}</div>
-        <div className="ent-faq-grid">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div className="ent-faq-card" key={i}>
-              <div className="ent-faq-q">{t(`faq${i}Q`)}</div>
-              <div className="ent-faq-a">{t(`faq${i}A`)}</div>
-            </div>
-          ))}
+        <div className="dev-faq-list" role="list">
+          {[1, 2, 3, 4, 5, 6].map(i => {
+            const expanded = openFaq === i;
+            return (
+              <div className="dev-faq-item" key={i} role="listitem">
+                <button
+                  type="button"
+                  id={`re-faq-q-${i}`}
+                  className="dev-faq-q-btn"
+                  aria-expanded={expanded}
+                  aria-controls={`re-faq-a-${i}`}
+                  onClick={() => setOpenFaq(expanded ? null : i)}
+                >
+                  <span className="dev-faq-q-text">{t(`faq${i}Q`)}</span>
+                  <span className="dev-faq-chevron" aria-hidden>{expanded ? '−' : '+'}</span>
+                </button>
+                <div
+                  id={`re-faq-a-${i}`}
+                  role="region"
+                  aria-labelledby={`re-faq-q-${i}`}
+                  className="dev-faq-panel"
+                  hidden={!expanded}
+                >
+                  <p>{t(`faq${i}A`)}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="ent-cta-section ent-reveal">
-        <div className="ent-section-label gold">{t('ctaLabel')}</div>
-        <h2>{t('ctaTitle')}</h2>
-        <p>{t('ctaDesc')}</p>
-        <div className="ent-cta-buttons">
-          <button className="ent-btn-primary" onClick={openPilot}>{t('ctaPilot')}</button>
-          <Link to="/enterprise/crmdemo" className="ent-btn-secondary" style={{ textDecoration: 'none' }}>
-            {t('ctaDemo')}
-          </Link>
+      <section className="dev-cta-section ent-reveal dev-scroll-target" id="cta">
+        <div className="dev-cta-inner">
+          <h2>{t('ctaTitle')}</h2>
+          <p>{t('ctaDesc')}</p>
+          <div className="dev-cta-btns">
+            <button className="dev-cta-primary" onClick={openPilot}>{t('ctaPilot')}</button>
+            <Link to="/enterprise/crmdemo/dashboard" className="dev-cta-ghost" style={{ textDecoration: 'none' }}>
+              {t('ctaDemo')}
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* PILOT MODAL */}
-      <div className={`ent-pilot-backdrop${pilotOpen ? ' open' : ''}`} onClick={(e) => { if (e.target === e.currentTarget) closePilot(); }}>
+      <div className={`ent-pilot-backdrop${pilotOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-labelledby="re-pilot-title" onClick={(e) => { if (e.target === e.currentTarget) closePilot(); }}>
         <div className="ent-pilot-modal">
           <div className="ent-pilot-header">
-            <h3>{t('modalTitle')}</h3>
-            <button className="ent-pilot-close" onClick={closePilot}>✕</button>
+            <h3 id="re-pilot-title">{t('modalTitle')}</h3>
+            <button type="button" className="ent-pilot-close" onClick={closePilot} aria-label={t('closeLabel')}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
           </div>
           <p className="ent-pilot-sub">{t('modalSub')}</p>
 
@@ -536,17 +764,17 @@ export default function RealEstate() {
               <div className="ent-pilot-section-label">{t('modalSec1')}</div>
               <div className="ent-pilot-row">
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">Full Name <span className="req">*</span></label>
-                  <input className="ent-pilot-input" type="text" name="name" required />
+                  <label className="ent-pilot-label">{t('fldName')} <span className="req">*</span></label>
+                  <input className="ent-pilot-input" type="text" name="name" required aria-required="true" />
                 </div>
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">Email <span className="req">*</span></label>
-                  <input className="ent-pilot-input" type="email" name="email" required />
+                  <label className="ent-pilot-label">{t('fldEmail')} <span className="req">*</span></label>
+                  <input className="ent-pilot-input" type="email" name="email" required aria-required="true" />
                 </div>
               </div>
               <div className="ent-pilot-row">
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">Phone</label>
+                  <label className="ent-pilot-label">{t('fldPhone')}</label>
                   <input className="ent-pilot-input" type="tel" name="phone" />
                 </div>
               </div>
@@ -555,38 +783,37 @@ export default function RealEstate() {
               <div className="ent-pilot-section-label">{t('modalSec2')}</div>
               <div className="ent-pilot-row">
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">Company / Brokerage <span className="req">*</span></label>
-                  <input className="ent-pilot-input" type="text" name="company" required />
+                  <label className="ent-pilot-label">{t('fldCompany')} <span className="req">*</span></label>
+                  <input className="ent-pilot-input" type="text" name="company" required aria-required="true" />
                 </div>
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">Role <span className="req">*</span></label>
-                  <select className="ent-pilot-select" name="role" required defaultValue="">
-                    <option value="" disabled>Select role</option>
-                    <option value="vp-sales">VP of Sales</option>
-                    <option value="director-sales">Director of Sales</option>
-                    <option value="sales-manager">Sales Manager</option>
-                    <option value="broker-owner">Broker / Owner</option>
-                    <option value="marketing-director">Marketing Director</option>
-                    <option value="team-lead">Team Lead</option>
-                    <option value="agent">Top-Producing Agent</option>
-                    <option value="other">Other</option>
+                  <label className="ent-pilot-label">{t('fldRole')} <span className="req">*</span></label>
+                  <select className="ent-pilot-select" name="role" required aria-required="true" defaultValue="">
+                    <option value="" disabled>{t('fldSelectRole')}</option>
+                    <option value="vp-sales">{t('fldVpSales')}</option>
+                    <option value="director-sales">{t('fldDirSales')}</option>
+                    <option value="sales-manager">{t('fldSalesMgr')}</option>
+                    <option value="broker-owner">{t('fldBroker')}</option>
+                    <option value="marketing-director">{t('fldMktDir')}</option>
+                    <option value="agent">{t('fldAgent')}</option>
+                    <option value="other">{t('fldOther')}</option>
                   </select>
                 </div>
               </div>
               <div className="ent-pilot-row">
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">Team Size</label>
+                  <label className="ent-pilot-label">{t('fldTeamSize')}</label>
                   <select className="ent-pilot-select" name="teamSize" defaultValue="">
-                    <option value="" disabled>Select</option>
-                    <option value="1-5">1 – 5 agents</option>
-                    <option value="6-20">6 – 20 agents</option>
-                    <option value="21-50">21 – 50 agents</option>
-                    <option value="50+">50+ agents</option>
+                    <option value="" disabled>{t('fldSelectSize')}</option>
+                    <option value="1-5">{t('fldTeam15')}</option>
+                    <option value="6-20">{t('fldTeam620')}</option>
+                    <option value="21-50">{t('fldTeam2050')}</option>
+                    <option value="50+">{t('fldTeam50')}</option>
                   </select>
                 </div>
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">Market</label>
-                  <input className="ent-pilot-input" type="text" name="market" placeholder="e.g. Vancouver, Dubai, Toronto" />
+                  <label className="ent-pilot-label">{t('fldMarket')}</label>
+                  <input className="ent-pilot-input" type="text" name="market" placeholder={t('fldMarketHint')} />
                 </div>
               </div>
 
@@ -594,26 +821,25 @@ export default function RealEstate() {
               <div className="ent-pilot-section-label">{t('modalSec3')}</div>
               <div className="ent-pilot-row">
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">Project or Listing Type <span className="req">*</span></label>
-                  <select className="ent-pilot-select" name="projectType" required defaultValue="">
-                    <option value="" disabled>Select type</option>
-                    <option value="pre-construction">Pre-Construction Tower</option>
-                    <option value="luxury-resale">Luxury Resale ($2M+)</option>
-                    <option value="new-development">New Development</option>
-                    <option value="master-planned">Master-Planned Community</option>
-                    <option value="brokerage-campaign">Brokerage-Wide VIP Campaign</option>
-                    <option value="mixed-use">Mixed-Use Development</option>
-                    <option value="other">Other</option>
+                  <label className="ent-pilot-label">{t('fldProjectType')} <span className="req">*</span></label>
+                  <select className="ent-pilot-select" name="projectType" required aria-required="true" defaultValue="">
+                    <option value="" disabled>{t('fldSelectType')}</option>
+                    <option value="pre-construction">{t('fldPreCon')}</option>
+                    <option value="luxury-resale">{t('fldLuxResale')}</option>
+                    <option value="new-development">{t('fldNewDev')}</option>
+                    <option value="brokerage-campaign">{t('fldBrokerage')}</option>
+                    <option value="mixed-use">{t('fldMixed')}</option>
+                    <option value="other">{t('fldOther')}</option>
                   </select>
                 </div>
                 <div className="ent-pilot-field">
-                  <label className="ent-pilot-label">VIP Prospects to Target</label>
+                  <label className="ent-pilot-label">{t('fldProspects')}</label>
                   <select className="ent-pilot-select" name="vipCount" defaultValue="">
-                    <option value="" disabled>How many?</option>
-                    <option value="25-50">25 – 50</option>
-                    <option value="50-100">50 – 100</option>
-                    <option value="100-200">100 – 200</option>
-                    <option value="200+">200+</option>
+                    <option value="" disabled>{t('fldSelectRange')}</option>
+                    <option value="25-50">{t('fld50')}</option>
+                    <option value="50-100">{t('fld50100')}</option>
+                    <option value="100-200">{t('fld100200')}</option>
+                    <option value="200+">{t('fld200')}</option>
                   </select>
                 </div>
               </div>
@@ -621,24 +847,24 @@ export default function RealEstate() {
               <div className="ent-pilot-divider" />
               <div className="ent-pilot-section-label">{t('modalSec4')}</div>
               <div className="ent-pilot-field full">
-                <label className="ent-pilot-label">Biggest sales challenge right now?</label>
+                <label className="ent-pilot-label">{t('fldChallenge')}</label>
                 <select className="ent-pilot-select" name="challenge" defaultValue="">
-                  <option value="" disabled>Select challenge</option>
-                  <option value="anonymous-traffic">Anonymous website traffic — can't identify buyers</option>
-                  <option value="slow-followup">Too slow from interest to first contact</option>
-                  <option value="generic-outreach">Generic outreach — one pitch for all buyers</option>
-                  <option value="low-viewings">Low conversion from leads to booked viewings</option>
-                  <option value="no-context">Sales team lacks buyer context on calls</option>
-                  <option value="luxury-positioning">Need premium positioning for luxury listings</option>
-                  <option value="international-buyers">Engaging international / remote buyers</option>
-                  <option value="other">Other</option>
+                  <option value="" disabled>{t('fldSelectChallenge')}</option>
+                  <option value="anonymous-traffic">{t('fldCh1')}</option>
+                  <option value="slow-followup">{t('fldCh2')}</option>
+                  <option value="generic-outreach">{t('fldCh3')}</option>
+                  <option value="no-context">{t('fldCh4')}</option>
+                  <option value="low-viewings">{t('fldCh5')}</option>
+                  <option value="international-buyers">{t('fldCh6')}</option>
+                  <option value="other">{t('fldOther')}</option>
                 </select>
               </div>
               <div className="ent-pilot-field full">
-                <label className="ent-pilot-label">Notes</label>
-                <textarea className="ent-pilot-textarea" name="notes" placeholder="Tell us about your current project, buyer list, or sales challenge..." />
+                <label className="ent-pilot-label">{t('fldNotes')}</label>
+                <textarea className="ent-pilot-textarea" name="notes" placeholder={t('fldNotesHint')} />
               </div>
 
+              {formError && <p className="ent-pilot-error">{t('fldError')}</p>}
               <button type="submit" className="ent-pilot-submit" disabled={submitting}>
                 {submitting ? t('modalSubmitting') : t('modalSubmit')}
               </button>
@@ -656,10 +882,29 @@ export default function RealEstate() {
       </div>
 
       {/* FOOTER */}
-      <footer className="ent-footer">
-        <p>{t('footerText').includes('DynamicNFC') ? (
-          <>© 2026 <a href="https://dynamicnfc.ca">DynamicNFC</a> — {lang === 'ar' ? 'محرك تسريع المبيعات لمحترفي العقارات' : 'Sales Velocity Engine for Real Estate Professionals'}</>
-        ) : t('footerText')}</p>
+      <footer className="dev-footer">
+        <div className="dev-ft-inner">
+          <div className="dev-ft-brand">
+            <Link to="/"><img src="/assets/images/logo.png" alt="DynamicNFC" className="dev-ft-logo" /></Link>
+            <p className="dev-ft-note">{isRTL ? 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات والمؤسسات.' : 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and enterprise.'}</p>
+          </div>
+          <div className="dev-ft-cols">
+            <div className="dev-ft-col">
+              <h5>{isRTL ? 'القطاعات' : 'Industries'}</h5>
+              <Link to="/developers">{isRTL ? 'المطورين' : 'Developers'}</Link>
+              <Link to="/real-estate">{isRTL ? 'العقارات' : 'Real Estate'}</Link>
+              <Link to="/automotive">{isRTL ? 'السيارات' : 'Automotive'}</Link>
+              <Link to="/nfc-cards">{isRTL ? 'بطاقات NFC' : 'NFC Cards'}</Link>
+            </div>
+            <div className="dev-ft-col">
+              <h5>{isRTL ? 'الموارد' : 'Resources'}</h5>
+              <Link to="/enterprise/crmdemo/dashboard">{isRTL ? 'عرض مباشر' : 'Live Demo'}</Link>
+              <Link to="/contact-sales">{isRTL ? 'تواصل مع المبيعات' : 'Contact Sales'}</Link>
+              <Link to="/login">{isRTL ? 'تسجيل الدخول' : 'Log in'}</Link>
+            </div>
+          </div>
+        </div>
+        <div className="dev-ft-bottom"><p>{isRTL ? '© ٢٠٢٦ DynamicNFC Card Inc. جميع الحقوق محفوظة.' : '© 2026 DynamicNFC Card Inc. All Rights Reserved.'}</p></div>
       </footer>
     </div>
   );

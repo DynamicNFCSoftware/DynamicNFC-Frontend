@@ -3,7 +3,13 @@
    Inherits .ent-* from Enterprise.css and .dev-* from Developers.css
    Scope: .re-* for RealEstate-specific components
    ═══════════════════════════════════════════════════════ */
+@import '../../styles/ent-base.css';
 
+.ent-page .re-chall-quote {
+  max-width: 760px;
+  margin: 0 auto 1.5rem;
+  text-wrap: balance;
+}
 /* ═══ VIP vs ANONYMOUS COMPARISON ═══ */
 .ent-page .re-diff-grid {
   display: grid;
@@ -95,3 +101,43 @@
 .ent-page[dir="rtl"] .re-diff-card {
   text-align: right;
 }
+
+/* ROI Calculator CTA */
+/* Use Cases tag fix */
+.ent-page .dev-usecase-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.ent-page .dev-usecase-tag {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  background: rgba(184, 134, 11, 0.08);
+  border: 1px solid rgba(184, 134, 11, 0.15);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--gold, #b8860b);
+  white-space: nowrap;
+}
+
+/* ═══ RE OVERRIDES — layout fixes ═══ */
+
+/* Blind Spot strip — center items properly */
+.ent-page .dev-blind-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:2.5rem; max-width:900px; margin-left:auto; margin-right:auto; }
+.ent-page .dev-blind-item { text-align:center; }
+.ent-page .dev-blind-icon { margin:0 auto 0.85rem; }
+
+/* CTA — full width inside ent-page */
+.ent-page .dev-cta-section { max-width:none; padding:0 3rem; margin:3rem 0 0; }
+.ent-page .dev-cta-inner { max-width:1100px; margin:0 auto; }
+
+/* Footer — proper padding inside ent-page */
+.ent-page .dev-footer { margin-left:-3rem; margin-right:-3rem; padding:3rem 6rem 2rem; }
+
+@media (max-width:768px) {
+  .ent-page .dev-cta-section { padding:0 1.5rem; }
+  .ent-page .dev-footer { margin-left:-1.5rem; margin-right:-1.5rem; padding:2rem 1.5rem; }
+}
+

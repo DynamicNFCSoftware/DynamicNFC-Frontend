@@ -1,9 +1,30 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
+import * as Sentry from '@sentry/react'
 import App from "./App"
+
+// Initialize Sentry error monitoring (no-op if DSN is empty)
+const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN || '';
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    environment: import.meta.env.MODE,
+    tracesSampleRate: 0.1,
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 1.0,
+  });
+}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </StrictMode>
 )
+
+// Remove FOUC guard after React hydrates
+requestAnimationFrame(() => {
+  document.getElementById('root')?.classList.add('loaded');
+});

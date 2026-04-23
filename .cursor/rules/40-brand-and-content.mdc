@@ -1,0 +1,27 @@
+---
+description: Brand language and UX copy consistency
+globs: frontend/src/**/*.{js,jsx,css,md}
+alwaysApply: false
+---
+
+# Brand and Content Rules
+
+## Product Vocabulary (in customer-facing text)
+- NFC card → "VIP Access Key" (never "digital business card").
+- Premium Box → "Private Invitation" (never "flyer" or "marketing flyer").
+- Website / personalized experience → "Private Buyer Experience" (never "landing page" or "brochure").
+- Physical tap → "the ultimate opt-in" (this is the privacy answer).
+- Contrast: "Blind Spot" of standard CRMs vs "20/20 Vision" of DynamicNFC.
+- Mantra: "Identity precedes Action".
+- Industry label consistency: "Real Estate Developers & Agents" (not shortened variants in marketing contexts).
+
+## Framing
+- Frame every feature as a revenue driver, not a tech feature.
+- Avoid fake numeric claims without source (for example "3.2x", "47%", "100%"). Use qualitative language instead: Named, Intent, Real-Time, Zero Guesswork.
+
+## Visual
+- Brand blue is `#457b9d`. Never `#365f8a` or any other blue as brand primary — recurring drift source, verify before commit.
+- Typography: Playfair Display (headings), Outfit (body), Noto Kufi Arabic (Arabic/RTL), GeistMono or JetBrains Mono (tech/credibility accents).
+- Never name CSS variables by color (`--ai-purple`) — name by role (`--ai-accent`).
+- Keep footer pattern consistent on customer pages (logo + key links + copyright).
+- Use inline SVG or Lucide React for icons. No emoji buttons in core flows.

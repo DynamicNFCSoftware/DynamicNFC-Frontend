@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /enterprise/crmdemo/khalid
+Disallow: /enterprise/crmdemo/ahmed
+Disallow: /enterprise/crmdemo/registered
+Disallow: /enterprise/crmdemo/marketplace
+Disallow: /enterprise/crmdemo/dashboard
+Disallow: /enterprise/crmdemo/ai-demo
+Disallow: /automotive/demo/
+Disallow: /automotive/dashboard
+Disallow: /dashboard
+Disallow: /create-card
+Disallow: /edit-card
+
+Sitemap: https://dynamicnfc.ca/sitemap.xml

@@ -9,9 +9,14 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar, Legend
 } from 'recharts';
-import { collection, getDocs, query, where, orderBy, limit, Timestamp, doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../firebase';
+import {
+  collection, getDocs, query, where, orderBy, limit, Timestamp, doc, getDoc,
+  onSnapshot
+} from 'firebase/firestore';
+import { auth, db } from '../../../firebase';
 import './AdminDashboard.css';
+import { useTranslation } from '../../../i18n';
+import '../../../i18n/pages/admin';
 
 /* ────────────────────────────────────────────
    MICRO COMPONENTS
@@ -45,9 +50,9 @@ const Spark = ({ data = [], color = '#e63946', w = 64, h = 24 }) => {
   );
 };
 
-const TrendBadge = ({ current, previous }) => {
+const TrendBadge = ({ current, previous, t }) => {
   if (previous === 0 && current === 0) return null;
-  if (previous === 0) return <span className="ad-trend up">NEW</span>;
+  if (previous === 0) return <span className="ad-trend up">{t('trendNew')}</span>;
   const pct = Math.round(((current - previous) / previous) * 100);
   if (pct === 0) return <span className="ad-trend flat">{'\u2192'} 0%</span>;
   return <span className={`ad-trend ${pct > 0 ? 'up' : 'down'}`}>{pct > 0 ? '\u2191' : '\u2193'} {Math.abs(pct)}%</span>;
@@ -57,14 +62,14 @@ const TrendBadge = ({ current, previous }) => {
    HELPERS
    ──────────────────────────────────────────── */
 
-const timeAgo = (ts) => {
-  if (!ts) return 'Never';
+const timeAgo = (ts, t) => {
+  if (!ts) return t('lastTapNever');
   const d = ts?.toDate ? ts.toDate() : new Date(ts);
   const s = Math.floor((Date.now() - d.getTime()) / 1000);
-  if (s < 60) return 'Just now';
-  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
-  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
-  return `${Math.floor(s / 86400)}d ago`;
+  if (s < 60) return t('justNow');
+  if (s < 3600) return `${Math.floor(s / 60)}${t('minuteShort')}`;
+  if (s < 86400) return `${Math.floor(s / 3600)}${t('hourShort')}`;
+  return `${Math.floor(s / 86400)}${t('dayShort')}`;
 };
 
 const fmtDur = (sec) => {
@@ -129,27 +134,27 @@ function calcScore(events, cfg) {
   return { score, label: 'NEW', color: '#94a3b8', stage: 'new' };
 }
 
-function getTrigger(events) {
+function getTrigger(events, t) {
   const h48 = Date.now() - 48 * 3600000;
   const recent = events.filter(e => (e.timestamp?.toDate?.()?.getTime?.() || 0) > h48);
   if (!recent.length) return null;
-  if (recent.some(e => e.event === 'book_viewing')) return { icon: '\u2705', text: 'Viewing booked \u2014 confirm & prepare', color: '#059669' };
-  if (recent.some(e => ['pricing_request', 'payment_plan'].includes(e.event))) return { icon: '\u{1F525}', text: 'Pricing requested \u2014 call with offer', color: '#dc2626' };
-  if (recent.some(e => ['brochure_download', 'floorplan_download'].includes(e.event))) return { icon: '\u{1F4CB}', text: 'Downloaded materials \u2014 follow up', color: '#f59e0b' };
-  if (recent.length >= 3) return { icon: '\u26A1', text: `${recent.length} actions in 48h \u2014 strike now`, color: '#3b82f6' };
+  if (recent.some(e => e.event === 'book_viewing')) return { icon: '\u2705', text: t('triggerViewingBooked'), color: '#059669' };
+  if (recent.some(e => ['pricing_request', 'payment_plan'].includes(e.event))) return { icon: '\u{1F525}', text: t('triggerPricingRequested'), color: '#dc2626' };
+  if (recent.some(e => ['brochure_download', 'floorplan_download'].includes(e.event))) return { icon: '\u{1F4CB}', text: t('triggerDownloaded'), color: '#f59e0b' };
+  if (recent.length >= 3) return { icon: '\u26A1', text: `${recent.length} ${t('triggerActions48h')}`, color: '#3b82f6' };
   return null;
 }
 
-function eventLabel(e) {
+function eventLabel(e, t) {
   const labels = {
-    portal_open: 'Opened portal', portal_entry: 'Opened portal', portal_exit: 'Left portal',
-    unit_view: 'Viewed unit', unit_interaction: 'Viewed unit', tower_view: 'Viewed tower',
-    section_view: 'Browsed section', pricing_request: 'Requested pricing',
-    book_viewing: 'Booked viewing', brochure_download: 'Downloaded brochure',
-    floorplan_download: 'Downloaded floor plan', payment_plan: 'Requested payment plan',
-    roi_calculator: 'Used ROI calculator', contact_advisor: 'Contacted advisor',
-    unit_favorite: 'Favorited unit', unit_compare: 'Compared units',
-    filter_use: 'Used filter', tab_click: 'Clicked tab', cta_click: 'Clicked action',
+    portal_open: t('evtOpenedPortal'), portal_entry: t('evtOpenedPortal'), portal_exit: t('evtLeftPortal'),
+    unit_view: t('evtViewedUnit'), unit_interaction: t('evtViewedUnit'), tower_view: t('evtViewedTower'),
+    section_view: t('evtBrowsedSection'), pricing_request: t('requestPricing'),
+    book_viewing: t('bookViewing'), brochure_download: t('actionBrochure'),
+    floorplan_download: t('evtDownloadedFloorPlan'), payment_plan: t('alertPaymentPlan'),
+    roi_calculator: t('roiShort'), contact_advisor: t('alertAdvisorContact'),
+    unit_favorite: t('favorite'), unit_compare: t('alertComparingPlans'),
+    filter_use: t('filter'), tab_click: t('tab'), cta_click: t('evtClickedAction'),
   };
   let l = labels[e.event] || e.event;
   const d = e.details || e.data || {};
@@ -160,14 +165,31 @@ function eventLabel(e) {
   return l;
 }
 
+function getQueueDue(person) {
+  if (person.trigger?.text?.toLowerCase?.().includes('booked')) return 'today';
+  if (person.trigger?.text?.toLowerCase?.().includes('pricing')) return 'today';
+  if (person.idle >= 6 && person.score >= 30) return 'today';
+  if (person.score >= 70) return 'today';
+  if (person.idle >= 3 || person.score >= 50) return 'tomorrow';
+  return 'week';
+}
+
+function getQueueRisk(person) {
+  if (person.idle >= 7 && person.score >= 30) return 'high';
+  if (person.idle >= 4 || person.score >= 50) return 'medium';
+  return 'low';
+}
+
 /* ═══════════════════════════════════════════════════════════════
    MAIN DASHBOARD
    ═══════════════════════════════════════════════════════════════ */
 
 export default function AdminDashboard() {
+  const t = useTranslation('admin');
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [feedFilter, setFeedFilter] = useState('all');
+  const [seeding, setSeeding] = useState(false);
   const { sector: sectorFilter, setSector: setSectorFilter } = useOutletContext();
 
   const fetchData = async () => {
@@ -209,6 +231,77 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const behavRef = query(collection(db, 'behaviors'), orderBy('timestamp', 'desc'), limit(500));
+    const tapsRef = query(collection(db, 'taps'), orderBy('timestamp', 'desc'), limit(50));
+    const unsubBehaviors = onSnapshot(behavRef, (snap) => {
+      const behaviors = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setData(prev => prev ? { ...prev, behaviors } : prev);
+    });
+    const unsubTaps = onSnapshot(tapsRef, (snap) => {
+      const taps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setData(prev => prev ? { ...prev, taps } : prev);
+    });
+    return () => {
+      unsubBehaviors();
+      unsubTaps();
+    };
+  }, []);
+
+  const seedDemoRun = async () => {
+    if (seeding) return;
+    if (!window.confirm(t('seedConfirm'))) return;
+    setSeeding(true);
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error(t('notAuthenticated'));
+      const resp = await fetch('/api/demo/seed', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      });
+      const result = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(result.error || t('seedFail'));
+      await fetchData();
+      alert(t('seedDone'));
+    } catch (err) {
+      console.error('Seed demo failed:', err);
+      alert(t('seedFail'));
+    } finally {
+      setSeeding(false);
+    }
+  };
+
+  const resetSeedRun = async () => {
+    if (seeding) return;
+    if (!window.confirm(t('resetConfirm'))) return;
+    setSeeding(true);
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error(t('notAuthenticated'));
+      const resp = await fetch('/api/demo/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      });
+      const result = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(result.error || t('resetFail'));
+      await fetchData();
+      alert(t('resetDone'));
+    } catch (err) {
+      console.error('Reset demo failed:', err);
+      alert(t('resetFail'));
+    } finally {
+      setSeeding(false);
+    }
+  };
+
   /* ── COMPUTED ── */
   const m = useMemo(() => {
     if (!data) return null;
@@ -243,13 +336,13 @@ export default function AdminDashboard() {
       const totalSec = exits.reduce((s, e) => s + (e.details?.durationSeconds || 0), 0);
       const units = new Set(ev.filter(e => ['unit_view', 'unit_interaction'].includes(e.event)).map(e => (e.details?.unitId || e.data?.unitId)).filter(Boolean)).size;
       const acts = [];
-      if (ev.some(e => e.event === 'pricing_request')) acts.push('Pricing requested');
-      if (ev.some(e => e.event === 'book_viewing')) acts.push('Viewing booked');
-      if (ev.some(e => e.event === 'brochure_download')) acts.push('Brochure downloaded');
-      if (ev.some(e => e.event === 'payment_plan')) acts.push('Payment plan');
-      if (ev.some(e => e.event === 'contact_advisor')) acts.push('Advisor contacted');
+      if (ev.some(e => e.event === 'pricing_request')) acts.push(t('alertPricingInterest'));
+      if (ev.some(e => e.event === 'book_viewing')) acts.push(t('alertViewingBooked'));
+      if (ev.some(e => e.event === 'brochure_download')) acts.push(t('actionBrochure'));
+      if (ev.some(e => e.event === 'payment_plan')) acts.push(t('alertPaymentPlan'));
+      if (ev.some(e => e.event === 'contact_advisor')) acts.push(t('alertAdvisorContact'));
       const lastEv = ev[0];
-      const trigger = getTrigger(ev);
+      const trigger = getTrigger(ev, t);
       const lastActivity = lastEv?.timestamp?.toDate?.() || null;
       const idle = lastActivity ? Math.floor((Date.now() - lastActivity.getTime()) / 86400000) : 999;
       const atRisk = idle > 5 && sc.score >= 30;
@@ -277,7 +370,7 @@ export default function AdminDashboard() {
       return {
         ...card, name, ...sc, sessions, totalSec, units, actions: acts, trigger,
         lastActivity, idle, atRisk, ttfa, viewVel, eventCount: ev.length,
-        summary: acts.length > 0 ? acts.slice(0, 2).join(', ') : (ev.length > 2 ? 'Browsing actively' : ev.length > 0 ? 'Opened portal' : 'No activity'),
+        summary: acts.length > 0 ? acts.slice(0, 2).join(', ') : (ev.length > 2 ? t('browsingActively') : ev.length > 0 ? t('evtOpenedPortal') : t('noActivity')),
       };
     }).sort((a, b) => b.score - a.score);
 
@@ -343,9 +436,9 @@ export default function AdminDashboard() {
 
     // Channel mix
     const channelMix = [
-      { name: 'VIP (NFC)', value: vipSessions, color: '#e63946' },
-      { name: 'Registered', value: regSessions, color: '#457b9d' },
-      { name: 'Anonymous', value: anonSessions, color: '#94a3b8' },
+      { name: t('vipNfc'), value: vipSessions, color: '#e63946' },
+      { name: t('registeredLabel'), value: regSessions, color: '#457b9d' },
+      { name: t('anonymousLabel'), value: anonSessions, color: '#94a3b8' },
     ].filter(d => d.value > 0);
 
     // Funnel
@@ -354,11 +447,11 @@ export default function AdminDashboard() {
     const pricingCount = new Set(behaviors.filter(b => ['pricing_request', 'brochure_download', 'floorplan_download', 'roi_calculator', 'payment_plan'].includes(b.event)).map(b => b.cardId)).size;
     const bookingCount = new Set(behaviors.filter(b => ['book_viewing', 'contact_advisor'].includes(b.event)).map(b => b.cardId)).size;
     const funnel = [
-      { label: 'Total Visitors', value: cards.length + taps.length, color: '#64748b' },
-      { label: 'Portal Opened', value: portalOpenedCount, color: '#3b82f6' },
-      { label: 'Viewed Unit', value: unitViewedCount, color: '#8b5cf6' },
-      { label: 'Requested Pricing', value: pricingCount, color: '#f59e0b' },
-      { label: 'Booked Viewing', value: bookingCount, color: '#059669' },
+      { label: t('totalVisitors'), value: cards.length + taps.length, color: '#64748b' },
+      { label: t('portalOpened'), value: portalOpenedCount, color: '#3b82f6' },
+      { label: t('viewedUnit'), value: unitViewedCount, color: '#8b5cf6' },
+      { label: t('requestedPricing'), value: pricingCount, color: '#f59e0b' },
+      { label: t('bookedViewing'), value: bookingCount, color: '#059669' },
     ];
 
     // Interest distribution
@@ -402,11 +495,11 @@ export default function AdminDashboard() {
       recentEvents, hotPeople, avgScore, activeAlerts,
       twEvents, lwEvents, campaignMetrics, totalEvents: behaviors.length,
     };
-  }, [data, sectorFilter]);
+  }, [data, sectorFilter, t]);
 
   /* ── RENDER ── */
-  if (loading) return <div className="ad-loading-state"><div className="ad-spinner" /><span>Loading intelligence...</span></div>;
-  if (!m) return <div className="ad-loading-state">Failed to load data</div>;
+  if (loading) return <div className="ad-loading-state"><div className="ad-spinner" /><span>{t('loadingIntelligence')}</span></div>;
+  if (!m) return <div className="ad-loading-state">{t('failedLoadData')}</div>;
 
   const hotCount = m.pipeline.hot;
   const needsAttention = hotCount + m.people.filter(p => p.atRisk).length;
@@ -419,17 +512,29 @@ export default function AdminDashboard() {
     return true;
   });
 
+  const callQueue = m.people
+    .filter((p) => p.score > 0)
+    .map((p) => ({ ...p, due: getQueueDue(p), risk: getQueueRisk(p), owner: p.salesRep || 'Unassigned' }))
+    .sort((a, b) => {
+      const dueRank = { today: 3, tomorrow: 2, week: 1 };
+      const riskRank = { high: 3, medium: 2, low: 1 };
+      if (dueRank[b.due] !== dueRank[a.due]) return dueRank[b.due] - dueRank[a.due];
+      if (riskRank[b.risk] !== riskRank[a.risk]) return riskRank[b.risk] - riskRank[a.risk];
+      return b.score - a.score;
+    })
+    .slice(0, 5);
+
   return (
     <div className="ad-dash">
 
       {/* ═══════ HEADER ═══════ */}
       <div className="ad-header-row">
         <div>
-          <h1 className="ad-h1">Sales Intelligence</h1>
+          <h1 className="ad-h1">{t('salesIntelligence')}</h1>
           <p className="ad-subtitle" style={{ color: needsAttention > 0 ? '#dc2626' : '#059669' }}>
             {needsAttention > 0
-              ? `${needsAttention} ${needsAttention === 1 ? 'contact needs' : 'contacts need'} attention`
-              : m.people.length > 0 ? `${m.people.length} contacts tracked \u2014 pipeline healthy` : 'Ready \u2014 send VIP cards to start'}
+              ? `${needsAttention} ${needsAttention === 1 ? t('contactNeedsAttention') : t('contactsNeedAttention')}`
+              : m.people.length > 0 ? `${m.people.length} ${t('contactsTrackedHealthy')}` : t('readySendVip')}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -438,91 +543,131 @@ export default function AdminDashboard() {
             onChange={e => setSectorFilter(e.target.value)}
             style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #d1d5db', fontSize: '0.8rem', fontFamily: 'inherit', color: '#374151', background: '#fff', cursor: 'pointer' }}
           >
-            <option value="all">All Sectors</option>
-            <option value="real_estate">Real Estate</option>
-            <option value="automotive">Automotive</option>
+            <option value="all">{t('allSectors')}</option>
+            <option value="real_estate">{t('navRealEstate')}</option>
+            <option value="automotive">{t('navAutomotive')}</option>
           </select>
-          <button onClick={fetchData} className="ad-btn-refresh">{'\u21BB'} Refresh</button>
+          <button onClick={fetchData} className="ad-btn-refresh">{'\u21BB'} {t('refresh')}</button>
+          <button onClick={seedDemoRun} className="ad-btn-refresh" disabled={seeding}>
+            {seeding ? '...' : `+ ${t('seedDemo')}`}
+          </button>
+          <button onClick={resetSeedRun} className="ad-btn-refresh" disabled={seeding}>
+            {seeding ? '...' : t('resetSeed')}
+          </button>
+        </div>
+      </div>
+
+      <div className="ad-demo-guide">
+        <div className="ad-demo-guide-title">{t('guidedDemoFlow')}</div>
+        <div className="ad-demo-guide-steps">
+          <span><b>1.</b> {t('guideStep1')}</span>
+          <span><b>2.</b> {t('guideStep2')}</span>
+          <span><b>3.</b> {t('guideStep3')}</span>
+          <span><b>4.</b> {t('guideStep4')}</span>
+        </div>
+      </div>
+
+      <div className="ad-call-queue">
+        <div className="ad-card-hdr-row">
+          <div className="ad-chart-hdr">{t('callQueueTitle')}</div>
+          <span className="ad-card-sub-count">{t('callQueueSub')}</span>
+        </div>
+        <div className="ad-call-list">
+          {callQueue.length === 0 ? (
+            <div className="ad-empty-sm">{t('noActionableContacts')}</div>
+          ) : callQueue.map((p) => (
+            <Link to={`/admin/cards/${p.id}`} key={p.id} className="ad-call-row">
+              <div className="ad-call-main">
+                <div className="ad-call-name">{p.name}</div>
+                <div className="ad-call-meta">{p.owner} · {p.topUnit || t('noUnitFocus')}</div>
+              </div>
+              <div className="ad-call-tags">
+                <span className={`ad-chip-pill due ${p.due}`}>{p.due === 'today' ? t('dueToday') : p.due === 'tomorrow' ? t('dueTomorrow') : t('dueWeek')}</span>
+                <span className={`ad-chip-pill risk ${p.risk}`}>{p.risk === 'high' ? t('riskHigh') : p.risk === 'medium' ? t('riskMedium') : t('riskLow')}</span>
+                <span className="ad-chip-pill score">{t('scoreShort')} {p.score}</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
 
       {/* ═══════ S1: EXECUTIVE VIEW ═══════ */}
       <div className="ad-exec">
-        <h3>Executive View</h3>
-        <p>Conversions are identical for VIP and Standard traffic. The only difference is identity. VIP has a named card enabling 1-to-1 outreach; Standard uses anonymous tracking for segment marketing.</p>
+        <h3>{t('executiveView')}</h3>
+        <p>{t('executiveDesc')}</p>
         <div className="ad-exec-chips">
-          <span className="ad-chip">Primary KPI: Booked Viewings uplift</span>
-          <span className="ad-chip">Configurable scoring</span>
-          <span className="ad-chip">Shared actions: Book, Pricing, Payment Plan, Brochure</span>
+          <span className="ad-chip">{t('chipPrimaryKpi')}</span>
+          <span className="ad-chip">{t('chipConfigScoring')}</span>
+          <span className="ad-chip">{t('chipSharedActions')}</span>
         </div>
       </div>
 
       {/* ═══════ S2: VELOCITY KPIs ═══════ */}
-      <div className="ad-section-label">VELOCITY</div>
+      <div className="ad-section-label">{t('velocityLabel')}</div>
       <div className="ad-vel-row">
         <div className="ad-vel-card">
-          <div className="ad-vel-label">Time to First Action</div>
-          <div className="ad-vel-num">{m.avgTTFA !== null ? m.avgTTFA : '\u2014'}<span className="ad-vel-unit">{m.avgTTFA !== null ? ' min' : ''}</span></div>
-          <div className="ad-vel-sub">Avg mins from tap to first intent</div>
+          <div className="ad-vel-label">{t('timeToFirstAction')}</div>
+          <div className="ad-vel-num">{m.avgTTFA !== null ? m.avgTTFA : '\u2014'}<span className="ad-vel-unit">{m.avgTTFA !== null ? ` ${t('minuteShort')}` : ''}</span></div>
+          <div className="ad-vel-sub">{t('avgMinsFromTap')}</div>
         </div>
         <div className="ad-vel-card">
-          <div className="ad-vel-label">Viewing Velocity</div>
-          <div className="ad-vel-num">{m.avgViewVel !== null ? m.avgViewVel : '\u2014'}<span className="ad-vel-unit">{m.avgViewVel !== null ? ' days' : ''}</span></div>
-          <div className="ad-vel-sub">Avg days to first booking</div>
+          <div className="ad-vel-label">{t('viewingVelocity')}</div>
+          <div className="ad-vel-num">{m.avgViewVel !== null ? m.avgViewVel : '\u2014'}<span className="ad-vel-unit">{m.avgViewVel !== null ? ` ${t('daysLabel')}` : ''}</span></div>
+          <div className="ad-vel-sub">{t('avgDaysToBooking')}</div>
         </div>
         <div className="ad-vel-card">
-          <div className="ad-vel-label">VIP Conv Lift</div>
+          <div className="ad-vel-label">{t('vipConvLift')}</div>
           <div className="ad-vel-num">{m.convLift}</div>
-          <div className="ad-vel-sub">VIP vs Std booking rate</div>
+          <div className="ad-vel-sub">{t('vipVsStdBooking')}</div>
         </div>
         <div className="ad-vel-card">
-          <div className="ad-vel-label">Lead Capture</div>
+          <div className="ad-vel-label">{t('leadCapture')}</div>
           <div className="ad-vel-num">{m.leadCaptureRate}<span className="ad-vel-unit">%</span></div>
-          <div className="ad-vel-sub">Anon {'\u2192'} Registered conversion</div>
+          <div className="ad-vel-sub">{t('anonToRegistered')}</div>
         </div>
       </div>
 
       {/* ═══════ S3: SESSION COUNTS ═══════ */}
-      <div className="ad-section-label">SESSIONS</div>
+      <div className="ad-section-label">{t('sessionsUpper')}</div>
       <div className="ad-session-row">
         <div className="ad-session-card">
           <div className="ad-session-num" style={{ color: '#e63946' }}><AnimCounter value={m.vipSessions} /></div>
-          <div className="ad-session-label">VIP Sessions</div>
-          <div className="ad-session-sub">Person known via NFC</div>
+          <div className="ad-session-label">{t('vipSessionsLabel')}</div>
+          <div className="ad-session-sub">{t('personKnownNfc')}</div>
         </div>
         <div className="ad-session-card">
           <div className="ad-session-num" style={{ color: '#457b9d' }}><AnimCounter value={m.regSessions} /></div>
-          <div className="ad-session-label">Registered</div>
-          <div className="ad-session-sub">Market sign-ups</div>
+          <div className="ad-session-label">{t('registeredLabel')}</div>
+          <div className="ad-session-sub">{t('marketSignups')}</div>
         </div>
         <div className="ad-session-card">
           <div className="ad-session-num" style={{ color: '#94a3b8' }}><AnimCounter value={m.anonSessions} /></div>
-          <div className="ad-session-label">Anonymous</div>
-          <div className="ad-session-sub">Standard web traffic</div>
+          <div className="ad-session-label">{t('anonymousLabel')}</div>
+          <div className="ad-session-sub">{t('standardWebTraffic')}</div>
         </div>
         <div className="ad-session-card">
           <div className="ad-session-num" style={{ color: '#f59e0b' }}><AnimCounter value={m.totalConversions} /></div>
-          <div className="ad-session-label">Conversions</div>
-          <div className="ad-session-sub">All shared actions</div>
+          <div className="ad-session-label">{t('conversionsLabel')}</div>
+          <div className="ad-session-sub">{t('allSharedActions')}</div>
         </div>
         <div className="ad-session-card">
           <div className="ad-session-num" style={{ color: '#059669' }}><AnimCounter value={m.totalBookings} /></div>
-          <div className="ad-session-label">Bookings</div>
-          <div className="ad-session-sub">Viewings booked</div>
+          <div className="ad-session-label">{t('bookingsLabel')}</div>
+          <div className="ad-session-sub">{t('viewingsBooked')}</div>
         </div>
       </div>
 
       {/* ═══════ S4: CONVERSION ACTIONS ═══════ */}
       <div className="ad-section-header">
-        <h2>Shared Conversion Actions</h2>
-        <span className="ad-section-badge">VIP + Standard {'\u00B7'} Non-linear</span>
+        <h2>{t('sharedConversionActions')}</h2>
+        <span className="ad-section-badge">{t('vipStdNonLinear')}</span>
       </div>
       <div className="ad-conv-row">
         {[
-          { k: 'book_viewing', l: 'Book a Viewing', c: '#dc2626', evts: 'book_viewing' },
-          { k: 'pricing_request', l: 'Request Pricing', c: '#f59e0b', evts: 'pricing_request' },
-          { k: 'payment_plan', l: 'Payment Plan', c: '#059669', evts: 'payment_plan' },
-          { k: 'brochure_download', l: 'Download Materials', c: '#3b82f6', evts: ['brochure_download', 'floorplan_download'] },
+          { k: 'book_viewing', l: t('bookViewing'), c: '#dc2626', evts: 'book_viewing' },
+          { k: 'pricing_request', l: t('requestPricing'), c: '#f59e0b', evts: 'pricing_request' },
+          { k: 'payment_plan', l: t('paymentPlan'), c: '#059669', evts: 'payment_plan' },
+          { k: 'brochure_download', l: t('downloadMaterials'), c: '#3b82f6', evts: ['brochure_download', 'floorplan_download'] },
         ].map(a => {
           const conv = m.convByType[a.k];
           return (
@@ -533,36 +678,39 @@ export default function AdminDashboard() {
               </div>
               <div className="ad-conv-lbl">{a.l}</div>
               <div className="ad-conv-split">
-                <span><span className="ad-dot red" />VIP: <b>{conv.vip}</b></span>
-                <span><span className="ad-dot blue" />Std: <b>{conv.std}</b></span>
+                <span><span className="ad-dot red" />{t('vipShort')}: <b>{conv.vip}</b></span>
+                <span><span className="ad-dot blue" />{t('standardShort')}: <b>{conv.std}</b></span>
               </div>
             </div>
           );
         })}
       </div>
+      <p className="ad-legend-note">
+        {t('redVipBlueStd')}
+      </p>
 
       {/* ═══════ S5: CHARTS ROW ═══════ */}
-      <div className="ad-section-label">ANALYTICS</div>
+      <div className="ad-section-label">{t('analyticsUpper')}</div>
       <div className="ad-analytics-row">
         {/* Engagement Over Time - Multi-line */}
         <div className="ad-chart-card" style={{ flex: 5 }}>
-          <div className="ad-chart-hdr">Engagement over time (7 days)</div>
+          <div className="ad-chart-hdr">{t('engagementOverTime7d')}</div>
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={m.trend}>
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={24} allowDecimals={false} />
               <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', fontSize: 11, padding: '6px 10px' }} />
               <Legend wrapperStyle={{ fontSize: '0.65rem' }} />
-              <Line type="monotone" dataKey="anonymous" stroke="#94a3b8" strokeWidth={2} dot={{ r: 3 }} name="Anonymous" />
-              <Line type="monotone" dataKey="registered" stroke="#457b9d" strokeWidth={2} dot={{ r: 3 }} name="Registered" />
-              <Line type="monotone" dataKey="vip" stroke="#e63946" strokeWidth={2} dot={{ r: 3 }} name="VIP" />
+              <Line type="monotone" dataKey="anonymous" stroke="#94a3b8" strokeWidth={2} dot={{ r: 3 }} name={t('anonymousLabel')} />
+              <Line type="monotone" dataKey="registered" stroke="#457b9d" strokeWidth={2} dot={{ r: 3 }} name={t('registeredLabel')} />
+              <Line type="monotone" dataKey="vip" stroke="#e63946" strokeWidth={2} dot={{ r: 3 }} name={t('vipShort')} />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         {/* Channel Mix */}
         <div className="ad-chart-card" style={{ flex: 3 }}>
-          <div className="ad-chart-hdr">Channel mix</div>
+          <div className="ad-chart-hdr">{t('channelMix')}</div>
           {m.channelMix.length > 0 ? (
             <>
               <ResponsiveContainer width="100%" height={140}>
@@ -577,28 +725,28 @@ export default function AdminDashboard() {
                 {m.channelMix.map(s => <span key={s.name}><i style={{ background: s.color }} />{s.name} ({s.value})</span>)}
               </div>
             </>
-          ) : <div className="ad-empty-sm">No session data yet</div>}
+          ) : <div className="ad-empty-sm">{t('noActivityYet')}</div>}
         </div>
       </div>
 
       {/* ═══════ S6: FEED + VIP SUMMARY ═══════ */}
-      <div className="ad-section-label">ACTIVITY &amp; VIP SUMMARY</div>
+      <div className="ad-section-label">{t('activityVipSummaryUpper')}</div>
       <div className="ad-bottom-row">
         {/* Activity Feed */}
         <div className="ad-card-block" style={{ flex: 5 }}>
           <div className="ad-card-hdr-row">
-            <div className="ad-chart-hdr">Activity Feed</div>
+            <div className="ad-chart-hdr">{t('activityFeed')}</div>
             <div className="ad-feed-filters">
               {['all', 'vip', 'registered'].map(f => (
                 <button key={f} className={`ad-feed-filter ${feedFilter === f ? 'active' : ''}`} onClick={() => setFeedFilter(f)}>
-                  {f === 'all' ? 'All' : f === 'vip' ? 'VIP' : 'Registered'}
+                  {f === 'all' ? t('allFilter') : f === 'vip' ? t('vipShort') : t('registeredLabel')}
                 </button>
               ))}
             </div>
           </div>
           <div className="ad-feed-list">
             {filteredEvents.length === 0 ? (
-              <div className="ad-empty-sm">No {feedFilter !== 'all' ? feedFilter : ''} activity yet</div>
+              <div className="ad-empty-sm">{t('noFilterActivityYet', { filter: feedFilter !== 'all' ? feedFilter : '' })}</div>
             ) : filteredEvents.map((e, i) => {
               const icon = eventIcons[e.event] || eventIcons.default || '\u{1F4CB}';
               const catColors = { browse: '#94a3b8', engage: '#3b82f6', intent: '#f59e0b', action: '#dc2626' };
@@ -610,12 +758,12 @@ export default function AdminDashboard() {
                   <div className="ad-feed-content">
                     <div className="ad-feed-who">
                       {e.visitorName || `Card ${e.cardId || '?'}`}
-                      {e.visitorType === 'vip' && <span className="ad-feed-vip-tag">VIP</span>}
-                      {(e.visitorType === 'registered' || e.visitorType === 'family') && <span className="ad-feed-reg-tag">REG</span>}
+                      {e.visitorType === 'vip' && <span className="ad-feed-vip-tag">{t('vipShort')}</span>}
+                      {(e.visitorType === 'registered' || e.visitorType === 'family') && <span className="ad-feed-reg-tag">{t('registeredLabel')}</span>}
                     </div>
-                    <div className="ad-feed-what">{eventLabel(e)}</div>
+                    <div className="ad-feed-what">{eventLabel(e, t)}</div>
                   </div>
-                  <div className="ad-feed-when">{timeAgo(e.timestamp)}</div>
+                  <div className="ad-feed-when">{timeAgo(e.timestamp, t)}</div>
                 </div>
               );
             })}
@@ -625,22 +773,22 @@ export default function AdminDashboard() {
         {/* VIP Summary */}
         <div className="ad-card-block" style={{ flex: 3 }}>
           <div className="ad-card-hdr-row">
-            <div className="ad-chart-hdr">VIP Activity Summary</div>
-            <span className="ad-card-sub-count">High-priority signals</span>
+            <div className="ad-chart-hdr">{t('vipActivitySummary')}</div>
+            <span className="ad-card-sub-count">{t('highPrioritySignals')}</span>
           </div>
           <div className="ad-vip-summary">
             <div className="ad-vip-kpis">
               <div className="ad-vip-kpi" style={{ background: '#fef2f2' }}>
                 <div className="ad-vip-kpi-num" style={{ color: '#dc2626' }}>{m.hotPeople.length}</div>
-                <div className="ad-vip-kpi-lbl">Hot Leads</div>
+                <div className="ad-vip-kpi-lbl">{t('hotLeads')}</div>
               </div>
               <div className="ad-vip-kpi" style={{ background: '#fffbeb' }}>
                 <div className="ad-vip-kpi-num" style={{ color: '#f59e0b' }}>{m.activeAlerts}</div>
-                <div className="ad-vip-kpi-lbl">Alerts</div>
+                <div className="ad-vip-kpi-lbl">{t('alertsLabel')}</div>
               </div>
               <div className="ad-vip-kpi" style={{ background: '#eff6ff' }}>
                 <div className="ad-vip-kpi-num" style={{ color: '#3b82f6' }}>{m.avgScore}</div>
-                <div className="ad-vip-kpi-lbl">Avg Score</div>
+                <div className="ad-vip-kpi-lbl">{t('avgScore')}</div>
               </div>
             </div>
             <div className="ad-vip-people">
@@ -649,18 +797,18 @@ export default function AdminDashboard() {
                   <div className="ad-vip-mini-score" style={{ background: p.color + '14', color: p.color, borderColor: p.color + '30' }}>{p.score}</div>
                   <div className="ad-vip-mini-info">
                     <div className="ad-vip-mini-name">{p.name}</div>
-                    <div className="ad-vip-mini-meta">{p.summary} {'\u00B7'} {p.idle < 999 ? `${p.idle}d idle` : ''}</div>
+                    <div className="ad-vip-mini-meta">{p.summary} {'\u00B7'} {p.idle < 999 ? `${p.idle}d ${t('idleShort')}` : ''}</div>
                   </div>
                 </Link>
               ))}
             </div>
-            <Link to="/admin/priority" className="ad-vip-link">View Priority List {'\u2192'}</Link>
+            <Link to="/admin/priority" className="ad-vip-link">{t('viewPriorityList')} {'\u2192'}</Link>
           </div>
         </div>
       </div>
 
       {/* ═══════ S7: FUNNEL ═══════ */}
-      <div className="ad-section-label">CONVERSION FUNNEL</div>
+      <div className="ad-section-label">{t('conversionFunnelUpper')}</div>
       <div className="ad-chart-card">
         <div className="ad-funnel">
           {m.funnel.map((step, i) => {
@@ -675,19 +823,25 @@ export default function AdminDashboard() {
                 </div>
                 <div className="ad-funnel-info">
                   <span>{step.label}</span>
-                  {dropOff !== null && dropOff > 0 && <span className="ad-funnel-drop">{'\u2193'} {dropOff}% drop-off</span>}
+                  {dropOff !== null && dropOff > 0 && <span className="ad-funnel-drop">{'\u2193'} {dropOff}% {t('dropOff')}</span>}
                 </div>
               </div>
             );
           })}
         </div>
+        <div className="ad-funnel-legend">
+          <span><i style={{ background: '#94a3b8' }} /> {t('portalOpens')}</span>
+          <span><i style={{ background: '#3b82f6' }} /> {t('engagedSessions')}</span>
+          <span><i style={{ background: '#f59e0b' }} /> {t('intentSignals')}</span>
+          <span><i style={{ background: '#dc2626' }} /> {t('bookingsLabel')}</span>
+        </div>
       </div>
 
       {/* ═══════ S8: INTEREST DISTRIBUTION ═══════ */}
       {m.topUnits.length > 0 && (<>
-        <div className="ad-section-label">INTEREST DISTRIBUTION</div>
+        <div className="ad-section-label">{t('interestDistributionUpper')}</div>
         <div className="ad-chart-card">
-          <div className="ad-chart-hdr">Top units by views</div>
+          <div className="ad-chart-hdr">{t('topUnitsByViews')}</div>
           <ResponsiveContainer width="100%" height={Math.max(m.topUnits.length * 36, 100)}>
             <BarChart data={m.topUnits} layout="vertical" barSize={16} margin={{ left: 10 }}>
               <XAxis type="number" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
@@ -696,12 +850,13 @@ export default function AdminDashboard() {
               <Bar dataKey="views" fill="#e63946" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
+          <p className="ad-legend-note">{t('unitBarLegend')}</p>
         </div>
       </>)}
 
       {/* ═══════ S9: CAMPAIGNS ═══════ */}
       {m.campaignMetrics.length > 0 && (<>
-        <div className="ad-section-label">CAMPAIGNS</div>
+        <div className="ad-section-label">{t('campaignsUpper')}</div>
         <div className="ad-campaign-grid">
           {m.campaignMetrics.map(c => (
             <div key={c.id} className="ad-campaign-card">
@@ -711,14 +866,14 @@ export default function AdminDashboard() {
               </div>
               <div className="ad-campaign-client">{c.client || '\u2014'}</div>
               <div className="ad-campaign-metrics">
-                <div><b>{c.people}</b><span>cards</span></div>
-                <div><b>{c.vipCount}</b><span>VIP</span></div>
-                <div><b>{c.convRate}%</b><span>conv</span></div>
-                <div><b>{c.events}</b><span>events</span></div>
+                <div><b>{c.people}</b><span>{t('cardsMetric')}</span></div>
+                <div><b>{c.vipCount}</b><span>{t('vipShort')}</span></div>
+                <div><b>{c.convRate}%</b><span>{t('convMetric')}</span></div>
+                <div><b>{c.events}</b><span>{t('eventsMetric')}</span></div>
               </div>
               <div className="ad-campaign-pipeline">
-                {c.hot > 0 && <span style={{ color: '#dc2626' }}>{'\u{1F534}'} {c.hot} hot</span>}
-                {c.warm > 0 && <span style={{ color: '#f59e0b' }}>{'\u{1F7E1}'} {c.warm} warm</span>}
+                {c.hot > 0 && <span style={{ color: '#dc2626' }}>{'\u{1F534}'} {c.hot} {t('hotShort')}</span>}
+                {c.warm > 0 && <span style={{ color: '#f59e0b' }}>{'\u{1F7E1}'} {c.warm} {t('warmLabel')}</span>}
               </div>
             </div>
           ))}

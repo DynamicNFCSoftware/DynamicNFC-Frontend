@@ -3,31 +3,32 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
+
+  // If we have a cached user from sessionStorage, render immediately
+  // without showing a loader — Firebase will confirm in the background
+  if (loading && user) {
+    return children;
+  }
 
   if (loading) {
+    // Minimal transparent loader — no jarring dark flash
     return (
       <div style={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#0D0D12',
-        color: '#fff',
-        fontFamily: "'Outfit', sans-serif",
       }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: 36,
-            height: 36,
-            border: '3px solid rgba(255,255,255,0.1)',
-            borderTopColor: '#e63946',
-            borderRadius: '50%',
-            animation: 'spin 0.8s linear infinite',
-            margin: '0 auto 1rem',
-          }} />
-          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-        </div>
+        <div style={{
+          width: 28,
+          height: 28,
+          border: '3px solid rgba(0,0,0,0.08)',
+          borderTopColor: '#e63946',
+          borderRadius: '50%',
+          animation: 'protectedSpin 0.7s linear infinite',
+        }} />
+        <style>{`@keyframes protectedSpin{to{transform:rotate(360deg)}}`}</style>
       </div>
     );
   }

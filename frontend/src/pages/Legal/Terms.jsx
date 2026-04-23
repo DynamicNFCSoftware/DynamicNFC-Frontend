@@ -1,0 +1,54 @@
+import React from 'react';
+import { useLanguage } from '../../i18n';
+import SEO from '../../components/SEO/SEO';
+
+const TR = {
+  en: {
+    title: 'Terms of Service',
+    updated: 'Last updated: March 2026',
+    sections: [
+      { heading: '1. Acceptance of Terms', body: 'By accessing and using the DynamicNFC platform ("Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.' },
+      { heading: '2. Service Description', body: 'DynamicNFC provides digital NFC card creation, management, analytics, and related enterprise tools. We reserve the right to modify, suspend, or discontinue any part of the Service at any time.' },
+      { heading: '3. User Accounts', body: 'You are responsible for maintaining the confidentiality of your account credentials. You must provide accurate information and promptly update it if it changes. You are responsible for all activity under your account.' },
+      { heading: '4. Acceptable Use', body: 'You agree not to use the Service for any unlawful purpose, to transmit harmful content, or to interfere with the operation of the Service. We reserve the right to terminate accounts that violate these terms.' },
+      { heading: '5. Intellectual Property', body: 'All content, trademarks, and technology within the Service are the property of DynamicNFC or its licensors. You retain ownership of content you upload but grant us a license to use it for providing the Service.' },
+      { heading: '6. Limitation of Liability', body: 'The Service is provided "as is" without warranties of any kind. DynamicNFC shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service.' },
+      { heading: '7. Contact', body: 'For questions about these Terms, contact us at info@dynamicnfc.help.' },
+    ],
+  },
+  ar: {
+    title: 'شروط الخدمة',
+    updated: 'آخر تحديث: مارس ٢٠٢٦',
+    sections: [
+      { heading: '١. قبول الشروط', body: 'بالوصول إلى منصة DynamicNFC واستخدامها ("الخدمة")، فإنك توافق على الالتزام بشروط الخدمة هذه. إذا كنت لا توافق، لا تستخدم الخدمة.' },
+      { heading: '٢. وصف الخدمة', body: 'توفر DynamicNFC إنشاء بطاقات NFC الرقمية وإدارتها والتحليلات وأدوات المؤسسات ذات الصلة. نحتفظ بالحق في تعديل أو تعليق أو إيقاف أي جزء من الخدمة في أي وقت.' },
+      { heading: '٣. حسابات المستخدمين', body: 'أنت مسؤول عن الحفاظ على سرية بيانات اعتماد حسابك. يجب تقديم معلومات دقيقة وتحديثها فوراً عند التغيير. أنت مسؤول عن جميع الأنشطة تحت حسابك.' },
+      { heading: '٤. الاستخدام المقبول', body: 'توافق على عدم استخدام الخدمة لأي غرض غير قانوني أو نقل محتوى ضار أو التدخل في تشغيل الخدمة. نحتفظ بالحق في إنهاء الحسابات التي تنتهك هذه الشروط.' },
+      { heading: '٥. الملكية الفكرية', body: 'جميع المحتوى والعلامات التجارية والتكنولوجيا داخل الخدمة هي ملك لـ DynamicNFC أو مرخصيها. تحتفظ بملكية المحتوى الذي تحمّله ولكنك تمنحنا ترخيصاً لاستخدامه لتقديم الخدمة.' },
+      { heading: '٦. تحديد المسؤولية', body: 'يتم تقديم الخدمة "كما هي" بدون ضمانات من أي نوع. لا تتحمل DynamicNFC أي مسؤولية عن أي أضرار غير مباشرة أو عرضية أو تبعية ناشئة عن استخدامك للخدمة.' },
+      { heading: '٧. الاتصال', body: 'للأسئلة حول هذه الشروط، تواصل معنا على info@dynamicnfc.help.' },
+    ],
+  },
+};
+
+const Terms = () => {
+  const { lang } = useLanguage();
+  const isRTL = lang === 'ar';
+  const t = TR[lang] || TR.en;
+
+  return (
+    <div dir={isRTL ? 'rtl' : 'ltr'} style={{ maxWidth: '720px', margin: '0 auto', padding: '3rem 1.5rem', color: 'var(--text)' }}>
+      <SEO title={t.title} description="DynamicNFC Terms of Service" path="/terms" />
+      <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '.5rem' }}>{t.title}</h1>
+      <p style={{ color: 'var(--muted)', marginBottom: '2rem', fontSize: '.9rem' }}>{t.updated}</p>
+      {t.sections.map((s, i) => (
+        <section key={i} style={{ marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 600, marginBottom: '.4rem' }}>{s.heading}</h2>
+          <p style={{ lineHeight: 1.7, color: 'var(--text2)' }}>{s.body}</p>
+        </section>
+      ))}
+    </div>
+  );
+};
+
+export default Terms;

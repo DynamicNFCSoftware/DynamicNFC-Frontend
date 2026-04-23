@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-
+import { Link } from "react-router-dom";
+import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import './MarketplacePortal.css';
+import SEO from '../../components/SEO/SEO';
+import '../../i18n/portals/marketplacePortal';
 // ═══════════════════════════════════════════════════════════════════
 // MARKETPLACE PORTAL — PUBLIC ACCESS (Definitive Edition)
 // ═══════════════════════════════════════════════════════════════════
@@ -20,14 +24,20 @@ const _sessionId = (() => {
   return sid;
 })();
 const _bc = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("dnfc_tracking") : null;
+const _source = "direct";
 let _leadInfo = null;
 
 const trackEvent = (event, data = {}) => {
+  const _deviceType = /Mobi|Android/i.test(navigator.userAgent) ? "mobile"
+    : /Tablet|iPad/i.test(navigator.userAgent) ? "tablet"
+    : "desktop";
   const ev = {
     id: `evt_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
     timestamp: new Date().toISOString(),
     sessionId: _sessionId,
     portalType: _leadInfo ? "lead" : "anonymous",
+    source: _source,
+    deviceType: _deviceType,
     ...(_leadInfo ? { leadName: _leadInfo.name, leadEmail: _leadInfo.email } : {}),
     event, ...data,
   };
@@ -37,7 +47,7 @@ const trackEvent = (event, data = {}) => {
     localStorage.setItem("dnfc_events", JSON.stringify(events));
   } catch(e) {}
   _bc?.postMessage(ev);
-  console.log(`[DNFC:MP] ${event}`, data);
+  bridgeEventToFirestore(ev);
 };
 
 // ─── BILINGUAL ───────────────────────────────────────────────────
@@ -53,6 +63,11 @@ const LANG = {
       ctaSecondary: "Book a Visit",
     },
     stats: { units: "Premium Units", floors: "Floors", beds: "Bedrooms", completion: "Completion" },
+    roiBanner: {
+      title: "Calculate Your Investment Returns",
+      desc: "Use our interactive ROI calculator to project your returns based on property value, rental income, appreciation rates, and financing options.",
+      cta: "Open ROI Calculator →",
+    },
     sections: {
       residences: "Available Residences", residencesSub: "Find Your Perfect Residence",
       amenities: "The Lifestyle", amenitiesSub: "World-Class Amenities",
@@ -124,6 +139,11 @@ const LANG = {
       ctaSecondary: "احجز زيارة",
     },
     stats: { units: "وحدة فاخرة", floors: "طابقاً", beds: "غرف نوم", completion: "التسليم" },
+    roiBanner: {
+      title: "احسب عوائد استثمارك",
+      desc: "استخدم حاسبة العائد التفاعلية لتقدير أرباحك بناءً على قيمة العقار والإيجار السنوي ومعدلات النمو وخيارات التمويل.",
+      cta: "← افتح حاسبة العائد",
+    },
     sections: {
       residences: "المساكن المتاحة", residencesSub: "اعثر على مسكنك المثالي",
       amenities: "أسلوب الحياة", amenitiesSub: "مرافق عالمية",
@@ -176,15 +196,115 @@ const LANG = {
       emailSent: "تم إرسال الكتيب لبريدك", registered: "أنت مسجّل بالفعل!",
       leadCaptured: "شكراً! جارٍ معالجة طلبك...",
     },
-    footer: "إعلان عام. الأسعار المعروضة هي نطاقات بداية. سجّل للتفاصيل.",
-    poweredBy: "مدعوم من", registerNow: "سجّل الآن", registerDone: "مسجّل",
-  },
+    footer: "إدراج عام. الأسعار المعروضة هي نطاقات بدء. سجل للحصول على الأسعار التفصيلية والتوافر.",
+    poweredBy: "مشغل بواسطة", registerNow: "سجل الآن", registerDone: "مسجل",
+    brochureDesc: "تم إعداد كتيبك الشخصي مع تفاصيل الوحدة السكنية.",
+    brochureDownload: "تحميل كتيب PDF",
+    brochureEmail: "إرسال إلى البريد الإلكتروني",
+    brochureIncludes: "الكتيب يشمل:",
+    brochureItem1: "المخططات الطابقية التفصيلية والمواصفات",
+    brochureItem2: "كتالوج التشطيبات المميزة",
+    brochureItem3: "نظرة عامة على المرافق وأسلوب الحياة",
+    brochureItem4: "تحليل الاستثمار وخطط الدفع",
+    brochureItem5: "خريطة الموقع والاتصال",
+    brochureReady: "الكتيب جاهز",
+    brochureTitle: "الكتيب الرقمي",
+    cardDetails: "عرض التفاصيل",
+    cardGetPricing: "الحصول على الأسعار",
+    cardRegisterPrice: "التسجيل للحصول على الأسعار الدقيقة",
+    compareBedrooms: "غرف النوم",
+    compareCategory: "الفئة",
+    compareEmpty: "أضف وحدات للمقارنة باستخدام زر المقارنة في بطاقات الوحدات.",
+    compareFeature: "الميزة",
+    compareFloor: "الطابق",
+    comparePrice: "نطاق السعر",
+    compareRemoveBtn: "إزالة",
+    compareSize: "الحجم",
+    compareTitle: "مقارنة الوحدات السكنية",
+    compareView: "عرض",
+    filterAll: "الكل",
+    filterBed2: "غرفتي نوم",
+    filterBed3: "ثلاث غرف نوم",
+    filterPenthouse: "بنتهاوس",
+    floorPlanBalcony: "شرفة / تراس",
+    floorPlanBathrooms: "الحمامات",
+    floorPlanDisclaimer: "المخططات الطابقية إرشادية وقد تختلف. الأبعاد الفعلية مؤكدة عند التسليم.",
+    floorPlanDownload: "تحميل مخطط الطابق PDF",
+    floorPlanTitle: "مخطط الطابق",
+    floorPlanTotalArea: "المساحة الإجمالية",
+    heroBadge: "البيع الآن — المرحلة 2",
+    heroCta: "عرض المجموعة",
+    heroCtaSecondary: "حجز زيارة",
+    heroSubtitle: "معيشة على الواجهة المائية مميزة في قلب المدينة. استكشف مجموعتنا من الوحدات الحصرية من 2 إلى 4+ غرف نوم.",
+    heroTitle: "مساكن فيستا",
+    leadFormEmail: "البريد الإلكتروني",
+    leadFormName: "الاسم الكامل",
+    leadFormNote: "يتم حماية معلوماتك. لا رسائل مزعجة، أبدًا.",
+    leadFormPhone: "الهاتف",
+    leadFormSubmit: "التسجيل والمتابعة",
+    leadFormSubtitle: "سجل لفتح الأسعار الدقيقة، المخططات الطابقية، الكتيبات، ومواعيد الزيارة ذات الأولوية.",
+    leadFormTitle: "الحصول على وصول كامل",
+    navAccount: "حسابي",
+    navBrand: "مساكن فيستا",
+    navLang: "العربية",
+    navRegister: "التسجيل / تسجيل الدخول",
+    paymentDisclaimer: "خطط الدفع خاضعة للموافقة. سجل للحصول على الشروط الشخصية.",
+    paymentM1: "دفعة الحجز",
+    paymentM1d: "عند الحجز",
+    paymentM2: "الدفعة الأولى",
+    paymentM2d: "خلال 30 يومًا",
+    paymentM3: "البناء 30٪",
+    paymentM3d: "عند اكتمال 30٪",
+    paymentM4: "البناء 60٪",
+    paymentM4d: "عند اكتمال 60٪",
+    paymentM5: "التسليم",
+    paymentM5d: "عند تسليم المفتاح",
+    paymentM6: "ما بعد التسليم",
+    paymentM6d: "12 شهرًا بعد التسليم",
+    paymentMilestones: "معالم الدفع",
+    paymentPlan6040: "خطة 60/40",
+    paymentPlan6040Desc: "60٪ أثناء البناء · 40٪ عند التسليم",
+    paymentPlan7030: "خطة 70/30",
+    paymentPlan7030Desc: "70٪ أثناء البناء · 30٪ بعد التسليم (12 شهرًا)",
+    paymentRequestCall: "طلب استشارة الدفع",
+    paymentSubtitle: "هيكل دفع مرن",
+    paymentTitle: "خطة الدفع",
+    paymentTotalPrice: "ابتداءً من",
+    sectionAmenities: "أسلوب الحياة",
+    sectionAmenitiesSub: "مرافق عالمية المستوى",
+    sectionCta: "جاهز لاتخاذ الخطوة التالية؟",
+    sectionCtaSub: "سجل للحصول على الأسعار الحصرية، المخططات الطابقية، الكتيبات، ومواعيد الزيارة ذات الأولوية.",
+    sectionInvestment: "لمحة استثمارية",
+    sectionInvestmentSub: "لماذا مساكن فيستا",
+    sectionResidences: "الوحدات المتاحة",
+    sectionResidencesSub: "ابحث عن الوحدة المثالية لك",
+    statsBeds: "غرف النوم",
+    statsCompletion: "الانتهاء",
+    statsFloors: "الطوابق",
+    statsUnits: "الوحدات المميزة",
+    toastBooking: "تم إرسال طلب الزيارة — سنتواصل معك خلال 48 ساعة",
+    toastBrochure: "تم تنزيل الكتيب",
+    toastCompare: "تمت إضافته للمقارنة",
+    toastCompareRemove: "تمت إزالته من المقارنة",
+    toastEmailSent: "تم إرسال الكتيب إلى بريدك الإلكتروني",
+    toastFloorPlan: "تم فتح المخطط الطابقي",
+    toastLeadCaptured: "شكرًا لك! جاري معالجة طلبك...",
+    toastPricing: "تم إرسال تفاصيل الأسعار إلى بريدك الإلكتروني",
+    toastRegistered: "أنت مسجل بالفعل!",
+    unitBook: "حجز زيارة",
+    unitBrochure: "الكتيب",
+    unitCompare: "المقارنة",
+    unitFloorPlan: "مخطط الطابق",
+    unitPricing: "الحصول على الأسعار الدقيقة",
+},
 };
 
 // ─── PROPERTY DATA (public — price ranges, not exact) ────────────
 const UNITS = [
   {
     id: "SKY-PH-01",
+    tower: "Al Qamar",
+    unitType: "penthouse",
     name: { en: "Sky Penthouse", ar: "بنتهاوس السماء" },
     floor: { en: "Floor 42–44", ar: "الطابق ٤٢-٤٤" },
     beds: { en: "4 Bedrooms", ar: "٤ غرف نوم" }, bedNum: 4,
@@ -225,6 +345,8 @@ const UNITS = [
   },
   {
     id: "GR-35-01",
+    tower: "Al Safwa",
+    unitType: "3br",
     name: { en: "Grand Residence", ar: "الإقامة الكبرى" },
     floor: { en: "Floor 35–38", ar: "الطابق ٣٥-٣٨" },
     beds: { en: "3 Bedrooms", ar: "٣ غرف نوم" }, bedNum: 3,
@@ -265,6 +387,8 @@ const UNITS = [
   },
   {
     id: "EX-25-01",
+    tower: "Al Rawda",
+    unitType: "2br",
     name: { en: "Executive Suite", ar: "الجناح التنفيذي" },
     floor: { en: "Floor 25–30", ar: "الطابق ٢٥-٣٠" },
     beds: { en: "2 Bedrooms", ar: "غرفتا نوم" }, bedNum: 2,
@@ -340,207 +464,6 @@ const ROOM_COLORS = {
 };
 
 // ─── CSS (Light Cream Luxury) ────────────────────────────────────
-const css = `
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600&display=swap');
-
-:root {
-  --mp-ch: #1A1A1F; --mp-cream: #FAFAF8; --mp-warm: #F5F3F0;
-  --mp-t1: #1A1A1F; --mp-t2: rgba(26,26,31,0.65); --mp-t3: rgba(26,26,31,0.4);
-  --mp-bdr: rgba(26,26,31,0.08); --mp-bdr2: rgba(26,26,31,0.12);
-  --mp-accent: #1A1A1F; --mp-green: #2A9D5C; --mp-red: #C1121F;
-  --mp-serif: 'Cormorant Garamond', Georgia, serif;
-  --mp-sans: 'Outfit', system-ui, sans-serif;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-
-.mp { min-height:100vh; background:var(--mp-cream); font-family:var(--mp-sans); color:var(--mp-t1); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
-
-/* Header */
-.mp-hd { position:fixed; top:0; left:0; right:0; z-index:100; padding:1.25rem 3rem; display:flex; align-items:center; justify-content:space-between; transition:all .5s; }
-.mp-hd.sc { background:rgba(250,250,248,.96); backdrop-filter:blur(20px); border-bottom:1px solid var(--mp-bdr); padding:.85rem 3rem; box-shadow:0 2px 20px rgba(0,0,0,.04); }
-.mp-logo { font-family:var(--mp-serif); font-size:1.5rem; font-weight:400; letter-spacing:.12em; color:var(--mp-t1); text-transform:uppercase; }
-.mp-logo b { font-weight:600; }
-.mp-nav { display:flex; align-items:center; gap:.75rem; }
-.mp-navbtn { background:none; border:1px solid var(--mp-bdr2); color:var(--mp-t2); padding:.4rem .9rem; border-radius:6px; font-family:var(--mp-sans); font-size:.78rem; cursor:pointer; transition:.3s; }
-.mp-navbtn:hover { border-color:var(--mp-ch); color:var(--mp-t1); }
-.mp-navbtn-dark { background:var(--mp-ch); border:none; color:var(--mp-cream); padding:.4rem 1rem; border-radius:6px; font-family:var(--mp-sans); font-size:.78rem; font-weight:500; cursor:pointer; transition:.3s; }
-.mp-navbtn-dark:hover { background:#333; }
-.mp-lead-badge { font-size:.78rem; color:var(--mp-t3); padding:.4rem .8rem; border:1px solid var(--mp-bdr); border-radius:100px; }
-
-/* Hero */
-.mp-hero { position:relative; height:85vh; min-height:600px; display:flex; align-items:flex-end; overflow:hidden; }
-.mp-hero-bg { position:absolute; inset:0; background-size:cover; background-position:center; transform:scale(1.03); animation:mp-hz 25s ease-in-out infinite alternate; }
-@keyframes mp-hz { from{transform:scale(1.03)} to{transform:scale(1.1)} }
-.mp-hero-ov { position:absolute; inset:0; background:linear-gradient(180deg,rgba(250,250,248,.1) 0%,rgba(250,250,248,.3) 30%,rgba(250,250,248,.88) 75%,var(--mp-cream) 100%); }
-.mp-hero-ct { position:relative; z-index:2; padding:0 4rem 5rem; max-width:800px; animation:mp-fu .8s ease-out; }
-@keyframes mp-fu { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-.mp-pvt { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem 1rem; border:1px solid var(--mp-bdr2); border-radius:100px; margin-bottom:1.5rem; font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--mp-t3); }
-.mp-htitle { font-family:var(--mp-serif); font-size:clamp(2.8rem,6vw,5rem); font-weight:400; line-height:1.05; margin-bottom:1.2rem; color:var(--mp-t1); }
-.mp-hdesc { font-size:1.05rem; font-weight:400; line-height:1.7; color:var(--mp-t2); max-width:550px; margin-bottom:2.5rem; }
-.mp-hacts { display:flex; gap:1rem; flex-wrap:wrap; }
-.mp-btn-d { display:inline-flex; align-items:center; gap:.7rem; padding:1rem 2.5rem; background:var(--mp-ch); color:var(--mp-cream); font-family:var(--mp-sans); font-size:.85rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; border:none; border-radius:4px; cursor:pointer; transition:all .4s; }
-.mp-btn-d:hover { background:#333; transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,.15); }
-.mp-btn-l { display:inline-flex; align-items:center; gap:.7rem; padding:1rem 2.5rem; background:transparent; color:var(--mp-t1); font-family:var(--mp-sans); font-size:.85rem; font-weight:400; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--mp-bdr2); border-radius:4px; cursor:pointer; transition:all .4s; }
-.mp-btn-l:hover { border-color:var(--mp-ch); background:rgba(26,26,31,.03); }
-.mp-btn-sm { padding:.5rem 1rem; font-size:.7rem; letter-spacing:.06em; }
-
-/* Stats */
-.mp-stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--mp-bdr); border-bottom:1px solid var(--mp-bdr); background:#FFFFFF; }
-.mp-stat { padding:2.5rem 2rem; text-align:center; border-inline-end:1px solid var(--mp-bdr); }
-.mp-stat:last-child { border:none; }
-.mp-stat-v { font-family:var(--mp-serif); font-size:2.5rem; font-weight:400; color:var(--mp-t1); line-height:1; margin-bottom:.5rem; }
-.mp-stat-l { font-size:.75rem; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--mp-t3); }
-
-/* Sections */
-.mp-sec { padding:6rem 4rem; }
-.mp-sh { text-align:center; margin-bottom:4rem; }
-.mp-sl { font-size:.72rem; letter-spacing:.25em; text-transform:uppercase; color:var(--mp-t3); margin-bottom:1rem; display:block; font-weight:500; }
-.mp-st { font-family:var(--mp-serif); font-size:clamp(2rem,4vw,3rem); font-weight:400; margin-bottom:.6rem; color:var(--mp-t1); }
-
-/* Filter Tabs */
-.mp-filters { display:flex; justify-content:center; gap:.5rem; flex-wrap:wrap; margin-top:1.5rem; }
-.mp-ftab { padding:.5rem 1.2rem; border-radius:100px; font-size:.78rem; cursor:pointer; font-family:var(--mp-sans); transition:.3s; }
-.mp-ftab.off { background:transparent; color:var(--mp-t3); border:1px solid var(--mp-bdr2); }
-.mp-ftab.on { background:var(--mp-ch); color:var(--mp-cream); border:1px solid var(--mp-ch); font-weight:500; }
-
-/* Unit Cards */
-.mp-units { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; max-width:1200px; margin:0 auto; }
-.mp-card { background:#FFFFFF; border:1px solid var(--mp-bdr); border-radius:8px; overflow:hidden; cursor:pointer; transition:all .5s; }
-.mp-card:hover { border-color:var(--mp-bdr2); transform:translateY(-5px); box-shadow:0 16px 40px rgba(0,0,0,.08); }
-.mp-card-img { position:relative; height:220px; overflow:hidden; }
-.mp-card-img img { width:100%; height:100%; object-fit:cover; transition:transform .6s; }
-.mp-card:hover .mp-card-img img { transform:scale(1.06); }
-.mp-card-fbadge { position:absolute; top:1rem; inset-inline-start:1rem; padding:.35rem .8rem; background:rgba(26,26,31,.75); border-radius:4px; font-size:.65rem; letter-spacing:.08em; text-transform:uppercase; color:#FAFAF8; }
-.mp-card-status { position:absolute; top:1rem; inset-inline-end:1rem; padding:.35rem .8rem; border-radius:4px; font-size:.65rem; font-weight:600; color:#fff; }
-.mp-card-body { padding:1.5rem; }
-.mp-card-name { font-family:var(--mp-serif); font-size:1.5rem; font-weight:500; margin-bottom:.3rem; color:var(--mp-t1); }
-.mp-card-floor { font-size:.8rem; color:var(--mp-t3); letter-spacing:.08em; text-transform:uppercase; margin-bottom:1rem; font-weight:500; }
-.mp-card-meta { display:flex; gap:1.5rem; margin-bottom:1rem; font-size:.88rem; color:var(--mp-t2); }
-.mp-card-price { font-family:var(--mp-serif); font-size:1.5rem; font-weight:500; color:var(--mp-t1); margin-bottom:.25rem; }
-.mp-card-hint { font-size:.78rem; color:var(--mp-t3); }
-.mp-card-acts { display:flex; gap:.4rem; padding:.75rem 1rem; border-top:1px solid var(--mp-bdr); flex-wrap:wrap; }
-.mp-card-acts button { flex:none; }
-
-/* Amenities */
-.mp-am-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; max-width:1100px; margin:0 auto; }
-.mp-am { background:#FFFFFF; border:1px solid var(--mp-bdr); border-radius:8px; padding:2rem; text-align:center; transition:.3s; }
-.mp-am:hover { border-color:var(--mp-bdr2); box-shadow:0 4px 16px rgba(0,0,0,.04); }
-.mp-am-icon { font-size:2rem; margin-bottom:.8rem; }
-.mp-am-name { font-family:var(--mp-serif); font-size:1.1rem; font-weight:500; color:var(--mp-t1); }
-
-/* Investment */
-.mp-inv-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; max-width:1100px; margin:0 auto; }
-.mp-inv { text-align:center; padding:2.5rem 1.5rem; background:#FFFFFF; border:1px solid var(--mp-bdr); border-radius:8px; transition:.3s; }
-.mp-inv:hover { border-color:var(--mp-bdr2); box-shadow:0 4px 16px rgba(0,0,0,.04); }
-.mp-inv-v { font-family:var(--mp-serif); font-size:2.5rem; font-weight:400; color:var(--mp-t1); margin-bottom:.5rem; }
-.mp-inv-l { font-size:.88rem; font-weight:500; margin-bottom:.3rem; color:var(--mp-t1); }
-.mp-inv-n { font-size:.78rem; color:var(--mp-t3); }
-
-/* CTA Banner */
-.mp-cta-banner { padding:5rem 4rem; background:var(--mp-ch); text-align:center; }
-
-/* Divider */
-.mp-div { display:flex; align-items:center; padding:2rem 4rem; }
-.mp-div-l { flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--mp-bdr),transparent); }
-.mp-div-d { padding:0 1.5rem; color:var(--mp-t3); font-size:.5rem; }
-
-/* Footer */
-.mp-ft { padding:3rem 4rem; text-align:center; border-top:1px solid var(--mp-bdr); }
-.mp-ft p { font-size:.82rem; color:var(--mp-t3); margin-bottom:.75rem; }
-
-/* Scroll Reveal */
-.mp-rv { opacity:0; transform:translateY(25px); transition:all .8s cubic-bezier(.4,0,.2,1); }
-.mp-rv.vis { opacity:1; transform:translateY(0); }
-
-/* Toast */
-.mp-toast { position:fixed; bottom:2rem; inset-inline-end:2rem; padding:1rem 1.8rem; background:var(--mp-ch); color:var(--mp-cream); font-family:var(--mp-sans); font-size:.85rem; font-weight:500; border-radius:8px; z-index:300; animation:mp-tin .4s ease-out; box-shadow:0 8px 30px rgba(0,0,0,.2); }
-@keyframes mp-tin { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-.mp-toast.hiding { animation:mp-tout .3s ease-in forwards; }
-@keyframes mp-tout { to{transform:translateY(20px);opacity:0} }
-
-/* Modals */
-.mp-modal-ov { position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(6px); z-index:200; display:flex; align-items:center; justify-content:center; padding:2rem; animation:mp-mf .3s; }
-@keyframes mp-mf { from{opacity:0} to{opacity:1} }
-.mp-modal { background:#FFFFFF; border-radius:12px; max-width:1000px; width:100%; max-height:90vh; overflow-y:auto; position:relative; animation:mp-ms .4s ease-out; box-shadow:0 20px 60px rgba(0,0,0,.15); }
-@keyframes mp-ms { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
-.mp-modal-x { position:absolute; top:1.2rem; inset-inline-end:1.2rem; width:36px; height:36px; border-radius:50%; background:rgba(26,26,31,.05); border:1px solid var(--mp-bdr); color:var(--mp-t2); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.3s; z-index:5; }
-.mp-modal-x:hover { background:rgba(26,26,31,.1); color:var(--mp-t1); }
-.mp-modal-body { padding:2.5rem; }
-.mp-md-gallery { display:flex; gap:2px; height:280px; overflow:hidden; }
-.mp-md-gallery img { flex:1; min-width:0; object-fit:cover; transition:.4s; }
-.mp-md-gallery img:hover { flex:1.5; }
-
-/* Lead Form Modal */
-.mp-lead-ov { position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(6px); z-index:250; display:flex; align-items:center; justify-content:center; padding:2rem; animation:mp-mf .3s; }
-.mp-lead-box { background:#FFFFFF; border-radius:12px; max-width:440px; width:100%; padding:2.5rem; animation:mp-ms .4s ease-out; box-shadow:0 20px 60px rgba(0,0,0,.15); }
-.mp-lead-input { width:100%; padding:.85rem 1rem; border:1px solid var(--mp-bdr2); border-radius:6px; font-size:.9rem; color:var(--mp-t1); outline:none; font-family:var(--mp-sans); transition:.3s; }
-.mp-lead-input:focus { border-color:var(--mp-ch); }
-.mp-lead-label { display:block; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--mp-t3); margin-bottom:.4rem; }
-
-/* Floor Plan */
-.mp-fp-svg { width:100%; aspect-ratio:16/10; border:1px solid var(--mp-bdr); border-radius:8px; margin-bottom:1.5rem; background:var(--mp-warm); }
-.mp-fp-specs { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
-.mp-fp-spec { padding:1rem; border:1px solid var(--mp-bdr); border-radius:6px; text-align:center; }
-.mp-fp-spec-l { font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:var(--mp-t3); margin-bottom:.3rem; }
-.mp-fp-spec-v { font-family:var(--mp-serif); font-size:1.1rem; color:var(--mp-t1); }
-
-/* Brochure */
-.mp-br-prog { height:4px; background:var(--mp-bdr); border-radius:2px; overflow:hidden; margin-bottom:2rem; }
-.mp-br-fill { height:100%; background:var(--mp-ch); border-radius:2px; animation:mp-brfill 2s ease-out forwards; }
-@keyframes mp-brfill { from{width:0} to{width:100%} }
-.mp-br-items { display:flex; flex-direction:column; gap:.5rem; margin:1.5rem 0; }
-.mp-br-item { display:flex; align-items:center; gap:.6rem; font-size:.85rem; color:var(--mp-t2); }
-.mp-br-item::before { content:'✓'; color:var(--mp-green); font-weight:600; }
-
-/* Payment Modal */
-.mp-pm-tabs { display:flex; gap:.5rem; margin-bottom:2rem; }
-.mp-pm-tab { flex:1; padding:.8rem; text-align:center; border:1px solid var(--mp-bdr); border-radius:8px; cursor:pointer; transition:.3s; font-family:var(--mp-sans); font-size:.82rem; background:transparent; color:var(--mp-t2); }
-.mp-pm-tab.active { border-color:var(--mp-ch); background:rgba(26,26,31,.04); color:var(--mp-t1); font-weight:500; }
-.mp-pm-ms { display:flex; flex-direction:column; gap:1rem; margin-top:2rem; }
-.mp-pm-m { display:flex; align-items:center; gap:1rem; padding:1rem; border:1px solid var(--mp-bdr); border-radius:8px; transition:.3s; }
-.mp-pm-m:hover { border-color:var(--mp-bdr2); background:rgba(26,26,31,.02); }
-
-/* Compare Modal */
-.mp-cmp-row { display:grid; padding:.75rem 1rem; border-bottom:1px solid var(--mp-bdr); align-items:center; font-size:.85rem; }
-.mp-cmp-row.hdr { font-weight:600; color:var(--mp-t3); font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; }
-.mp-cmp-label { font-weight:500; color:var(--mp-t3); font-size:.72rem; }
-.mp-cmp-val { text-align:center; }
-.mp-cmp-empty { text-align:center; padding:3rem; color:var(--mp-t3); }
-.mp-cmp-rm { background:none; border:1px solid rgba(193,18,31,.3); color:var(--mp-red); padding:.25rem .5rem; border-radius:4px; font-size:.65rem; cursor:pointer; font-family:var(--mp-sans); }
-
-/* Compare count */
-.mp-cmp-count { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:var(--mp-ch); color:var(--mp-cream); font-size:.65rem; font-weight:600; border-radius:50%; margin-inline-start:.4rem; }
-
-/* Responsive */
-@media(max-width:1024px) {
-  .mp-units { grid-template-columns:repeat(2,1fr); }
-  .mp-am-grid { grid-template-columns:repeat(2,1fr); }
-  .mp-inv-grid { grid-template-columns:repeat(2,1fr); }
-  .mp-stats { grid-template-columns:repeat(2,1fr); }
-  .mp-md-gallery { height:220px; }
-}
-@media(max-width:768px) {
-  .mp-hd { padding:1rem 1.5rem; }
-  .mp-hero-ct { padding:0 1.5rem 3rem; }
-  .mp-sec { padding:4rem 1.5rem; }
-  .mp-units { grid-template-columns:1fr; }
-  .mp-am-grid { grid-template-columns:1fr 1fr; }
-  .mp-hacts { flex-direction:column; }
-  .mp-btn-d,.mp-btn-l { width:100%; justify-content:center; }
-  .mp-modal { margin:1rem; }
-  .mp-modal-body { padding:1.5rem; }
-  .mp-md-gallery { height:180px; flex-direction:column; }
-  .mp-md-gallery img { height:180px; flex:none; }
-  .mp-ft,.mp-cta-banner { padding:3rem 1.5rem; }
-  .mp-fp-specs { grid-template-columns:1fr; }
-}
-@media(max-width:480px) {
-  .mp-stats { grid-template-columns:1fr 1fr; }
-  .mp-inv-grid { grid-template-columns:1fr; }
-  .mp-pm-tabs { flex-direction:column; }
-}
-`;
 
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function MarketplacePortal() {
@@ -561,7 +484,6 @@ export default function MarketplacePortal() {
   const resRef = useRef(null);
   const t = LANG[lang];
 
-  useEffect(() => { const el = document.createElement("style"); el.textContent = css; document.head.appendChild(el); return () => document.head.removeChild(el); }, []);
   useEffect(() => { const fn = () => setScrolled(window.scrollY > 60); window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn); }, []);
   useEffect(() => { const obs = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("vis"); }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }); document.querySelectorAll(".mp-rv").forEach((el) => obs.observe(el)); return () => obs.disconnect(); }, [lang, modal, selectedUnit, showLeadForm]);
   useEffect(() => { trackEvent("marketplace_visit"); }, []);
@@ -603,12 +525,12 @@ export default function MarketplacePortal() {
   };
 
   // Actions (all behind lead gate except view)
-  const openDetail = (unit) => { setSelectedUnit(unit); trackEvent("view_unit", { unitId: unit.id, unitName: unit.name.en }); };
-  const openFloor = (unit) => requireLead(() => { setModalUnit(unit); setModal("floorplan"); trackEvent("view_floorplan", { unitId: unit.id }); showToast(t.toast.floorPlan); });
-  const openBrochure = (unit) => requireLead(() => { setModalUnit(unit); setModal("brochure"); trackEvent("download_brochure", { unitId: unit.id }); showToast(t.toast.brochure); });
-  const openPayment = (unit) => requireLead(() => { setModalUnit(unit); setModal("payment"); setPayPlan("60/40"); trackEvent("explore_payment_plan", { unitId: unit.id }); });
+  const openDetail = (unit) => { setSelectedUnit(unit); trackEvent("view_unit", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); };
+  const openFloor = (unit) => requireLead(() => { setModalUnit(unit); setModal("floorplan"); trackEvent("view_floorplan", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.floorPlan); });
+  const openBrochure = (unit) => requireLead(() => { setModalUnit(unit); setModal("brochure"); trackEvent("download_brochure", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.brochure); });
+  const openPayment = (unit) => requireLead(() => { setModalUnit(unit); setModal("payment"); setPayPlan("60/40"); trackEvent("explore_payment_plan", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); });
   const openCompare = () => { setModal("compare"); };
-  const reqPricing = (unit) => requireLead(() => { trackEvent("request_pricing", { unitId: unit.id }); showToast(t.toast.pricing); });
+  const reqPricing = (unit) => requireLead(() => { trackEvent("request_pricing", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.pricing); });
   const handleBooking = (unit) => requireLead(() => { trackEvent("book_viewing", { unitId: unit?.id || "general" }); showToast(t.toast.booking); });
   const closeAll = () => { setModal(null); setModalUnit(null); setSelectedUnit(null); };
 
@@ -635,7 +557,21 @@ export default function MarketplacePortal() {
   // ═══════════════════════════════════════════════════════════════
   return (
     <div className="mp" dir={t.dir}>
+      <SEO
+        title="Real Estate Marketplace"
+        description="Browse premium residences with floor plans, pricing access, and viewing requests."
+        path="/enterprise/crmdemo/marketplace"
+      />
       {/* HEADER */}
+      <div className="mp-crossnav" style={{ top: scrolled ? "0" : "-40px" }}>
+        <Link to="/enterprise/crmdemo">← Demo Hub</Link>
+        <Link to="/enterprise/crmdemo/khalid">VIP Portal</Link>
+        <Link to="/enterprise/crmdemo/ahmed">Ahmed Portal</Link>
+        <span className="active">Marketplace</span>
+        <Link to="/enterprise/crmdemo/dashboard">Dashboard</Link>
+        <Link to="/enterprise/crmdemo/ai-demo">AI Pipeline</Link>
+        <span className="crossnav-persona">🌐 {lang === "ar" ? "زائر عام" : "Public Visitor"}</span>
+      </div>
       <header className={`mp-hd ${scrolled ? "sc" : ""}`}>
         <div className="mp-logo">Vista <b>Residences</b></div>
         <div className="mp-nav">
@@ -723,7 +659,18 @@ export default function MarketplacePortal() {
       <section className="mp-sec">
         <div className="mp-sh mp-rv"><span className="mp-sl">{t.sections.investment}</span><h2 className="mp-st">{t.sections.investmentSub}</h2></div>
         <div className="mp-inv-grid">{INVEST[lang].map((item, i) => (<div className="mp-inv mp-rv" key={i}><div className="mp-inv-v">{item.value}</div><div className="mp-inv-l">{item.label}</div><div className="mp-inv-n">{item.note}</div></div>))}</div>
+
       </section>
+
+      {/* ── ROI CALCULATOR BANNER ── */}
+      <Link to="/enterprise/crmdemo/roi-calculator" className="mp-roi-banner" onClick={() => { trackEvent("roi_calculator_click"); }}>
+        <div className="mp-roi-icon">📊</div>
+        <div className="mp-roi-content">
+          <h3 className="mp-roi-title">{t.roiBanner.title}</h3>
+          <p className="mp-roi-desc">{t.roiBanner.desc}</p>
+        </div>
+        <span className="mp-roi-cta">{t.roiBanner.cta}</span>
+      </Link>
 
       {/* CTA BANNER */}
       <section className="mp-cta-banner mp-rv">
@@ -885,8 +832,8 @@ export default function MarketplacePortal() {
             <p style={{ color: "var(--mp-t2)", fontSize: ".88rem", marginBottom: "2rem", lineHeight: 1.6 }}>{t.leadForm.subtitle}</p>
             <form onSubmit={handleLeadSubmit}>
               <div style={{ marginBottom: "1rem" }}><label className="mp-lead-label">{t.leadForm.name}</label><input name="leadName" type="text" required className="mp-lead-input" /></div>
-              <div style={{ marginBottom: "1rem" }}><label className="mp-lead-label">{t.leadForm.email}</label><input name="leadEmail" type="email" required className="mp-lead-input" /></div>
-              <div style={{ marginBottom: "1.5rem" }}><label className="mp-lead-label">{t.leadForm.phone}</label><input name="leadPhone" type="tel" className="mp-lead-input" /></div>
+              <div style={{ marginBottom: "1rem" }}><label className="mp-lead-label">{t.leadForm.email}</label><input name="leadEmail" type="text" inputMode="email" required className="mp-lead-input" /></div>
+              <div style={{ marginBottom: "1.5rem" }}><label className="mp-lead-label">{t.leadForm.phone}</label><input name="leadPhone" type="text" inputMode="tel" className="mp-lead-input" /></div>
               <button type="submit" className="mp-btn-d" style={{ width: "100%", justifyContent: "center" }}>{t.leadForm.submit} →</button>
               <p style={{ textAlign: "center", fontSize: ".72rem", color: "var(--mp-t3)", marginTop: "1rem" }}>{t.leadForm.note}</p>
             </form>

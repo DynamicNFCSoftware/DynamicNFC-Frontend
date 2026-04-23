@@ -1,0 +1,68 @@
+/* ═══════════════════════════════════════════════════════
+   Breadcrumb.css — Minimal breadcrumb navigation
+   Scope: .bc prefix
+   ═══════════════════════════════════════════════════════ */
+
+.bc {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 2rem;
+  font-family: 'Outfit', -apple-system, sans-serif;
+  font-size: 0.8rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.bc-link {
+  color: var(--muted, #6b7280);
+  text-decoration: none;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.bc-link:hover {
+  color: var(--text, #1a1a1f);
+}
+
+.bc-sep {
+  color: var(--border-h, rgba(0, 0, 0, 0.15));
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .bc-sep {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.bc-current {
+  color: var(--text, #1a1a1f);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* RTL */
+.bc[dir="rtl"] {
+  font-family: 'Noto Kufi Arabic', 'Outfit', sans-serif;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .bc {
+    padding: 0.6rem 1rem;
+    font-size: 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .bc::-webkit-scrollbar {
+    display: none;
+  }
+}

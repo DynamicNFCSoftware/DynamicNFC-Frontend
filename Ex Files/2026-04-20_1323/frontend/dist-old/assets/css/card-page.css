@@ -1,0 +1,71 @@
+/* Card page specific styles */
+
+.CardHeader_card-header__mOiLv {
+    position: relative;
+    width: 100%;
+    height: 120px;
+}
+
+.CardHeader_banner-image-container__6g0Pz {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+}
+
+.CardHeader_banner-image__2KOX9 {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.CardHeader_left-picture__v05WN {
+    position: absolute;
+    bottom: -40px;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid white;
+    background: white;
+    z-index: 2;
+}
+
+.CardHeader_left-picture-img__yFgFE {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.CardHeader_right-picture__uGU1E {
+    position: absolute;
+    bottom: -30px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid white;
+    background: white;
+    z-index: 2;
+}
+
+.CardHeader_right-picture-img__L0u2u {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Make card details 1.5x wider */
+#bg-card-bg {
+    min-width: 450px;
+}
+
+/* Remove unwanted padding from card container */
+.card-details-section ._15zfejk0._15zfejk1 {
+    padding-top: 0 !important;
+}

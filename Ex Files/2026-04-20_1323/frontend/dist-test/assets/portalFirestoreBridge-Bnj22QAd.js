@@ -1,0 +1,1 @@
+import{b as s,d as a}from"./index-wK7bcijJ.js";import{M as o,t as i,u as c}from"./firebase-DZ9VvTiY.js";function p(r){try{const e=s.currentUser;if(!e)return;const t={...r,source:"portal_bridge"};typeof t.timestamp=="string"&&(t.timestamp=o.fromDate(new Date(t.timestamp))),i(c(a,"tenants",e.uid,"events"),t).catch(()=>{})}catch{}}export{p as b};

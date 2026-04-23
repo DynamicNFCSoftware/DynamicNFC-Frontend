@@ -1,0 +1,304 @@
+/* ═══════════════════════════════════════════════════════════
+   ADMIN DASHBOARD v3 — Salesforce Lightning CSS
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Loading ── */
+.ad-loading-state {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; height: 400px; color: #94a3b8; font-size: 0.85rem;
+}
+.ad-spinner {
+  width: 18px; height: 18px;
+  border: 2px solid #e2e8f0; border-top-color: #3b82f6;
+  border-radius: 50%; animation: ad-spin 0.7s linear infinite;
+}
+@keyframes ad-spin { to { transform: rotate(360deg); } }
+
+/* ── Layout ── */
+.ad-dash { max-width: 1080px; }
+
+/* ── Header ── */
+.ad-header-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid #e5e7eb;
+}
+.ad-h1 { font-size: 1.2rem; font-weight: 600; color: #0f172a; margin: 0; }
+.ad-subtitle { font-size: 0.82rem; margin: 3px 0 0; font-weight: 500; }
+.ad-btn-refresh {
+  padding: 6px 14px; border-radius: 6px; border: 1px solid #d1d5db;
+  background: #fff; color: #374151; font-size: 0.8rem; font-weight: 500;
+  cursor: pointer; transition: all 0.12s; font-family: inherit;
+}
+.ad-btn-refresh:hover { border-color: #3b82f6; color: #3b82f6; }
+
+/* ── Section Label ── */
+.ad-section-label {
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #94a3b8; margin: 20px 0 8px;
+}
+
+/* ── Section Header (with badge) ── */
+.ad-section-header {
+  display: flex; align-items: center; gap: 10px; margin: 20px 0 8px;
+}
+.ad-section-header h2 {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: #334155; margin: 0;
+}
+.ad-section-badge {
+  font-size: 0.58rem; padding: 2px 8px; border-radius: 10px;
+  background: #f1f5f9; color: #64748b; font-weight: 500;
+}
+
+/* ── Executive View Banner ── */
+.ad-exec {
+  background: #fefbf4; border: 1px solid #f5e6c8;
+  border-radius: 8px; padding: 16px 20px; margin-bottom: 16px;
+}
+.ad-exec h3 {
+  font-size: 0.95rem; font-weight: 600; color: #92400e;
+  margin: 0 0 6px; font-family: 'Playfair Display', serif;
+}
+.ad-exec p {
+  font-size: 0.75rem; color: #78716c; line-height: 1.5; margin: 0 0 10px;
+}
+.ad-exec-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ad-chip {
+  font-size: 0.62rem; padding: 3px 10px; border-radius: 20px;
+  background: #fff; border: 1px solid #e7e0d5; color: #78716c; font-weight: 500;
+}
+
+/* ── Velocity KPIs ── */
+.ad-vel-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.ad-vel-card {
+  background: #fff; border-radius: 6px; padding: 14px 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04); border-top: 3px solid #e63946;
+}
+.ad-vel-label {
+  font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: #94a3b8; margin-bottom: 6px;
+}
+.ad-vel-num {
+  font-size: 1.4rem; font-weight: 700; color: #e63946;
+  line-height: 1; font-family: 'Playfair Display', serif;
+}
+.ad-vel-unit { font-size: 0.7rem; font-weight: 500; }
+.ad-vel-sub { font-size: 0.58rem; color: #94a3b8; margin-top: 4px; }
+
+/* ── Trend Badge ── */
+.ad-trend {
+  font-size: 0.6rem; font-weight: 700; padding: 1px 6px;
+  border-radius: 3px; margin-left: 6px;
+}
+.ad-trend.up { color: #059669; background: #ecfdf5; }
+.ad-trend.down { color: #dc2626; background: #fef2f2; }
+.ad-trend.flat { color: #94a3b8; background: #f8fafc; }
+
+/* ── Session Cards ── */
+.ad-session-row {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.ad-session-card {
+  background: #fff; border-radius: 6px; padding: 14px 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.ad-session-num { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.ad-session-label {
+  font-size: 0.65rem; font-weight: 600; color: #334155;
+  text-transform: uppercase; letter-spacing: 0.04em; margin-top: 4px;
+}
+.ad-session-sub { font-size: 0.58rem; color: #94a3b8; margin-top: 2px; }
+
+/* ── Conversion Row ── */
+.ad-conv-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.ad-conv {
+  background: #fff; border-radius: 6px; padding: 12px 14px;
+  border-bottom: 3px solid; box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.ad-conv-top { display: flex; justify-content: space-between; align-items: center; }
+.ad-conv-num { font-size: 1.3rem; font-weight: 700; line-height: 1; }
+.ad-conv-lbl { font-size: 0.68rem; color: #64748b; font-weight: 500; margin-top: 4px; }
+.ad-conv-split {
+  display: flex; gap: 12px; margin-top: 6px; font-size: 0.6rem; color: #64748b;
+}
+.ad-conv-split b { font-weight: 700; color: #334155; }
+.ad-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  display: inline-block; margin-right: 3px; vertical-align: middle;
+}
+.ad-dot.red { background: #e63946; }
+.ad-dot.blue { background: #457b9d; }
+
+/* ── Analytics Row ── */
+.ad-analytics-row { display: flex; gap: 8px; margin-bottom: 12px; }
+
+.ad-chart-card {
+  background: #fff; border-radius: 6px; padding: 14px 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.ad-chart-hdr {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.04em; color: #64748b; margin-bottom: 10px;
+}
+.ad-pie-legend {
+  display: flex; gap: 12px; justify-content: center; padding: 4px 0 2px; flex-wrap: wrap;
+}
+.ad-pie-legend span {
+  display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #64748b;
+}
+.ad-pie-legend i {
+  width: 6px; height: 6px; border-radius: 50%; display: inline-block;
+}
+.ad-empty-sm {
+  text-align: center; color: #94a3b8; padding: 32px 0; font-size: 0.78rem;
+}
+
+/* ── Bottom Row: Feed + VIP Summary ── */
+.ad-bottom-row { display: flex; gap: 8px; margin-bottom: 12px; }
+
+.ad-card-block {
+  background: #fff; border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03); overflow: hidden;
+}
+.ad-card-hdr-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px 0;
+}
+.ad-card-sub-count { font-size: 0.62rem; color: #94a3b8; }
+
+/* ── Feed Filters ── */
+.ad-feed-filters { display: flex; gap: 4px; }
+.ad-feed-filter {
+  padding: 3px 10px; border-radius: 12px; border: 1px solid #e2e8f0;
+  background: #fff; color: #64748b; font-size: 0.62rem; font-weight: 500;
+  cursor: pointer; transition: all 0.12s; font-family: inherit;
+}
+.ad-feed-filter:hover { border-color: #94a3b8; }
+.ad-feed-filter.active {
+  background: #0f172a; color: #fff; border-color: #0f172a;
+}
+
+/* ── Activity Feed ── */
+.ad-feed-list { padding: 4px 0; max-height: 420px; overflow-y: auto; }
+.ad-feed-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 16px; border-bottom: 1px solid #f8fafc;
+}
+.ad-feed-row:last-child { border-bottom: none; }
+.ad-feed-icon-box {
+  width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.ad-feed-content { flex: 1; min-width: 0; }
+.ad-feed-who { font-size: 0.75rem; font-weight: 600; color: #0f172a; }
+.ad-feed-vip-tag {
+  font-size: 0.48rem; background: #fef2f2; color: #dc2626;
+  padding: 1px 4px; border-radius: 2px; font-weight: 700;
+  margin-left: 4px; vertical-align: middle;
+}
+.ad-feed-reg-tag {
+  font-size: 0.48rem; background: #eff6ff; color: #457b9d;
+  padding: 1px 4px; border-radius: 2px; font-weight: 700;
+  margin-left: 4px; vertical-align: middle;
+}
+.ad-feed-what { font-size: 0.7rem; color: #64748b; line-height: 1.3; }
+.ad-feed-when { font-size: 0.6rem; color: #b0b8c4; white-space: nowrap; margin-top: 2px; }
+
+/* ── VIP Summary ── */
+.ad-vip-summary { padding: 12px 16px; }
+.ad-vip-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.ad-vip-kpi { border-radius: 6px; padding: 10px; text-align: center; }
+.ad-vip-kpi-num { font-size: 1.3rem; font-weight: 700; line-height: 1; }
+.ad-vip-kpi-lbl { font-size: 0.58rem; font-weight: 600; color: #64748b; text-transform: uppercase; margin-top: 3px; }
+
+.ad-vip-people { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.ad-vip-mini {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 6px; border: 1px solid #f1f5f9;
+  text-decoration: none; transition: all 0.1s;
+}
+.ad-vip-mini:hover { border-color: #e0e7ff; background: #f8fafc; }
+.ad-vip-mini-score {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700; flex-shrink: 0; border: 1.5px solid;
+}
+.ad-vip-mini-info { flex: 1; min-width: 0; }
+.ad-vip-mini-name { font-size: 0.78rem; font-weight: 600; color: #0f172a; }
+.ad-vip-mini-meta { font-size: 0.62rem; color: #94a3b8; }
+
+.ad-vip-link {
+  display: block; text-align: center; padding: 8px;
+  font-size: 0.72rem; font-weight: 600; color: #3b82f6;
+  text-decoration: none; border-top: 1px solid #f1f5f9; margin-top: 4px;
+}
+.ad-vip-link:hover { color: #1d4ed8; background: #f8fafc; }
+
+/* ── Funnel ── */
+.ad-funnel { padding: 8px 0; }
+.ad-funnel-step {
+  display: flex; flex-direction: column; align-items: center; margin-bottom: 4px;
+}
+.ad-funnel-bar {
+  height: 36px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.78rem; font-weight: 600;
+  transition: width 0.5s ease; min-width: 40px;
+}
+.ad-funnel-info {
+  display: flex; justify-content: space-between; width: 100%;
+  max-width: 400px; font-size: 0.65rem; color: #64748b; margin-top: 2px;
+}
+.ad-funnel-drop { color: #dc2626; font-weight: 600; font-size: 0.6rem; }
+
+/* ── Campaign Grid ── */
+.ad-campaign-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px; margin-bottom: 16px;
+}
+.ad-campaign-card {
+  background: #fff; border-radius: 6px; padding: 12px 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.ad-campaign-top { display: flex; justify-content: space-between; align-items: center; }
+.ad-campaign-name { font-size: 0.82rem; font-weight: 600; color: #0f172a; }
+.ad-campaign-status {
+  font-size: 0.55rem; padding: 2px 6px; border-radius: 3px;
+  background: #f1f5f9; color: #64748b; font-weight: 600; text-transform: uppercase;
+}
+.ad-campaign-status.active { background: #ecfdf5; color: #059669; }
+.ad-campaign-client { font-size: 0.7rem; color: #94a3b8; margin-top: 2px; }
+.ad-campaign-metrics {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px;
+}
+.ad-campaign-metrics div { text-align: center; }
+.ad-campaign-metrics b { display: block; font-size: 0.9rem; font-weight: 700; color: #0f172a; }
+.ad-campaign-metrics span { font-size: 0.55rem; color: #94a3b8; text-transform: uppercase; }
+.ad-campaign-pipeline {
+  display: flex; gap: 10px; margin-top: 6px; font-size: 0.65rem; font-weight: 500;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .ad-vel-row { grid-template-columns: repeat(2, 1fr); }
+  .ad-session-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  .ad-analytics-row { flex-direction: column; }
+  .ad-bottom-row { flex-direction: column; }
+  .ad-conv-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .ad-header-row { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .ad-vel-row { grid-template-columns: 1fr; }
+  .ad-session-row { grid-template-columns: repeat(2, 1fr); }
+  .ad-conv-row { grid-template-columns: 1fr; }
+}

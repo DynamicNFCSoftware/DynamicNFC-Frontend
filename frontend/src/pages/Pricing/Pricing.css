@@ -1,0 +1,54 @@
+.pr-page{min-height:100vh;background:#0B0B0F;color:#fff;font-family:'Outfit',system-ui,sans-serif;padding-bottom:4rem}
+
+/* Hero */
+.pr-hero{text-align:center;padding:6rem 1.5rem 2rem}
+.pr-title{font-family:'Playfair Display',Georgia,serif;font-size:2.8rem;font-weight:500;margin-bottom:.75rem}
+.pr-subtitle{font-size:1.1rem;color:rgba(255,255,255,.55);margin-bottom:2rem}
+
+/* Toggle */
+.pr-toggle{display:flex;align-items:center;justify-content:center;gap:.75rem;font-size:.85rem}
+.pr-toggle span{color:rgba(255,255,255,.4);transition:color .3s}
+.pr-toggle span.active{color:#fff;font-weight:600}
+.pr-toggle span em{font-style:normal;color:#4ecdc4;font-size:.72rem;font-weight:600}
+.pr-toggle-btn{width:48px;height:26px;border-radius:13px;border:none;background:rgba(255,255,255,.12);cursor:pointer;position:relative;padding:0;transition:background .3s}
+.pr-toggle-dot{width:20px;height:20px;border-radius:50%;background:#e63946;position:absolute;top:3px;left:3px;transition:transform .3s}
+.pr-toggle-dot.right{transform:translateX(22px)}
+
+/* Plans */
+.pr-plans{display:flex;justify-content:center;gap:1.5rem;padding:2.5rem 1.5rem;max-width:1100px;margin:0 auto;flex-wrap:wrap}
+.pr-card{flex:1;min-width:280px;max-width:340px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:2rem 1.75rem;display:flex;flex-direction:column;position:relative;transition:transform .3s,border-color .3s}
+.pr-card:hover{transform:translateY(-4px)}
+.pr-highlight{border-color:rgba(230,57,70,.4);background:rgba(230,57,70,.04);box-shadow:0 12px 40px rgba(230,57,70,.08)}
+.pr-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#e63946;color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .85rem;border-radius:50px}
+.pr-plan-name{font-size:1.3rem;font-weight:600;margin-bottom:.75rem}
+.pr-price{margin-bottom:.75rem;display:flex;align-items:baseline;gap:.3rem}
+.pr-price-amount{font-size:2.5rem;font-weight:700}
+.pr-price-custom{font-size:2rem;font-weight:600;color:#e63946}
+.pr-price-period{font-size:.82rem;color:rgba(255,255,255,.4)}
+.pr-plan-desc{font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:1.25rem}
+
+/* Features */
+.pr-features{list-style:none;padding:0;margin:0 0 1.5rem;flex:1}
+.pr-features li{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:rgba(255,255,255,.75);padding:.4rem 0}
+.pr-features svg{flex-shrink:0}
+
+/* CTA */
+.pr-cta{width:100%;padding:.8rem;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.8);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s}
+.pr-cta:hover{background:rgba(255,255,255,.06);transform:translateY(-2px)}
+.pr-cta-primary{background:#e63946;border-color:#e63946;color:#fff;box-shadow:0 8px 24px rgba(230,57,70,.3)}
+.pr-cta-primary:hover{background:#d32f3f;box-shadow:0 12px 32px rgba(230,57,70,.4)}
+
+/* FAQ */
+.pr-faq-section{max-width:900px;margin:3rem auto 0;padding:0 1.5rem}
+.pr-faq-section h2{font-family:'Playfair Display',Georgia,serif;font-size:1.6rem;font-weight:500;text-align:center;margin-bottom:2rem}
+.pr-faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
+.pr-faq-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:1.25rem 1.5rem}
+.pr-faq-item h3{font-size:.9rem;font-weight:600;margin-bottom:.5rem}
+.pr-faq-item p{font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.6}
+
+@media(max-width:760px){
+  .pr-title{font-size:2rem}
+  .pr-plans{flex-direction:column;align-items:center}
+  .pr-card{max-width:100%}
+  .pr-faq-grid{grid-template-columns:1fr}
+}

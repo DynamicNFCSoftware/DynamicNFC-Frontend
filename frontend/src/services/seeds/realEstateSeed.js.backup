@@ -1,0 +1,258 @@
+// Real Estate sector seed — region-aware via getPersonas
+import { getPersonas } from "../../config/regionConfig";
+
+const toIso = (ms) => new Date(ms).toISOString();
+const SECTOR = "realEstate";
+
+export function buildRealEstateSeed(baseTimeMs = Date.now(), regionId = "gulf") {
+  const personas = getPersonas("real_estate", regionId);
+  const vip1 = personas.find((p) => p.id === "vip1")?.name || "VIP Investor";
+  const vip2 = personas.find((p) => p.id === "vip2")?.name || "VIP Buyer";
+  const fam1 = personas.find((p) => p.id === "fam1")?.name || "Family Buyer";
+  const vip2Email = personas.find((p) => p.id === "vip2")?.email || "vip2@example.com";
+  const fam1Email = personas.find((p) => p.id === "fam1")?.email || "family@example.com";
+  const firstName = (name) => (name || "").split(" ")[0];
+
+  const events = [];
+  const pushEvent = (id, daysAgo, payload) => {
+    events.push({
+      id,
+      ...payload,
+      sector: SECTOR,
+      region: regionId,
+      timestamp: toIso(baseTimeMs - daysAgo * 24 * 60 * 60 * 1000),
+    });
+  };
+
+  pushEvent("ev_kh_01", 9, { event: "portal_opened", portalType: "vip", vipName: vip1, unitName: "Sky Penthouse A", unitType: "penthouse", tower: "Al Qamar", metadata: { duration: 95 } });
+  pushEvent("ev_kh_02", 8.5, { event: "view_unit", portalType: "vip", vipName: vip1, unitName: "Sky Penthouse A", unitType: "penthouse", tower: "Al Qamar" });
+  pushEvent("ev_kh_03", 8, { event: "view_unit", portalType: "vip", vipName: vip1, unitName: "Sky Penthouse B", unitType: "penthouse", tower: "Al Qamar" });
+  pushEvent("ev_kh_04", 7.5, { event: "request_pricing", portalType: "vip", vipName: vip1, unitName: "Sky Penthouse B", unitType: "penthouse", tower: "Al Qamar" });
+  pushEvent("ev_kh_05", 7, { event: "comparison_view", portalType: "vip", vipName: vip1, unitName: "Sky Penthouse A", unitType: "penthouse", tower: "Al Qamar" });
+  pushEvent("ev_kh_06", 6.5, { event: "explore_payment_plan", portalType: "vip", vipName: vip1, unitName: "Sky Penthouse A", unitType: "penthouse", tower: "Al Qamar" });
+  pushEvent("ev_kh_07", 6, { event: "download_brochure", portalType: "vip", vipName: vip1, unitName: "Sky Penthouse A", unitType: "penthouse", tower: "Al Qamar" });
+  pushEvent("ev_kh_08", 5.5, { event: "book_viewing", portalType: "vip", vipName: vip1, unitName: "Sky Penthouse A", unitType: "penthouse", tower: "Al Qamar" });
+
+  pushEvent("ev_fa_01", 9, { event: "portal_opened", portalType: "vip", vipName: vip2, unitName: "Royal 3BR A", unitType: "3br", tower: "Al Safwa" });
+  pushEvent("ev_fa_02", 8.5, { event: "view_unit", portalType: "vip", vipName: vip2, unitName: "Royal 3BR A", unitType: "3br", tower: "Al Safwa" });
+  pushEvent("ev_fa_03", 8, { event: "view_unit", portalType: "vip", vipName: vip2, unitName: "Royal 3BR B", unitType: "3br", tower: "Al Safwa" });
+  pushEvent("ev_fa_04", 7.2, { event: "view_unit", portalType: "vip", vipName: vip2, unitName: "Garden 3BR", unitType: "3br", tower: "Al Safwa" });
+  pushEvent("ev_fa_05", 6.6, { event: "request_pricing", portalType: "vip", vipName: vip2, unitName: "Garden 3BR", unitType: "3br", tower: "Al Safwa" });
+  pushEvent("ev_fa_06", 6, { event: "comparison_view", portalType: "vip", vipName: vip2, unitName: "Royal 3BR B", unitType: "3br", tower: "Al Safwa" });
+  pushEvent("ev_fa_07", 5.2, { event: "download_brochure", portalType: "vip", vipName: vip2, unitName: "Garden 3BR", unitType: "3br", tower: "Al Safwa" });
+  pushEvent("ev_fa_08", 4.6, { event: "explore_payment_plan", portalType: "vip", vipName: vip2, unitName: "Garden 3BR", unitType: "3br", tower: "Al Safwa" });
+
+  pushEvent("ev_ah_01", 8, { event: "portal_opened", portalType: "registered", userName: fam1, unitName: "Marina 2BR A", unitType: "2br", tower: "Al Qamar" });
+  pushEvent("ev_ah_02", 7.5, { event: "view_unit", portalType: "registered", userName: fam1, unitName: "Marina 2BR A", unitType: "2br", tower: "Al Qamar" });
+  pushEvent("ev_ah_03", 7, { event: "view_unit", portalType: "registered", userName: fam1, unitName: "Marina 2BR B", unitType: "2br", tower: "Al Qamar" });
+  pushEvent("ev_ah_04", 6.4, { event: "request_pricing", portalType: "registered", userName: fam1, unitName: "Marina 2BR B", unitType: "2br", tower: "Al Qamar" });
+
+  pushEvent("ev_an_01", 8.8, { event: "portal_opened", portalType: "anonymous", sessionId: "anon_sess_001", unitName: "Studio Bay 1", unitType: "studio", tower: "Al Safwa" });
+  pushEvent("ev_an_02", 8.5, { event: "view_unit", portalType: "anonymous", sessionId: "anon_sess_001", unitName: "Studio Bay 1", unitType: "studio", tower: "Al Safwa" });
+  pushEvent("ev_an_03", 7.1, { event: "portal_opened", portalType: "anonymous", sessionId: "anon_sess_002", unitName: "Marina 2BR A", unitType: "2br", tower: "Al Qamar" });
+  pushEvent("ev_an_04", 6.9, { event: "view_unit", portalType: "anonymous", sessionId: "anon_sess_002", unitName: "Marina 2BR A", unitType: "2br", tower: "Al Qamar" });
+  pushEvent("ev_an_05", 6.3, { event: "portal_opened", portalType: "anonymous", sessionId: "anon_sess_003", unitName: "Royal 3BR B", unitType: "3br", tower: "Al Rawda" });
+  pushEvent("ev_an_06", 6.1, { event: "view_unit", portalType: "anonymous", sessionId: "anon_sess_003", unitName: "Royal 3BR B", unitType: "3br", tower: "Al Rawda" });
+
+  pushEvent("ev_lead_01", 7.2, { event: "portal_opened", portalType: "lead", leadName: firstName(vip2), unitName: "Garden 3BR", unitType: "3br", tower: "Al Rawda" });
+  pushEvent("ev_lead_02", 7, { event: "view_unit", portalType: "lead", leadName: firstName(vip2), unitName: "Garden 3BR", unitType: "3br", tower: "Al Rawda" });
+  pushEvent("ev_lead_03", 6.6, { event: "contact_advisor", portalType: "lead", leadName: firstName(vip2), unitName: "Garden 3BR", unitType: "3br", tower: "Al Rawda" });
+
+  const cards = [
+    { id: "RE-001", unitName: "Sky Penthouse A", unitType: "penthouse", tower: "Al Qamar", price: 4500000, status: "reserved", sector: SECTOR },
+    { id: "RE-002", unitName: "Sky Penthouse B", unitType: "penthouse", tower: "Al Qamar", price: 4800000, status: "available", sector: SECTOR },
+    { id: "RE-003", unitName: "Royal 3BR A", unitType: "3br", tower: "Al Safwa", price: 2600000, status: "available", sector: SECTOR },
+    { id: "RE-004", unitName: "Royal 3BR B", unitType: "3br", tower: "Al Safwa", price: 2750000, status: "available", sector: SECTOR },
+    { id: "RE-005", unitName: "Garden 3BR", unitType: "3br", tower: "Al Safwa", price: 2800000, status: "available", sector: SECTOR },
+    { id: "RE-006", unitName: "Marina 2BR A", unitType: "2br", tower: "Al Qamar", price: 1800000, status: "available", sector: SECTOR },
+    { id: "RE-007", unitName: "Marina 2BR B", unitType: "2br", tower: "Al Qamar", price: 1850000, status: "available", sector: SECTOR },
+    { id: "RE-008", unitName: "Studio Bay 1", unitType: "studio", tower: "Al Safwa", price: 850000, status: "available", sector: SECTOR },
+    { id: "RE-009", unitName: "Studio Bay 2", unitType: "studio", tower: "Al Safwa", price: 860000, status: "sold", sector: SECTOR },
+    { id: "RE-010", unitName: "Garden 4BR", unitType: "4br", tower: "Al Rawda", price: 3500000, status: "available", sector: SECTOR },
+  ];
+
+  const leads = [
+    {
+      id: "lead_vip2",
+      name: vip2,
+      email: vip2Email,
+      phone: "+971 50 123 4567",
+      source: "website",
+      status: "qualified",
+      assignedRep: "rep1",
+      score: 78,
+      createdAt: toIso(baseTimeMs - 9 * 24 * 60 * 60 * 1000),
+      lastContactAt: toIso(baseTimeMs - 2 * 24 * 60 * 60 * 1000),
+      notes: "Interested in 3BR family units.",
+      sector: SECTOR,
+      region: regionId,
+    },
+    {
+      id: "lead_fam1",
+      name: fam1,
+      email: fam1Email,
+      phone: "+971 52 400 1122",
+      source: "event",
+      status: "contacted",
+      assignedRep: "rep2",
+      score: 62,
+      createdAt: toIso(baseTimeMs - 8 * 24 * 60 * 60 * 1000),
+      lastContactAt: toIso(baseTimeMs - 3 * 24 * 60 * 60 * 1000),
+      notes: "Comparing 2BR options in North Tower.",
+      sector: SECTOR,
+      region: regionId,
+    },
+    {
+      id: "lead_new",
+      name: "Yousef Karim",
+      email: "yousef@example.com",
+      phone: "+971 54 009 1122",
+      source: "nfc_card",
+      status: "new",
+      assignedRep: "rep1",
+      score: 38,
+      createdAt: toIso(baseTimeMs - 2 * 24 * 60 * 60 * 1000),
+      lastContactAt: toIso(baseTimeMs - 1 * 24 * 60 * 60 * 1000),
+      notes: "First contact pending.",
+      sector: SECTOR,
+      region: regionId,
+    },
+  ];
+  const deals = [
+    {
+      id: "deal_khalid_penthouse",
+      title: `Sky Penthouse A - ${firstName(vip1)}`,
+      leadName: vip1,
+      unitName: "Sky Penthouse A",
+      value: 4500000,
+      stage: "negotiation",
+      probability: 0.7,
+      assignedRep: "rep1",
+      createdAt: toIso(baseTimeMs - 8 * 24 * 60 * 60 * 1000),
+      expectedCloseAt: toIso(baseTimeMs + 21 * 24 * 60 * 60 * 1000),
+      sector: SECTOR,
+      region: regionId,
+    },
+    {
+      id: "deal_fatima_3br",
+      title: `Garden 3BR - ${firstName(vip2)}`,
+      leadName: vip2,
+      unitName: "Garden 3BR",
+      value: 2800000,
+      stage: "viewing_scheduled",
+      probability: 0.5,
+      assignedRep: "rep2",
+      createdAt: toIso(baseTimeMs - 5 * 24 * 60 * 60 * 1000),
+      expectedCloseAt: toIso(baseTimeMs + 28 * 24 * 60 * 60 * 1000),
+      sector: SECTOR,
+      region: regionId,
+    },
+    {
+      id: "deal_sara_3br",
+      title: `Garden 3BR - ${firstName(vip2)}`,
+      leadName: vip2,
+      unitName: "Garden 3BR",
+      value: 1200000,
+      stage: "inquiry",
+      probability: 0.3,
+      assignedRep: "rep2",
+      createdAt: toIso(baseTimeMs - 6 * 24 * 60 * 60 * 1000),
+      expectedCloseAt: toIso(baseTimeMs + 35 * 24 * 60 * 60 * 1000),
+      sector: SECTOR,
+      region: regionId,
+    },
+    {
+      id: "deal_ahmed_2br",
+      title: `Marina 2BR - ${firstName(fam1)}`,
+      leadName: fam1,
+      unitName: "Marina 2BR A",
+      value: 1800000,
+      stage: "contacted",
+      probability: 0.4,
+      assignedRep: "rep1",
+      createdAt: toIso(baseTimeMs - 7 * 24 * 60 * 60 * 1000),
+      expectedCloseAt: toIso(baseTimeMs + 42 * 24 * 60 * 60 * 1000),
+      sector: SECTOR,
+      region: regionId,
+    },
+    {
+      id: "deal_yousef_studio",
+      title: `Studio Bay 1 - Yousef`,
+      leadName: "Yousef Karim",
+      unitName: "Studio Bay 1",
+      value: 850000,
+      stage: "new_lead",
+      probability: 0.2,
+      assignedRep: "rep1",
+      createdAt: toIso(baseTimeMs - 2 * 24 * 60 * 60 * 1000),
+      expectedCloseAt: toIso(baseTimeMs + 60 * 24 * 60 * 60 * 1000),
+      sector: SECTOR,
+      region: regionId,
+    },
+  ];
+
+  const campaigns = [
+    {
+      id: "camp_vip_winter_access",
+      name: "Vista VIP Winter Access",
+      type: "email",
+      status: "active",
+      audience: "high_intent_vips",
+      sent: 24,
+      opened: 18,
+      clicked: 12,
+      converted: 3,
+      startDate: toIso(baseTimeMs - 30 * 24 * 60 * 60 * 1000),
+      endDate: null,
+      client: "Vista Residences",
+      totalCards: 24,
+      activeCards: 18,
+      sector: SECTOR,
+      region: regionId,
+    },
+    {
+      id: "camp_penthouse_concierge",
+      name: "Penthouse Concierge",
+      type: "event",
+      status: "completed",
+      audience: "vip_penthouse_interest",
+      sent: 12,
+      opened: 11,
+      clicked: 7,
+      converted: 2,
+      startDate: toIso(baseTimeMs - 60 * 24 * 60 * 60 * 1000),
+      endDate: toIso(baseTimeMs - 25 * 24 * 60 * 60 * 1000),
+      client: "Vista Residences",
+      totalCards: 12,
+      activeCards: 11,
+      sector: SECTOR,
+      region: regionId,
+    },
+    {
+      id: "camp_payment_plan_priority",
+      name: "Payment Plan Priority",
+      type: "sms",
+      status: "draft",
+      audience: "family_buyers",
+      sent: 0,
+      opened: 0,
+      clicked: 0,
+      converted: 0,
+      startDate: toIso(baseTimeMs + 2 * 24 * 60 * 60 * 1000),
+      endDate: null,
+      client: "Vista Residences",
+      totalCards: 18,
+      activeCards: 0,
+      sector: SECTOR,
+      region: regionId,
+    },
+  ];
+
+  return {
+    cards: cards.map((card) => ({ ...card, region: regionId })),
+    leads,
+    deals,
+    campaigns,
+    events,
+  };
+}

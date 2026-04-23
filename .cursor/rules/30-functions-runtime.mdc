@@ -1,0 +1,19 @@
+---
+description: Firebase Functions coding and operational constraints
+globs: functions/**/*.js
+alwaysApply: false
+---
+
+# Functions Rules
+
+- Runtime target: Node.js 22, Firebase Functions 1st gen (`firebase-functions/v1`).
+- Region: `us-central1` unless intentionally changed. Note: Firestore is in `northamerica-northeast1` — every call is cross-region. Do not add new functions in other regions without discussing trade-off.
+- Google Wallet: use Application Default Credentials (ADC) only. GCP org policy blocks JSON key files — never attempt that path.
+- Production logging is allowed in functions (`console.log/warn/error`) for observability.
+- Validate redirect URLs and external input; never trust request payload blindly.
+- Keep API auth/authorization checks intact (`verifyIdToken`, admin gate via `admins` collection).
+- Prefer additive, backward-compatible changes to function payloads and scheduled jobs.
+- Before deploy, verify for orphan functions and clean intentionally:
+  `firebase functions:delete <orphan-name> --region us-central1 --force`
+- Currently deployed (7): `api`, `contactForm`, `onWalletPassRequest`, `aggregateTaps`, `aggregateCampaignTaps`, `cleanupInactiveTenants`, `seedDemoData`. For live state, check `CLAUDE_HANDOFF.md` or run `firebase functions:list`.
+- `/c/:cardId` is handled client-side by the `CardRedirect` React component + Firestore lookup. Do not re-introduce a public HTTPS function for this — blocked by GCP org policy.

@@ -12,6 +12,8 @@ import {
 import { collection, getDocs, query, where, orderBy, limit, Timestamp, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import './AdminAnalytics.css';
+import { useTranslation } from '../../../i18n';
+import '../../../i18n/pages/admin';
 
 /* ────────────────────────────────────────────
    HELPERS
@@ -68,6 +70,7 @@ const heatColor = (val) => {
    ═══════════════════════════════════════════════════════════════ */
 
 export default function AdminAnalytics() {
+  const t = useTranslation('admin');
   const [loading, setLoading] = useState(true);
   const [rawData, setRawData] = useState(null);
   const { sector: sectorFilter, setSector: setSectorFilter } = useOutletContext();
@@ -123,11 +126,11 @@ export default function AdminAnalytics() {
 
     // ── S1: Lead Score Distribution ──
     const buckets = [
-      { range: '0\u201320', label: 'Cold', min: 0, max: 20, color: '#94a3b8', count: 0 },
-      { range: '20\u201340', label: 'Warm', min: 20, max: 40, color: '#3b82f6', count: 0 },
-      { range: '40\u201360', label: 'Engaged', min: 40, max: 60, color: '#f59e0b', count: 0 },
-      { range: '60\u201380', label: 'Hot', min: 60, max: 80, color: '#d97706', count: 0 },
-      { range: '80+', label: 'Ready', min: 80, max: 999, color: '#dc2626', count: 0 },
+      { range: '0\u201320', label: t('stageCold'), min: 0, max: 20, color: '#94a3b8', count: 0 },
+      { range: '20\u201340', label: t('stageWarm'), min: 20, max: 40, color: '#3b82f6', count: 0 },
+      { range: '40\u201360', label: t('stageEngaged'), min: 40, max: 60, color: '#f59e0b', count: 0 },
+      { range: '60\u201380', label: t('stageHot'), min: 60, max: 80, color: '#d97706', count: 0 },
+      { range: '80+', label: t('stageReady'), min: 80, max: 999, color: '#dc2626', count: 0 },
     ];
     const people = cards.map(card => {
       const ev = behaviors.filter(b => b.cardId === card.id);
@@ -144,10 +147,10 @@ export default function AdminAnalytics() {
     const vipEvents = behaviors.filter(b => b.visitorType === 'vip');
     const stdEvents = behaviors.filter(b => b.visitorType !== 'vip');
     const actionTypes = [
-      { key: 'book_viewing', label: 'Book Viewing' },
-      { key: 'pricing_request', label: 'Pricing' },
-      { key: 'payment_plan', label: 'Payment Plan' },
-      { key: 'brochure_download', label: 'Brochure', extra: ['floorplan_download'] },
+      { key: 'book_viewing', label: t('actionBookViewing') },
+      { key: 'pricing_request', label: t('actionPricing') },
+      { key: 'payment_plan', label: t('actionPaymentPlan') },
+      { key: 'brochure_download', label: t('actionBrochure'), extra: ['floorplan_download'] },
     ];
     const actionPerf = actionTypes.map(a => {
       const keys = [a.key, ...(a.extra || [])];
@@ -215,19 +218,19 @@ export default function AdminAnalytics() {
       vipHeatmap, unitTypesArr,
       propertyHeatmap,
     };
-  }, [rawData, sectorFilter]);
+  }, [rawData, sectorFilter, t]);
 
   if (loading) return <div className="ap-loading"><div className="ap-spinner" /></div>;
-  if (!m) return <div className="aan-empty">Failed to load analytics data</div>;
+  if (!m) return <div className="aan-empty">{t('failedLoadData')}</div>;
 
   return (
     <div style={{ maxWidth: 1080 }}>
       {/* ═══════ HEADER ═══════ */}
       <div className="aan-header">
         <div>
-          <h1 className="aan-title">Analytics</h1>
+          <h1 className="aan-title">{t('analyticsTitle')}</h1>
           <div className="aan-subtitle" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-            <span>Deep engagement intelligence across all traffic</span>
+            <span>{t('analyticsSubtitle')}</span>
             <span
               style={{
                 display: 'inline-flex',
@@ -241,7 +244,7 @@ export default function AdminAnalytics() {
                 fontWeight: 600,
               }}
             >
-              Son 30 gün gösteriliyor
+              {t('last30Days')}
             </span>
           </div>
         </div>
@@ -251,18 +254,18 @@ export default function AdminAnalytics() {
             onChange={e => setSectorFilter(e.target.value)}
             style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #e5e7eb', fontSize: '0.78rem', fontFamily: 'inherit', color: '#374151', background: '#fff', cursor: 'pointer' }}
           >
-            <option value="all">All Sectors</option>
-            <option value="real_estate">Real Estate</option>
-            <option value="automotive">Automotive</option>
+            <option value="all">{t('allSectors')}</option>
+            <option value="real_estate">{t('navRealEstate')}</option>
+            <option value="automotive">{t('navAutomotive')}</option>
           </select>
-          <button onClick={fetchData} className="aan-btn">{'\u21BB'} Refresh</button>
+          <button onClick={fetchData} className="aan-btn">{'\u21BB'} {t('refresh')}</button>
         </div>
       </div>
 
       {/* ═══════ S1: LEAD SCORE DISTRIBUTION ═══════ */}
       <div className="aan-card">
-        <div className="aan-card-title">Lead Score Distribution</div>
-        <div className="aan-card-desc">Pipeline health across all contacts {'\u2014'} {m.totalContacts} contacts</div>
+        <div className="aan-card-title">{t('leadScoreDistribution')}</div>
+        <div className="aan-card-desc">{t('pipelineHealth')} {'\u2014'} {m.totalContacts} {t('contactsHot')}</div>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={m.buckets} layout="vertical" barSize={20} margin={{ left: 10, right: 20 }}>
             <XAxis type="number" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
@@ -283,24 +286,24 @@ export default function AdminAnalytics() {
       <div className="aan-grid-2">
         {/* S2: Action Performance */}
         <div className="aan-card">
-          <div className="aan-card-title">Action Performance</div>
-          <div className="aan-card-desc">VIP vs Standard comparison</div>
+          <div className="aan-card-title">{t('actionPerformance')}</div>
+          <div className="aan-card-desc">{t('vipVsStandard')}</div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={m.actionPerf} barSize={16} margin={{ left: -10, right: 10 }}>
               <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip contentStyle={tooltipStyle} />
               <Legend wrapperStyle={{ fontSize: '0.65rem' }} />
-              <Bar dataKey="VIP" fill="#e63946" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="Standard" fill="#457b9d" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="VIP" name={t('vipShort')} fill="#e63946" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Standard" name={t('standardShort')} fill="#457b9d" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* S3: Top Plans */}
         <div className="aan-card">
-          <div className="aan-card-title">Top Plans by Interest</div>
-          <div className="aan-card-desc">All traffic {'\u2014'} unit views</div>
+          <div className="aan-card-title">{t('topPlansByInterest')}</div>
+          <div className="aan-card-desc">{t('allTrafficUnitViews')}</div>
           {m.topPlans.length > 0 ? (
             <ResponsiveContainer width="100%" height={Math.max(m.topPlans.length * 32, 100)}>
               <BarChart data={m.topPlans} layout="vertical" barSize={14} margin={{ left: 10, right: 20 }}>
@@ -311,7 +314,7 @@ export default function AdminAnalytics() {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="aan-empty">No unit view data yet</div>
+            <div className="aan-empty">{t('noUnitViewData')}</div>
           )}
         </div>
       </div>
@@ -320,14 +323,14 @@ export default function AdminAnalytics() {
       <div className="aan-grid-2">
         {/* S4: VIP Intent Heatmap */}
         <div className="aan-card">
-          <div className="aan-card-title">VIP Intent Heatmap</div>
-          <div className="aan-card-desc">Weighted intent signals per VIP {'\u00D7'} unit</div>
+          <div className="aan-card-title">{t('vipIntentHeatmap')}</div>
+          <div className="aan-card-desc">{t('weightedIntent')}</div>
           {m.vipHeatmap.length > 0 && m.unitTypesArr.length > 0 ? (
             <div style={{ overflowX: 'auto' }}>
               <table className="aan-heatmap">
                 <thead>
                   <tr>
-                    <th>VIP</th>
+                    <th>{t('vipShort')}</th>
                     {m.unitTypesArr.map(ut => <th key={ut}>{ut}</th>)}
                   </tr>
                 </thead>
@@ -352,23 +355,23 @@ export default function AdminAnalytics() {
               </table>
             </div>
           ) : (
-            <div className="aan-empty">No VIP intent data yet</div>
+            <div className="aan-empty">{t('noVipIntentData')}</div>
           )}
         </div>
 
         {/* S5: Property Demand Heatmap */}
         <div className="aan-card">
-          <div className="aan-card-title">Property Demand Heatmap</div>
-          <div className="aan-card-desc">Tower demand by floor range</div>
+          <div className="aan-card-title">{t('propertyDemandHeatmap')}</div>
+          <div className="aan-card-desc">{t('towerDemandByFloor')}</div>
           {m.propertyHeatmap.length > 0 ? (
             <div style={{ overflowX: 'auto' }}>
               <table className="aan-heatmap">
                 <thead>
                   <tr>
-                    <th>Tower</th>
-                    <th>Low (1-4)</th>
-                    <th>Mid (5-8)</th>
-                    <th>High (9+)</th>
+                    <th>{t('tower')}</th>
+                    <th>{t('lowFloor')}</th>
+                    <th>{t('midFloor')}</th>
+                    <th>{t('highFloor')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -392,42 +395,33 @@ export default function AdminAnalytics() {
               </table>
             </div>
           ) : (
-            <div className="aan-empty">No tower/floor data yet</div>
+            <div className="aan-empty">{t('noTowerData')}</div>
           )}
         </div>
       </div>
 
       {/* ═══════ S6: GUIDANCE ═══════ */}
-      <div className="aan-section">Guidance</div>
+      <div className="aan-section">{t('guidance')}</div>
       <div className="aan-guidance">
         <div className="aan-guide-item" style={{ borderLeftColor: '#3b82f6' }}>
           <span className="aan-guide-icon">{'\u{1F535}'}</span>
           <div>
-            <div className="aan-guide-title">Low clicks {'\u2260'} low demand</div>
-            <div className="aan-guide-text">
-              Improve media, naming, and clarity before changing price.
-              A unit with zero views may just need better presentation.
-            </div>
+            <div className="aan-guide-title">{t('lowClicksTitle')}</div>
+            <div className="aan-guide-text">{t('lowClicksText')}</div>
           </div>
         </div>
         <div className="aan-guide-item" style={{ borderLeftColor: '#f59e0b' }}>
           <span className="aan-guide-icon">{'\u{1F7E0}'}</span>
           <div>
-            <div className="aan-guide-title">Pricing signals = follow-up signals</div>
-            <div className="aan-guide-text">
-              For VIP: call with payment plan. For Standard: add pricing CTA to portal.
-              Every pricing request is a buying signal.
-            </div>
+            <div className="aan-guide-title">{t('pricingSignalsTitle')}</div>
+            <div className="aan-guide-text">{t('pricingSignalsText')}</div>
           </div>
         </div>
         <div className="aan-guide-item" style={{ borderLeftColor: '#dc2626' }}>
           <span className="aan-guide-icon">{'\u{1F534}'}</span>
           <div>
-            <div className="aan-guide-title">MVP guardrail</div>
-            <div className="aan-guide-text">
-              This dashboard exists to increase booked viewings, not analytics for analytics.
-              Every insight should lead to an action.
-            </div>
+            <div className="aan-guide-title">{t('mvpGuardrailTitle')}</div>
+            <div className="aan-guide-text">{t('mvpGuardrailText')}</div>
           </div>
         </div>
       </div>

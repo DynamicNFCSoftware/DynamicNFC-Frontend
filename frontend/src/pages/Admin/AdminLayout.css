@@ -1,0 +1,154 @@
+/* AdminLayout.css — Salesforce Lightning Theme — prefix: ap- */
+.ap-layout { display: flex; min-height: 100vh; background: #f4f6f9; color: #1a1a2e; font-family: 'Outfit', system-ui, -apple-system, sans-serif; }
+.ap-layout * { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Sidebar */
+.ap-sidebar { width: 240px; background: #ffffff; border-right: 1px solid #e5e7eb; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; transition: width 0.2s ease; flex-shrink: 0; z-index: 20; }
+.ap-sidebar.ap-collapsed { width: 64px; }
+.ap-sidebar-header { padding: 20px 16px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #e5e7eb; min-height: 64px; gap: 8px; position: relative; }
+.ap-sidebar-logo { display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; }
+.ap-sidebar-logo img { height: 44px; width: auto; flex-shrink: 0; transition: height 0.2s ease; }
+.ap-collapsed .ap-sidebar-logo img { height: 28px; }
+.ap-logo-link { display: flex; align-items: center; justify-content: center; text-decoration: none; transition: opacity 0.15s; }
+.ap-logo-link:hover { opacity: 0.8; }
+.ap-logo-img { height: 48px !important; width: auto; filter: none; }
+.ap-collapsed .ap-logo-img { height: 32px !important; }
+.ap-toggle { position: absolute; right: 8px; top: 20px; background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 0.85rem; padding: 4px; border-radius: 4px; }
+.ap-toggle:hover { background: #f3f4f6; color: #374151; }
+
+/* Nav */
+.ap-nav { flex: 1; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+.ap-nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; color: #6b7280; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.15s; white-space: nowrap; overflow: hidden; }
+.ap-nav-item:hover { background: #f0f7ff; color: #0176d3; }
+.ap-nav-item.ap-active { background: #0176d3 !important; color: #ffffff !important; font-weight: 600; }
+.ap-nav-icon { font-size: 1.1rem; flex-shrink: 0; width: 20px; text-align: center; }
+.ap-nav-label { overflow: hidden; }
+.ap-portal-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.58rem;
+  color: #9ca3af;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 150px;
+}
+.ap-portal-link:hover .ap-portal-sub { color: #64748b; }
+.ap-collapsed .ap-nav-label { display: none; }
+.ap-collapsed .ap-nav-item { justify-content: center; padding: 10px; }
+
+/* Nav group headers */
+.ap-nav-group {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+  padding: 16px 16px 6px;
+}
+.ap-collapsed .ap-nav-group { display: none; }
+
+/* Sector select in nav group */
+.ap-sector-select {
+  margin-left: auto;
+  padding: 1px 4px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f9fafb;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ap-sector-select:focus { outline: none; border-color: #0176d3; }
+.ap-collapsed .ap-sector-select { display: none; }
+
+/* Portal sub-group label (for "All" mode category headers) */
+.ap-portal-subgroup {
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #cbd5e1;
+  padding: 8px 16px 2px;
+}
+.ap-collapsed .ap-portal-subgroup { display: none; }
+
+/* Portal link */
+.ap-portal-link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; color: #6b7280; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.15s; white-space: nowrap; overflow: hidden; }
+.ap-portal-link:hover { background: #f0f7ff; color: #0176d3; }
+.ap-collapsed .ap-portal-link { justify-content: center; padding: 10px; }
+
+/* Hot lead badge */
+.ap-nav-badge {
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: auto;
+  line-height: 1;
+}
+.ap-collapsed .ap-nav-badge { display: none; }
+.ap-active .ap-nav-badge { background: #fff; color: #dc2626; }
+
+/* External link indicator */
+.ap-external-icon {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  margin-left: auto;
+}
+.ap-collapsed .ap-external-icon { display: none; }
+
+/* Sidebar footer */
+.ap-sidebar-footer { padding: 12px 16px; border-top: 1px solid #e5e7eb; }
+.ap-back-link { display: flex; align-items: center; gap: 6px; color: #9ca3af; text-decoration: none; font-size: 0.8rem; padding: 6px; border-radius: 6px; transition: 0.15s; }
+.ap-back-link:hover { color: #0176d3; background: #f0f7ff; }
+
+/* Main area */
+.ap-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* Header */
+.ap-header { padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; background: #ffffff; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: sticky; top: 0; z-index: 10; }
+.ap-header-title { font-size: 1rem; font-weight: 600; color: #1a1a2e; }
+.ap-user-info { display: flex; align-items: center; gap: 12px; }
+.ap-user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #0176d3; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; letter-spacing: 0.02em; }
+.ap-user-name { color: #6b7280; font-size: 0.8rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ap-logout-btn { background: #fff; color: #dc2626; border: 1px solid #fecaca; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 500; font-family: inherit; transition: 0.15s; }
+.ap-logout-btn:hover { background: #fef2f2; }
+
+/* Content */
+.ap-content { flex: 1; padding: 24px; overflow-y: auto; background: #f7f8fa; }
+
+/* Mobile */
+.ap-mobile-toggle { display: none; background: none; border: none; color: #374151; font-size: 1.3rem; cursor: pointer; padding: 4px; }
+.ap-overlay { display: none; }
+
+@media (max-width: 768px) {
+  .ap-sidebar { position: fixed; left: 0; top: 0; z-index: 100; width: 240px; transform: translateX(-100%); transition: transform 0.2s ease; box-shadow: 4px 0 12px rgba(0,0,0,0.1); }
+  .ap-sidebar.ap-open { transform: translateX(0); }
+  .ap-sidebar.ap-collapsed { transform: translateX(-100%); }
+  .ap-overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 99; }
+  .ap-mobile-toggle { display: block; }
+  .ap-content { padding: 16px; }
+  .ap-header { padding: 0 16px; }
+}
+
+/* Settings (light) */
+.ap-settings-section { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.ap-settings-title { font-size: 0.9rem; font-weight: 600; color: #374151; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.ap-settings-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; font-size: 0.85rem; border-bottom: 1px solid #f3f4f6; }
+.ap-settings-row:last-child { border-bottom: none; }
+.ap-settings-label { color: #6b7280; }
+.ap-settings-value { color: #111827; font-weight: 500; }
+.ap-settings-danger { border-color: #fecaca; }
+
+/* Loading */
+.ap-loading { display: flex; align-items: center; justify-content: center; min-height: 40vh; }
+.ap-spinner { width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #0176d3; border-radius: 50%; animation: ap-spin 0.7s linear infinite; }
+@keyframes ap-spin { to { transform: rotate(360deg); } }
+.ap-empty { text-align: center; padding: 2rem; color: #9ca3af; font-size: 0.9rem; }

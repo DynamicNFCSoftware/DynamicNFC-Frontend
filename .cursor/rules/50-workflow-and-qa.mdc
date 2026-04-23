@@ -1,0 +1,32 @@
+---
+description: Build, QA, and deployment workflow checks
+alwaysApply: true
+---
+
+# Workflow and QA Rules
+
+## Build & Deploy
+- Validate build before deploy: `cd frontend && npm run build`.
+- Deploy from repository ROOT (not `frontend/`).
+- Pre-deploy: diff `frontend/dist/assets/index-*.js` bundle hash vs production. Stale bundle is the #1 cause of "works locally but not in prod" incidents.
+- Rollback path: Firebase Hosting release history (`firebase hosting:clone`).
+
+## QA Checklist (before marking task done)
+- Region + sector switching tested across all 4 regions × 3 sectors.
+- Async UI has both loading and error states — no silent failures.
+- Responsive verified at 375, 768, 1024, and 1440 widths for UI-heavy changes.
+- Heavy animation respects `prefers-reduced-motion`.
+- Color contrast meets WCAG AA (4.5:1 for text).
+- No `console.log` left in frontend code (functions logging is allowed).
+- No broken `href="#"` links.
+- Adjacent pages that share components still work.
+
+## Incident Protocol
+F12 Console → capture full error stack → identify whether issue is frontend (bundle hash mismatch) or function (Cloud Functions logs) → rebuild + redeploy hosting BEFORE deep-diving into code.
+
+## Large File Safety
+When editing files >500 lines, verify integrity immediately after edit.
+- PowerShell line count: `(Get-Content "path").Length`
+- PowerShell tail: `Get-Content "path" -Tail 40`
+- Bash equivalents: `wc -l <file>` and `tail -n 40 <file>`
+- Confirm `npm run build` passes before considering the edit complete.

@@ -82,6 +82,18 @@ const authenticate = async (req, res, next) => {
 };
 app.use(authenticate);
 
+const requireAdmin = async (req, res, next) => {
+  try {
+    const email = (req.user?.email || "").toLowerCase();
+    if (!email) return res.status(403).json({ error: "Forbidden" });
+    const adminDoc = await db.collection("admins").doc(email).get();
+    if (!adminDoc.exists) return res.status(403).json({ error: "Forbidden" });
+    next();
+  } catch (e) {
+    return res.status(500).json({ error: "Admin check failed" });
+  }
+};
+
 app.get("/api/smartcards", async (req, res) => {
   try {
     let q = db.collection("smartcards").orderBy("createdAt", "desc");
@@ -193,7 +205,7 @@ app.post("/api/campaigns", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post("/api/seed-demo", async (req, res) => {
+app.post("/api/seed-demo", requireAdmin, async (req, res) => {
   try {
     const batch = db.batch();
     const now = admin.firestore.FieldValue.serverTimestamp();
@@ -219,7 +231,220 @@ app.post("/api/seed-demo", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.post("/api/demo/seed", requireAdmin, async (req, res) => {
+  try {
+    const now = Date.now();
+    const batch = db.batch();
+    const campaignRef = db.collection("campaigns").doc("seed-demo-live");
+    batch.set(campaignRef, {
+      name: "Seed Demo Live",
+      client: "DynamicNFC Demo",
+      totalCards: 6,
+      activeCards: 6,
+      sector: "real_estate",
+      status: "active",
+      demoSeed: true,
+      startDate: admin.firestore.Timestamp.fromDate(new Date(now - 86400000)),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+
+    const profiles = [
+      { name: "Khalid Al-Rashid", visitorType: "vip", unitId: "T1-1201", unitName: "Aurora Penthouse 1", owner: "Alex Reed" },
+      { name: "Fatima Al-Mansouri", visitorType: "family", unitId: "T2-1101", unitName: "Horizon Family 3B", owner: "Mina Patel" },
+      { name: "Maya Hassan", visitorType: "registered", unitId: "T2-0602", unitName: "Horizon Classic 2A", owner: "Alex Reed" },
+      { name: "Omar Khalil", visitorType: "anonymous", unitId: "T3-0701", unitName: "Nova Classic 7A", owner: null },
+      { name: "Nora Ali", visitorType: "vip", unitId: "T1-0903", unitName: "Aurora Marina 2B", owner: "Mina Patel" },
+      { name: "Yousef Karim", visitorType: "registered", unitId: "T3-1102", unitName: "Nova Family 3A", owner: "Alex Reed" },
+    ];
+
+    const eventSeries = [
+      { event: "portal_open", category: "browse", minutes: 0, weight: 0 },
+      { event: "unit_view", category: "engage", minutes: 3, weight: 3 },
+      { event: "brochure_download", category: "intent", minutes: 8, weight: 5 },
+      { event: "pricing_request", category: "intent", minutes: 12, weight: 15 },
+      { event: "book_viewing", category: "action", minutes: 18, weight: 25 },
+    ];
+
+    let eventCount = 0;
+    profiles.forEach((p, i) => {
+      const cardRef = db.collection("smartcards").doc();
+      batch.set(cardRef, {
+        status: "active",
+        assignedTo: p.name.toLowerCase().replace(/\s+/g, "-"),
+        assignedName: p.name,
+        redirectUrl: "https://dynamicnfc.ca/enterprise/crmdemo/khalid",
+        campaignId: "seed-demo-live",
+        cardType: p.visitorType === "vip" || p.visitorType === "family" ? "vip" : "public",
+        visitorType: p.visitorType,
+        salesRep: p.owner,
+        totalTaps: 0,
+        demoSeed: true,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      const baseTs = now - (i + 1) * 43200000;
+      eventSeries.forEach((s, idx) => {
+        const evRef = db.collection("behaviors").doc();
+        const actual = idx === 3 && i % 2 === 1
+          ? { event: "payment_plan", category: "intent", minutes: 12, weight: 15 }
+          : s;
+        const finalEv = idx === 4 && i >= 3
+          ? { event: "contact_advisor", category: "action", minutes: 18, weight: 20 }
+          : actual;
+        batch.set(evRef, {
+          cardId: cardRef.id,
+          visitorName: p.name,
+          visitorType: p.visitorType,
+          event: finalEv.event,
+          category: finalEv.category,
+          details: { unitId: p.unitId, unitName: p.unitName },
+          funnelWeight: finalEv.weight,
+          sessionId: `seed_live_${i}_${now}`,
+          portalName: i % 4 === 0 ? "marketplace" : i % 3 === 0 ? "family" : "vip",
+          demoSeed: true,
+          timestamp: admin.firestore.Timestamp.fromDate(new Date(baseTs + finalEv.minutes * 60000)),
+        });
+        eventCount += 1;
+      });
+    });
+
+    await batch.commit();
+    res.json({ success: true, cardsCreated: profiles.length, eventsCreated: eventCount });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post("/api/demo/reset", requireAdmin, async (req, res) => {
+  try {
+    const [seedCards, seedBehaviors] = await Promise.all([
+      db.collection("smartcards").where("demoSeed", "==", true).limit(500).get(),
+      db.collection("behaviors").where("demoSeed", "==", true).limit(2000).get(),
+    ]);
+    const batch = db.batch();
+    seedBehaviors.docs.forEach((d) => batch.delete(d.ref));
+    seedCards.docs.forEach((d) => batch.delete(d.ref));
+    batch.delete(db.collection("campaigns").doc("seed-demo-live"));
+    await batch.commit();
+    res.json({ success: true, deletedCards: seedCards.size, deletedEvents: seedBehaviors.size });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 exports.api = functions.https.onRequest(app);
+
+// ═══════════════════════════════════════════════════════
+// TENANT CLEANUP — Scheduled Inactivity Cleanup
+// Daily at 03:00 America/Toronto
+// Phase A: soft-delete (pendingDeletionAt) after 15 days inactivity
+// Phase B: hard-delete (recursive) after 7 days grace period
+// Exempt list: settings/cleanup-exempt (managed via AdminSettings UI)
+// DRY-RUN default TRUE — first deploy does nothing
+// ═══════════════════════════════════════════════════════
+const CLEANUP_DRY_RUN = true;
+const CLEANUP_INACTIVITY_DAYS = 15;
+const CLEANUP_GRACE_DAYS = 7;
+const CLEANUP_MAX_PER_RUN = 50;
+
+exports.cleanupInactiveTenants = functions
+  .region("us-central1")
+  .pubsub.schedule("0 3 * * *")
+  .timeZone("America/Toronto")
+  .onRun(async () => {
+    const now = Date.now();
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    const inactivityCutoff = new Date(now - CLEANUP_INACTIVITY_DAYS * DAY_MS);
+    const graceCutoff = new Date(now - CLEANUP_GRACE_DAYS * DAY_MS);
+
+    const summary = {
+      dryRun: CLEANUP_DRY_RUN,
+      scanned: 0,
+      softDeleted: 0,
+      hardDeleted: 0,
+      skippedExempt: 0,
+      errors: 0,
+    };
+
+    // Load exempt list ONCE
+    let exemptUids = new Set();
+    let exemptEmails = new Set();
+    try {
+      // Path must match firestore.rules /settings/{settingId} and AdminSettings UI
+      const exemptSnap = await db.collection("settings").doc("cleanup-exempt").get();
+      if (exemptSnap.exists) {
+        const d = exemptSnap.data() || {};
+        if (Array.isArray(d.uids)) d.uids.forEach((u) => exemptUids.add(u));
+        if (Array.isArray(d.emails)) d.emails.forEach((e) => exemptEmails.add(String(e).toLowerCase()));
+      }
+    } catch (err) {
+      console.warn("[Cleanup] Failed to read exempt list:", err.message);
+    }
+
+    const isExempt = (uid, email) =>
+      exemptUids.has(uid) || (email && exemptEmails.has(email.toLowerCase()));
+
+    // Scan inactive tenants
+    let tenantsSnap;
+    try {
+      tenantsSnap = await db
+        .collection("tenants")
+        .where("lastActivity", "<", admin.firestore.Timestamp.fromDate(inactivityCutoff))
+        .limit(CLEANUP_MAX_PER_RUN)
+        .get();
+    } catch (err) {
+      console.error("[Cleanup] Query failed:", err.message);
+      return null;
+    }
+
+    console.log(`[Cleanup] Scan — ${tenantsSnap.size} inactive tenants, dryRun=${CLEANUP_DRY_RUN}`);
+
+    for (const tenantDoc of tenantsSnap.docs) {
+      summary.scanned++;
+      const uid = tenantDoc.id;
+      const data = tenantDoc.data() || {};
+      const email = data.email || "";
+
+      try {
+        if (isExempt(uid, email)) {
+          summary.skippedExempt++;
+          console.log(`[Cleanup] SKIP exempt: ${uid} (${email})`);
+          continue;
+        }
+
+        const pendingAt = data.pendingDeletionAt?.toDate?.() || null;
+
+        // PHASE B: Hard delete — pendingDeletionAt set AND grace period expired
+        if (pendingAt && pendingAt < graceCutoff) {
+          console.log(`[Cleanup] HARD DELETE: ${uid} (${email}) — pending since ${pendingAt.toISOString()}`);
+          if (!CLEANUP_DRY_RUN) {
+            await db.recursiveDelete(tenantDoc.ref);
+          }
+          summary.hardDeleted++;
+          continue;
+        }
+
+        // PHASE A: Soft delete — inactive but not yet marked
+        if (!pendingAt) {
+          console.log(`[Cleanup] SOFT DELETE: ${uid} (${email}) — inactive ${Math.floor((now - (data.lastActivity?.toDate?.()?.getTime() || 0)) / DAY_MS)}d`);
+          if (!CLEANUP_DRY_RUN) {
+            await tenantDoc.ref.set(
+              { pendingDeletionAt: admin.firestore.FieldValue.serverTimestamp() },
+              { merge: true }
+            );
+          }
+          summary.softDeleted++;
+        }
+      } catch (err) {
+        console.error(`[Cleanup] ERROR ${uid}:`, err.message);
+        summary.errors++;
+      }
+    }
+
+    console.log("[Cleanup] Summary:", JSON.stringify(summary));
+    return null;
+  });
 
 // ═══════════════════════════════════════════════════════
 // CONTACT FORM — Public endpoint (replaces FormSubmit.co)
@@ -420,4 +645,256 @@ exports.onWalletPassRequest = functions.firestore
         processedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     }
+  });
+
+// ═══════════════════════════════════════════════════════
+// SEED DEMO DATA — Callable function for first-time /unified login
+// Idempotent: checks tenants/{uid} seedVersion before writing
+// Creates: events, deals, campaigns, leads under tenants/{uid}/
+// ═══════════════════════════════════════════════════════
+const SEED_VERSION = "v1";
+
+exports.seedDemoData = functions.region("us-central1").https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Login required");
+  }
+
+  const uid = context.auth.uid;
+  const email = context.auth.token.email || "";
+  const sectorId = (data && data.sectorId) || "real_estate";
+  const tenantRef = db.collection("tenants").doc(uid);
+
+  // Idempotent check
+  const tenantSnap = await tenantRef.get();
+  if (tenantSnap.exists) {
+    const existing = tenantSnap.data();
+    if (existing.seedVersion === SEED_VERSION) {
+      console.log(`[Seed] Skip — ${uid} already seeded with ${SEED_VERSION}`);
+      return { status: "already_seeded", seedVersion: SEED_VERSION };
+    }
+  }
+
+  console.log(`[Seed] Seeding ${uid} (${email}) sector=${sectorId}`);
+  const now = Date.now();
+  const DAY = 86400000;
+  const batch = db.batch();
+
+  // Tenant root doc
+  batch.set(tenantRef, {
+    email,
+    displayName: email.split("@")[0] || "User",
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    lastActivity: admin.firestore.FieldValue.serverTimestamp(),
+    seedVersion: SEED_VERSION,
+    seedComplete: true,
+    schemaVersion: 1,
+    cleanupEligible: true,
+    pendingDeletionAt: null,
+  }, { merge: true });
+
+  // Demo events (5)
+  const events = sectorId === "automotive" ? [
+    { id: "ev_s1", event: "auto_portal_entry", portalType: "vip", vipName: "Khalid Al-Mansouri", unitName: "AMG GT 63 S", tower: "performance", unitType: "coupe", timestamp: new Date(now - 5 * DAY).toISOString() },
+    { id: "ev_s2", event: "vehicle_view", portalType: "vip", vipName: "Khalid Al-Mansouri", unitName: "G-Class G63", tower: "suv", unitType: "suv", timestamp: new Date(now - 4 * DAY).toISOString() },
+    { id: "ev_s3", event: "request_quote", portalType: "vip", vipName: "Sultan Al-Otaibi", unitName: "AMG GT 63 S", tower: "performance", unitType: "coupe", timestamp: new Date(now - 3 * DAY).toISOString() },
+    { id: "ev_s4", event: "test_drive_request", portalType: "vip", vipName: "Khalid Al-Mansouri", unitName: "G-Class G63", tower: "suv", unitType: "suv", timestamp: new Date(now - 2 * DAY).toISOString() },
+    { id: "ev_s5", event: "download_brochure", portalType: "anonymous", sessionId: "anon_seed_01", unitName: "EQS 580", tower: "electric", unitType: "sedan", timestamp: new Date(now - 1 * DAY).toISOString() },
+  ] : [
+    { id: "ev_s1", event: "portal_opened", portalType: "vip", vipName: "Khalid Al-Rashid", unitName: "Sky Penthouse A", tower: "Al Qamar", unitType: "penthouse", timestamp: new Date(now - 7 * DAY).toISOString() },
+    { id: "ev_s2", event: "view_unit", portalType: "vip", vipName: "Khalid Al-Rashid", unitName: "Sky Penthouse A", tower: "Al Qamar", unitType: "penthouse", timestamp: new Date(now - 5 * DAY).toISOString() },
+    { id: "ev_s3", event: "request_pricing", portalType: "vip", vipName: "Fatima Al-Mansouri", unitName: "Garden 3BR", tower: "Al Rawda", unitType: "3br", timestamp: new Date(now - 4 * DAY).toISOString() },
+    { id: "ev_s4", event: "book_viewing", portalType: "vip", vipName: "Khalid Al-Rashid", unitName: "Sky Penthouse A", tower: "Al Qamar", unitType: "penthouse", timestamp: new Date(now - 3 * DAY).toISOString() },
+    { id: "ev_s5", event: "download_brochure", portalType: "registered", userName: "Ahmed Al-Fahad", unitName: "Marina 2BR A", tower: "Al Qamar", unitType: "2br", timestamp: new Date(now - 2 * DAY).toISOString() },
+  ];
+
+  events.forEach((ev) => {
+    batch.set(tenantRef.collection("events").doc(ev.id), ev);
+  });
+
+  // Demo deals (3)
+  const deals = sectorId === "automotive" ? [
+    { title: "AMG GT 63 S - Khalid", leadName: "Khalid Al-Mansouri", unitName: "AMG GT 63 S", value: 850000, stage: "negotiation", probability: 0.7, createdAt: new Date(now - 6 * DAY).toISOString() },
+    { title: "G63 - Sultan", leadName: "Sultan Al-Otaibi", unitName: "G-Class G63", value: 720000, stage: "test_drive", probability: 0.5, createdAt: new Date(now - 4 * DAY).toISOString() },
+    { title: "EQS 580 - Lead", leadName: "Anonymous", unitName: "EQS 580", value: 580000, stage: "new_lead", probability: 0.2, createdAt: new Date(now - 2 * DAY).toISOString() },
+  ] : [
+    { title: "Sky Penthouse A - Khalid", leadName: "Khalid Al-Rashid", unitName: "Sky Penthouse A", value: 4500000, stage: "negotiation", probability: 0.7, createdAt: new Date(now - 8 * DAY).toISOString() },
+    { title: "Garden 3BR - Fatima", leadName: "Fatima Al-Mansouri", unitName: "Garden 3BR", value: 2800000, stage: "viewing_scheduled", probability: 0.5, createdAt: new Date(now - 5 * DAY).toISOString() },
+    { title: "Marina 2BR - Ahmed", leadName: "Ahmed Al-Fahad", unitName: "Marina 2BR A", value: 1800000, stage: "contacted", probability: 0.4, createdAt: new Date(now - 3 * DAY).toISOString() },
+  ];
+
+  deals.forEach((deal, i) => {
+    batch.set(tenantRef.collection("deals").doc(`deal_s${i + 1}`), {
+      ...deal,
+      assignedRep: "",
+      expectedCloseAt: null,
+    });
+  });
+
+  // Demo campaign (1)
+  batch.set(tenantRef.collection("campaigns").doc("camp_seed_1"), {
+    name: sectorId === "automotive" ? "Prestige VIP Launch" : "Vista VIP Winter Access",
+    type: "email",
+    status: "active",
+    audience: "high_intent_vips",
+    sent: 24,
+    opened: 18,
+    clicked: 12,
+    converted: 3,
+    startDate: new Date(now - 30 * DAY).toISOString(),
+    endDate: null,
+    client: sectorId === "automotive" ? "Prestige Motors" : "Vista Residences",
+    totalCards: 24,
+    activeCards: 18,
+  });
+
+  // Demo leads (2)
+  const leads = sectorId === "automotive" ? [
+    { name: "Khalid Al-Mansouri", email: "khalid@prestige.sa", source: "nfc_card", status: "qualified", score: 82 },
+    { name: "Sultan Al-Otaibi", email: "sultan@prestige.sa", source: "event", status: "contacted", score: 65 },
+  ] : [
+    { name: "Khalid Al-Rashid", email: "khalid@alnoor.sa", source: "nfc_card", status: "qualified", score: 78 },
+    { name: "Fatima Al-Mansouri", email: "fatima@alnoor.sa", source: "website", status: "contacted", score: 62 },
+  ];
+
+  leads.forEach((lead, i) => {
+    batch.set(tenantRef.collection("leads").doc(`lead_s${i + 1}`), {
+      ...lead,
+      phone: "",
+      assignedRep: "",
+      createdAt: new Date(now - (7 - i) * DAY).toISOString(),
+      lastContactAt: new Date(now - (2 + i) * DAY).toISOString(),
+      notes: "",
+    });
+  });
+
+  // Settings
+  batch.set(tenantRef.collection("settings").doc("preferences"), {
+    language: "en",
+    theme: "light",
+    currency: "AED",
+    notifications: true,
+  });
+
+  await batch.commit();
+  console.log(`[Seed] Done — ${uid}: ${events.length} events, ${deals.length} deals, ${leads.length} leads, 1 campaign`);
+  return { status: "seeded", seedVersion: SEED_VERSION };
+});
+
+// ═══════════════════════════════════════════════════════
+// TAP AGGREGATION — Firestore trigger on taps/{tapId}
+// Increments cachedTapCount on the tenant's campaign doc
+// so frontend reads cached value instead of querying all taps
+// ═══════════════════════════════════════════════════════
+exports.aggregateTaps = functions.firestore
+  .document("taps/{tapId}")
+  .onCreate(async (snap) => {
+    const data = snap.data();
+    const campaignId = data.campaignId;
+    const uid = data.assignedTo;
+
+    if (!campaignId || !uid) {
+      console.log("[AggregateTaps] Skip — missing campaignId or assignedTo");
+      return null;
+    }
+
+    const dayKey = new Date().toISOString().slice(0, 10);
+    const campaignRef = db.collection("tenants").doc(uid).collection("campaigns").doc(campaignId);
+
+    try {
+      const campaignSnap = await campaignRef.get();
+      if (!campaignSnap.exists) {
+        console.log(`[AggregateTaps] Skip — campaign ${campaignId} not found for tenant ${uid}`);
+        return null;
+      }
+
+      await campaignRef.update({
+        cachedTapCount: admin.firestore.FieldValue.increment(1),
+        cachedLastTapAt: admin.firestore.FieldValue.serverTimestamp(),
+        [`cachedTapsByDay.${dayKey}`]: admin.firestore.FieldValue.increment(1),
+      });
+
+      console.log(`[AggregateTaps] +1 tap for campaign ${campaignId} tenant ${uid} day ${dayKey}`);
+    } catch (err) {
+      console.error(`[AggregateTaps] Error:`, err.message);
+    }
+
+    return null;
+  });
+
+// ═══════════════════════════════════════════════════════
+// CAMPAIGN TAP AGGREGATION — Scheduled every 15 minutes
+// Recomputes tapsTotal, taps7d, dealCount, conversionPct
+// for every non-archived campaign across all tenants.
+// Writes to campaign.aggregates {} (read-only for clients).
+// ═══════════════════════════════════════════════════════
+const STAGE_WEIGHT = {
+  new_lead: 0.1, contacted: 0.2,
+  viewing_scheduled: 0.4, viewing_done: 0.6,
+  test_drive: 0.4, quote_sent: 0.5,
+  negotiation: 0.8, offer_sent: 0.9,
+  financing: 0.85, reservation: 0.9, contract: 0.95,
+  closed_won: 1.0, closed_lost: 0.0,
+};
+
+exports.aggregateCampaignTaps = functions
+  .region("us-central1")
+  .pubsub.schedule("every 15 minutes")
+  .timeZone("UTC")
+  .onRun(async () => {
+    const now = admin.firestore.Timestamp.now();
+    const sevenDaysAgo = admin.firestore.Timestamp.fromMillis(
+      Date.now() - 7 * 24 * 60 * 60 * 1000
+    );
+    const tenantsSnap = await db.collection("tenants").get();
+    let totalProcessed = 0;
+
+    for (const tenantDoc of tenantsSnap.docs) {
+      const uid = tenantDoc.id;
+      let campaignsSnap;
+      try {
+        campaignsSnap = await db.collection("tenants").doc(uid).collection("campaigns")
+          .where("status", "!=", "archived").get();
+      } catch { continue; }
+      if (campaignsSnap.empty) continue;
+
+      const batch = db.batch();
+      let writes = 0;
+
+      for (const campDoc of campaignsSnap.docs) {
+        const campaignId = campDoc.id;
+        try {
+          const [tapsTotalSnap, taps7dSnap, dealsSnap] = await Promise.all([
+            db.collection("taps").where("campaignId", "==", campaignId).count().get(),
+            db.collection("taps").where("campaignId", "==", campaignId)
+              .where("timestamp", ">=", sevenDaysAgo).count().get(),
+            db.collection("tenants").doc(uid).collection("deals")
+              .where("campaignId", "==", campaignId).get(),
+          ]);
+          let totalWeight = 0;
+          let dealCount = 0;
+          dealsSnap.forEach((d) => {
+            totalWeight += STAGE_WEIGHT[d.get("stage")] ?? 0;
+            dealCount++;
+          });
+          const convPct = dealCount === 0 ? 0 : (totalWeight / dealCount) * 100;
+          batch.update(campDoc.ref, {
+            aggregates: {
+              tapsTotal: tapsTotalSnap.data().count,
+              taps7d: taps7dSnap.data().count,
+              dealCount,
+              conversionPct: Number(convPct.toFixed(2)),
+              updatedAt: now,
+            },
+          });
+          writes++;
+          if (writes >= 400) { await batch.commit(); writes = 0; }
+        } catch (err) {
+          console.error(`[AggCampaignTaps] Error ${uid}/${campaignId}:`, err.message);
+        }
+      }
+      if (writes > 0) await batch.commit();
+      totalProcessed += campaignsSnap.size;
+    }
+    console.log(`[AggCampaignTaps] Processed ${totalProcessed} campaigns across ${tenantsSnap.size} tenants`);
+    return null;
   });

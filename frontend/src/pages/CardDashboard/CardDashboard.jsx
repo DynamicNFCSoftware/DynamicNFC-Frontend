@@ -1,105 +1,265 @@
 import React, { useState, useEffect } from "react";
+import './CardDashboard.css';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { db } from "../../firebase";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, deleteDoc } from "firebase/firestore";
+import SEO from '../../components/SEO/SEO';
 
-const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
-.pd-wrapper { min-height: 100vh; background: #0D0D12; color: #E8E8EC; font-family: 'Outfit', sans-serif; padding-bottom: 5rem; }
-.pd-header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 3rem; background: rgba(13, 13, 18, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 50; }
-.pd-logo-text { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; color: #fff; }
-.pd-container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
-.pd-stats { display: flex; gap: 2rem; background: rgba(255,255,255,0.02); padding: 1.25rem 2.5rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); min-width: 250px; justify-content: center; }
-.pd-stat-val { font-size: 1.75rem; font-weight: 600; color: #fff; display: block; text-align: center; }
-.pd-stat-lbl { font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
-.pd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
-.pd-card { background: linear-gradient(145deg, #1c1c24, #121218); border-radius: 24px; padding: 2px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 340px; transition: 0.3s; }
-.pd-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-.pd-card-inner { background: #141419; border-radius: 22px; height: 100%; overflow: hidden; display: flex; flex-direction: column; }
-.pd-card-cover { height: 100px; background-size: cover; background-position: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.pd-card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.pd-card-name { font-size: 1.3rem; font-weight: 600; color: #fff; margin-bottom: 0.2rem; }
-.pd-card-title { font-size: 0.85rem; color: #e63946; margin-bottom: 1rem; }
-.pd-card-actions { display: flex; gap: 0.5rem; padding: 1.2rem; border-top: 1px solid rgba(255,255,255,0.05); }
-.pd-btn-action { flex: 1; padding: 0.6rem; border-radius: 10px; font-size: 0.75rem; font-weight: 500; cursor: pointer; text-align: center; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); color: #fff; background: rgba(255,255,255,0.05); transition: 0.2s; display: flex; align-items: center; justify-content: center;}
-.pd-btn-action:hover { background: rgba(255,255,255,0.12); }
-.pd-card-new { border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 340px; text-decoration: none; background: rgba(255,255,255,0.01); color: #fff; transition: 0.3s; }
-.pd-card-new:hover { border-color: #e63946; background: rgba(230, 57, 70, 0.05); }
-.btn-delete:hover { background: rgba(230,57,70,0.1) !important; border-color: rgba(230,57,70,0.5) !important; color: #e63946 !important; }
-`;
+/* ═══════════════════════════════════════════════════════
+   CardDashboard v2 — Mobile-first, Card-as-Hero
+   Inspired by HiHello / Blinq: card IS the app.
+   ═══════════════════════════════════════════════════════ */
 
 export default function CardDashboard() {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
-    const [cards, setCards] = useState([]);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [cards, setCards] = useState([]);
+  const [deleting, setDeleting] = useState(null);
+  const [qrCardId, setQrCardId] = useState(null);
+  const [copied, setCopied] = useState(false);
 
-    useEffect(() => {
-        const uid = user?.uid || user?.accountId;
-        if (!user || !uid) return;
+  useEffect(() => {
+    const uid = user?.uid || user?.accountId;
+    if (!user || !uid) return;
+    const q = query(collection(db, "cards"), where("userId", "==", uid));
+    const unsub = onSnapshot(q, (snap) => {
+      setCards(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    }, (err) => console.error("Firestore:", err));
+    return () => unsub();
+  }, [user]);
 
-        const q = query(collection(db, "cards"), where("userId", "==", uid));
-        
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setCards(data);
-        }, (err) => {
-            console.error("Firestore Error:", err);
-        });
+  const primaryCard = cards[0] || null;
+  const otherCards = cards.slice(1);
+  const totalScans = cards.reduce((s, c) => s + (Number(c.scans) || 0), 0);
 
-        return () => unsubscribe();
-    }, [user]);
+  const handleDelete = async (cardId) => {
+    if (!window.confirm("Delete this card?")) return;
+    try {
+      setDeleting(cardId);
+      await deleteDoc(doc(db, "cards", cardId));
+    } catch { alert("Delete failed."); }
+    finally { setDeleting(null); }
+  };
 
-    const totalScans = cards.reduce((s, c) => s + (Number(c.scans) || 0), 0);
+  const cardUrl = (id) => `${window.location.origin}/card/?hashId=${id}`;
 
+  const handleShare = async (id) => {
+    const url = cardUrl(id);
+    const card = cards.find(c => c.id === id);
+    if (navigator.share) {
+      try { await navigator.share({ title: `${card?.name || 'My'} - DynamicNFC`, text: 'Check out my digital business card', url }); return; }
+      catch (e) { if (e.name === 'AbortError') return; }
+    }
+    try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2000); }
+    catch { prompt('Copy this link:', url); }
+  };
+
+  const handleQR = (id) => setQrCardId(id);
+
+  /* ═══ NO CARDS — Empty state ═══ */
+  if (cards.length === 0) {
     return (
-        <div className="pd-wrapper">
-            <style>{CSS}</style>
-            <header className="pd-header">
-                <div className="pd-logo-text">DynamicNFC</div>
-                <button className="pd-btn-action" style={{maxWidth:'120px'}} onClick={async () => { await logout(); navigate("/login"); }}>Sign Out</button>
-            </header>
-            
-            <main className="pd-container">
-                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'3rem', flexWrap:'wrap', gap:'1rem'}}>
-                    <div>
-                        <h1 style={{fontFamily:"'Playfair Display'", fontSize:'2.5rem', marginBottom:'0.5rem'}}>Portfolio</h1>
-                        <p style={{color:'rgba(255,255,255,0.4)', fontWeight:300}}>Welcome back, {user?.email?.split('@')[0]}</p>
-                    </div>
-                    <div className="pd-stats">
-                        <div><span className="pd-stat-val">{cards.length}</span><span className="pd-stat-lbl">Active Cards</span></div>
-                        <div style={{width:'1px', height:'30px', background:'rgba(255,255,255,0.1)'}}></div>
-                        <div><span className="pd-stat-val" style={{color:'#e63946'}}>{totalScans}</span><span className="pd-stat-lbl">Real Scans</span></div>
-                    </div>
-                </div>
-
-                <div className="pd-grid">
-                    {cards.map(card => (
-                        <div className="pd-card" key={card.id}>
-                            <div className="pd-card-inner">
-                                <div className="pd-card-cover" style={{
-                                    backgroundImage: card.images?.cover ? `url(${card.images.cover})` : 'none',
-                                    backgroundColor: !card.images?.cover ? (card.accentColor || '#1c1c24') : 'transparent'
-                                }} />
-                                <div className="pd-card-body">
-                                    <div className="pd-card-name">{card.name || "Untitled Identity"}</div>
-                                    <div className="pd-card-title" style={{color: card.accentColor || '#e63946'}}>{card.title || "Card Holder"}</div>
-                                    <div style={{fontSize:'0.75rem', opacity:0.4}}>Scans: {card.scans || 0}</div>
-                                </div>
-                                <div className="pd-card-actions">
-                                    <Link to={`/card/?hashId=${card.id}`} target="_blank" className="pd-btn-action">Preview Live</Link>
-                                    <button className="pd-btn-action" onClick={() => navigate(`/edit-card?hashId=${card.id}`)}>Edit</button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                    
-                    <Link to="/create-card" className="pd-card-new">
-                        <span style={{fontSize:'3.5rem', fontWeight:200, marginBottom:'1rem'}}>+</span>
-                        <span style={{fontSize:'0.8rem', letterSpacing:'1.5px', textTransform:'uppercase'}}>Create New Card</span>
-                    </Link>
-                </div>
-            </main>
+      <div className="cd">
+        <SEO title="My Cards" description="Manage your digital NFC business cards, view analytics, and create new cards." path="/card-dashboard" />
+        <div className="cd-empty">
+          <div className="cd-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="48" height="48">
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <line x1="2" y1="10" x2="22" y2="10" />
+              <path d="M6 16h4" />
+            </svg>
+          </div>
+          <h1>Create your first card</h1>
+          <p>Your digital business card lives here. Share it with a tap, a QR code, or a link.</p>
+          <div className="cd-empty-btns">
+            <button className="cd-btn primary" onClick={() => navigate('/create-card')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12" y2="18.01" strokeWidth="2" strokeLinecap="round" /></svg>
+              Create Digital Card
+            </button>
+            <button className="cd-btn secondary" onClick={() => navigate('/create-physical-card')}>
+              Order Physical Card
+            </button>
+          </div>
         </div>
+      </div>
     );
+  }
+
+  /* ═══ HAS CARDS — Card-Hero layout ═══ */
+  const pc = primaryCard;
+  const ac = pc.accentColor || '#C5A467';
+
+  return (
+    <div className="cd">
+      <SEO title="My Cards" description="Manage your digital NFC business cards, view analytics, and create new cards." path="/card-dashboard" />
+
+      {/* ═══ CARD HERO — Above the fold ═══ */}
+      <div className="cd-hero">
+        {/* Cover */}
+        <div className="cd-cover" style={{
+          backgroundImage: pc.images?.cover
+            ? `url(${pc.images.cover})`
+            : `linear-gradient(145deg, ${ac}25, #1a1a1f 70%)`,
+        }}>
+          <div className="cd-cover-overlay" />
+          {/* Scans badge */}
+          <div className="cd-scans-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            {pc.scans || 0} scans
+          </div>
+        </div>
+
+        {/* Profile + Info */}
+        <div className="cd-info">
+          <div className="cd-avatar-row">
+            <div className="cd-avatar" style={{ borderColor: ac }}>
+              {pc.images?.profile
+                ? <img src={pc.images.profile} alt="" />
+                : <span>{(pc.name || 'U').charAt(0)}</span>
+              }
+            </div>
+            {pc.images?.company && (
+              <div className="cd-company-logo">
+                <img src={pc.images.company} alt="" />
+              </div>
+            )}
+          </div>
+          <h1 className="cd-name">{pc.name || 'Untitled Card'}</h1>
+          <div className="cd-title" style={{ color: ac }}>{pc.title || 'Card Holder'}</div>
+          {pc.company && <div className="cd-company">{pc.company}</div>}
+        </div>
+
+        {/* Quick action row under card */}
+        <div className="cd-quick-row">
+          <Link to={`/card/?hashId=${pc.id}`} target="_blank" className="cd-quick-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Preview
+          </Link>
+          <button className="cd-quick-btn" onClick={() => navigate(`/edit-card?hashId=${pc.id}`)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button className="cd-quick-btn danger" onClick={() => handleDelete(pc.id)} disabled={deleting === pc.id}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="18" height="18"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+            {deleting === pc.id ? '...' : 'Delete'}
+          </button>
+        </div>
+      </div>
+
+      {/* ═══ OTHER CARDS (if multiple) ═══ */}
+      {otherCards.length > 0 && (
+        <div className="cd-section">
+          <div className="cd-divider">
+            <span>Other Cards ({otherCards.length})</span>
+          </div>
+          <div className="cd-other-grid">
+            {otherCards.map(card => (
+              <div className="cd-other-card" key={card.id}>
+                <div className="cd-other-cover" style={{
+                  backgroundImage: card.images?.cover ? `url(${card.images.cover})` : 'none',
+                  backgroundColor: !card.images?.cover ? (card.accentColor || '#1a1a1f') : 'transparent',
+                }} />
+                <div className="cd-other-body">
+                  <div className="cd-other-name">{card.name || 'Untitled'}</div>
+                  <div className="cd-other-title" style={{ color: card.accentColor || '#e63946' }}>{card.title || 'Card Holder'}</div>
+                  <div className="cd-other-scans">{card.scans || 0} scans</div>
+                </div>
+                <div className="cd-other-actions">
+                  <button className="cd-mini-btn" onClick={() => handleQR(card.id)} title="QR Code">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                  </button>
+                  <button className="cd-mini-btn" onClick={() => handleShare(card.id)} title="Share">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                  </button>
+                  <button className="cd-mini-btn" onClick={() => navigate(`/edit-card?hashId=${card.id}`)} title="Edit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ═══ CREATE NEW — Below the fold ═══ */}
+      <div className="cd-section">
+        <div className="cd-divider">
+          <span>{cards.length > 0 ? 'Create another card' : 'Get started'}</span>
+        </div>
+        <div className="cd-create-grid">
+          <button className="cd-create-card" onClick={() => navigate('/create-card')}>
+            <div className="cd-create-icon digital">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24"><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12" y2="18.01" strokeWidth="2" strokeLinecap="round" /></svg>
+            </div>
+            <div className="cd-create-text">
+              <strong>Digital Profile</strong>
+              <span>Free — share via link or QR</span>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18" className="cd-create-arrow"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <button className="cd-create-card" onClick={() => navigate('/create-physical-card')}>
+            <div className="cd-create-icon physical">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M2 10h20" /><path d="M6 16h4" /></svg>
+            </div>
+            <div className="cd-create-text">
+              <strong>Physical NFC Card</strong>
+              <span>From $30 — PVC, Metal, Eco</span>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18" className="cd-create-arrow"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {/* ═══ STICKY BOTTOM BAR ═══ */}
+      <div className="cd-sticky-bar">
+        <button className="cd-sticky-btn qr" onClick={() => handleQR(pc.id)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="22" height="22"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M18 18h3v3h-3z"/><path d="M14 18h.01"/><path d="M18 14h.01"/></svg>
+          <span>QR Code</span>
+        </button>
+        <button className="cd-sticky-btn share" onClick={() => handleShare(pc.id)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          <span>{copied ? 'Copied!' : 'Share'}</span>
+        </button>
+        <button className="cd-sticky-btn edit" onClick={() => navigate(`/edit-card?hashId=${pc.id}`)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="22" height="22"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span>Edit</span>
+        </button>
+      </div>
+
+      {/* ═══ QR OVERLAY ═══ */}
+      {qrCardId && (
+        <div className="cd-qr-overlay" onClick={() => setQrCardId(null)}>
+          <div className="cd-qr-modal" onClick={e => e.stopPropagation()}>
+            <button className="cd-qr-close" onClick={() => setQrCardId(null)}>✕</button>
+            <div className="cd-qr-name">
+              {cards.find(c => c.id === qrCardId)?.name || 'My Card'}
+            </div>
+            <div className="cd-qr-sub">Scan to view my digital card</div>
+            <div className="cd-qr-frame">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(cardUrl(qrCardId))}&color=1a1a1f&bgcolor=ffffff&margin=8`}
+                alt="QR Code"
+                className="cd-qr-img"
+              />
+            </div>
+            <div className="cd-qr-url">{cardUrl(qrCardId)}</div>
+            <div className="cd-qr-actions">
+              <button className="cd-qr-btn primary" onClick={() => handleShare(qrCardId)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                Share Link
+              </button>
+              <button className="cd-qr-btn secondary" onClick={async () => {
+                try { await navigator.clipboard.writeText(cardUrl(qrCardId)); setCopied(true); setTimeout(() => setCopied(false), 2000); }
+                catch { prompt('Copy:', cardUrl(qrCardId)); }
+              }}>
+                {copied ? 'Copied!' : 'Copy Link'}
+              </button>
+            </div>
+            <div className="cd-qr-powered">Powered by DynamicNFC</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

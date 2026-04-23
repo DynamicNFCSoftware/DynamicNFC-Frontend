@@ -1,0 +1,21 @@
+---
+description: Firestore query and tenant data safety
+globs: frontend/src/{services,hooks,pages/UnifiedDashboard}/**/*.{js,jsx}
+alwaysApply: false
+---
+
+# Firestore and Tenant Rules
+
+- Tenant data lives under `tenants/{uid}/{cards,leads,deals,campaigns,events,settings}`; preserve tenant isolation.
+- Every tenant subcollection doc MUST carry both `sector` (realEstate|automotive|yacht) and `region` (gulf|usa|mexico|canada) fields.
+- Use deterministic IDs and merge writes (`{ merge: true }`) for reseed flows. Never destructive reseed.
+- Never call `clearTenantSubcollections()` from `seedTenantData`, region-switch handlers, or version-bump migrations. Only `resetToDemo` (explicit manual user action) may clear.
+- On region/sector switch, filter client-side via `filterBySectorAndRegion`. Never re-seed, never add server-side region filters, keep listeners stable.
+- Add `.limit()` to list queries where appropriate to avoid runaway reads.
+- Keep admin checks via `useAdmin()` and auth checks via `useAuth()`.
+- Canonical field names — do not invent variants:
+  - Card: `id, name, unitName, type, unitType, tower, status, pricing, views, downloads, bookings, totalTaps, lastTapAt, interestedVips, sparkline, campaignId, linkedCampaignId, linkedDealCount, assignedRepId, assignedRepName`
+  - Deal: `id, name, title, leadName, item, value, stage, score, velocity, triggers, atRisk, vipLinked, lastSeen`
+  - Campaign: `id, name, description, channel, type, objective, targetAudience, totalCards, activeCards, cardIds, budget, spent`
+- Tenant lifecycle: 22-day inactive retention (15d → `pendingDeletionAt`, +7d grace, day 22 hard delete). Exempt emails live in `settings/cleanup-exempt`.
+- Top-level legacy collections that must still work: `smartcards`, `cards` (do not modify structure), `taps`, `behaviors`, `campaigns`, `admins`, `settings`, `walletPassRequests`, `walletPasses`.

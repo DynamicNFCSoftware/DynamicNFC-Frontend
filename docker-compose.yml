@@ -25,6 +25,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: dynamicpass
       SPRING_PROFILES_ACTIVE: production
       SERVER_FORWARD_HEADERS_STRATEGY: framework
+      DOCUSIGN_RSA_KEY_PATH: /app/docusign-private.key
     ports:
       - "8080:8080"
     networks:

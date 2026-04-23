@@ -1,41 +1,167 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
+import './AIDemo.css';
+import { loadGIS, requestToken, getUserInfo, createGmailDraft, createCalendarEvent, revokeToken, buildVipEmailHtml } from "./googleLiveApi";
+import canvaProposalCover from "../../assets/images/canva-proposal-cover.png";
+import SEO from '../../components/SEO/SEO';
 
-// ═══════════════════════════════════════════════════════════════════
-// AI SALES AUTOMATION DEMO — Interactive MCP Showcase
-// ═══════════════════════════════════════════════════════════════════
-// Interactive execution: each step has Run button, terminal animation,
-// then reveals real MCP results (Gmail draft, Calendar event, etc.)
-// Steps unlock sequentially like a real pipeline.
-// Self-contained, prefix: ai-
-// Supports dark & light theme toggle.
-// ═══════════════════════════════════════════════════════════════════
+/* ═══ TRANSLATIONS ═══ */
+const TR = {
+  en: {
+    home: 'Home', back: 'Back to CRM',
+    badge: 'Live MCP Demo',
+    light: 'Light', dark: 'Dark',
+    heroTag: 'Live MCP Demo — Real API Results',
+    heroH1a: 'One tap.', heroH1b: 'Five actions. Zero manual work.',
+    heroDesc: 'Khalid taps his NFC card. In under a minute: a proposal is designed, an email is sent, a showing is booked, and an NDA is signed. Every result below is real — click any link to verify.',
+    statPlatforms: 'Live Platforms', statTime: 'Full Pipeline', statActual: 'Actual Time', statSteps: 'Steps Complete',
+    googleTitle: 'Connect Your Google Account',
+    googleLive: 'Live Mode',
+    googleDescLive: 'Gmail drafts and Calendar events will be created in YOUR account.',
+    googleDescDemo: 'Connect to create real Gmail drafts and Calendar events in your own account. Otherwise, demo data is shown.',
+    googleConnect: 'Connect with Google', googleConnecting: 'Connecting...',
+    googleDisconnect: 'Disconnect',
+    googleError: 'Connection failed. You can continue with demo data.',
+    googlePrivacy: 'OAuth2 popup — your password never touches our servers. Token expires when you close this page.',
+    pipeTitle: 'The Pipeline',
+    pipeRunAll: 'Run Full Pipeline', pipeDone: 'Pipeline Complete', pipeRunning: 'Running...',
+    run: 'Run',
+    statusDone: 'Complete', statusRunning: 'Executing...', statusReady: 'Ready', statusLocked: 'Locked',
+    triggerDesc: 'Khalid walks into the sales center and taps his card. We instantly know who he is, what he looked at before, and that he\'s been eyeing the Sky Penthouse for three days.',
+    canvaDesc: 'A 7-page proposal gets built on the spot — his name, his unit, ROI numbers, floor plans. Gulf-luxury design, bilingual layout. This is a real Canva file — click through and check.',
+    gmailDesc: 'The proposal gets attached to a personal invite email and lands in Khalid\'s inbox. This is a real Gmail draft — open it yourself.',
+    calendarDesc: 'The system checks who\'s free, picks the best time, and books a private showing. A real Google Calendar event you can verify.',
+    docusignDesc: 'Before Khalid walks in, we send him an NDA. He signs, exclusive pricing unlocks in his portal. Pre-filled, ready to go.',
+    detected: 'Detected', leadScore: 'Lead Score',
+    pagesGen: 'Pages Generated',
+    canvaMeta: 'Personalized Gulf Region luxury proposal with Unit PH-4201 details, ROI analysis, exclusive VIP pricing (AED 8,500,000), and premium amenities. Bilingual EN/AR with Arabic-inspired design.',
+    viewCanva: 'View in Canva', editDesign: 'Edit Design',
+    canvaExport: 'Real Canva design generated via MCP — exported as PDF and attached to email in next step',
+    clickPreview: 'Click to preview full email',
+    openYourDraft: 'Open YOUR draft in Gmail', viewRealDraft: 'View real draft in Gmail',
+    openYourEvent: 'Open YOUR event in Calendar', openCalendar: 'Open in Google Calendar',
+    calVerify: 'Real calendar event created via MCP — click link above to verify',
+    docDraft: 'Draft Created', docSent: 'Sent',
+    docRecipient: 'Recipient', docEmail: 'Email', docEnvelope: 'Envelope ID', docStatus: 'Status',
+    docStatusLive: 'Real DocuSign envelope via REST API', docStatusDemo: 'Demo mode — configure DocuSign credentials',
+    viewDocusign: 'View in DocuSign', apiResponse: 'API Response',
+    docUnlock: 'Workflow triggered: Exclusive pre-launch pricing unlocked in Khalid\'s VIP portal',
+    finalH2: 'Done.', finalTotal: 's total.',
+    finalDesc: 'Khalid has a proposal in his inbox, a showing on his calendar, and an NDA waiting for his signature. Your sales team can focus on closing — not chasing.',
+    finalItem1: 'Proposal built and exported', finalItem2: 'Email drafted and sent', finalItem3: 'Showing booked', finalItem4: 'NDA sent, pricing unlocked',
+    emailModalTitle: 'Vista Residences', emailModalSub: 'VIP Private Showing Invitation',
+    emailDear: 'Dear Khalid,',
+    emailBody1: 'Thank you for your continued interest in Vista Residences. As a VIP buyer, we are pleased to invite you to an',
+    emailBody1b: 'exclusive private showing',
+    emailBody1c: 'of the Sky Penthouse.',
+    emailBrochure: 'Your personalized property brochure with ROI analysis is attached. Please complete the enclosed NDA to unlock exclusive pre-launch pricing before your showing.',
+    emailRegards: 'Warm regards,', emailTeam: 'Vista Residences Sales Team', emailPowered: 'Powered by Dynamic NFC',
+    emailRealDraft: 'This is a real draft — Open in Gmail',
+    footer: 'AI Sales Automation Demo for', footerLink: 'Dynamic NFC',
+    footNote: 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and enterprise.',
+    footIndustries: 'Industries', footDevAgents: 'Developers & Agents', footAuto: 'Automotive', footNfc: 'NFC Cards',
+    footResources: 'Resources', footLiveDemo: 'Live Demo', footContact: 'Contact Sales', footLogin: 'Log in',
+    footCopy: '© 2026 DynamicNFC Card Inc. All Rights Reserved.',
+  },
+  ar: {
+    home: 'الرئيسية', back: 'العودة إلى CRM',
+    badge: 'عرض MCP مباشر',
+    light: 'فاتح', dark: 'داكن',
+    heroTag: 'عرض MCP مباشر — نتائج API حقيقية',
+    heroH1a: 'نقرة واحدة.', heroH1b: 'خمسة إجراءات. بلا أي عمل يدوي.',
+    heroDesc: 'خالد ينقر بطاقة NFC. خلال أقل من دقيقة: يتم تصميم عرض، إرسال بريد إلكتروني، حجز معاينة، وتوقيع اتفاقية سرية. كل نتيجة أدناه حقيقية — انقر على أي رابط للتحقق.',
+    statPlatforms: 'منصات مباشرة', statTime: 'كامل المسار', statActual: 'الوقت الفعلي', statSteps: 'الخطوات المكتملة',
+    googleTitle: 'اربط حسابك في Google',
+    googleLive: 'الوضع المباشر',
+    googleDescLive: 'سيتم إنشاء مسودات Gmail وأحداث التقويم في حسابك أنت.',
+    googleDescDemo: 'اربط حسابك لإنشاء مسودات Gmail وأحداث تقويم حقيقية. وإلا ستُعرض بيانات تجريبية.',
+    googleConnect: 'الربط مع Google', googleConnecting: 'جارٍ الاتصال...',
+    googleDisconnect: 'قطع الاتصال',
+    googleError: 'فشل الاتصال. يمكنك المتابعة بالبيانات التجريبية.',
+    googlePrivacy: 'نافذة OAuth2 — كلمة مرورك لا تمر عبر خوادمنا. تنتهي صلاحية الرمز عند إغلاق الصفحة.',
+    pipeTitle: 'المسار',
+    pipeRunAll: 'تشغيل المسار الكامل', pipeDone: 'اكتمل المسار', pipeRunning: 'جارٍ التشغيل...',
+    run: 'تشغيل',
+    statusDone: 'مكتمل', statusRunning: 'قيد التنفيذ...', statusReady: 'جاهز', statusLocked: 'مقفل',
+    triggerDesc: 'خالد يدخل مركز المبيعات وينقر بطاقته. نعرف فورًا من هو، ما شاهده سابقًا، وأنه يتابع Sky Penthouse منذ ثلاثة أيام.',
+    canvaDesc: 'عرض من 7 صفحات يُصمم فورًا — اسمه، وحدته، أرقام العائد، المخططات. تصميم خليجي فاخر، ثنائي اللغة. هذا ملف Canva حقيقي — انقر وتحقق.',
+    gmailDesc: 'العرض يُرفق ببريد دعوة شخصي ويصل إلى بريد خالد. هذه مسودة Gmail حقيقية — افتحها بنفسك.',
+    calendarDesc: 'النظام يتحقق من الأوقات المتاحة، يختار الأنسب، ويحجز معاينة خاصة. حدث Google Calendar حقيقي يمكنك التحقق منه.',
+    docusignDesc: 'قبل وصول خالد، نرسل له اتفاقية سرية. يوقّع، والأسعار الحصرية تُفتح في بوابته. معبأ مسبقًا، جاهز.',
+    detected: 'تم الكشف', leadScore: 'تقييم العميل',
+    pagesGen: 'صفحات تم إنشاؤها',
+    canvaMeta: 'عرض استثماري مخصص لمنطقة الخليج مع تفاصيل الوحدة PH-4201، تحليل العائد، تسعير VIP حصري (8,500,000 درهم)، ومرافق فاخرة. ثنائي اللغة EN/AR بتصميم عربي.',
+    viewCanva: 'عرض في Canva', editDesign: 'تعديل التصميم',
+    canvaExport: 'تصميم Canva حقيقي عبر MCP — تم تصديره كـ PDF وإرفاقه بالبريد في الخطوة التالية',
+    clickPreview: 'انقر لمعاينة البريد الكامل',
+    openYourDraft: 'افتح مسودتك في Gmail', viewRealDraft: 'عرض المسودة الحقيقية في Gmail',
+    openYourEvent: 'افتح حدثك في التقويم', openCalendar: 'فتح في Google Calendar',
+    calVerify: 'حدث تقويم حقيقي تم إنشاؤه عبر MCP — انقر الرابط أعلاه للتحقق',
+    docDraft: 'تم إنشاء المسودة', docSent: 'تم الإرسال',
+    docRecipient: 'المستلم', docEmail: 'البريد', docEnvelope: 'معرّف المغلف', docStatus: 'الحالة',
+    docStatusLive: 'مغلف DocuSign حقيقي عبر REST API', docStatusDemo: 'وضع تجريبي — قم بإعداد بيانات DocuSign',
+    viewDocusign: 'عرض في DocuSign', apiResponse: 'استجابة API',
+    docUnlock: 'تم تفعيل سير العمل: تم فتح أسعار ما قبل الإطلاق الحصرية في بوابة خالد VIP',
+    finalH2: 'تم.', finalTotal: ' ثانية إجمالي.',
+    finalDesc: 'خالد لديه عرض في بريده، معاينة في تقويمه، واتفاقية سرية بانتظار توقيعه. فريق مبيعاتك يمكنه التركيز على الإغلاق — لا الملاحقة.',
+    finalItem1: 'تم بناء العرض وتصديره', finalItem2: 'تم صياغة البريد وإرساله', finalItem3: 'تم حجز المعاينة', finalItem4: 'تم إرسال الاتفاقية، والتسعير مفتوح',
+    emailModalTitle: 'Vista Residences', emailModalSub: 'دعوة معاينة خاصة لكبار الشخصيات',
+    emailDear: 'عزيزي خالد،',
+    emailBody1: 'شكرًا لاهتمامك المستمر بـ Vista Residences. بصفتك مشتري VIP، يسعدنا دعوتك إلى',
+    emailBody1b: 'معاينة خاصة حصرية',
+    emailBody1c: 'لـ Sky Penthouse.',
+    emailBrochure: 'كتيب العقار المخصص مع تحليل العائد مرفق. يرجى إكمال اتفاقية السرية المرفقة لفتح أسعار ما قبل الإطلاق الحصرية قبل معاينتك.',
+    emailRegards: 'مع أطيب التحيات،', emailTeam: 'فريق مبيعات Vista Residences', emailPowered: 'مدعوم من Dynamic NFC',
+    emailRealDraft: 'هذه مسودة حقيقية — افتح في Gmail',
+    footer: 'عرض أتمتة مبيعات AI لـ', footerLink: 'Dynamic NFC',
+    footNote: 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات والمؤسسات.',
+    footIndustries: 'القطاعات', footDevAgents: 'المطورين والوكلاء', footAuto: 'السيارات', footNfc: 'بطاقات NFC',
+    footResources: 'الموارد', footLiveDemo: 'عرض مباشر', footContact: 'تواصل مع المبيعات', footLogin: 'تسجيل الدخول',
+    footCopy: '© ٢٠٢٦ DynamicNFC Card Inc. جميع الحقوق محفوظة.',
+  },
+};
 
 /* ── Real results from MCP tool calls ── */
 const REAL_RESULTS = {
-  calendar: {
-    title: "Private Showing — Sky Penthouse — Khalid Al-Rashid (VIP)",
-    date: "Thursday, March 12, 2026",
-    time: "2:00 PM – 3:00 PM GST",
-    location: "Vista Residences Sales Center, Dubai Marina",
-    link: "https://www.google.com/calendar/event?eid=dW5tMXB1dDY3dWEwMm9xYWF1a2JxcDVmcDQgaW5mb0BkeW5hbWljbmZjLmhlbHA",
-    slotsFound: 3,
+  canva: {
+    designId: "DAHDq0h2I3g",
+    title: "Private Investment Memorandum — Khalid Al-Rashid",
+    pages: 7,
+    editUrl: "https://www.canva.com/d/jSENLEvDSFflEB2",
+    viewUrl: "https://www.canva.com/d/rFvRuRe3S2mY5LO",
+    thumbnailUrl: canvaProposalCover,
+    exportFormat: "PDF",
+    sections: ["Cover", "Personal Letter", "The Residence", "Investment Analysis", "The Lifestyle", "Your Invitation", "Back Cover"],
   },
+  calendar: (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    const day = d.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Dubai" });
+    return {
+      title: "Private Showing — Sky Penthouse — Khalid Al-Rashid (VIP)",
+      date: day,
+      time: "2:00 PM – 3:00 PM GST",
+      location: "Vista Residences Sales Center, Dubai Marina",
+      link: "https://www.google.com/calendar/event?eid=b3VwazdtbmRldHZtamI5dnMyZHJ1bnZ0cHMgaW5mb0BkeW5hbWljbmZjLmhlbHA",
+      slotsFound: 3,
+    };
+  })(),
   gmail: {
     to: "khalid.alrashid@vista.ae",
     subject: "Khalid, your private viewing of the Sky Penthouse is confirmed",
     from: "info@dynamicnfc.help",
-    attachment: "Vista_Residences_SkyPenthouse_Khalid_AlRashid.pdf",
-    draftLink: "https://mail.google.com/mail/?authuser=info@dynamicnfc.help#drafts/19cd3fa2c68904a0",
-    draftId: "r-5341690815395717705",
+    attachment: "Al_Noor_Residences_PH4201_Khalid_AlRashid.pdf",
+    draftLink: "https://mail.google.com/mail/?authuser=info@dynamicnfc.help#drafts/19ce466e35411df8",
+    draftId: "r7478946889190758659",
   },
   docusign: {
-    template: "VIP Buyer NDA — Vista Residences",
+    template: "VIP Buyer NDA — Al Noor Residences",
     recipient: "Khalid Al-Rashid",
     email: "khalid.alrashid@vista.ae",
-    envelopeId: "e4f7-a2b1-9c3d-8e6f",
-    status: "Signed",
-    signedIn: "4 minutes",
+    envelopeId: null, // will be filled by live API call
+    status: "created",
+    signedIn: null,
+    live: false,
   },
 };
 
@@ -45,297 +171,78 @@ const TERMINAL_LINES = {
     { type: "cmd", text: "nfc.detect() → VIP Access Key scanned" },
     { type: "wait", text: "Authenticating NFC card..." },
     { type: "data", text: "Profile: Khalid Al-Rashid | Tier: Platinum | VIP ID: KR-001" },
-    { type: "data", text: "Interest: Sky Penthouse | Range: AED 8M–15M" },
-    { type: "data", text: "Last engagement: 3 days ago (viewed Sky Penthouse)" },
+    { type: "data", text: "Interest: Unit PH-4201, Al Noor Residences | Range: AED 8M–15M" },
+    { type: "data", text: "Last engagement: 3 days ago (viewed Penthouse Collection)" },
     { type: "ok", text: "VIP profile loaded — triggering AI sales pipeline" },
+  ],
+  canva: [
+    { type: "cmd", text: "mcp.canva.generate_design({type: 'proposal', style: 'gulf_luxury'})" },
+    { type: "wait", text: "AI generating personalized VIP investment proposal..." },
+    { type: "data", text: "Template: Gulf Region — Arabic-inspired geometric patterns, gold & ivory palette" },
+    { type: "data", text: "Personalizing for: Khalid Al-Rashid — Unit PH-4201, Al Noor Residences" },
+    { type: "data", text: "Pages: Cover, Personal Letter, The Residence, Investment Analysis, The Lifestyle, Your Invitation, Back Cover" },
+    { type: "data", text: "Locale: Bilingual EN/AR — right-to-left layout support enabled" },
+    { type: "cmd", text: "mcp.canva.export_design({format: 'pdf', design_id: 'DAHDl2uZnXE'})" },
+    { type: "wait", text: "Exporting 7-page proposal as PDF..." },
+    { type: "ok", text: "Proposal generated — Al_Noor_Residences_PH4201_Khalid_AlRashid.pdf (3.1MB)" },
   ],
   gmail: [
     { type: "cmd", text: "mcp.gmail.create_draft({to: 'khalid.alrashid@vista.ae'})" },
-    { type: "wait", text: "Generating personalized VIP brochure email..." },
+    { type: "wait", text: "Composing personalized VIP invitation email..." },
     { type: "data", text: "Subject: 'Khalid, your private viewing of the Sky Penthouse is confirmed'" },
-    { type: "data", text: "Attaching: Vista_Residences_SkyPenthouse_Khalid_AlRashid.pdf (2.4MB)" },
-    { type: "data", text: "Content: Unit details, ROI projections, floor plan, amenities" },
-    { type: "ok", text: "Email sent successfully — draft ID: r-5341690815395717705" },
+    { type: "data", text: "Attaching: Al_Noor_Residences_PH4201_Khalid_AlRashid.pdf (3.1MB)" },
+    { type: "data", text: "Content: Personal invitation + Canva proposal attached" },
+    { type: "ok", text: "Email sent successfully — draft ID: r7478946889190758659" },
   ],
-  calendar: [
-    { type: "cmd", text: "mcp.gcal.find_meeting_times({attendees: ['khalid.alrashid@vista.ae']})" },
-    { type: "wait", text: "Checking availability for all parties..." },
-    { type: "data", text: "3 available slots found this week" },
-    { type: "data", text: "Optimal: Thursday Mar 12, 2:00 PM (all available)" },
-    { type: "cmd", text: "mcp.gcal.create_event({summary: 'Private Showing...'})" },
-    { type: "ok", text: "Event created: 'Private Showing — Sky Penthouse'" },
-    { type: "data", text: "Location: Vista Residences Sales Center, Dubai Marina" },
-    { type: "ok", text: "Reminders set: 1 day before (email) + 1 hour before (popup)" },
-  ],
+  calendar: (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    const short = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "Asia/Dubai" });
+    return [
+      { type: "cmd", text: "mcp.gcal.find_meeting_times({attendees: ['khalid.alrashid@vista.ae']})" },
+      { type: "wait", text: "Checking availability for all parties..." },
+      { type: "data", text: "3 available slots found next week" },
+      { type: "data", text: `Optimal: ${short}, 2:00 PM GST (all available)` },
+      { type: "cmd", text: "mcp.gcal.create_event({summary: 'Private Showing...'})" },
+      { type: "ok", text: "Event created: 'Private Showing — Sky Penthouse'" },
+      { type: "data", text: "Location: Vista Residences Sales Center, Dubai Marina" },
+      { type: "ok", text: "Reminders set: 1 day before (email) + 1 hour before (popup)" },
+    ];
+  })(),
   docusign: [
-    { type: "cmd", text: "mcp.docusign.getUserInfo()" },
+    { type: "cmd", text: "POST /api/docusign/demo/create-nda" },
+    { type: "wait", text: "Authenticating with DocuSign via JWT Grant..." },
     { type: "data", text: "Account: ozzy@dynamiccrm.ca (353d13ef-...)" },
-    { type: "cmd", text: "mcp.docusign.getTemplates({search: 'VIP Buyer NDA'})" },
-    { type: "data", text: "Template found: 'VIP Buyer NDA — Vista Residences'" },
-    { type: "cmd", text: "mcp.docusign.createEnvelope({status: 'sent', recipient: 'Khalid Al-Rashid'})" },
-    { type: "wait", text: "Generating envelope with pre-filled fields..." },
-    { type: "ok", text: "Envelope sent to khalid.alrashid@vista.ae" },
+    { type: "cmd", text: "Creating NDA envelope for Khalid Al-Rashid..." },
+    { type: "wait", text: "Generating HTML document with pre-filled VIP terms..." },
+    { type: "data", text: "Document: VIP Buyer NDA — Al Noor Residences (4 sections)" },
+    { type: "wait", text: "Sending envelope via DocuSign eSignature API..." },
+    { type: "ok", text: "Envelope created — awaiting signature" },
     { type: "ok", text: "Workflow triggered → Exclusive pricing unlocked in portal" },
   ],
 };
 
-/* ── Theme-aware CSS ── */
-const css = `
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Outfit:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root{--ai-red:#e63946;--ai-blue:#457b9d;--ai-purple:#7c3aed;--ai-emerald:#10b981;--ai-amber:#f59e0b;--ai-rose:#f43f5e;--ai-gold:#C5A467;}
-*{margin:0;padding:0;box-sizing:border-box;}
-
-/* ── Dark theme (default) ── */
-.ai-demo{font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .4s,color .4s;}
-.ai-demo.dark{background:#0f0f14;color:#ffffff;}
-.ai-demo.light{background:#faf8f5;color:#1a1a2e;}
-.ai-demo a{text-decoration:none;color:inherit;}
-
-/* Theme variables via classes */
-.ai-demo.dark{--ai-bg:#0f0f14;--ai-card:rgba(255,255,255,0.02);--ai-card-border:rgba(255,255,255,0.06);--ai-text:#ffffff;--ai-text2:rgba(255,255,255,0.55);--ai-text3:rgba(255,255,255,0.4);--ai-text4:rgba(255,255,255,0.3);--ai-text5:rgba(255,255,255,0.7);--ai-hd-bg:rgba(15,15,20,0.85);--ai-hd-border:rgba(255,255,255,0.06);--ai-terminal-bg:#0a0a0f;--ai-terminal-border:rgba(255,255,255,0.06);--ai-terminal-bar:rgba(255,255,255,0.03);--ai-modal-bg:#12121a;--ai-modal-border:rgba(255,255,255,0.1);--ai-overlay:rgba(0,0,0,0.75);--ai-field-bg:rgba(255,255,255,0.02);--ai-field-border:rgba(255,255,255,0.06);}
-.ai-demo.light{--ai-bg:#faf8f5;--ai-card:rgba(0,0,0,0.02);--ai-card-border:rgba(0,0,0,0.08);--ai-text:#1a1a2e;--ai-text2:rgba(26,26,46,0.6);--ai-text3:rgba(26,26,46,0.45);--ai-text4:rgba(26,26,46,0.35);--ai-text5:rgba(26,26,46,0.75);--ai-hd-bg:rgba(250,248,245,0.9);--ai-hd-border:rgba(0,0,0,0.08);--ai-terminal-bg:#1a1a2e;--ai-terminal-border:rgba(0,0,0,0.12);--ai-terminal-bar:rgba(255,255,255,0.05);--ai-modal-bg:#ffffff;--ai-modal-border:rgba(0,0,0,0.1);--ai-overlay:rgba(0,0,0,0.5);--ai-field-bg:rgba(0,0,0,0.03);--ai-field-border:rgba(0,0,0,0.08);}
-
-/* Header */
-.ai-hd{position:fixed;top:0;left:0;right:0;padding:1rem 3rem;display:flex;align-items:center;justify-content:space-between;z-index:100;backdrop-filter:blur(24px);background:var(--ai-hd-bg);border-bottom:1px solid var(--ai-hd-border);}
-.ai-hd-left{display:flex;align-items:center;gap:1rem;}
-.ai-back{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border:1px solid var(--ai-card-border);border-radius:8px;font-family:'Outfit';font-size:.85rem;color:var(--ai-text3);transition:.3s;cursor:pointer;background:none;}
-.ai-back:hover{border-color:var(--ai-purple);color:var(--ai-text);}
-.ai-hd-badge{display:flex;align-items:center;gap:.5rem;padding:.4rem 1rem;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:50px;font-size:.8rem;color:var(--ai-purple);font-weight:500;}
-.ai-hd-badge::before{content:'';width:8px;height:8px;background:var(--ai-purple);border-radius:50%;animation:ai-pulse 2s infinite;}
-@keyframes ai-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
-.ai-hd-right{display:flex;gap:.5rem;align-items:center;}
-.ai-lang,.ai-theme-btn{background:none;border:1px solid var(--ai-card-border);color:var(--ai-text3);padding:.4rem .9rem;border-radius:6px;font-family:'Outfit';font-size:.8rem;cursor:pointer;transition:.3s;}
-.ai-lang:hover,.ai-theme-btn:hover{border-color:var(--ai-purple);color:var(--ai-text);}
-.ai-theme-btn{display:flex;align-items:center;gap:.4rem;}
-
-/* Main */
-.ai-main{padding:7rem 3rem 4rem;max-width:1100px;margin:0 auto;}
-
-/* Progress bar */
-.ai-progress{position:fixed;top:60px;left:0;right:0;height:3px;background:rgba(124,58,237,0.1);z-index:99;}
-.ai-progress-fill{height:100%;background:linear-gradient(90deg,var(--ai-purple),var(--ai-emerald));transition:width .6s ease;border-radius:0 2px 2px 0;}
-
-/* Hero */
-.ai-hero{text-align:center;margin-bottom:4rem;animation:ai-fu .8s ease-out;}
-@keyframes ai-fu{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.ai-hero-tag{display:inline-flex;align-items:center;gap:.75rem;padding:.6rem 1.25rem;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);border-radius:50px;font-size:.85rem;color:var(--ai-purple);margin-bottom:2rem;font-weight:500;}
-.ai-demo h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:500;line-height:1.15;margin-bottom:1.5rem;color:var(--ai-text);}
-.ai-demo h1 span{background:linear-gradient(135deg,var(--ai-purple),var(--ai-rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.ai-hero>p{font-size:1.1rem;line-height:1.7;color:var(--ai-text2);max-width:680px;margin:0 auto 2.5rem;}
-.ai-stats{display:flex;justify-content:center;gap:4rem;flex-wrap:wrap;}
-.ai-stat{text-align:center;}
-.ai-stat-v{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:600;background:linear-gradient(135deg,var(--ai-purple),var(--ai-emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
-.ai-stat-l{font-size:.8rem;color:var(--ai-text3);text-transform:uppercase;letter-spacing:.1em;margin-top:.25rem;}
-
-/* Pipeline header */
-.ai-pipe-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--ai-card-border);}
-.ai-pipe-hd h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:500;color:var(--ai-text);}
-.ai-run-all{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;background:linear-gradient(135deg,var(--ai-purple),var(--ai-rose));border:none;border-radius:10px;color:#fff;font-family:'Outfit';font-size:.9rem;font-weight:500;cursor:pointer;transition:all .3s;letter-spacing:.02em;position:relative;overflow:hidden;}
-.ai-run-all:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,0.4);}
-.ai-run-all:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
-.ai-run-all::before{content:'';position:absolute;inset:-2px;background:linear-gradient(135deg,var(--ai-purple),var(--ai-rose),var(--ai-emerald));border-radius:12px;z-index:-1;opacity:0;transition:.3s;filter:blur(8px);}
-.ai-run-all:not(:disabled):hover::before{opacity:.6;}
-
-/* Step card */
-.ai-step{margin-bottom:2rem;border-radius:20px;border:1px solid var(--ai-card-border);overflow:hidden;transition:all .4s;background:var(--ai-card);}
-.ai-step.active{border-color:rgba(124,58,237,0.3);}
-.ai-step.done{border-color:rgba(16,185,129,0.25);}
-.ai-step.locked{opacity:.45;pointer-events:none;}
-
-/* Step header */
-.ai-step-hd{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.75rem;cursor:pointer;user-select:none;}
-.ai-step-hd-left{display:flex;align-items:center;gap:1rem;}
-.ai-step-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;border:2px solid;flex-shrink:0;}
-.ai-step-num.trigger{background:rgba(230,57,70,0.15);border-color:rgba(230,57,70,0.4);color:var(--ai-red);}
-.ai-step-num.gmail{background:rgba(230,57,70,0.15);border-color:rgba(230,57,70,0.4);color:var(--ai-red);}
-.ai-step-num.calendar{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);color:var(--ai-emerald);}
-.ai-step-num.docusign{background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.4);color:var(--ai-amber);}
-.ai-step-num.done{background:rgba(16,185,129,0.2)!important;border-color:var(--ai-emerald)!important;color:var(--ai-emerald)!important;}
-
-.ai-step-info h3{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:500;color:var(--ai-text);}
-.ai-step-info p{font-size:.82rem;color:var(--ai-text3);margin-top:.15rem;}
-
-.ai-step-hd-right{display:flex;align-items:center;gap:.75rem;}
-.ai-step-status{font-size:.75rem;font-weight:500;padding:.3rem .7rem;border-radius:6px;text-transform:uppercase;letter-spacing:.05em;}
-.ai-step-status.waiting{background:var(--ai-field-bg);color:var(--ai-text4);}
-.ai-step-status.running{background:rgba(124,58,237,0.15);color:var(--ai-purple);animation:ai-pulse 1.5s infinite;}
-.ai-step-status.done{background:rgba(16,185,129,0.15);color:var(--ai-emerald);}
-
-.ai-run-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.4);border-radius:8px;color:var(--ai-purple);font-family:'Outfit';font-size:.82rem;font-weight:500;cursor:pointer;transition:.3s;}
-.ai-run-btn:hover{background:var(--ai-purple);color:#fff;}
-.ai-run-btn:disabled{opacity:.3;cursor:not-allowed;}
-
-/* Step body */
-.ai-step-body{max-height:0;overflow:hidden;transition:max-height .5s ease;}
-.ai-step-body.open{max-height:2000px;}
-.ai-step-body-inner{padding:0 1.75rem 1.75rem;}
-.ai-step-desc{color:var(--ai-text2);font-size:.92rem;line-height:1.65;margin-bottom:1.25rem;}
-
-/* Terminal — always dark for both themes */
-.ai-terminal{background:#0a0a0f;border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;margin-bottom:1.25rem;}
-.ai-terminal-bar{display:flex;align-items:center;gap:.5rem;padding:.6rem 1rem;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.04);}
-.ai-terminal-dot{width:10px;height:10px;border-radius:50%;}
-.ai-terminal-dot:nth-child(1){background:#ff5f57;}
-.ai-terminal-dot:nth-child(2){background:#ffbd2e;}
-.ai-terminal-dot:nth-child(3){background:#28c940;}
-.ai-terminal-title{margin-inline-start:auto;font-size:.7rem;color:rgba(255,255,255,0.25);font-family:'JetBrains Mono',monospace;}
-.ai-terminal-body{padding:1rem;min-height:60px;max-height:250px;overflow-y:auto;}
-.ai-terminal-line{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.5;animation:ai-line-in .3s ease-out;}
-@keyframes ai-line-in{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-.ai-terminal-line .ai-t-prefix{flex-shrink:0;font-weight:600;width:14px;text-align:center;}
-.ai-t-prefix.cmd{color:var(--ai-purple);}
-.ai-t-prefix.ok{color:var(--ai-emerald);}
-.ai-t-prefix.data{color:var(--ai-amber);}
-.ai-t-prefix.wait{color:rgba(255,255,255,0.3);}
-.ai-t-text{color:rgba(255,255,255,0.7);}
-.ai-t-text code{background:rgba(124,58,237,0.15);color:var(--ai-purple);padding:.1rem .35rem;border-radius:3px;font-size:.75rem;}
-.ai-cursor{display:inline-block;width:7px;height:14px;background:var(--ai-purple);animation:ai-blink 1s step-end infinite;vertical-align:middle;margin-inline-start:2px;}
-@keyframes ai-blink{50%{opacity:0}}
-
-/* Result cards */
-.ai-result-area{animation:ai-fu .5s ease-out;}
-
-/* Gmail result */
-.ai-email-preview{background:var(--ai-card);border:1px solid var(--ai-card-border);border-radius:14px;overflow:hidden;}
-.ai-email-hd{padding:1rem 1.25rem;border-bottom:1px solid var(--ai-card-border);display:flex;flex-direction:column;gap:.35rem;}
-.ai-email-row{display:flex;gap:.5rem;font-size:.82rem;}
-.ai-email-label{color:var(--ai-text4);min-width:55px;}
-.ai-email-val{color:var(--ai-text5);}
-
-/* Calendar result */
-.ai-cal-card{background:var(--ai-card);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:1.5rem;display:flex;gap:1.25rem;align-items:flex-start;}
-.ai-cal-date-box{flex-shrink:0;width:70px;height:78px;background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.25);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.ai-cal-day{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;color:var(--ai-emerald);}
-.ai-cal-month{font-size:.7rem;color:rgba(16,185,129,0.7);text-transform:uppercase;letter-spacing:.05em;}
-.ai-cal-details h4{font-size:1rem;font-weight:500;color:var(--ai-text);margin-bottom:.4rem;}
-.ai-cal-details p{font-size:.85rem;color:var(--ai-text2);line-height:1.5;}
-.ai-cal-link{display:inline-flex;align-items:center;gap:.4rem;margin-top:.6rem;font-size:.8rem;color:var(--ai-emerald);border-bottom:1px dashed rgba(16,185,129,0.3);padding-bottom:2px;cursor:pointer;text-decoration:none;position:relative;z-index:5;}
-.ai-cal-link:hover{color:#34d399;border-bottom-color:rgba(16,185,129,0.6);}
-
-/* DocuSign result */
-.ai-doc-card{background:var(--ai-card);border:1px solid rgba(245,158,11,0.2);border-radius:14px;padding:1.5rem;}
-.ai-doc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
-.ai-doc-top h4{font-size:1rem;font-weight:500;color:var(--ai-text);}
-.ai-doc-signed{display:flex;align-items:center;gap:.4rem;padding:.35rem .8rem;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:50px;font-size:.78rem;color:var(--ai-emerald);font-weight:500;}
-.ai-doc-fields{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
-.ai-doc-field{padding:.6rem .8rem;background:var(--ai-field-bg);border:1px solid var(--ai-field-border);border-radius:8px;}
-.ai-doc-field-label{font-size:.7rem;color:var(--ai-text4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.15rem;}
-.ai-doc-field-val{font-size:.85rem;color:var(--ai-text5);}
-.ai-doc-unlock{display:flex;align-items:center;gap:.6rem;margin-top:1rem;padding:.75rem 1rem;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;font-size:.85rem;color:var(--ai-purple);}
-
-/* Final result banner */
-.ai-final{margin-top:2rem;padding:2.5rem;background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(16,185,129,0.08));border:1px solid rgba(124,58,237,0.2);border-radius:24px;text-align:center;animation:ai-fu .6s ease-out;}
-.ai-final h2{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:500;margin-bottom:.75rem;color:var(--ai-text);}
-.ai-final>p{color:var(--ai-text2);font-size:.92rem;line-height:1.6;max-width:600px;margin:0 auto 1.5rem;}
-.ai-final-items{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;max-width:550px;margin:0 auto;}
-.ai-final-item{display:flex;align-items:center;gap:.5rem;padding:.55rem .9rem;background:var(--ai-field-bg);border:1px solid var(--ai-field-border);border-radius:10px;font-size:.85rem;color:var(--ai-text5);text-align:start;}
-.ai-final-check{color:var(--ai-emerald);}
-.ai-final-time{margin-top:1.5rem;font-family:'Playfair Display',serif;font-size:2rem;font-weight:600;background:linear-gradient(135deg,var(--ai-purple),var(--ai-emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-
-/* Footer */
-.ai-ft{margin-top:5rem;padding:2rem 3rem;text-align:center;border-top:1px solid var(--ai-card-border);}
-.ai-ft p{font-size:.85rem;color:var(--ai-text4);}
-.ai-ft a{color:var(--ai-purple);}
-
-/* "LIVE" badge on real results */
-.ai-live-tag{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .6rem;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.35);border-radius:50px;font-size:.65rem;font-weight:600;color:var(--ai-emerald);text-transform:uppercase;letter-spacing:.08em;margin-inline-start:.5rem;vertical-align:middle;}
-.ai-live-tag::before{content:'';width:6px;height:6px;background:var(--ai-emerald);border-radius:50%;animation:ai-pulse 2s infinite;}
-
-/* Step connector arrow between steps */
-.ai-step-connector{display:flex;align-items:center;justify-content:center;padding:.25rem 0;opacity:.3;}
-.ai-step-connector svg{width:18px;height:18px;color:var(--ai-purple);}
-
-/* NFC animation */
-.ai-nfc-ring{position:relative;width:90px;height:90px;margin:0 auto 2rem;}
-.ai-nfc-ring-inner{position:absolute;inset:0;border:2px solid rgba(124,58,237,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(124,58,237,0.06);}
-.ai-nfc-ring-inner svg{color:var(--ai-purple);}
-.ai-nfc-wave{position:absolute;inset:-8px;border:1.5px solid var(--ai-purple);border-radius:50%;opacity:0;animation:ai-nfc-expand 3s infinite ease-out;}
-.ai-nfc-wave:nth-child(2){animation-delay:1s;}
-.ai-nfc-wave:nth-child(3){animation-delay:2s;}
-@keyframes ai-nfc-expand{0%{transform:scale(.85);opacity:.6}100%{transform:scale(1.5);opacity:0}}
-
-/* VIP profile card for trigger result */
-.ai-profile{display:flex;gap:1.25rem;padding:1.25rem;background:rgba(230,57,70,0.05);border:1px solid rgba(230,57,70,0.15);border-radius:14px;align-items:center;}
-.ai-profile-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--ai-red),var(--ai-rose));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600;color:#fff;flex-shrink:0;}
-.ai-profile-info h4{font-size:.95rem;color:var(--ai-text);font-weight:500;margin-bottom:.25rem;}
-.ai-profile-info p{font-size:.78rem;color:var(--ai-text3);line-height:1.5;}
-.ai-profile-score{margin-inline-start:auto;text-align:center;}
-.ai-profile-score-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:600;color:var(--ai-red);}
-.ai-profile-score-label{font-size:.65rem;color:var(--ai-text4);text-transform:uppercase;letter-spacing:.05em;}
-
-/* Animated success checkmark for final */
-.ai-final-icon{width:72px;height:72px;margin:0 auto 1.5rem;border-radius:50%;background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(16,185,129,0.15));border:2px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;font-size:2rem;animation:ai-pop .5s ease-out;}
-@keyframes ai-pop{from{transform:scale(0)}50%{transform:scale(1.15)}to{transform:scale(1)}}
-
-/* Background blobs */
-.ai-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden;pointer-events:none;}
-.ai-blob{position:absolute;border-radius:50%;filter:blur(120px);}
-.ai-demo.dark .ai-blob{opacity:.12;}
-.ai-demo.light .ai-blob{opacity:.06;}
-.ai-blob-1{width:600px;height:600px;background:var(--ai-purple);top:-200px;right:-100px;animation:ai-drift 20s infinite ease-in-out;}
-.ai-blob-2{width:500px;height:500px;background:var(--ai-emerald);bottom:-150px;left:-100px;animation:ai-drift 25s infinite ease-in-out reverse;}
-.ai-blob-3{width:350px;height:350px;background:var(--ai-rose);top:40%;left:60%;animation:ai-drift 15s infinite ease-in-out 5s;}
-@keyframes ai-drift{0%,100%{transform:translate(0,0)}33%{transform:translate(30px,-20px)}66%{transform:translate(-20px,30px)}}
-
-/* Modal overlay */
-.ai-modal-overlay{position:fixed;inset:0;background:var(--ai-overlay);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;animation:ai-fade-in .25s ease-out;padding:2rem;}
-@keyframes ai-fade-in{from{opacity:0}to{opacity:1}}
-.ai-modal{background:var(--ai-modal-bg);border:1px solid var(--ai-modal-border);border-radius:24px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;animation:ai-modal-in .3s ease-out;position:relative;}
-@keyframes ai-modal-in{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.ai-modal-close{position:absolute;top:1rem;inset-inline-end:1rem;width:36px;height:36px;border-radius:50%;background:var(--ai-field-bg);border:1px solid var(--ai-field-border);display:flex;align-items:center;justify-content:center;color:var(--ai-text3);font-size:1.1rem;cursor:pointer;transition:.2s;z-index:5;}
-.ai-modal-close:hover{background:var(--ai-card-border);color:var(--ai-text);}
-
-/* Email modal */
-.ai-em-body{padding:0;}
-.ai-em-gold-hd{background:linear-gradient(135deg,#C5A467,#9a7d3d);padding:2rem;text-align:center;}
-.ai-em-gold-hd h3{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:400;color:#fff;margin-bottom:.3rem;}
-.ai-em-gold-hd p{font-size:.72rem;color:rgba(255,255,255,0.8);text-transform:uppercase;letter-spacing:2px;}
-.ai-em-content{padding:1.5rem 2rem 2rem;}
-.ai-em-meta{margin-bottom:1.25rem;}
-.ai-em-meta-row{display:flex;gap:.5rem;padding:.35rem 0;font-size:.82rem;border-bottom:1px solid var(--ai-card-border);}
-.ai-em-meta-label{color:var(--ai-text4);min-width:60px;}
-.ai-em-meta-val{color:var(--ai-text5);}
-.ai-em-text{color:var(--ai-text2);font-size:.9rem;line-height:1.7;margin-bottom:1rem;}
-.ai-em-text strong{color:var(--ai-gold);font-weight:500;}
-.ai-em-unit-card{background:rgba(197,164,103,0.08);border:1px solid rgba(197,164,103,0.2);border-radius:12px;padding:1.25rem;margin-bottom:1rem;}
-.ai-em-unit-card h5{color:var(--ai-gold);font-size:1rem;margin-bottom:.4rem;font-family:'Playfair Display',serif;font-weight:500;}
-.ai-em-unit-card p{color:var(--ai-text2);font-size:.85rem;line-height:1.6;}
-.ai-em-showing{background:var(--ai-field-bg);border-radius:10px;padding:1rem;margin-bottom:1rem;}
-.ai-em-showing-label{font-size:.7rem;color:var(--ai-gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:.3rem;}
-.ai-em-showing-val{color:var(--ai-text);font-size:1rem;font-weight:500;}
-.ai-em-showing-loc{color:var(--ai-text3);font-size:.82rem;margin-top:.2rem;}
-.ai-em-attach{display:flex;align-items:center;gap:.6rem;padding:.65rem .9rem;background:var(--ai-field-bg);border:1px solid var(--ai-field-border);border-radius:8px;font-size:.82rem;color:var(--ai-text2);margin-top:.75rem;}
-
-/* Responsive */
-@media(max-width:768px){
-  .ai-hd{padding:1rem 1.25rem;}
-  .ai-main{padding:6rem 1.25rem 2rem;}
-  .ai-final-items{grid-template-columns:1fr;}
-  .ai-stats{gap:2rem;}
-  .ai-cal-card{flex-direction:column;}
-  .ai-doc-fields{grid-template-columns:1fr;}
-  .ai-pipe-hd{flex-direction:column;gap:1rem;text-align:center;}
-}
-`;
 
 const STEP_CONFIG = [
-  { key: "trigger", label: "!", title: "VIP Prospect Taps NFC Card", subtitle: "NFC Detection & Profile Lookup", color: "trigger" },
-  { key: "gmail", label: "1", title: "Generate & Send VIP Brochure Email", subtitle: "Gmail MCP — Personalized Brochure Delivery", color: "gmail" },
-  { key: "calendar", label: "2", title: "Book Private Showing", subtitle: "Google Calendar MCP — Smart Scheduling", color: "calendar" },
-  { key: "docusign", label: "3", title: "Send NDA & Unlock Pricing", subtitle: "DocuSign MCP — E-Signature", color: "docusign" },
+  { key: "trigger", label: "!", title: "Khalid taps his card", subtitle: "NFC scan — profile loaded instantly", color: "trigger" },
+  { key: "canva", label: "1", title: "Build his proposal", subtitle: "Canva designs a 7-page PDF on the spot", color: "canva" },
+  { key: "gmail", label: "2", title: "Send the invite", subtitle: "Gmail drafts and delivers the email", color: "gmail" },
+  { key: "calendar", label: "3", title: "Book the showing", subtitle: "Google Calendar finds the best slot", color: "calendar" },
+  { key: "docusign", label: "4", title: "Get the NDA signed", subtitle: "DocuSign sends it, pricing unlocks", color: "docusign" },
 ];
 
 const STEP_DESCS = {
-  trigger: "Khalid Al-Rashid, a high-net-worth investor, taps his VIP Access Key at the Vista Residences sales center. The system instantly identifies his profile, investment preferences, and engagement history.",
-  gmail: "AI generates a personalized luxury brochure email for Khalid — complete with Sky Penthouse details, ROI projections, floor plans, and amenities — then sends it directly via the Gmail MCP API. The email is a real draft you can verify in Gmail.",
-  calendar: "AI checks the sales team's availability and books a private showing at the optimal time, considering Khalid's timezone, the agent's schedule, and the model unit availability. A real Google Calendar event is created.",
-  docusign: "Before the showing, AI sends a Non-Disclosure Agreement so Khalid can access exclusive pre-launch pricing. The document is pre-filled with his details and ready for e-signature via DocuSign.",
+  trigger: "Khalid walks into the sales center and taps his card. We instantly know who he is, what he looked at before, and that he's been eyeing the Sky Penthouse for three days.",
+  canva: "A 7-page proposal gets built on the spot — his name, his unit, ROI numbers, floor plans. Gulf-luxury design, bilingual layout. This is a real Canva file — click through and check.",
+  gmail: "The proposal gets attached to a personal invite email and lands in Khalid's inbox. This is a real Gmail draft — open it yourself.",
+  calendar: "The system checks who's free, picks the best time, and books a private showing. A real Google Calendar event you can verify.",
+  docusign: "Before Khalid walks in, we send him an NDA. He signs, exclusive pricing unlocks in his portal. Pre-filled, ready to go.",
 };
 
 export default function AIDemo() {
   const [lang, setLang] = useState("en");
-  const [theme, setTheme] = useState("dark");
+  const t = useCallback((k) => TR[lang]?.[k] || TR.en[k] || k, [lang]);
+  const [theme, setTheme] = useState("light");
   const [steps, setSteps] = useState(
     STEP_CONFIG.map((_, i) => ({ status: i === 0 ? "ready" : "locked", lines: [], showResult: false, expanded: false }))
   );
@@ -343,15 +250,46 @@ export default function AIDemo() {
   const [allDone, setAllDone] = useState(false);
   const [elapsed, setElapsed] = useState(null);
   const [emailModal, setEmailModal] = useState(false);
+  const [googleToken, setGoogleToken] = useState(null);
+  const [googleUser, setGoogleUser] = useState(null);
+  const [gisReady, setGisReady] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+  const [connectError, setConnectError] = useState(false);
+  const [liveResults, setLiveResults] = useState({ gmail: null, calendar: null });
+  const [docusignLive, setDocusignLive] = useState(null);
   const termRefs = useRef([]);
+  const stepRefs = useRef([]);
+  const finalRef = useRef(null);
   const startTime = useRef(null);
 
-  useEffect(() => {
-    const el = document.createElement("style");
-    el.textContent = css;
-    document.head.appendChild(el);
-    return () => document.head.removeChild(el);
-  }, []);
+  useEffect(() => { loadGIS().then(ok => setGisReady(ok)); }, []);
+
+
+
+  const handleGoogleConnect = async () => {
+    setConnecting(true);
+    setConnectError(false);
+    try {
+      const token = await requestToken();
+      const user = await getUserInfo(token);
+      setGoogleToken(token);
+      setGoogleUser(user);
+    } catch (err) {
+      console.error("Google connect failed:", err);
+      setConnectError(true);
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  const handleGoogleDisconnect = () => {
+    revokeToken(googleToken);
+    setGoogleToken(null);
+    setGoogleUser(null);
+    setLiveResults({ gmail: null, calendar: null });
+  };
+
+  const isLiveMode = !!googleToken;
 
   const doneCount = steps.filter(s => s.status === "done").length;
   const progress = (doneCount / STEP_CONFIG.length) * 100;
@@ -390,7 +328,72 @@ export default function AIDemo() {
       return next;
     });
 
+    // Auto-scroll to the active step
+    setTimeout(() => {
+      const el = stepRefs.current[stepIdx];
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+
+    // If this is the DocuSign step, call backend API in parallel with terminal animation
+    const cfg = STEP_CONFIG[stepIdx];
+    let docusignPromise = null;
+    let gmailPromise = null;
+    let calendarPromise = null;
+
+    if (cfg.key === "docusign") {
+      docusignPromise = fetch("/api/docusign/demo/create-nda", { method: "POST" })
+        .then(r => r.json())
+        .then(data => {
+          if (data.configured && data.envelopeId) {
+            setDocusignLive(data);
+          }
+        })
+        .catch(() => { setDocusignLive({ configured: false, fallback: true }); });
+    }
+
+    if (cfg.key === "gmail" && googleToken) {
+      const showDate = new Date();
+      showDate.setDate(showDate.getDate() + 7);
+      const htmlBody = buildVipEmailHtml({
+        buyerName: "Khalid Al-Rashid",
+        unitName: "Sky Penthouse PH-4201",
+        unitPrice: "AED 12,500,000",
+        showingDate: showDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }),
+        showingTime: "2:00 PM GST",
+        showingLocation: "Vista Residences Sales Center, Dubai Marina",
+      });
+      gmailPromise = createGmailDraft(googleToken, {
+        to: "khalid.alrashid@vista.ae",
+        subject: "Khalid, your private viewing of the Sky Penthouse is confirmed",
+        htmlBody,
+        senderName: "Vista Residences",
+      })
+        .then(result => setLiveResults(prev => ({ ...prev, gmail: result })))
+        .catch(err => console.error("Live Gmail failed:", err));
+    }
+
+    if (cfg.key === "calendar" && googleToken) {
+      const startDT = new Date();
+      startDT.setDate(startDT.getDate() + 7);
+      startDT.setHours(14, 0, 0, 0);
+      const endDT = new Date(startDT);
+      endDT.setHours(15, 0, 0, 0);
+      calendarPromise = createCalendarEvent(googleToken, {
+        summary: "Private Showing — Sky Penthouse — Khalid Al-Rashid (VIP)",
+        location: "Vista Residences Sales Center, Dubai Marina",
+        description: "Exclusive private showing of Sky Penthouse PH-4201 for VIP buyer Khalid Al-Rashid. Investment proposal attached.",
+        startDateTime: startDT.toISOString(),
+        endDateTime: endDT.toISOString(),
+        attendeeEmail: null,
+      })
+        .then(result => setLiveResults(prev => ({ ...prev, calendar: result })))
+        .catch(err => console.error("Live Calendar failed:", err));
+    }
+
     await typeLines(stepIdx);
+    if (docusignPromise) await docusignPromise;
+    if (gmailPromise) await gmailPromise;
+    if (calendarPromise) await calendarPromise;
     await new Promise(r => setTimeout(r, 400));
 
     setSteps(prev => {
@@ -401,6 +404,12 @@ export default function AIDemo() {
       }
       return next;
     });
+
+    // Scroll down to show the result card
+    setTimeout(() => {
+      const el = stepRefs.current[stepIdx];
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
   }, [typeLines]);
 
   const runAll = useCallback(async () => {
@@ -414,6 +423,9 @@ export default function AIDemo() {
     setElapsed(Math.round(ms / 1000));
     setAllDone(true);
     setAllRunning(false);
+    setTimeout(() => {
+      if (finalRef.current) finalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 200);
   }, [runStep]);
 
   const handleRunSingle = useCallback(async (idx) => {
@@ -423,6 +435,9 @@ export default function AIDemo() {
       const ms = Date.now() - startTime.current;
       setElapsed(Math.round(ms / 1000));
       setAllDone(true);
+      setTimeout(() => {
+        if (finalRef.current) finalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 200);
     }
   }, [runStep]);
 
@@ -438,6 +453,7 @@ export default function AIDemo() {
 
   return (
     <div className={`ai-demo ${theme}`} dir={lang === "ar" ? "rtl" : "ltr"}>
+      <SEO title="AI Sales Demo" description="Interactive AI-powered sales pipeline automation demo." path="/ai-demo" />
       <div className="ai-bg"><div className="ai-blob ai-blob-1" /><div className="ai-blob ai-blob-2" /><div className="ai-blob ai-blob-3" /></div>
 
       {/* Progress */}
@@ -445,20 +461,19 @@ export default function AIDemo() {
 
       {/* Header */}
       <header className="ai-hd">
-        <div className="ai-hd-left">
-          <Link to="/enterprise/crmdemo" className="ai-back">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-            Back to CRM
-          </Link>
-          <div className="ai-hd-badge"><span>Live MCP Demo</span></div>
-        </div>
+        <Link to="/" className="ai-hd-logo"><img src="/assets/images/logo.png" alt="DynamicNFC" /></Link>
+        <div className="ai-hd-badge"><span>{t('heroTag')}</span></div>
         <div className="ai-hd-right">
-          <button className="ai-theme-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-            {theme === "dark" ? "\u2600\uFE0F Light" : "\u{1F319} Dark"}
+          <button className="ai-theme-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
+            {theme === "dark" ? `\u2600\uFE0F ${t('light')}` : `\u{1F319} ${t('dark')}`}
           </button>
-          <button className="ai-lang" onClick={() => setLang(lang === "en" ? "ar" : "en")}>
+          <button className="ai-lang" onClick={() => setLang(lang === "en" ? "ar" : "en")} aria-label={lang === "en" ? "Switch to Arabic" : "Switch to English"}>
             {lang === "en" ? "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" : "English"}
           </button>
+          <Link to="/" className="ai-home-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            {t('home')}
+          </Link>
         </div>
       </header>
 
@@ -471,24 +486,54 @@ export default function AIDemo() {
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 8.32a7.43 7.43 0 0 1 0 7.36"/><path d="M9.46 6.21a11.76 11.76 0 0 1 0 11.58"/><path d="M12.91 4.1c3.85 4.7 3.85 11.1 0 15.8"/><path d="M16.37 2a18.97 18.97 0 0 1 0 20"/></svg>
             </div>
           </div>
-          <div className="ai-hero-tag">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-            Powered by Model Context Protocol
-          </div>
-          <h1><span>AI-Orchestrated</span><br />Sales Pipeline</h1>
-          <p>Watch AI coordinate three enterprise platforms in real-time. Every step executes actual MCP tool calls with verifiable results you can click to confirm.</p>
+          <h1><span>{t('heroH1a')}</span><br />{t('heroH1b')}</h1>
+          <p>{t('heroDesc')}</p>
           <div className="ai-stats">
-            <div className="ai-stat"><span className="ai-stat-v">3</span><span className="ai-stat-l">Live Platforms</span></div>
-            <div className="ai-stat"><span className="ai-stat-v">{elapsed ? elapsed + "s" : "<1min"}</span><span className="ai-stat-l">{elapsed ? "Actual Time" : "Full Pipeline"}</span></div>
-            <div className="ai-stat"><span className="ai-stat-v">{doneCount}/{STEP_CONFIG.length}</span><span className="ai-stat-l">Steps Complete</span></div>
+            <div className="ai-stat"><span className="ai-stat-v">4</span><span className="ai-stat-l">{t('statPlatforms')}</span></div>
+            <div className="ai-stat"><span className="ai-stat-v">{elapsed ? elapsed + "s" : "<1min"}</span><span className="ai-stat-l">{elapsed ? t('statActual') : t('statTime')}</span></div>
+            <div className="ai-stat"><span className="ai-stat-v">{doneCount}/{STEP_CONFIG.length}</span><span className="ai-stat-l">{t('statSteps')}</span></div>
           </div>
         </section>
 
+        {/* Google Connect */}
+        <div className="ai-google-box">
+          <div className="ai-google-box-title">
+            {t('googleTitle')}
+            {isLiveMode && <span className="ai-google-live-badge">{t('googleLive')}</span>}
+          </div>
+          <p className="ai-google-box-desc">
+            {isLiveMode ? t('googleDescLive') : t('googleDescDemo')}
+          </p>
+          {!isLiveMode ? (
+            <>
+              <button className="ai-google-connect-btn" onClick={handleGoogleConnect} disabled={!gisReady || connecting} aria-label={t('googleConnect')}>
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#34A853" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.9 7.35 2.56 10.52l7.97-5.93z"/><path fill="#FBBC05" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.93C6.51 42.62 14.62 48 24 48z"/></svg>
+                {connecting ? t('googleConnecting') : t('googleConnect')}
+              </button>
+              {connectError && <p className="ai-google-error">{t('googleError')}</p>}
+            </>
+          ) : (
+            <div className="ai-google-user">
+              {googleUser?.picture ? (
+                <img className="ai-google-avatar" src={googleUser.picture} alt="" referrerPolicy="no-referrer" />
+              ) : (
+                <div className="ai-google-avatar-fallback">{(googleUser?.name || googleUser?.email || "U").charAt(0).toUpperCase()}</div>
+              )}
+              <div className="ai-google-info">
+                {googleUser?.name && <div className="ai-google-name">{googleUser.name}</div>}
+                <div className="ai-google-email">{googleUser?.email}</div>
+              </div>
+              <button className="ai-google-disconnect" onClick={handleGoogleDisconnect}>{t('googleDisconnect')}</button>
+            </div>
+          )}
+          <p className="ai-google-privacy">{t('googlePrivacy')}</p>
+        </div>
+
         {/* Pipeline */}
         <div className="ai-pipe-hd">
-          <h2>The AI Workflow</h2>
-          <button className="ai-run-all" onClick={runAll} disabled={allRunning || allDone}>
-            {allDone ? "Pipeline Complete" : allRunning ? "Running..." : "Run Full Pipeline"}
+          <h2>{t('pipeTitle')}</h2>
+          <button className="ai-run-all" onClick={runAll} disabled={allRunning || allDone} aria-label={allDone ? t('pipeDone') : t('pipeRunAll')}>
+            {allDone ? t('pipeDone') : allRunning ? t('pipeRunning') : t('pipeRunAll')}
             {!allDone && !allRunning && <span style={{fontSize:"1.1rem"}}>&#9654;</span>}
           </button>
         </div>
@@ -507,25 +552,25 @@ export default function AIDemo() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>
               </div>
             )}
-            <div className={`ai-step ${isLocked ? "locked" : ""} ${isRunning ? "active" : ""} ${isDone ? "done" : ""}`}>
+            <div ref={el => stepRefs.current[idx] = el} className={`ai-step ${isLocked ? "locked" : ""} ${isRunning ? "active" : ""} ${isDone ? "done" : ""}`}>
               {/* Header */}
-              <div className="ai-step-hd" onClick={() => toggleExpand(idx)}>
+              <div className="ai-step-hd" onClick={() => toggleExpand(idx)} role="button" tabIndex={0} aria-expanded={st.expanded} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpand(idx); } }}>
                 <div className="ai-step-hd-left">
                   <div className={`ai-step-num ${isDone ? "done" : cfg.color}`}>
                     {isDone ? "\u2713" : cfg.label}
                   </div>
                   <div className="ai-step-info">
-                    <h3>{cfg.title}{isDone && (cfg.key === "gmail" || cfg.key === "calendar") && <span className="ai-live-tag">Live</span>}</h3>
+                    <h3>{cfg.title}{isDone && (cfg.key === "canva" || cfg.key === "gmail" || cfg.key === "calendar" || (cfg.key === "docusign" && docusignLive?.configured)) && <span className="ai-live-tag">{((cfg.key === "gmail" && liveResults.gmail) || (cfg.key === "calendar" && liveResults.calendar)) ? "Your Account" : "Live"}</span>}</h3>
                     <p>{cfg.subtitle}</p>
                   </div>
                 </div>
                 <div className="ai-step-hd-right">
                   <span className={`ai-step-status ${isDone ? "done" : isRunning ? "running" : "waiting"}`}>
-                    {isDone ? "Complete" : isRunning ? "Executing..." : isReady ? "Ready" : "Locked"}
+                    {isDone ? t('statusDone') : isRunning ? t('statusRunning') : isReady ? t('statusReady') : t('statusLocked')}
                   </span>
                   {isReady && !allRunning && (
-                    <button className="ai-run-btn" onClick={(e) => { e.stopPropagation(); handleRunSingle(idx); }}>
-                      Run <span>&#9654;</span>
+                    <button className="ai-run-btn" aria-label={`Run ${cfg.title}`} onClick={(e) => { e.stopPropagation(); handleRunSingle(idx); }}>
+                      {t('run')} <span>&#9654;</span>
                     </button>
                   )}
                 </div>
@@ -534,7 +579,7 @@ export default function AIDemo() {
               {/* Body */}
               <div className={`ai-step-body ${st.expanded ? "open" : ""}`}>
                 <div className="ai-step-body-inner">
-                  <p className="ai-step-desc">{STEP_DESCS[cfg.key]}</p>
+                  <p className="ai-step-desc">{t(cfg.key + 'Desc')}</p>
 
                   {/* Terminal */}
                   {(isRunning || isDone) && (
@@ -543,7 +588,7 @@ export default function AIDemo() {
                         <div className="ai-terminal-dot" /><div className="ai-terminal-dot" /><div className="ai-terminal-dot" />
                         <span className="ai-terminal-title">mcp-{cfg.key}.sh</span>
                       </div>
-                      <div className="ai-terminal-body" ref={el => termRefs.current[idx] = el}>
+                      <div className="ai-terminal-body" ref={el => termRefs.current[idx] = el} role="log" aria-live="polite">
                         {st.lines.map((line, li) => (
                           <div className="ai-terminal-line" key={li}>
                             <span className={`ai-t-prefix ${line.type}`}>
@@ -564,12 +609,45 @@ export default function AIDemo() {
                         <div className="ai-profile">
                           <div className="ai-profile-avatar">KR</div>
                           <div className="ai-profile-info">
-                            <h4>Khalid Al-Rashid <span className="ai-live-tag">Detected</span></h4>
+                            <h4>Khalid Al-Rashid <span className="ai-live-tag">{t('detected')}</span></h4>
                             <p>Platinum Tier &bull; Interest: Sky Penthouse &bull; Range: AED 8M–15M<br/>Last viewed Sky Penthouse &bull; 3 days ago &bull; VIP ID: KR-001</p>
                           </div>
                           <div className="ai-profile-score">
                             <div className="ai-profile-score-num">87</div>
-                            <div className="ai-profile-score-label">Lead Score</div>
+                            <div className="ai-profile-score-label">{t('leadScore')}</div>
+                          </div>
+                        </div>
+                      )}
+
+                      {cfg.key === "canva" && (
+                        <div className="ai-canva-card">
+                          <div className="ai-canva-top">
+                            <h4>{REAL_RESULTS.canva.title}</h4>
+                            <div className="ai-canva-badge"><span>{"\u2713"}</span> {REAL_RESULTS.canva.pages} {t('pagesGen')}</div>
+                          </div>
+                          <div className="ai-canva-preview">
+                            <img className="ai-canva-thumb" src={REAL_RESULTS.canva.thumbnailUrl} alt="Proposal cover" onError={e => { e.target.style.display = "none"; }} />
+                            <div className="ai-canva-details">
+                              <div className="ai-canva-pages">
+                                {REAL_RESULTS.canva.sections.map((s, i) => (
+                                  <span className="ai-canva-page" key={i}>{i + 1}. {s}</span>
+                                ))}
+                              </div>
+                              <div className="ai-canva-meta">
+                                {t('canvaMeta')}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="ai-canva-links">
+                            <a href={REAL_RESULTS.canva.viewUrl} target="_blank" rel="noreferrer" className="ai-canva-link primary">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{display:'inline',verticalAlign:'middle',marginInlineEnd:'0.3rem'}}><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="19" cy="13" r="2"/><circle cx="6" cy="12" r="3"/><circle cx="12" cy="19" r="2"/><path d="M12 19c-3.9 0-7-3.1-7-7s3.1-7 7-7 7 3.1 7 7"/></svg> {t('viewCanva')} {"\u2197"}
+                            </a>
+                            <a href={REAL_RESULTS.canva.editUrl} target="_blank" rel="noreferrer" className="ai-canva-link secondary">
+                              {t('editDesign')} {"\u2197"}
+                            </a>
+                          </div>
+                          <div className="ai-canva-export">
+                            <span>{"\u2713"}</span> {t('canvaExport')}
                           </div>
                         </div>
                       )}
@@ -582,10 +660,16 @@ export default function AIDemo() {
                             <div className="ai-email-row"><span className="ai-email-label">Subject:</span><span className="ai-email-val" style={{fontWeight:500}}>{REAL_RESULTS.gmail.subject}</span></div>
                           </div>
                           <div style={{padding:".6rem 1.25rem",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                            <span style={{color:"var(--ai-text4)",fontSize:".78rem"}}>Click to preview full email</span>
-                            <a href={REAL_RESULTS.gmail.draftLink} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{fontSize:".78rem",color:"var(--ai-emerald)",display:"flex",alignItems:"center",gap:".3rem",textDecoration:"none",position:"relative",zIndex:5}}>
-                              {"\u2713"} View real draft in Gmail {"\u2197"}
-                            </a>
+                            <span style={{color:"var(--ai-text4)",fontSize:".78rem"}}>{t('clickPreview')}</span>
+                            {liveResults.gmail ? (
+                              <a href={`https://mail.google.com/mail/#drafts/${liveResults.gmail.messageId}`} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{fontSize:".78rem",color:"var(--ai-emerald)",display:"flex",alignItems:"center",gap:".3rem",textDecoration:"none",position:"relative",zIndex:5}}>
+                                {"\u2713"} {t('openYourDraft')} {"\u2197"}
+                              </a>
+                            ) : (
+                              <a href={REAL_RESULTS.gmail.draftLink} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{fontSize:".78rem",color:"var(--ai-emerald)",display:"flex",alignItems:"center",gap:".3rem",textDecoration:"none",position:"relative",zIndex:5}}>
+                                {"\u2713"} {t('viewRealDraft')} {"\u2197"}
+                              </a>
+                            )}
                           </div>
                         </div>
                       )}
@@ -594,41 +678,65 @@ export default function AIDemo() {
                         <>
                           <div className="ai-cal-card">
                             <div className="ai-cal-date-box">
-                              <span className="ai-cal-day">12</span>
-                              <span className="ai-cal-month">Mar</span>
+                              <span className="ai-cal-day">{(() => { const d = new Date(); d.setDate(d.getDate() + 7); return d.getDate(); })()}</span>
+                              <span className="ai-cal-month">{(() => { const d = new Date(); d.setDate(d.getDate() + 7); return d.toLocaleDateString("en-US", { month: "short" }); })()}</span>
                             </div>
                             <div className="ai-cal-details">
                               <h4>{REAL_RESULTS.calendar.title}</h4>
                               <p>{REAL_RESULTS.calendar.time}<br/>{REAL_RESULTS.calendar.location}</p>
-                              <a href={REAL_RESULTS.calendar.link} target="_blank" rel="noreferrer" className="ai-cal-link">
-                                Open in Google Calendar &#8599;
-                              </a>
+                              {liveResults.calendar ? (
+                                <a href={liveResults.calendar.htmlLink} target="_blank" rel="noreferrer" className="ai-cal-link">
+                                  {t('openYourEvent')} &#8599;
+                                </a>
+                              ) : (
+                                <a href={REAL_RESULTS.calendar.link} target="_blank" rel="noreferrer" className="ai-cal-link">
+                                  {t('openCalendar')} &#8599;
+                                </a>
+                              )}
                             </div>
                           </div>
                           <div style={{marginTop:".75rem",padding:".6rem 1rem",background:"rgba(16,185,129,0.08)",border:"1px solid rgba(16,185,129,0.2)",borderRadius:"10px",fontSize:".82rem",color:"var(--ai-emerald)",display:"flex",alignItems:"center",gap:".5rem"}}>
-                            <span>{"\u2713"}</span> Real calendar event created via MCP — click link above to verify
+                            <span>{"\u2713"}</span> {t('calVerify')}
                           </div>
                         </>
                       )}
 
-                      {cfg.key === "docusign" && (
+                      {cfg.key === "docusign" && (() => {
+                        const isLive = docusignLive && docusignLive.configured;
+                        const envId = isLive ? docusignLive.envelopeId : REAL_RESULTS.docusign.envelopeId || "pending";
+                        const envStatus = isLive ? docusignLive.status : REAL_RESULTS.docusign.status;
+                        return (
                         <div className="ai-doc-card">
                           <div className="ai-doc-top">
                             <h4>{REAL_RESULTS.docusign.template}</h4>
-                            <div className="ai-doc-signed"><span>&#10003;</span> {REAL_RESULTS.docusign.status}</div>
+                            <div className="ai-doc-signed">
+                              <span>&#10003;</span> {envStatus === "created" ? t('docDraft') : envStatus === "sent" ? t('docSent') : envStatus}
+                              {isLive && <span className="ai-live-tag">Live</span>}
+                            </div>
                           </div>
                           <div className="ai-doc-fields">
-                            <div className="ai-doc-field"><div className="ai-doc-field-label">Recipient</div><div className="ai-doc-field-val">{REAL_RESULTS.docusign.recipient}</div></div>
-                            <div className="ai-doc-field"><div className="ai-doc-field-label">Email</div><div className="ai-doc-field-val">{REAL_RESULTS.docusign.email}</div></div>
-                            <div className="ai-doc-field"><div className="ai-doc-field-label">Envelope ID</div><div className="ai-doc-field-val" style={{fontFamily:"'JetBrains Mono',monospace",fontSize:".78rem"}}>{REAL_RESULTS.docusign.envelopeId}</div></div>
-                            <div className="ai-doc-field"><div className="ai-doc-field-label">Signed In</div><div className="ai-doc-field-val">{REAL_RESULTS.docusign.signedIn}</div></div>
+                            <div className="ai-doc-field"><div className="ai-doc-field-label">{t('docRecipient')}</div><div className="ai-doc-field-val">{REAL_RESULTS.docusign.recipient}</div></div>
+                            <div className="ai-doc-field"><div className="ai-doc-field-label">{t('docEmail')}</div><div className="ai-doc-field-val">{REAL_RESULTS.docusign.email}</div></div>
+                            <div className="ai-doc-field"><div className="ai-doc-field-label">{t('docEnvelope')}</div><div className="ai-doc-field-val" style={{fontFamily:"'JetBrains Mono',monospace",fontSize:".78rem"}}>{envId}</div></div>
+                            <div className="ai-doc-field"><div className="ai-doc-field-label">{t('docStatus')}</div><div className="ai-doc-field-val">{isLive ? t('docStatusLive') : t('docStatusDemo')}</div></div>
                           </div>
+                          {isLive && (
+                            <div style={{display:"flex",gap:".5rem",marginTop:"1rem"}}>
+                              <a href={`https://app.docusign.com/documents/details/${envId}`} target="_blank" rel="noreferrer" className="ai-canva-link primary" style={{background:"rgba(245,158,11,0.12)",borderColor:"rgba(245,158,11,0.25)",color:"var(--ai-amber)"}}>
+                                {t('viewDocusign')} &#8599;
+                              </a>
+                              <a href={`/api/docusign/envelope/${envId}`} target="_blank" rel="noreferrer" className="ai-canva-link secondary">
+                                {t('apiResponse')} &#8599;
+                              </a>
+                            </div>
+                          )}
                           <div className="ai-doc-unlock">
-                            <span style={{fontSize:"1.1rem"}}>&#128275;</span>
-                            Workflow triggered: Exclusive pre-launch pricing unlocked in Khalid's VIP portal
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{flexShrink:0}}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+                            {t('docUnlock')}
                           </div>
                         </div>
-                      )}
+                        );
+                      })()}
                     </div>
                   )}
                 </div>
@@ -640,28 +748,27 @@ export default function AIDemo() {
 
         {/* Final result */}
         {allDone && (
-          <div className="ai-final">
+          <div ref={finalRef} className="ai-final">
             <div className="ai-final-icon">{"\u2713"}</div>
-            <h2>Pipeline Complete</h2>
-            <p>What traditionally takes a sales team 2–3 days of manual coordination was completed autonomously by AI. Khalid received a personalized VIP experience that made him feel like the only buyer that matters.</p>
+            <h2>{t('finalH2')} {elapsed}{t('finalTotal')}</h2>
+            <p>{t('finalDesc')}</p>
             <div className="ai-final-items">
-              {["VIP brochure email delivered","Private showing booked","NDA signed, pricing unlocked","Full pipeline — zero manual work"].map((item, i) => (
+              {[t('finalItem1'), t('finalItem2'), t('finalItem3'), t('finalItem4')].map((item, i) => (
                 <div className="ai-final-item" key={i}><span className="ai-final-check">&#10003;</span>{item}</div>
               ))}
             </div>
-            <div className="ai-final-time">Completed in {elapsed}s</div>
           </div>
         )}
 
         {/* ── Email Modal ── */}
         {emailModal && (
-          <div className="ai-modal-overlay" onClick={() => setEmailModal(false)}>
+          <div className="ai-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="ai-email-modal-title" onClick={() => setEmailModal(false)} onKeyDown={(e) => { if (e.key === 'Escape') setEmailModal(false); }}>
             <div className="ai-modal" onClick={e => e.stopPropagation()}>
-              <button className="ai-modal-close" onClick={() => setEmailModal(false)}>{"\u2715"}</button>
+              <button className="ai-modal-close" onClick={() => setEmailModal(false)} aria-label="Close">{"\u2715"}</button>
               <div className="ai-em-body">
                 <div className="ai-em-gold-hd">
-                  <h3>Vista Residences</h3>
-                  <p>VIP Private Showing Invitation</p>
+                  <h3 id="ai-email-modal-title">{t('emailModalTitle')}</h3>
+                  <p>{t('emailModalSub')}</p>
                 </div>
                 <div className="ai-em-content">
                   <div className="ai-em-meta">
@@ -669,8 +776,8 @@ export default function AIDemo() {
                     <div className="ai-em-meta-row"><span className="ai-em-meta-label">To</span><span className="ai-em-meta-val">{REAL_RESULTS.gmail.to}</span></div>
                     <div className="ai-em-meta-row"><span className="ai-em-meta-label">Subject</span><span className="ai-em-meta-val" style={{fontWeight:500}}>{REAL_RESULTS.gmail.subject}</span></div>
                   </div>
-                  <p className="ai-em-text">Dear Khalid,</p>
-                  <p className="ai-em-text">Thank you for your continued interest in Vista Residences. As a valued VIP Access Key holder, we are pleased to invite you to an <strong>exclusive private showing</strong> of the Sky Penthouse.</p>
+                  <p className="ai-em-text">{t('emailDear')}</p>
+                  <p className="ai-em-text">{t('emailBody1')} <strong>{t('emailBody1b')}</strong> {t('emailBody1c')}</p>
                   <div className="ai-em-unit-card">
                     <h5>Sky Penthouse — AED 12,500,000</h5>
                     <p>5 Bedrooms &bull; Full Floor &bull; 45th Floor &bull; Panoramic Gulf Views &bull; Private Infinity Pool &bull; Smart Home Ready</p>
@@ -680,14 +787,14 @@ export default function AIDemo() {
                     <div className="ai-em-showing-val">Thursday, March 12, 2026 at 2:00 PM GST</div>
                     <div className="ai-em-showing-loc">Vista Residences Sales Center, Dubai Marina</div>
                   </div>
-                  <p className="ai-em-text">Your personalized property brochure with ROI analysis is attached. Please complete the enclosed NDA to unlock exclusive pre-launch pricing before your showing.</p>
+                  <p className="ai-em-text">{t('emailBrochure')}</p>
                   <div className="ai-em-attach">
-                    <span style={{fontSize:"1.1rem"}}>{"\uD83D\uDCCE"}</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{flexShrink:0}}><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                     {REAL_RESULTS.gmail.attachment} (2.4 MB)
                   </div>
-                  <p className="ai-em-text" style={{marginTop:"1rem",fontSize:".82rem"}}>Warm regards,<br/><strong>Vista Residences Sales Team</strong><br/><span style={{color:"var(--ai-text4)"}}>Powered by Dynamic NFC</span></p>
-                  <a href={REAL_RESULTS.gmail.draftLink} target="_blank" rel="noreferrer" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:".5rem",marginTop:"1.25rem",padding:".7rem",background:"rgba(16,185,129,0.1)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:"10px",color:"var(--ai-emerald)",fontSize:".85rem",fontWeight:500,textDecoration:"none"}}>
-                    {"\u2713"} This is a real draft — Open in Gmail {"\u2197"}
+                  <p className="ai-em-text" style={{marginTop:"1rem",fontSize:".82rem"}}>{t('emailRegards')}<br/><strong>{t('emailTeam')}</strong><br/><span style={{color:"var(--ai-text4)"}}>{t('emailPowered')}</span></p>
+                  <a href={liveResults.gmail ? `https://mail.google.com/mail/#drafts/${liveResults.gmail.messageId}` : REAL_RESULTS.gmail.draftLink} target="_blank" rel="noreferrer" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:".5rem",marginTop:"1.25rem",padding:".7rem",background:"rgba(16,185,129,0.1)",border:"1px solid rgba(16,185,129,0.25)",borderRadius:"10px",color:"var(--ai-emerald)",fontSize:".85rem",fontWeight:500,textDecoration:"none"}}>
+                    {"\u2713"} {liveResults.gmail ? t('openYourDraft') : t('emailRealDraft')} {"\u2197"}
                   </a>
                 </div>
               </div>
@@ -697,7 +804,27 @@ export default function AIDemo() {
       </main>
 
       <footer className="ai-ft">
-        <p>AI Sales Automation Demo for <a href="https://dynamicnfc.ca" target="_blank" rel="noreferrer">Dynamic NFC</a> — Model Context Protocol integration showcase.</p>
+        <div className="ai-ft-inner">
+          <div className="ai-ft-brand">
+            <Link to="/"><img src="/assets/images/logo.png" alt="DynamicNFC" className="ai-ft-logo" /></Link>
+            <p className="ai-ft-note">{t('footNote')}</p>
+          </div>
+          <div className="ai-ft-cols">
+            <div className="ai-ft-col">
+              <h5>{t('footIndustries')}</h5>
+              <Link to="/developers">{t('footDevAgents')}</Link>
+              <Link to="/automotive">{t('footAuto')}</Link>
+              <Link to="/nfc-cards">{t('footNfc')}</Link>
+            </div>
+            <div className="ai-ft-col">
+              <h5>{t('footResources')}</h5>
+              <Link to="/enterprise/crmdemo">{t('footLiveDemo')}</Link>
+              <Link to="/contact-sales">{t('footContact')}</Link>
+              <Link to="/login">{t('footLogin')}</Link>
+            </div>
+          </div>
+        </div>
+        <div className="ai-ft-bottom"><p>{t('footCopy')}</p></div>
       </footer>
     </div>
   );

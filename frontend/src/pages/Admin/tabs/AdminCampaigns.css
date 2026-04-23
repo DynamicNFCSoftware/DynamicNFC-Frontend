@@ -1,0 +1,305 @@
+/* AdminCampaigns.css — Salesforce Lightning Light Theme — prefix: acmp- */
+.acmp-page { max-width: 940px; }
+.acmp-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.75rem; }
+.acmp-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: #111827; }
+.acmp-subtitle { color: #6b7280; font-size: 0.85rem; margin-top: 0.15rem; }
+
+/* ── Campaign cards ─────────────────────────────────── */
+.acmp-list { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.acmp-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  overflow: hidden;
+  position: relative;
+}
+.acmp-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0176d3, #00a1e0);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.acmp-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06);
+  border-color: #c7d2fe;
+  transform: translateY(-2px);
+}
+.acmp-card:hover::before { opacity: 1; }
+
+.acmp-card-body { padding: 1.5rem 1.5rem 1.25rem; }
+
+.acmp-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.acmp-card-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; color: #111827; margin-bottom: 0.2rem; }
+.acmp-card-client { color: #6b7280; font-size: 0.82rem; }
+.acmp-card-desc { color: #6b7280; font-size: 0.8rem; margin-top: 0.4rem; line-height: 1.55; }
+
+/* ── Badges ─────────────────────────────────────────── */
+.acmp-badges { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+.acmp-sector-badge {
+  font-size: 0.62rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.acmp-sector-real_estate { background: #fef3c7; color: #92400e; }
+.acmp-sector-automotive { background: #eff6ff; color: #1d4ed8; }
+
+.acmp-status {
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.acmp-status-active { background: #dcfce7; color: #15803d; }
+.acmp-status-paused { background: #fef9c3; color: #a16207; }
+.acmp-status-completed { background: #f3f4f6; color: #9ca3af; }
+
+/* ── Stats row ──────────────────────────────────────── */
+.acmp-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin: 1.25rem 0 0;
+  background: #f9fafb;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.acmp-stat {
+  text-align: center;
+  padding: 1rem 0.5rem;
+  position: relative;
+}
+.acmp-stat:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: #e5e7eb;
+}
+.acmp-stat-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+.acmp-stat-value.acmp-val-planned { color: #7c3aed; }
+.acmp-stat-value.acmp-val-taps { color: #e63946; }
+.acmp-stat-value.acmp-val-time { font-size: 0.9rem; font-family: 'Outfit', sans-serif; color: #6b7280; font-weight: 500; }
+
+.acmp-stat-label {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 0.3rem;
+  font-weight: 500;
+}
+
+/* ── Meta + Actions footer ──────────────────────────── */
+.acmp-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.85rem 1.5rem;
+  background: #fafafa;
+  border-top: 1px solid #f3f4f6;
+}
+
+.acmp-card-meta {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  font-size: 0.73rem;
+  color: #9ca3af;
+}
+.acmp-card-meta span { white-space: nowrap; }
+
+.acmp-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0; }
+
+/* ── Buttons ────────────────────────────────────────── */
+.acmp-btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: inherit;
+  transition: all 0.2s;
+  line-height: 1.4;
+}
+.acmp-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+
+.acmp-btn-primary { background: #0176d3; color: #ffffff; border-color: #0176d3; font-weight: 600; }
+.acmp-btn-primary:hover { background: #015eb0; border-color: #015eb0; }
+.acmp-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.acmp-btn-view {
+  background: #f0f7ff;
+  color: #0176d3;
+  border-color: #bfdbfe;
+  font-weight: 500;
+}
+.acmp-btn-view:hover { background: #dbeafe; border-color: #93c5fd; }
+
+.acmp-btn-danger { background: #fff; color: #dc2626; border-color: #fecaca; }
+.acmp-btn-danger:hover { background: #fef2f2; border-color: #fca5a5; }
+
+/* ── Empty state ────────────────────────────────────── */
+.acmp-empty { text-align: center; padding: 4rem 2rem; background: #ffffff; border: 2px dashed #d1d5db; border-radius: 12px; }
+.acmp-empty-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.acmp-empty p { color: #6b7280; font-size: 0.9rem; max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+/* ── Modal ──────────────────────────────────────────── */
+.acmp-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+.acmp-modal { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 2rem; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+.acmp-modal-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 600; color: #111827; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f3f4f6; }
+.acmp-modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f3f4f6; }
+
+/* ── Form ───────────────────────────────────────────── */
+.acmp-form-group { margin-bottom: 1rem; }
+.acmp-form-label { display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
+.acmp-form-input { width: 100%; padding: 0.6rem 0.75rem; background: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; color: #111827; font-size: 0.88rem; font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+.acmp-form-input:focus { border-color: #0176d3; box-shadow: 0 0 0 3px rgba(1,118,211,0.12); }
+.acmp-form-input::placeholder { color: #9ca3af; }
+.acmp-textarea { resize: vertical; min-height: 60px; }
+.acmp-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.acmp-form-error { color: #dc2626; font-size: 0.82rem; margin-top: 0.5rem; background: #fef2f2; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #fecaca; }
+
+/* ── Toast ──────────────────────────────────────────── */
+.acmp-toast { position: fixed; bottom: 2rem; right: 2rem; background: #16a34a; color: #fff; padding: 0.75rem 1.5rem; border-radius: 10px; font-size: 0.85rem; font-weight: 500; z-index: 2000; animation: acmpSlide 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+.acmp-toast-error { background: #dc2626; }
+@keyframes acmpSlide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ── Archive (Completed Campaigns) ───────────────── */
+.acmp-archive { margin-top: 2.5rem; }
+
+.acmp-archive-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.acmp-archive-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+.acmp-archive-line { flex: 1; height: 1px; background: #e5e7eb; }
+
+.acmp-archive-list { display: flex; flex-direction: column; gap: 2px; }
+
+.acmp-arc-card {
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.acmp-arc-card:hover { border-color: #e5e7eb; background: #f5f5f5; }
+
+.acmp-arc-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.acmp-arc-row:hover { background: rgba(0,0,0,0.02); }
+
+.acmp-arc-chevron {
+  font-size: 0.55rem;
+  color: #9ca3af;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  display: inline-block;
+}
+.acmp-arc-chevron.acmp-arc-open { transform: rotate(90deg); }
+
+.acmp-arc-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+.acmp-arc-client {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  padding-left: 0.5rem;
+  border-left: 1px solid #e5e7eb;
+}
+.acmp-arc-date {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  margin-left: auto;
+}
+.acmp-arc-mini-stats {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+.acmp-arc-mini-stats span { white-space: nowrap; }
+
+/* Archive detail (expanded) */
+.acmp-arc-detail {
+  border-top: 1px solid #f0f0f0;
+  animation: acmpExpand 0.2s ease;
+}
+@keyframes acmpExpand { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 400px; } }
+
+.acmp-arc-desc { font-size: 0.8rem; color: #9ca3af; padding: 0.75rem 1rem 0; line-height: 1.5; }
+
+.acmp-stats-muted { opacity: 0.6; }
+.acmp-stats-muted .acmp-stat-value { color: #6b7280; font-size: 1.2rem; }
+
+.acmp-arc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  background: #f5f5f5;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .acmp-stats { grid-template-columns: repeat(2, 1fr); }
+  .acmp-stat:nth-child(2)::after { display: none; }
+  .acmp-form-row { grid-template-columns: 1fr; }
+  .acmp-card-footer { flex-direction: column; align-items: flex-start; }
+  .acmp-card-body { padding: 1.25rem 1rem 1rem; }
+  .acmp-card-footer { padding: 0.75rem 1rem; }
+  .acmp-arc-row { flex-wrap: wrap; }
+  .acmp-arc-date { margin-left: 0; }
+  .acmp-arc-mini-stats { width: 100%; }
+  .acmp-arc-footer { flex-direction: column; align-items: flex-start; }
+}

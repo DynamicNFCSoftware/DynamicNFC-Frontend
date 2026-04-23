@@ -22,8 +22,6 @@ const SCHEMA_VERSION = 1;
 const LAST_ACTIVITY_THROTTLE_MS = 60 * 60 * 1000;
 const lastActivityWriteByUid = new Map();
 
-const SUBCOLLECTIONS = ["cards", "leads", "deals", "campaigns", "events"];
-
 const slugify = (value) =>
   String(value || "")
     .toLowerCase()
@@ -32,30 +30,6 @@ const slugify = (value) =>
 
 const sanitizeFirestoreRow = (row) =>
   Object.fromEntries(Object.entries(row || {}).filter(([, value]) => value !== undefined));
-
-async function clearTenantSubcollections(uid) {
-  let batch = writeBatch(db);
-  let opCount = 0;
-  const flush = async () => {
-    if (opCount === 0) return;
-    await batch.commit();
-    batch = writeBatch(db);
-    opCount = 0;
-  };
-
-  for (const sub of SUBCOLLECTIONS) {
-    const snap = await getDocs(collection(db, "tenants", uid, sub));
-    for (const d of snap.docs) {
-      batch.delete(d.ref);
-      opCount += 1;
-      if (opCount >= 450) {
-        // Keep well below Firestore's 500-op batch cap.
-        await flush();
-      }
-    }
-  }
-  await flush();
-}
 
 export async function checkTenantExists(uid, regionId = "gulf") {
   const tenantSnap = await getDoc(doc(db, "tenants", uid));
@@ -140,8 +114,7 @@ export async function seedTenantData(uid, userInfo = {}, regionId = "gulf") {
         existingData.seedVersion !== SEED_VERSION
           ? "version mismatch"
           : `region mismatch (${existingData.seedRegion || "unknown"} -> ${regionId})`;
-      console.log("[TENANT RESEED] Reseed required:", reason, "- clearing old data before reseed");
-      await clearTenantSubcollections(uid);
+      console.log("[TENANT RESEED] Reseed required:", reason, "- reseeding with merge strategy");
     }
 
     await setDoc(
@@ -212,7 +185,6 @@ export async function updateLastActivity(uid, options = {}) {
 
 export async function resetToDemo(uid, userInfo = {}, regionId = "gulf") {
   await setDoc(doc(db, "tenants", uid), { seedComplete: false }, { merge: true });
-  await clearTenantSubcollections(uid);
   return seedTenantData(uid, userInfo, regionId);
 }
 

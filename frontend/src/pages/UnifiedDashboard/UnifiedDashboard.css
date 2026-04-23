@@ -1,0 +1,42 @@
+.ud-export-pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: #e63946;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.ud-export-pdf-btn:hover:not(:disabled) {
+  background: #c1121f;
+}
+.ud-export-pdf-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.ud-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ud-spin 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes ud-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accessibility skip link must be hidden during PDF capture */
+.ud-skip-link[data-pdf-hide],
+[data-pdf-hide] {
+  /* default visible; captureMain() will toggle via JS */
+}

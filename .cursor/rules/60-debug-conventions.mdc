@@ -1,0 +1,47 @@
+---
+description: Structured diagnostic logging conventions for debug sessions
+alwaysApply: false
+---
+
+# Debug Conventions
+
+When the user asks you to add diagnostic logging or investigate a non-obvious bug, use structured JSON log entries with this consistent schema.
+
+## Log Entry Shape
+
+```js
+console.log(JSON.stringify({
+  sessionId: "9755f9",                        // short ID, reused across all logs in one debugging session
+  runId: "seed-permission-diagnostic-v1",     // describes what this diagnostic run is testing
+  hypothesisId: "H1",                         // H1, H2, H3 — one per hypothesis
+  location: "tenantService.js:flush:commitError", // file.ext:function:phase
+  message: "clearTenantSubcollections flush commit failed", // short English
+  data: { uid, opCount, errorCode, errorMessage },         // structured context only
+  timestamp: Date.now()
+}));
+```
+
+## Rules
+
+- One log line = one JSON object. Never multi-line pretty-print — it breaks log ingestion.
+- Use short IDs: `H1`, `9755f9`. Not `hypothesis_number_1` or full UUIDs.
+- For errors, extract `errorCode` + `errorMessage` into `data`. Never stringify raw `Error` objects.
+- For async flows, emit both `beforeX` and `xError` / `xSuccess` at each critical phase, so the failure boundary is visible.
+- One `sessionId` per debugging session. Reuse across files and runs.
+- One `runId` per hypothesis sweep. Bump the version (`-v2`) when retrying with a changed hypothesis.
+- Always include `timestamp: Date.now()` — lets future readers tell if a log is stale or current.
+- Persistent diagnostic output goes to `debug/<sessionId>-<short-name>.log` at repo root. Add `debug/` to `.gitignore` if not already.
+
+## Cleanup Rule
+Once the bug is resolved, delete the diagnostic log file AND remove all diagnostic logs in the same PR that ships the fix. Production code should not carry `sessionId`/`runId`/`hypothesisId` entries. Stale debug logs in the repo cause confusion — future readers can't tell if the bug is still live.
+
+## When to Use
+- User is asking "why is X failing" and the root cause isn't obvious from the stack trace.
+- Permission, race condition, or batch-operation failure that's silently retrying.
+- Firestore security rules are suspected.
+- Verifying a hypothesis about production behavior across multiple call sites.
+
+## When NOT to Use
+- Casual `console.log("got here")` scaffolding during normal development.
+- Cloud Function observability (Cloud Functions already use structured Google Cloud logging — use the `functions.logger` API).
+- User-facing error messages.

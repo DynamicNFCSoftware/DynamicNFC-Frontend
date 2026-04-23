@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import './LoginPortal.css';
+import SEO from '../../components/SEO/SEO';
 
 // ═══════════════════════════════════════════════════════════════
 // LOGIN PORTAL — Ahmed Al-Fahad (Registered User, NOT VIP)
@@ -21,7 +23,6 @@ const trackEvent = (eventType, data = {}) => {
   const events = JSON.parse(localStorage.getItem("dnfc_events") || "[]");
   events.push(event);
   localStorage.setItem("dnfc_events", JSON.stringify(events));
-  console.log(`[TRACK:registered] ${eventType}`, data);
   return event;
 };
 
@@ -128,171 +129,6 @@ const AMENITIES = [
 ];
 
 // ─── CSS ─────────────────────────────────────────────────────────
-const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600&display=swap');
-
-/* ── RESET ── */
-.lp,.lp *{margin:0;padding:0;box-sizing:border-box;color:#FAFAF8;font-family:'Outfit',system-ui,sans-serif;line-height:1.5}
-.lp h1,.lp h2,.lp h3,.lp h4{color:#FAFAF8 !important;font-family:'Cormorant Garamond',Georgia,serif !important;margin:0}
-.lp p,.lp span,.lp div,.lp label,.lp a{color:inherit}
-.lp img{max-width:100%;display:block}
-.lp button{font-family:'Outfit',system-ui,sans-serif;cursor:pointer}
-.lp{min-height:100vh;background:#0D0D0F}
-
-/* ── LOGIN SCREEN ── */
-.lp-login{min-height:100vh;display:flex;position:relative;overflow:hidden}
-.lp-login-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.35)}
-.lp-login-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,13,15,.92),rgba(13,13,15,.7))}
-.lp-login-ct{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:2rem}
-.lp-login-box{width:100%;max-width:420px;padding:3rem;background:rgba(20,20,22,.9);border:1px solid rgba(255,255,255,.08);border-radius:12px;backdrop-filter:blur(20px);animation:slideUp .6s ease-out}
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.lp-login-logo{text-align:center;margin-bottom:2rem}
-.lp-login-logo h2{font-family:'Cormorant Garamond',Georgia,serif !important;font-size:1.8rem;font-weight:300;color:#FAFAF8 !important;letter-spacing:.08em}
-.lp-login-logo h2 b{font-weight:600}
-.lp-login-logo p{font-size:.75rem;color:rgba(250,250,248,.45) !important;letter-spacing:.15em;text-transform:uppercase;margin-top:.3rem}
-.lp-login-divider{width:40px;height:1px;background:rgba(255,255,255,.15);margin:0 auto 1.5rem}
-.lp-fg{margin-bottom:1.2rem}
-.lp-fl{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,250,248,.5) !important;margin-bottom:.5rem}
-.lp-fi{width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#FAFAF8 !important;font-family:'Outfit',system-ui,sans-serif;font-size:.9rem;outline:none;transition:.3s}
-.lp-fi:focus{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.06)}
-.lp-fi::placeholder{color:rgba(250,250,248,.3) !important}
-.lp-submit{width:100%;padding:.95rem;background:#FAFAF8;color:#0D0D0F !important;font-family:'Outfit',system-ui,sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:6px;cursor:pointer;transition:.3s;margin-top:.5rem}
-.lp-submit:hover{background:#E8E6E1;transform:translateY(-1px)}
-.lp-note{text-align:center;font-size:.72rem;color:rgba(250,250,248,.35) !important;margin-top:1.2rem;line-height:1.5}
-.lp-register-hint{text-align:center;margin-top:1rem;font-size:.78rem;color:rgba(250,250,248,.4) !important}
-.lp-register-hint span{color:#FAFAF8 !important;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-
-/* ── NAV ── */
-.lp-hd{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;align-items:center;justify-content:space-between;transition:.5s}
-.lp-hd.sc{background:rgba(13,13,15,.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.08);padding:.8rem 3rem}
-.lp-logo{font-family:'Cormorant Garamond',Georgia,serif !important;font-size:1.4rem;font-weight:300;letter-spacing:.15em;color:#FAFAF8 !important;text-transform:uppercase}
-.lp-logo b{font-weight:600}
-.lp-nav{display:flex;align-items:center;gap:1.2rem}
-.lp-user-badge{display:flex;align-items:center;gap:.6rem;padding:.4rem 1rem;border:1px solid rgba(255,255,255,.12);border-radius:100px;font-size:.75rem;color:rgba(250,250,248,.7) !important}
-.lp-user-badge .lp-avatar{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:#FAFAF8 !important}
-.lp-btn-sm{background:transparent;border:1px solid rgba(255,255,255,.12);color:rgba(250,250,248,.7) !important;padding:.4rem .9rem;border-radius:6px;font-size:.78rem;transition:.3s;letter-spacing:.04em}
-.lp-btn-sm:hover{border-color:rgba(255,255,255,.25);color:#FAFAF8 !important}
-
-/* ── HERO (smaller, less exclusive than VIP) ── */
-.lp-hero{position:relative;height:70vh;min-height:500px;display:flex;align-items:flex-end;overflow:hidden}
-.lp-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.03);animation:lhz 25s ease-in-out infinite alternate}
-@keyframes lhz{from{transform:scale(1.03)}to{transform:scale(1.08)}}
-.lp-hero-ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,15,.3) 0%,rgba(13,13,15,.55) 40%,rgba(13,13,15,.93) 85%,#0D0D0F 100%)}
-.lp-hero-ct{position:relative;z-index:2;padding:0 4rem 4rem;max-width:800px;animation:slideUp .8s ease-out}
-.lp-tag{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;border:1px solid rgba(255,255,255,.12);border-radius:100px;margin-bottom:1.2rem;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(250,250,248,.6) !important;background:rgba(255,255,255,.04)}
-.lp-tag::before{content:'○';font-size:.5rem;color:rgba(250,250,248,.4) !important}
-.lp-hero-greet{font-size:.95rem;font-weight:300;color:rgba(250,250,248,.7) !important;margin-bottom:.4rem}
-.lp-hero-greet span{color:#FAFAF8 !important;font-weight:400}
-.lp-htitle{font-family:'Cormorant Garamond',Georgia,serif !important;font-size:clamp(2.2rem,4.5vw,4rem);font-weight:300;line-height:1.1;margin-bottom:1rem;color:#FAFAF8 !important}
-.lp-hdesc{font-size:1rem;font-weight:300;line-height:1.7;color:rgba(250,250,248,.7) !important;max-width:550px;margin-bottom:2rem}
-.lp-hacts{display:flex;gap:1rem;flex-wrap:wrap}
-
-/* ── BUTTONS ── */
-.lp .btn-w{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;background:#FAFAF8;color:#0D0D0F !important;font-family:'Outfit',system-ui,sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:4px;cursor:pointer;transition:.4s;white-space:nowrap}
-.lp .btn-w:hover{background:#E8E6E1;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
-.lp .btn-o{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;background:transparent;color:rgba(250,250,248,.8) !important;font-family:'Outfit',system-ui,sans-serif;font-size:.82rem;font-weight:400;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,255,255,.15);border-radius:4px;cursor:pointer;transition:.4s;white-space:nowrap}
-.lp .btn-o:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.3)}
-.lp .btn-sm{padding:.55rem 1.2rem;font-size:.75rem}
-
-/* ── STATS ── */
-.lp-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);background:#111114}
-.lp-st{padding:2rem 1.5rem;text-align:center;border-right:1px solid rgba(255,255,255,.08);transition:.3s}
-[dir=rtl] .lp-st{border-right:none;border-left:1px solid rgba(255,255,255,.08)}
-.lp-st:last-child{border:none}
-.lp-st:hover{background:rgba(255,255,255,.02)}
-.lp-stv{font-family:'Cormorant Garamond',Georgia,serif !important;font-size:2rem;font-weight:300;color:#FAFAF8 !important;line-height:1;margin-bottom:.4rem}
-.lp-stl{font-size:.68rem;font-weight:400;letter-spacing:.15em;text-transform:uppercase;color:rgba(250,250,248,.4) !important}
-
-/* ── SECTION ── */
-.lp-sec{padding:5rem 4rem}
-.lp-sh{text-align:center;margin-bottom:3.5rem}
-.lp-sl{font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(250,250,248,.4) !important;margin-bottom:.8rem;display:block}
-.lp-st2{font-family:'Cormorant Garamond',Georgia,serif !important;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:300;color:#FAFAF8 !important;margin-bottom:.6rem}
-.lp-ss{font-size:.92rem;font-weight:300;color:rgba(250,250,248,.6) !important}
-
-/* ── UNIT CARDS ── */
-.lp-units{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1200px;margin:0 auto}
-.lp-card{background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden;cursor:pointer;transition:.5s}
-.lp-card:hover{border-color:rgba(255,255,255,.2);transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
-.lp-card-img{position:relative;height:210px;overflow:hidden}
-.lp-card-img img{width:100%;height:100%;object-fit:cover;transition:.6s}
-.lp-card:hover .lp-card-img img{transform:scale(1.06)}
-.lp-card-actions{display:flex;gap:.5rem;padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.06);flex-wrap:wrap}
-
-/* ── MODAL ── */
-.lp-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:2rem;animation:mfade .3s}
-@keyframes mfade{from{opacity:0}to{opacity:1}}
-.lp-modal{background:#111114;border:1px solid rgba(255,255,255,.08);border-radius:12px;max-width:1000px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:mslide .4s ease-out}
-@keyframes mslide{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
-.lp-modal-close{position:absolute;top:1.2rem;right:1.2rem;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(250,250,248,.7) !important;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.3s;z-index:5}
-[dir=rtl] .lp-modal-close{right:auto;left:1.2rem}
-.lp-modal-close:hover{background:rgba(255,255,255,.12);color:#FAFAF8 !important}
-.lp-modal-gallery{display:flex;gap:2px;height:300px;overflow:hidden}
-.lp-modal-gallery img{flex:1;min-width:0;object-fit:cover;cursor:pointer;transition:.4s}
-.lp-modal-gallery img:hover{flex:1.5}
-
-/* ── AMENITIES ── */
-.lp-am-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;max-width:1100px;margin:0 auto;background:rgba(255,255,255,.06)}
-.lp-am{background:#0D0D0F;padding:2rem;text-align:center;transition:.3s}
-.lp-am:hover{background:rgba(255,255,255,.02)}
-.lp-am-icon{font-size:1.6rem;margin-bottom:.7rem}
-
-/* ── INVESTMENT ── */
-.lp-inv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;max-width:1100px;margin:0 auto}
-.lp-inv{text-align:center;padding:2.2rem 1.5rem;border:1px solid rgba(255,255,255,.08);border-radius:4px;transition:.3s;background:#0D0D0F}
-.lp-inv:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.02)}
-
-/* ── PAYMENT ── */
-.lp-payment{margin-top:2rem;padding:2rem;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.02)}
-.lp-pay-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:1rem}
-.lp-pay-legend{display:flex;gap:2rem;flex-wrap:wrap}
-.lp-pay-dot{width:10px;height:10px;border-radius:50%}
-
-/* ── BOOKING FORM ── */
-.lp-contact{background:#111114}
-.lp-form{max-width:550px;margin:0 auto}
-
-/* ── TOAST ── */
-.lp-toast{position:fixed;bottom:2rem;right:2rem;padding:1rem 2rem;background:#FAFAF8;color:#0D0D0F !important;font-family:'Outfit',system-ui,sans-serif;font-size:.85rem;font-weight:500;border-radius:8px;z-index:300;animation:toastIn .4s ease-out;box-shadow:0 8px 30px rgba(0,0,0,.4)}
-[dir=rtl] .lp-toast{right:auto;left:2rem}
-@keyframes toastIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-
-/* ── DIVIDER ── */
-.lp-div{display:flex;align-items:center;padding:1.5rem 4rem}
-.lp-div-l{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
-.lp-div-d{padding:0 1.5rem;color:rgba(250,250,248,.2) !important;font-size:.45rem}
-
-/* ── REVEAL ── */
-.lp-rv{opacity:0;transform:translateY(25px);transition:.8s cubic-bezier(.4,0,.2,1)}
-.lp-rv.vis{opacity:1;transform:translateY(0)}
-
-/* ── RESPONSIVE ── */
-@media(max-width:1024px){
-  .lp-units{grid-template-columns:repeat(2,1fr)}
-  .lp-am-grid{grid-template-columns:repeat(2,1fr)}
-  .lp-inv-grid{grid-template-columns:repeat(2,1fr)}
-  .lp-stats{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:768px){
-  .lp-hd{padding:1rem 1.5rem}
-  .lp-hero-ct{padding:0 1.5rem 3rem}
-  .lp-sec{padding:3rem 1.5rem}
-  .lp-units{grid-template-columns:1fr}
-  .lp-am-grid{grid-template-columns:1fr 1fr}
-  .lp-inv-grid{grid-template-columns:1fr 1fr}
-  .lp-hacts{flex-direction:column}
-  .lp .btn-w,.lp .btn-o{width:100%;justify-content:center}
-  .lp-modal{margin:1rem}
-  .lp-modal-gallery{height:180px;flex-direction:column}
-  .lp-modal-gallery img{height:180px;flex:none}
-  .lp-user-badge{display:none}
-  .lp-login-box{padding:2rem 1.5rem}
-}
-@media(max-width:480px){
-  .lp-stats{grid-template-columns:1fr 1fr}
-  .lp-inv-grid{grid-template-columns:1fr}
-}
-`;
 
 // ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
@@ -307,13 +143,6 @@ export default function LoginPortal() {
   const [bookingForm, setBookingForm] = useState({ unit: "", date: "", time: "" });
   const L = lang;
   const dir = L === "en" ? "ltr" : "rtl";
-
-  useEffect(() => {
-    const el = document.createElement("style");
-    el.textContent = CSS;
-    document.head.appendChild(el);
-    return () => document.head.removeChild(el);
-  }, []);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
@@ -391,6 +220,7 @@ export default function LoginPortal() {
   if (!loggedIn) {
     return (
       <div className="lp" dir={dir}>
+        <SEO title="Portal Login" description="Access the DynamicNFC demo portal." path="/login-portal" />
         <div className="lp-login">
           <div className="lp-login-bg" style={{ backgroundImage: `url(/assets/images/vip-portal/hero.jpg)` }} />
           <div className="lp-login-ov" />
@@ -436,6 +266,7 @@ export default function LoginPortal() {
   // ─── PORTAL (After Login) ─────────────────────────────────
   return (
     <div className="lp" dir={dir}>
+      <SEO title="Portal Login" description="Access the DynamicNFC demo portal." path="/login-portal" />
       {/* NAV */}
       <header className={`lp-hd ${scrolled ? "sc" : ""}`}>
         <div className="lp-logo" style={{ color: "#FAFAF8", fontFamily: "'Cormorant Garamond',Georgia,serif" }}>Vista <b>Residences</b></div>
@@ -633,7 +464,7 @@ export default function LoginPortal() {
         </p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: ".6rem", opacity: .7 }}>
           <span style={{ color: "rgba(250,250,248,.4)", fontSize: ".72rem", letterSpacing: ".08em", textTransform: "uppercase" }}>{L === "en" ? "Powered by" : "مدعوم من"}</span>
-          <img src="/assets/images/dynamicnfc-logo-red.png" alt="Dynamic NFC" style={{ height: "22px", objectFit: "contain" }} />
+          <img src="/assets/images/dynamicnfc-logo-red.webp" alt="Dynamic NFC" style={{ height: "22px", objectFit: "contain" }} />
         </div>
       </footer>
 

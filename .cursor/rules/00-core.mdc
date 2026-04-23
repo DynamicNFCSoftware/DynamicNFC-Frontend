@@ -1,0 +1,19 @@
+---
+description: Core safety and repo boundaries
+alwaysApply: true
+---
+
+# DynamicNFC Core Rules
+
+- Keep changes minimal and scoped to the request. If something can be done in 3 lines, never write 50.
+- Prefer one generic helper over N sector/region-specific copies. Data-driven loops over repetitive blocks.
+- Do not modify `backend/` (deprecated Spring Boot) unless explicitly requested.
+- Do not change Firestore `cards` collection structure.
+- Do not edit `frontend/src/firebase.js` or `frontend/src/App.jsx` routing without explicit user request.
+- Do not edit `.cursor/rules/*.mdc` or `.cursorrules` — user maintains these manually.
+- Do not touch `blinq-app.shared.423b915ad.min.css` (35K-line legacy, audit pending).
+- Do not import `src/translations/*.json` (legacy duplicates, pending deletion). Use `src/i18n/pages/*.js` + `src/i18n/portals/*.js` only.
+- Treat `functions/index.js` as primary functions entry point. If another functions entry file appears, verify with user before editing.
+- Prefer existing architecture and naming conventions over introducing new patterns.
+- Use beginner-friendly explanations when proposing non-trivial changes.
+- Never commit secrets or generated artifacts (`node_modules`, `dist`, `.env`, `.firebase`).

@@ -1,71 +1,65 @@
-/* :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ═══════════════════════════════════════════════════════
+   Global Theme Variables — Light (default) & Dark
+   Toggled via data-theme="dark" on <html>
+   ═══════════════════════════════════════════════════════ */
+:root,
+[data-theme="light"] {
+  --bg: #faf8f5;
+  --bg2: #f0ede8;
+  --surface: #ffffff;
+  --charcoal: #1a1a1f;
+  --slate: #2d2d35;
+  --text: #1a1a1f;
+  --text2: #3a3a42;
+  --muted: #6b7280;
+  --border: rgba(0, 0, 0, 0.06);
+  --border-h: rgba(0, 0, 0, 0.10);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 16px 50px rgba(0, 0, 0, 0.10);
+  --nav-bg: rgba(250, 248, 245, 0.92);
+  --nav-border: rgba(0, 0, 0, 0.06);
+  --hover-bg: rgba(0, 0, 0, 0.03);
+  --lang-btn-bg: #ffffff;
+  --lang-btn-border: rgba(0, 0, 0, 0.06);
+  --hamburger-color: #1a1a1f;
+  color-scheme: light;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+[data-theme="dark"] {
+  --bg: #0f1118;
+  --bg2: #181a24;
+  --surface: #1e2030;
+  --charcoal: #e8e6e3;
+  --slate: #c8c6c2;
+  --text: #e8e6e3;
+  --text2: #b8b6b2;
+  --muted: #8b8d97;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-h: rgba(255, 255, 255, 0.14);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 50px rgba(0, 0, 0, 0.5);
+  --nav-bg: rgba(15, 17, 24, 0.92);
+  --nav-border: rgba(255, 255, 255, 0.06);
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --lang-btn-bg: #1e2030;
+  --lang-btn-border: rgba(255, 255, 255, 0.08);
+  --hamburger-color: #e8e6e3;
+  color-scheme: dark;
 }
-a:hover {
-  color: #535bf2;
+
+/* Smooth theme transition on key elements */
+body,
+.nav-bar,
+.nav-menu {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
 }
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
 
 /* Navbar auth buttons - always visible */
 .navbar-auth-buttons {
@@ -86,6 +80,23 @@ button:focus-visible {
 .navbar-auth-buttons .button:hover {
     background-color: #ac0704 !important;
     border-color: #ac0704 !important;
+}
+
+/* Cross-nav persona indicator (shared across all portals) */
+.crossnav-persona {
+  margin-inline-start: auto;
+  padding: .2rem .6rem;
+  border-radius: 4px;
+  background: rgba(230,57,70,.12);
+  color: #e63946;
+  font-size: .65rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: .02em;
+  flex-shrink: 0;
+}
+@media(max-width:600px) {
+  .crossnav-persona { font-size: .58rem; padding: .15rem .4rem; }
 }
 
 /* Tablet */

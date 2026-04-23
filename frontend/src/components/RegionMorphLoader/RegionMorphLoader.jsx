@@ -1,48 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./RegionMorphLoader.module.css";
+import { getRealEstateMapRegionData } from "../../config/mapRegionConfig";
 
-const REGION_DATA = {
-  canada: {
-    proj: "Vista Residences",
-    reg: "Canada · Vancouver",
-    city: "Vancouver",
-    code: "CAN",
-    accent: "#457b9d",
-    gold: "#b8860b",
-    coords: { lat: "49.28° N", lng: "123.12° W", short: "49.3N / 123.1W" },
-    miniMap: { x: 38, y: 30, countryId: "mm-canada" },
-  },
-  gulf: {
-    proj: "Al Noor Residences",
-    reg: "Gulf · Riyadh",
-    city: "Riyadh",
-    code: "SAU",
-    accent: "#b8860b",
-    gold: "#b8860b",
-    coords: { lat: "24.71° N", lng: "46.67° E", short: "24.7N / 46.7E" },
-    miniMap: { x: 130, y: 54, countryId: "mm-gulf" },
-  },
-  usa: {
-    proj: "Skyline Towers",
-    reg: "USA · New York",
-    city: "New York",
-    code: "USA",
-    accent: "#1e3a8a",
-    gold: "#c7302f",
-    coords: { lat: "40.71° N", lng: "74.00° W", short: "40.7N / 74.0W" },
-    miniMap: { x: 56, y: 48, countryId: "mm-usa" },
-  },
-  mexico: {
-    proj: "Residencias del Sol",
-    reg: "Mexico · CDMX",
-    city: "CDMX",
-    code: "MEX",
-    accent: "#006341",
-    gold: "#c7302f",
-    coords: { lat: "19.43° N", lng: "99.13° W", short: "19.4N / 99.1W" },
-    miniMap: { x: 44, y: 75, countryId: "mm-mexico" },
-  },
-};
+const REGION_DATA = getRealEstateMapRegionData();
 
 const BLUEPRINTS = {
   canada: {

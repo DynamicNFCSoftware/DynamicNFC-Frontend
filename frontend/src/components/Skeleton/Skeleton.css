@@ -1,0 +1,243 @@
+/* ═══════════════════════════════════════════════════════
+   Skeleton.css — Shimmer loading placeholders
+   Scope: .sk- prefix
+   ═══════════════════════════════════════════════════════ */
+
+@keyframes skShimmer {
+  0% { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.sk-bone {
+  background: linear-gradient(
+    90deg,
+    var(--sk-base, rgba(0, 0, 0, 0.06)) 25%,
+    var(--sk-shine, rgba(0, 0, 0, 0.10)) 37%,
+    var(--sk-base, rgba(0, 0, 0, 0.06)) 63%
+  );
+  background-size: 600px 100%;
+  animation: skShimmer 1.6s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .sk-bone {
+  --sk-base: rgba(255, 255, 255, 0.06);
+  --sk-shine: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Page Skeleton ── */
+.sk-page {
+  min-height: 100vh;
+  background: var(--bg, #faf8f5);
+  padding-top: 68px; /* navbar height */
+  font-family: 'Outfit', sans-serif;
+}
+
+.sk-page-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* ── Hero Skeleton ── */
+.sk-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  padding: 2rem 0 4rem;
+}
+
+.sk-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sk-badge {
+  width: 160px;
+  height: 28px;
+  border-radius: 50px;
+  margin-bottom: 0.5rem;
+}
+
+.sk-title {
+  width: 90%;
+  height: 42px;
+}
+
+.sk-title-sm {
+  width: 70%;
+  height: 42px;
+}
+
+.sk-paragraph {
+  width: 100%;
+  height: 16px;
+  margin-top: 0.25rem;
+}
+
+.sk-paragraph-md {
+  width: 85%;
+  height: 16px;
+}
+
+.sk-paragraph-sm {
+  width: 60%;
+  height: 16px;
+}
+
+.sk-cta-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.sk-btn {
+  width: 150px;
+  height: 48px;
+  border-radius: 50px;
+}
+
+.sk-btn-ghost {
+  width: 130px;
+  height: 48px;
+  border-radius: 50px;
+}
+
+.sk-hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sk-card-img {
+  width: 420px;
+  max-width: 100%;
+  height: 255px;
+  border-radius: 16px;
+}
+
+/* ── Section Skeleton ── */
+.sk-section {
+  padding: 3rem 0;
+}
+
+.sk-section-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.sk-section-tag {
+  width: 120px;
+  height: 22px;
+  border-radius: 50px;
+}
+
+.sk-section-title {
+  width: 360px;
+  max-width: 80%;
+  height: 36px;
+}
+
+.sk-section-sub {
+  width: 500px;
+  max-width: 90%;
+  height: 16px;
+}
+
+/* ── Card Grid Skeleton ── */
+.sk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.sk-grid-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+}
+
+.sk-grid-card-img {
+  width: 100%;
+  height: 180px;
+  border-radius: 0;
+}
+
+.sk-grid-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sk-grid-card-title {
+  width: 70%;
+  height: 20px;
+}
+
+.sk-grid-card-text {
+  width: 100%;
+  height: 14px;
+}
+
+.sk-grid-card-text-sm {
+  width: 50%;
+  height: 14px;
+}
+
+/* ── Stat Bar Skeleton ── */
+.sk-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+.sk-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sk-stat-num {
+  width: 80px;
+  height: 36px;
+}
+
+.sk-stat-label {
+  width: 100px;
+  height: 14px;
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 900px) {
+  .sk-hero {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .sk-hero-visual {
+    order: -1;
+  }
+
+  .sk-card-img {
+    width: 100%;
+    height: 200px;
+  }
+
+  .sk-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sk-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

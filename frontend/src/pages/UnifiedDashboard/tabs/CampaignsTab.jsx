@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useReducer, useMemo, useCallback, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useLanguage } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
@@ -9,6 +9,7 @@ import { SkeletonTable } from "../components/LoadingSkeleton";
 import { createTenantCampaign, updateTenantCampaign } from "../../../services/tenantService";
 import { db } from "../../../firebase";
 import { UI } from "./campaignsTab.i18n";
+import "./CampaignsTab.css";
 import CampaignDrawer from "../components/CampaignDrawer";
 import AddCampaignModal from "../components/AddCampaignModal";
 import {
@@ -25,8 +26,15 @@ import {
   objectiveLabel,
   sourceLabel,
 } from "../components/campaignUtils";
+import { campaignsReducer, initialState } from "./useCampaignsReducer";
 
 /* ═══ Helpers ═══ */
+const formatMoney = (n) => {
+  const value = Number(n || 0);
+  if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
+  if (value >= 1e3) return `${(value / 1e3).toFixed(1)}K`;
+  return value.toFixed(0);
+};
 
 /* ═══ KPI Card ═══ */
 function KpiCard({ icon, label, value, accent, onClick, isActive }) {
@@ -48,6 +56,54 @@ function KpiCard({ icon, label, value, accent, onClick, isActive }) {
   );
 }
 
+function SourceBadge({ source, label }) {
+  const config = {
+    manual: {
+      color: "#457b9d",
+      bg: "rgba(69, 123, 157, 0.12)",
+      icon: (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+        </svg>
+      ),
+    },
+    cards_tab_bulk: {
+      color: "#b8860b",
+      bg: "rgba(184, 134, 11, 0.12)",
+      icon: (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="8" y1="13" x2="16" y2="13" />
+          <line x1="8" y1="17" x2="16" y2="17" />
+        </svg>
+      ),
+    },
+    inventory_tab: {
+      color: "#2a9d8f",
+      bg: "rgba(42, 157, 143, 0.12)",
+      icon: (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <polyline points="16 18 22 12 16 6" />
+          <polyline points="8 6 2 12 8 18" />
+        </svg>
+      ),
+    },
+  };
+  const key = source || "manual";
+  const c = config[key] || config.manual;
+  return (
+    <span
+      className="ud-cmp-source-badge"
+      style={{ color: c.color, background: c.bg, borderColor: `${c.color}33` }}
+    >
+      {c.icon}
+      <span>{label}</span>
+    </span>
+  );
+}
+
 /* ═══ Sort options ═══ */
 const SORT_OPTS = [
   { id: "newest", field: "createdAt", dir: -1 },
@@ -61,6 +117,7 @@ export default function CampaignsTab() {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { lang } = useLanguage();
   useSector();
   const dashboard = useDashboard() || {};
@@ -87,32 +144,37 @@ export default function CampaignsTab() {
   }, [analytics?.settings]);
 
   // State
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sourceFilter, setSourceFilter] = useState("all");
-  const [sortKey, setSortKey] = useState("newest");
-  const [kpiFilter, setKpiFilter] = useState("");
-  const [selectedCampaign, setSelectedCampaign] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editingId, setEditingId] = useState("");
-  const [editingName, setEditingName] = useState("");
-  const [renameError, setRenameError] = useState("");
-  const [toast, setToast] = useState("");
-  const [actionBusy, setActionBusy] = useState("");
-  const [tapMetricsByCampaign, setTapMetricsByCampaign] = useState({});
+  const [state, dispatch] = useReducer(campaignsReducer, initialState);
+  const {
+    search,
+    statusFilter,
+    sourceFilter,
+    sortKey,
+    kpiFilter,
+    selectedCampaign,
+    showAddModal,
+    editingId,
+    editingName,
+    renameError,
+    toast,
+    actionBusy,
+    tapMetricsByCampaign,
+  } = state;
   const handledBulkRef = useRef("");
-  const queryHydratedRef = useRef(false);
+  const [editingCampaign, setEditingCampaign] = useState(null);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const searchParamsString = searchParams.toString();
 
   // Toast auto-clear
   useEffect(() => {
     if (!toast) return undefined;
-    const t = window.setTimeout(() => setToast(""), 2600);
+    const t = window.setTimeout(() => dispatch({ type: "SET_TOAST", payload: "" }), 2600);
     return () => window.clearTimeout(t);
   }, [toast]);
 
   // Hydrate filters from URL and keep shareable filter links
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(searchParamsString);
     const status = params.get("status") || "all";
     const source = params.get("source") || "all";
     const sort = params.get("sort") || "newest";
@@ -120,26 +182,39 @@ export default function CampaignsTab() {
     const validStatus = ["all", "draft", "active", "paused", "archived"];
     const validSource = ["all", "manual", "cards_tab_bulk", "inventory_tab"];
     const validSort = SORT_OPTS.map((o) => o.id);
-    setStatusFilter(validStatus.includes(status) ? status : "all");
-    setSourceFilter(validSource.includes(source) ? source : "all");
-    setSortKey(validSort.includes(sort) ? sort : "newest");
-    setSearch(q);
-    queryHydratedRef.current = true;
-  }, [location.search]);
+    dispatch({
+      type: "HYDRATE_FILTERS",
+      payload: {
+        search: q,
+        statusFilter: validStatus.includes(status) ? status : "all",
+        sourceFilter: validSource.includes(source) ? source : "all",
+        sortKey: validSort.includes(sort) ? sort : "newest",
+      },
+    });
+    setDebouncedSearch(q);
+  }, [searchParamsString]);
 
   useEffect(() => {
-    if (!queryHydratedRef.current) return;
-    const params = new URLSearchParams({
-      status: statusFilter,
-      source: sourceFilter,
-      sort: sortKey,
-      q: search,
-    });
-    const nextSearch = params.toString();
-    const currentSearch = location.search.startsWith("?") ? location.search.slice(1) : location.search;
-    if (nextSearch === currentSearch) return;
-    navigate({ search: nextSearch }, { replace: true });
-  }, [statusFilter, sourceFilter, sortKey, search, navigate, location.search]);
+    const timer = window.setTimeout(() => setDebouncedSearch(search), 300);
+    return () => window.clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParamsString);
+    const next = new URLSearchParams();
+    if (statusFilter !== "all") next.set("status", statusFilter);
+    if (sourceFilter !== "all") next.set("source", sourceFilter);
+    if (sortKey !== "newest") next.set("sort", sortKey);
+    if (debouncedSearch.trim()) next.set("q", debouncedSearch.trim());
+    if (sortKey === "oldest") next.set("dir", "asc");
+    else if (sortKey !== "newest") next.set("dir", "desc");
+    const currentPage = Number.parseInt(params.get("page") || "1", 10);
+    if (Number.isFinite(currentPage) && currentPage > 1) {
+      next.set("page", String(currentPage));
+    }
+    if (next.toString() === searchParamsString) return;
+    setSearchParams(next, { replace: true });
+  }, [statusFilter, sourceFilter, sortKey, debouncedSearch, searchParamsString, setSearchParams]);
 
   // Handle bulk create from CardsTab via location.state
   useEffect(() => {
@@ -159,9 +234,9 @@ export default function CampaignsTab() {
           cardIds: pending.cardIds || [],
           idempotencyKey: rid,
         });
-        setToast(tx.bulkCreated);
+        dispatch({ type: "SET_TOAST", payload: tx.bulkCreated });
       } catch (err) {
-        setToast(tx.bulkCreateFailed);
+        dispatch({ type: "SET_TOAST", payload: tx.bulkCreateFailed });
         console.error("[CampaignsTab] Bulk create failed:", err);
       } finally {
         navigate({ pathname: location.pathname, search: location.search }, { replace: true, state: null });
@@ -172,12 +247,12 @@ export default function CampaignsTab() {
   // Aggregate taps by campaignId from root taps collection
   useEffect(() => {
     if (!campaigns || campaigns.length === 0) {
-      setTapMetricsByCampaign({});
+      dispatch({ type: "SET_TAP_METRICS", payload: {} });
       return;
     }
     const campaignIds = [...new Set(campaigns.map((c) => c.id).filter(Boolean))];
     if (campaignIds.length === 0) {
-      setTapMetricsByCampaign({});
+      dispatch({ type: "SET_TAP_METRICS", payload: {} });
       return;
     }
 
@@ -185,24 +260,41 @@ export default function CampaignsTab() {
     const loadTapMetrics = async () => {
       const rows = {};
       campaignIds.forEach((id) => { rows[id] = { taps: 0, byDay: {} }; });
+
+      // Use cached tap data from Cloud Function (aggregateTaps) when available
+      const uncachedIds = [];
+      campaigns.forEach((c) => {
+        if (c.cachedTapCount > 0 && rows[c.id]) {
+          rows[c.id].taps = c.cachedTapCount;
+          if (c.cachedTapsByDay && typeof c.cachedTapsByDay === "object") {
+            rows[c.id].byDay = { ...c.cachedTapsByDay };
+          }
+        } else if (rows[c.id]) {
+          uncachedIds.push(c.id);
+        }
+      });
+
+      // Fallback: query root taps for campaigns without cached data
       try {
-        const chunks = chunkArray(campaignIds, 10);
-        for (const chunk of chunks) {
-          const tapsQ = query(
-            collection(db, "taps"),
-            where("campaignId", "in", chunk)
-          );
-          const snap = await getDocs(tapsQ);
-          snap.forEach((docSnap) => {
-            const data = docSnap.data() || {};
-            const campaignId = String(data.campaignId || "");
-            if (!campaignId || !rows[campaignId]) return;
-            rows[campaignId].taps += 1;
-            const tsVal = data.timestamp?.toDate?.() || new Date(data.timestamp || 0);
-            if (Number.isNaN(tsVal.getTime())) return;
-            const dayKey = tsVal.toISOString().slice(0, 10);
-            rows[campaignId].byDay[dayKey] = (rows[campaignId].byDay[dayKey] || 0) + 1;
-          });
+        if (uncachedIds.length > 0) {
+          const chunks = chunkArray(uncachedIds, 10);
+          for (const chunk of chunks) {
+            const tapsQ = query(
+              collection(db, "taps"),
+              where("campaignId", "in", chunk)
+            );
+            const snap = await getDocs(tapsQ);
+            snap.forEach((docSnap) => {
+              const data = docSnap.data() || {};
+              const campaignId = String(data.campaignId || "");
+              if (!campaignId || !rows[campaignId]) return;
+              rows[campaignId].taps += 1;
+              const tsVal = data.timestamp?.toDate?.() || new Date(data.timestamp || 0);
+              if (Number.isNaN(tsVal.getTime())) return;
+              const dayKey = tsVal.toISOString().slice(0, 10);
+              rows[campaignId].byDay[dayKey] = (rows[campaignId].byDay[dayKey] || 0) + 1;
+            });
+          }
         }
         if (cancelled) return;
         const normalized = {};
@@ -212,9 +304,9 @@ export default function CampaignsTab() {
             series: buildSevenDaySeries(row.byDay),
           };
         });
-        setTapMetricsByCampaign(normalized);
+        dispatch({ type: "SET_TAP_METRICS", payload: normalized });
       } catch {
-        if (!cancelled) setTapMetricsByCampaign({});
+        if (!cancelled) dispatch({ type: "SET_TAP_METRICS", payload: {} });
       }
     };
     loadTapMetrics();
@@ -247,17 +339,23 @@ export default function CampaignsTab() {
   const kpis = useMemo(() => {
     const now = Date.now();
     const WEEK = 7 * 86400000;
-    let draftCount = 0, activeCount = 0, pausedCount = 0, archivedCount = 0, created7d = 0;
+    let draftCount = 0;
+    let activeCount = 0;
+    let pausedCount = 0;
+    let archivedCount = 0;
+    let created7d = 0;
+    let activeBudgetTotal = 0;
     campaigns.forEach((c) => {
       const s = (c.status || "draft").toLowerCase();
       if (s === "draft") draftCount++;
       else if (s === "active") activeCount++;
       else if (s === "paused") pausedCount++;
       else if (s === "archived") archivedCount++;
+      if (s === "active") activeBudgetTotal += Number(c.budget || 0);
       const createdMs = c.createdAt?.toMillis?.() || c.createdAt?.seconds * 1000 || new Date(c.createdAt || 0).getTime();
       if (now - createdMs < WEEK) created7d++;
     });
-    return { draftCount, activeCount, pausedCount, archivedCount, created7d };
+    return { draftCount, activeCount, pausedCount, archivedCount, created7d, activeBudgetTotal };
   }, [campaigns]);
 
   // Source breakdown
@@ -329,34 +427,30 @@ export default function CampaignsTab() {
 
   // Rename handlers
   const startRename = useCallback((c) => {
-    setEditingId(c.id);
-    setEditingName(c.name || "");
-    setRenameError("");
+    dispatch({ type: "START_RENAME", payload: { id: c.id, name: c.name || "" } });
   }, []);
 
   const cancelRename = useCallback(() => {
-    setEditingId("");
-    setEditingName("");
-    setRenameError("");
+    dispatch({ type: "CANCEL_RENAME" });
   }, []);
 
   const saveRename = useCallback(
     async (campaignId) => {
       const trimmed = editingName.trim();
       if (!trimmed || trimmed.length < 3 || trimmed.length > 80) {
-        setRenameError(tx.nameRequired);
+        dispatch({ type: "SET_RENAME_ERROR", payload: tx.nameRequired });
         return;
       }
       if (isDuplicateName(trimmed, campaignId)) {
-        setRenameError(tx.nameDuplicate);
+        dispatch({ type: "SET_RENAME_ERROR", payload: tx.nameDuplicate });
         return;
       }
       try {
         await updateTenantCampaign(user.uid, campaignId, { name: trimmed });
-        setToast(tx.renameSaved);
+        dispatch({ type: "SET_TOAST", payload: tx.renameSaved });
         cancelRename();
       } catch (err) {
-        setRenameError(err.message || tx.renameFailed);
+        dispatch({ type: "SET_RENAME_ERROR", payload: err.message || tx.renameFailed });
       }
     },
     [editingName, user, tx, isDuplicateName, cancelRename]
@@ -368,27 +462,27 @@ export default function CampaignsTab() {
       if (!user?.uid) return;
       // Readiness gate: objective required to launch
       if (newStatus === "active" && !campaign.objective) {
-        setToast(tx.objectiveRequired);
+        dispatch({ type: "SET_TOAST", payload: tx.objectiveRequired });
         return;
       }
-      setActionBusy(campaign.id);
+      dispatch({ type: "SET_ACTION_BUSY", payload: campaign.id });
       try {
         await updateTenantCampaign(user.uid, campaign.id, {
           status: newStatus,
           _fromStatus: campaign.status || "draft",
         });
-        setToast(tx.statusChanged);
+        dispatch({ type: "SET_TOAST", payload: tx.statusChanged });
         if (selectedCampaign?.id === campaign.id) {
-          setSelectedCampaign((prev) => prev ? { ...prev, status: newStatus } : null);
+          dispatch({ type: "UPDATE_SELECTED_CAMPAIGN", payload: { status: newStatus } });
         }
       } catch (err) {
-        setToast(tx.statusFailed);
+        dispatch({ type: "SET_TOAST", payload: tx.statusFailed });
         console.error("[CampaignsTab] Status change failed:", err);
       } finally {
-        setActionBusy("");
+        dispatch({ type: "SET_ACTION_BUSY", payload: "" });
       }
     },
-    [user, tx, selectedCampaign]
+    [user, tx, selectedCampaign?.id]
   );
 
   // Create
@@ -400,7 +494,7 @@ export default function CampaignsTab() {
         throw new Error(tx.nameDuplicate);
       }
       await createTenantCampaign(user.uid, payload);
-      setToast(tx.createSuccess);
+      dispatch({ type: "SET_TOAST", payload: tx.createSuccess });
     },
     [user, tx, isDuplicateName]
   );
@@ -420,7 +514,7 @@ export default function CampaignsTab() {
           value={kpis.draftCount}
           accent={STATUS_COLORS.draft}
           isActive={kpiFilter === "draft"}
-          onClick={() => setKpiFilter((p) => (p === "draft" ? "" : "draft"))}
+          onClick={() => dispatch({ type: "SET_KPI_FILTER", payload: "draft" })}
         />
         <KpiCard
           icon="🟢"
@@ -428,7 +522,7 @@ export default function CampaignsTab() {
           value={kpis.activeCount}
           accent={STATUS_COLORS.active}
           isActive={kpiFilter === "active"}
-          onClick={() => setKpiFilter((p) => (p === "active" ? "" : "active"))}
+          onClick={() => dispatch({ type: "SET_KPI_FILTER", payload: "active" })}
         />
         <KpiCard
           icon="⏸"
@@ -436,7 +530,7 @@ export default function CampaignsTab() {
           value={kpis.pausedCount}
           accent={STATUS_COLORS.paused}
           isActive={kpiFilter === "paused"}
-          onClick={() => setKpiFilter((p) => (p === "paused" ? "" : "paused"))}
+          onClick={() => dispatch({ type: "SET_KPI_FILTER", payload: "paused" })}
         />
         <KpiCard
           icon="📦"
@@ -444,13 +538,19 @@ export default function CampaignsTab() {
           value={kpis.archivedCount}
           accent={STATUS_COLORS.archived}
           isActive={kpiFilter === "archived"}
-          onClick={() => setKpiFilter((p) => (p === "archived" ? "" : "archived"))}
+          onClick={() => dispatch({ type: "SET_KPI_FILTER", payload: "archived" })}
         />
         <KpiCard
           icon="🆕"
           label={tx.kpiCreated7d}
           value={kpis.created7d}
           accent="#457b9d"
+        />
+        <KpiCard
+          icon="💰"
+          label={tx.kpiTotalBudget}
+          value={kpis.activeBudgetTotal.toLocaleString()}
+          accent="#2a9d8f"
         />
       </div>
 
@@ -460,8 +560,8 @@ export default function CampaignsTab() {
           count > 0 && (
             <span
               key={src}
-              className={`ud-cmp-source-badge${sourceFilter === src ? " ud-cmp-source-badge--active" : ""}`}
-              onClick={() => setSourceFilter((p) => (p === src ? "all" : src))}
+              className={`ud-cmp-source-filter-badge${sourceFilter === src ? " ud-cmp-source-filter-badge--active" : ""}`}
+              onClick={() => dispatch({ type: "SET_SOURCE_FILTER", payload: sourceFilter === src ? "all" : src })}
               title={`${sourceLabel(src, tx)}: ${count}`}
             >
               {sourceLabel(src, tx)} ({count})
@@ -476,7 +576,7 @@ export default function CampaignsTab() {
           className="ud-cmp-search"
           placeholder={tx.search}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => dispatch({ type: "SET_SEARCH", payload: e.target.value })}
         />
         <div className="ud-cmp-filters">
           {["all", "draft", "active", "paused", "archived"].map((s) => (
@@ -484,7 +584,7 @@ export default function CampaignsTab() {
               key={s}
               className={`ud-cmp-chip${statusFilter === s ? " ud-cmp-chip--active" : ""}`}
               style={statusFilter === s && s !== "all" ? { borderColor: STATUS_COLORS[s], color: STATUS_COLORS[s] } : undefined}
-              onClick={() => { setStatusFilter(s); setKpiFilter(""); }}
+              onClick={() => { dispatch({ type: "SET_STATUS_FILTER", payload: s }); dispatch({ type: "SET_KPI_FILTER", payload: "" }); }}
             >
               {s === "all" ? tx.allStatuses : tx[s] || s}
             </button>
@@ -496,13 +596,19 @@ export default function CampaignsTab() {
             <button
               key={o.id}
               className={`ud-cmp-sort-btn${sortKey === o.id ? " ud-cmp-sort-btn--active" : ""}`}
-              onClick={() => setSortKey(o.id)}
+              onClick={() => dispatch({ type: "SET_SORT_KEY", payload: o.id })}
             >
               {tx[o.id] || o.id}
             </button>
           ))}
         </div>
-        <button className="ud-cmp-add-btn" onClick={() => setShowAddModal(true)}>
+        <button
+          className="ud-cmp-add-btn"
+          onClick={() => {
+            setEditingCampaign(null);
+            dispatch({ type: "SHOW_ADD_MODAL" });
+          }}
+        >
           {tx.addCampaign}
         </button>
       </div>
@@ -510,7 +616,7 @@ export default function CampaignsTab() {
       {hasFilters && (
         <button
           className="ud-cmp-clear"
-          onClick={() => { setSearch(""); setStatusFilter("all"); setSourceFilter("all"); setKpiFilter(""); }}
+          onClick={() => dispatch({ type: "CLEAR_FILTERS" })}
         >
           {tx.clearFilters}
         </button>
@@ -530,15 +636,13 @@ export default function CampaignsTab() {
                 <tr>
                   <th>{tx.name}</th>
                   <th>{tx.status}</th>
-                  <th>{tx.objectiveCol}</th>
-                  <th>{tx.channelCol}</th>
+                  <th>{tx.budget}</th>
                   <th>{tx.client}</th>
-                  <th>{tx.cards}</th>
-                  <th>{tx.budgetLabel}</th>
-                  <th>{tx.taps}</th>
-                  <th>{tx.conversionRate}</th>
+                  <th>{tx.objectiveCol}</th>
+                  <th>{tx.performanceCol}</th>
+                  <th>{tx.windowCol}</th>
                   <th>{tx.source}</th>
-                  <th>{tx.created}</th>
+                  <th>{tx.updatedLabel}</th>
                   <th>{tx.actions}</th>
                 </tr>
               </thead>
@@ -552,15 +656,20 @@ export default function CampaignsTab() {
                   const tapCount = metrics.taps || 0;
                   const wScore = weightedDealsByCampaign[c.id] || 0;
                   const convRate = tapCount > 0 ? ((wScore / tapCount) * 100).toFixed(1) : "0.0";
+                  const budget = Number(c.budget || 0);
+                  const spent = Number(c.spent || 0);
+                  const budgetPercentRaw = budget > 0 ? (spent / budget) * 100 : 0;
+                  const budgetPercent = Math.max(0, Math.min(100, budgetPercentRaw));
+                  const budgetBarColor = spent > budget ? "#e63946" : "#22c55e";
                   return (
-                    <tr key={c.id} className="ud-cmp-row" onClick={() => !isEditing && setSelectedCampaign(c)}>
+                    <tr key={c.id} className="ud-cmp-row" onClick={() => !isEditing && dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: c })}>
                       <td>
                         {isEditing ? (
                           <div className="ud-cmp-rename-cell" onClick={(e) => e.stopPropagation()}>
                             <input
                               className="ud-cmp-rename-input"
                               value={editingName}
-                              onChange={(e) => { setEditingName(e.target.value); setRenameError(""); }}
+                              onChange={(e) => dispatch({ type: "SET_EDITING_NAME", payload: e.target.value })}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter") saveRename(c.id);
                                 if (e.key === "Escape") cancelRename();
@@ -578,39 +687,68 @@ export default function CampaignsTab() {
                       </td>
                       <td>
                         <span className="ud-cmp-status-badge" style={{ background: STATUS_COLORS[st] }}>
-                          <span className="ud-cmp-status-badge__icon" aria-hidden="true">{STATUS_ICONS[st] || "•"}</span>
+                          <span
+                            className="ud-cmp-status-badge__icon"
+                            aria-hidden="true"
+                            dangerouslySetInnerHTML={{ __html: STATUS_ICONS[st] || "" }}
+                          />
                           <span>{tx[st] || st}</span>
                         </span>
                       </td>
-                      <td className="ud-cmp-obj-cell">{objectiveLabel(c.objective, tx)}</td>
-                      <td className="ud-cmp-channel-cell">
-                        {(c.channel || []).length > 0 ? (
-                          <div className="ud-cmp-channel-badges">
-                            {c.channel.slice(0, 3).map((ch) => (
-                              <span key={ch} className="ud-cmp-channel-badge">{tx[`ch_${ch}`] || ch}</span>
-                            ))}
-                            {c.channel.length > 3 && <span className="ud-cmp-channel-badge ud-cmp-channel-badge--more">+{c.channel.length - 3}</span>}
+                      <td className="ud-cmp-td ud-cmp-td--budget">
+                        {budget > 0 ? (
+                          <div className="ud-cmp-budget-cell">
+                            <div className="ud-cmp-budget-cell__bar">
+                              <div
+                                className="ud-cmp-budget-cell__fill"
+                                style={{
+                                  width: `${budgetPercent}%`,
+                                  background: budgetBarColor,
+                                }}
+                              />
+                            </div>
+                            <div className="ud-cmp-budget-cell__text">
+                              ${formatMoney(spent)} / ${formatMoney(budget)}
+                            </div>
                           </div>
-                        ) : "—"}
+                        ) : (
+                          <span className="ud-cmp-muted">—</span>
+                        )}
                       </td>
                       <td>{c.client || "—"}</td>
+                      <td className="ud-cmp-obj-cell">{objectiveLabel(c.objective, tx)}</td>
                       <td>
-                        <span className="ud-cmp-cards-count">{c.activeCards || 0}</span>
-                        <span className="ud-cmp-cards-total"> / {c.totalCards || 0}</span>
+                        <div className="ud-cmp-performance-cell">
+                          <span>{tapCount}</span>
+                          <span className="ud-cmp-performance-cell__divider">/</span>
+                          <span className="ud-cmp-performance-cell__conv">{convRate}%</span>
+                        </div>
                       </td>
-                      <td>{c.budget || 0}</td>
-                      <td>{tapCount}</td>
-                      <td>{convRate}%</td>
                       <td>
-                        <span className={`ud-cmp-source-tag ud-cmp-source-tag--${c.source || "manual"}`}>
-                          {sourceLabel(c.source, tx)}
-                        </span>
+                        <div className="ud-cmp-window-cell">
+                          <span>{formatDate(c.startDate)}</span>
+                          <span className="ud-cmp-window-cell__sep">→</span>
+                          <span>{c.endDate ? formatDate(c.endDate) : tx.timelineOngoing}</span>
+                        </div>
                       </td>
-                      <td>{formatDate(c.createdAt)}</td>
+                      <td>
+                        <SourceBadge
+                          source={c.source}
+                          label={tx[`source_${c.source}`] || sourceLabel(c.source, tx)}
+                        />
+                      </td>
+                      <td>{formatDate(c.updatedAt || c.createdAt)}</td>
                       <td onClick={(e) => e.stopPropagation()}>
                         <div className="ud-cmp-action-group">
+                          <button
+                            className="ud-cmp-action-btn ud-cmp-action-btn--rename"
+                            onClick={() => setEditingCampaign(c)}
+                            disabled={isBusy}
+                          >
+                            {tx.editDetails}
+                          </button>
                           {!isEditing && (
-                            <button className="ud-cmp-action-btn ud-cmp-action-btn--rename" onClick={() => startRename(c)} disabled={isBusy}>
+                            <button className="ud-cmp-action-btn ud-cmp-action-btn--rename" onClick={() => dispatch({ type: "START_RENAME", payload: c })} disabled={isBusy}>
                               {tx.rename}
                             </button>
                           )}
@@ -633,49 +771,67 @@ export default function CampaignsTab() {
             </table>
           </div>
 
-          {/* Pagination info + Load more */}
-          <div className="ud-cmp-pagination">
-            <span className="ud-cmp-pagination__text">
-              {tx.showing} {visible.length} {tx.of} {filtered.length}
-            </span>
-            {hasMore && (
+          {hasMore && (
+            <div className="ud-cmp-loadmore-wrap">
               <button
-                className="ud-cmp-load-more"
-                onClick={loadMoreCampaigns}
+                type="button"
+                className="ud-cmp-loadmore-btn"
+                onClick={() => loadMoreCampaigns && loadMoreCampaigns()}
                 disabled={campaignsLoadingMore}
               >
-                {campaignsLoadingMore ? `${tx.loadMore}...` : tx.loadMore}
+                {campaignsLoadingMore ? (tx.loading || "Loading…") : (tx.loadMore || "Load more")}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </>
       )}
-
-      {dataMode === "tenant" && <div className="ud-cmp-demo-tag">{tx.demo}</div>}
 
       {/* Detail Drawer */}
       {selectedCampaign && (
         <CampaignDrawer
-          key={selectedCampaign.id}
           campaign={selectedCampaign}
           tx={tx}
-          onClose={() => setSelectedCampaign(null)}
-          onRename={(c) => { startRename(c); setSelectedCampaign(null); }}
-          onStatusChange={(c, ns) => { handleStatusChange(c, ns); }}
-          linkedDealsCount={linkedDealsByCampaign[selectedCampaign.id] || 0}
-          weightedDealsScore={weightedDealsByCampaign[selectedCampaign.id] || 0}
-          tapMetrics={tapMetricsByCampaign[selectedCampaign.id] || null}
+          onClose={() => dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: null })}
+          onRename={(c) => startRename(c)}
+          onEdit={(c) => {
+            setEditingCampaign(c);
+            dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: null });
+          }}
+          onStatusChange={handleStatusChange}
+          linkedDealsCount={linkedDealsByCampaign?.[selectedCampaign.id] || 0}
+          weightedDealsScore={weightedDealsByCampaign?.[selectedCampaign.id] || 0}
+          tapMetrics={tapMetricsByCampaign?.[selectedCampaign.id] || null}
         />
       )}
 
-      {/* Add Campaign Modal */}
+      {/* Add Campaign Modal (create) */}
       {showAddModal && (
         <AddCampaignModal
           tx={tx}
-          onClose={() => setShowAddModal(false)}
+          onClose={() => dispatch({ type: "CLOSE_ADD_MODAL" })}
           onSave={async (payload) => {
             await handleCreate(payload);
-            setShowAddModal(false);
+            dispatch({ type: "CLOSE_ADD_MODAL" });
+          }}
+        />
+      )}
+
+      {/* Edit Campaign Modal */}
+      {editingCampaign && (
+        <AddCampaignModal
+          tx={tx}
+          mode="edit"
+          initialValues={editingCampaign}
+          submitLabel={tx.save || "Save"}
+          onClose={() => setEditingCampaign(null)}
+          onSave={async (payload) => {
+            try {
+              await updateTenantCampaign(user.uid, editingCampaign.id, payload);
+              dispatch({ type: "SET_TOAST", payload: tx.editSaved || tx.renameSaved });
+              setEditingCampaign(null);
+            } catch (err) {
+              dispatch({ type: "SET_TOAST", payload: err?.message || tx.statusFailed });
+            }
           }}
         />
       )}

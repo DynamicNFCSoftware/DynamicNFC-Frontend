@@ -1,16 +1,33 @@
 import React, { useState } from "react";
 import { AUDIENCES, CHANNELS, OBJECTIVES, buildDefaultCampaignName } from "./campaignUtils";
 
-export default function AddCampaignModal({ tx, onClose, onSave }) {
-  const [name, setName] = useState(buildDefaultCampaignName());
-  const [client, setClient] = useState("");
-  const [description, setDescription] = useState("");
-  const [objective, setObjective] = useState("");
-  const [targetAudience, setTargetAudience] = useState("");
-  const [channel, setChannel] = useState([]);
-  const [budget, setBudget] = useState("0");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+const toDateInput = (value) => {
+  if (!value) return "";
+  if (typeof value === "string") return value.slice(0, 10);
+  if (value?.toDate) return value.toDate().toISOString().slice(0, 10);
+  if (value?.seconds) return new Date(value.seconds * 1000).toISOString().slice(0, 10);
+  return "";
+};
+
+export default function AddCampaignModal({
+  tx,
+  onClose,
+  onSave,
+  initialValues = null,
+  mode = "create",
+  submitLabel,
+}) {
+  const isEditMode = mode === "edit";
+  const [name, setName] = useState(initialValues?.name || buildDefaultCampaignName());
+  const [client, setClient] = useState(initialValues?.client || "");
+  const [description, setDescription] = useState(initialValues?.description || "");
+  const [objective, setObjective] = useState(initialValues?.objective || "");
+  const [targetAudience, setTargetAudience] = useState(initialValues?.targetAudience || "");
+  const [channel, setChannel] = useState(Array.isArray(initialValues?.channel) ? initialValues.channel : []);
+  const [budget, setBudget] = useState(String(initialValues?.budget ?? 0));
+  const [spent, setSpent] = useState(String(initialValues?.spent ?? 0));
+  const [startDate, setStartDate] = useState(toDateInput(initialValues?.startDate));
+  const [endDate, setEndDate] = useState(toDateInput(initialValues?.endDate));
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -34,10 +51,10 @@ export default function AddCampaignModal({ tx, onClose, onSave }) {
         targetAudience,
         channel,
         budget: parseInt(budget, 10) || 0,
+        spent: parseInt(spent, 10) || 0,
         startDate: startDate || null,
         endDate: endDate || null,
-        status: "draft",
-        source: "manual",
+        ...(!isEditMode ? { status: "draft", source: "manual" } : {}),
       });
       onClose();
     } catch (err) {
@@ -50,7 +67,7 @@ export default function AddCampaignModal({ tx, onClose, onSave }) {
   return (
     <div className="ud-cmp-drawer-backdrop" onClick={onClose}>
       <div className="ud-cmp-modal ud-cmp-modal--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="ud-cmp-modal__title">{tx.addCampaign}</div>
+        <div className="ud-cmp-modal__title">{isEditMode ? tx.editCampaign : tx.addCampaign}</div>
 
         <div className="ud-cmp-modal__row">
           <div className="ud-cmp-modal__field ud-cmp-modal__field--grow">
@@ -124,16 +141,31 @@ export default function AddCampaignModal({ tx, onClose, onSave }) {
           ))}
         </div>
 
-        <div className="ud-cmp-modal__field">
-          <label className="ud-cmp-modal__label">{tx.budgetLabel}</label>
-          <input
-            className="ud-cmp-input"
-            type="number"
-            min={0}
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-            placeholder={tx.budgetPlaceholder}
-          />
+        <div className="ud-cmp-modal__row">
+          <div className="ud-cmp-modal__field">
+            <label className="ud-cmp-modal__label">{tx.budgetLabel}</label>
+            <input
+              className="ud-cmp-input"
+              type="number"
+              min={0}
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              placeholder={tx.budgetPlaceholder}
+            />
+          </div>
+          {isEditMode && (
+            <div className="ud-cmp-modal__field">
+              <label className="ud-cmp-modal__label">{tx.spentLabel}</label>
+              <input
+                className="ud-cmp-input"
+                type="number"
+                min={0}
+                value={spent}
+                onChange={(e) => setSpent(e.target.value)}
+                placeholder="0"
+              />
+            </div>
+          )}
         </div>
 
         <div className="ud-cmp-modal__row">
@@ -153,16 +185,19 @@ export default function AddCampaignModal({ tx, onClose, onSave }) {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              min={startDate || undefined}
             />
           </div>
         </div>
 
-        {!!error && <div className="ud-cmp-error">{error}</div>}
+        {error && <div className="ud-cmp-error">{error}</div>}
 
         <div className="ud-cmp-modal__actions">
-          <button className="ud-cmp-btn ud-cmp-btn--ghost" onClick={onClose} disabled={busy}>{tx.cancel}</button>
-          <button className="ud-cmp-btn ud-cmp-btn--primary" onClick={handleSave} disabled={busy}>{tx.create}</button>
+          <button className="ud-cmp-btn ud-cmp-btn--ghost" onClick={onClose} disabled={busy}>
+            {tx.cancel}
+          </button>
+          <button className="ud-cmp-btn ud-cmp-btn--primary" onClick={handleSave} disabled={busy}>
+            {busy ? tx.saving : submitLabel || tx.createCampaign}
+          </button>
         </div>
       </div>
     </div>

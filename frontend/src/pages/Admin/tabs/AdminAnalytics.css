@@ -1,0 +1,83 @@
+/* ═══════════════════════════════════════════════════════════
+   ANALYTICS PAGE — Salesforce Lightning CSS
+   Prefix: aan-
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Header ── */
+.aan-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #e5e7eb;
+}
+.aan-title { font-size: 1.15rem; font-weight: 600; color: #111827; margin: 0 0 2px; }
+.aan-subtitle { font-size: 0.82rem; color: #6b7280; }
+.aan-btn {
+  padding: 6px 14px; border-radius: 6px; border: 1px solid #e5e7eb;
+  background: #fff; color: #374151; font-size: 0.78rem; font-weight: 500;
+  cursor: pointer; font-family: inherit; transition: 0.12s;
+}
+.aan-btn:hover { border-color: #d1d5db; background: #f9fafb; }
+
+/* ── Section Labels ── */
+.aan-section {
+  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #94a3b8; margin: 24px 0 10px;
+}
+.aan-section-sub {
+  font-size: 0.58rem; font-weight: 500; color: #b0b8c4;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+
+/* ── Cards ── */
+.aan-card {
+  background: #fff; border-radius: 8px; padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 16px;
+}
+.aan-card-title {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #374151; margin-bottom: 4px;
+}
+.aan-card-desc {
+  font-size: 0.62rem; color: #94a3b8; margin-bottom: 12px;
+}
+
+/* ── 2-column grid ── */
+.aan-grid-2 {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;
+}
+@media (max-width: 900px) { .aan-grid-2 { grid-template-columns: 1fr; } }
+
+/* ── Heatmap Table ── */
+.aan-heatmap {
+  width: 100%; border-collapse: collapse; font-size: 0.75rem;
+}
+.aan-heatmap th {
+  padding: 8px 12px; text-align: left; font-size: 0.6rem;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: #6b7280; background: #f9fafb; border-bottom: 1px solid #e5e7eb;
+}
+.aan-heatmap td {
+  padding: 8px 12px; border-bottom: 1px solid #f3f4f6;
+  text-align: center; font-weight: 600;
+}
+.aan-heatmap td:first-child { text-align: left; font-weight: 600; color: #111827; }
+.aan-heatmap tbody tr:hover { background: #f8fafc; }
+.aan-heat-cell {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 28px; border-radius: 4px; font-size: 0.72rem; font-weight: 700;
+}
+
+/* ── Guidance ── */
+.aan-guidance {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.aan-guide-item {
+  display: flex; gap: 12px; padding: 12px 14px;
+  background: #fff; border-radius: 8px; border-left: 3px solid;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.aan-guide-icon { font-size: 1.1rem; flex-shrink: 0; }
+.aan-guide-title { font-size: 0.78rem; font-weight: 600; color: #111827; margin-bottom: 2px; }
+.aan-guide-text { font-size: 0.72rem; color: #6b7280; line-height: 1.4; }
+
+/* ── Empty ── */
+.aan-empty { text-align: center; padding: 40px; color: #94a3b8; font-size: 0.85rem; }

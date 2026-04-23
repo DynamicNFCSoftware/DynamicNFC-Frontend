@@ -13,6 +13,8 @@ import ExportPDF from "./components/ExportPDF";
 import NotificationSystem from "./components/NotificationSystem";
 import SectorSwitcher from "./components/SectorSwitcher";
 import RegionMorphLoader from "../../components/RegionMorphLoader/RegionMorphLoader";
+import AutomotiveMorphLoader from "../../components/AutomotiveMorphLoader/AutomotiveMorphLoader";
+import YachtMorphLoader from "../../components/YachtMorphLoader/YachtMorphLoader";
 import "./UnifiedLayout.css";
 
 const LAYOUT_TEXT = {
@@ -617,8 +619,11 @@ function LayoutContent({
   const navigate = useNavigate();
   const tx = LAYOUT_TEXT[lang] || LAYOUT_TEXT.en;
   if (seedingInProgress) {
-    const isRealEstate = sectorId === "real_estate";
-    const loaderRegion = (regionId || "canada").toLowerCase();
+    const sectorLower = (sectorId || "").toLowerCase().replace(/[-_]/g, "");
+    const isRealEstate = sectorLower === "realestate";
+    const isAutomotive = sectorLower === "automotive";
+    const isYacht = sectorLower === "yacht" || sectorLower === "yachts";
+    const safeRegion = (regionId || "canada").toLowerCase();
 
     return (
       <div className="ud-content-area">
@@ -626,8 +631,21 @@ function LayoutContent({
           {isRealEstate ? (
             <div className="ud-card" style={{ marginTop: 24, padding: 0, overflow: "hidden" }}>
               <RegionMorphLoader
-                region={loaderRegion}
+                region={safeRegion}
                 statusText="Preparing your region · Loading tenant data"
+              />
+            </div>
+          ) : isAutomotive ? (
+            <div className="ud-card" style={{ marginTop: 24, padding: 0, overflow: "hidden" }}>
+              <AutomotiveMorphLoader
+                region={safeRegion}
+                statusText="Preparing showroom · Loading tenant data"
+              />
+            </div>
+          ) : isYacht ? (
+            <div className="ud-card" style={{ marginTop: 24, padding: 0, overflow: "hidden" }}>
+              <YachtMorphLoader
+                region={safeRegion}
               />
             </div>
           ) : (

@@ -25,6 +25,7 @@ replay_pid*
 
 # Project specific
 dynamicNFC-key.pem
+docusign-private.key
 springboot.tar
 frontend.tar
 package-lock.json

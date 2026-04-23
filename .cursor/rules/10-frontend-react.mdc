@@ -1,0 +1,22 @@
+---
+description: Frontend React and UI implementation rules
+globs: frontend/src/**/*.{js,jsx,css}
+alwaysApply: false
+---
+
+# Frontend Rules
+
+- Stack: React 18 + Vite 7 + JSX. Never TypeScript — not even for new files.
+- Styling: custom CSS with per-page prefixes only. No Tailwind, no CSS Modules, no styled-components.
+- Charts: Recharts. Icons: inline SVG or Lucide React. No icon font libraries.
+- Use functional components and hooks; avoid class components.
+- Keep route definitions in `frontend/src/App.jsx`; route changes require explicit request.
+- CSS page prefixes (do not cross-share): `hp-` Home, `ent-` Enterprise, `dev-` Developers, `re-` RealEstate, `db-` Dashboard, `ai-` AIDemo, `ud-` UnifiedDashboard, `gw-` CRMGateway, `vp-` VIPPortal, `ap-` AhmedPortal, `mp-` MarketplacePortal, `acmp-` CampaignsTab.
+- Prefer CSS logical properties (`margin-inline-start`, `inset-inline-start`, `text-align: start`) for RTL safety. Never use `margin-left` / `margin-right`.
+- For user-facing text, wire through i18n (`t(...)`) instead of hardcoded strings.
+- If touching language switch behavior, keep single-button 4-language cycle: `EN -> AR -> ES -> FR` (never 4 separate buttons).
+- Region-aware design tokens come from `useRegion()`. Do not hardcode Gulf gold, Canada navy, or Mexico terracotta in page CSS.
+- Components over 500 lines should be split. After editing a file >500 lines, verify: `wc -l`, `tail`, `npm run build`.
+- When defining section components inside a render, call them as `{SectionIdentity()}` not `<SectionIdentity />` — the JSX form causes unmount/remount on every keystroke.
+- Demo routes must work without auth (`/enterprise/crmdemo/*`, `/automotive/demo/*`).
+- Demo interactions must write to Firestore via `services/firestoreTracking.js` — this powers dashboard analytics. Never add "demo only" flags that skip tracking.
