@@ -1,3 +1,5 @@
+- **Session startup**: read `CLAUDE_HANDOFF.md` at repo root before starting any work. It holds the latest infrastructure state, in-flight work, and recent completions. Treat HANDOFF as authoritative when it conflicts with older docs (CLAUDE.md, memory, rules).
+
 ---
 description: Core safety and repo boundaries
 alwaysApply: true
