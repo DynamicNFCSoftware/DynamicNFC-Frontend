@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
+import { useRegion } from "../../../hooks/useRegion";
+import { getEffectiveLocale } from "../../../config/regionConfig";
 import { getSectorSchema } from "../../../config/developerThemes";
-import { useDashboard } from "../DashboardDataProvider";
+import { useDashboard } from "../useDashboard";
 import { useAuth } from "../../../contexts/AuthContext";
 import AddDealModal from "../components/AddDealModal";
 import KanbanBoard from "../components/KanbanBoard";
@@ -12,6 +14,7 @@ import { createTenantDeal, updateTenantDealStage } from "../../../services/tenan
 
 export default function PipelineTab() {
   const { config, st, sectorId, activeSectorId } = useSector();
+  const { regionId, currency: regionCurrency } = useRegion();
   const { lang } = useLanguage();
   const { user } = useAuth();
   const location = useLocation();
@@ -21,7 +24,8 @@ export default function PipelineTab() {
   const [showAddDeal, setShowAddDeal] = useState(false);
   const [pipelineError, setPipelineError] = useState("");
   const handledInventoryRequestRef = useRef("");
-  const currency = analytics?.settings?.currency || "AED";
+  const currency = regionCurrency || analytics?.settings?.currency || "USD";
+  const locale = getEffectiveLocale(regionId, lang);
   const schema = useMemo(() => getSectorSchema(activeSectorId || sectorId, lang), [activeSectorId, sectorId, lang]);
 
   useEffect(() => {
@@ -39,7 +43,7 @@ export default function PipelineTab() {
       try {
         setPipelineError("");
         const payload = {
-          name: pending.name || "Inventory Lead",
+          name: pending.name || ({ en: "Inventory Lead", ar: "عميل المخزون", es: "Lead de inventario", fr: "Prospect inventaire" }[lang] || "Inventory Lead"),
           item: pending.item || pending.categoryName || "",
           value: Number(pending.value || 0),
           stage: pending.stage || "new_lead",
@@ -143,6 +147,7 @@ export default function PipelineTab() {
         deals={allDeals}
         suggestedDeals={suggestedDeals}
         currency={currency}
+        locale={locale}
         dealStages={schema.dealStages}
         thresholds={thresholds}
         onAcceptSuggestion={handleAcceptSuggestion}

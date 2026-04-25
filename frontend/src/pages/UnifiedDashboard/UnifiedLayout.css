@@ -2452,6 +2452,11 @@
   background: var(--ud-card-hover);
 }
 
+.ud-vip-candidate--disabled {
+  cursor: not-allowed !important;
+  opacity: 0.85;
+}
+
 .ud-vip-selected {
   background: var(--ud-accent-bg);
   border: 0.5px solid var(--ud-accent);
@@ -5873,6 +5878,17 @@ a:focus-visible {
 .ud-sidebar.ud-sector-yacht .ud-nav-section-label {
   color: #b8860b !important;
 }
+
+.ud-weekly-tooltip { background: var(--ud-tooltip-bg); border: 1px solid var(--ud-border); border-radius: 8px; padding: 8px 10px; color: var(--ud-tooltip-text); min-width: 140px; }
+.ud-weekly-tooltip__label { font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+.ud-weekly-tooltip__row { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.ud-weekly-tooltip__swatch { inline-size: 10px; block-size: 10px; border-radius: 2px; }
+.ud-weekly-tooltip__name { color: var(--ud-text-secondary); }
+.ud-weekly-tooltip__value { margin-inline-start: auto; font-weight: 600; color: var(--ud-text); }
+.ud-weekly-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; block-size: 320px; text-align: center; color: var(--ud-text-muted); gap: 8px; padding-inline: 12px; }
+.ud-weekly-empty__icon { inline-size: 40px; block-size: 40px; color: var(--ud-text-muted); }
+.ud-weekly-empty__title { font-size: 14px; font-weight: 600; color: var(--ud-text); }
+.ud-weekly-empty__desc { font-size: 12px; max-inline-size: 360px; }
 
 /* Collapsed rail pixel-pass: exact 40x40 vertical rhythm */
 .ud-layout.ud-collapsed .ud-sidebar-header {

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLanguage } from "../../../i18n";
-import { useDashboard } from "../DashboardDataProvider";
+import { useLanguage, useTranslation } from "../../../i18n";
+import eventDisplayMap from "../../../i18n/eventDisplayMap";
+import { useDashboard } from "../useDashboard";
 import BehavioralTimeline from "../components/BehavioralTimeline";
 import CreateVipModal from "../components/CreateVipModal";
 import OutreachModal from "../components/OutreachModal";
@@ -44,6 +45,8 @@ const UI = {
     high: "HIGH",
     collapseList: "Collapse list",
     expandList: "Expand list",
+    walkInProspect: "Walk-in Prospect",
+    promoteFirst: "Promote first to view full profile",
   },
   ar: {
     section: "إدارة VIP",
@@ -81,6 +84,8 @@ const UI = {
     high: "مرتفع",
     collapseList: "طي القائمة",
     expandList: "توسيع القائمة",
+    walkInProspect: "عميل محتمل زائر",
+    promoteFirst: "قم بالترقية أولاً لعرض الملف الكامل",
   },
   es: {
     section: "CRM VIP",
@@ -118,6 +123,8 @@ const UI = {
     high: "ALTO",
     collapseList: "Colapsar lista",
     expandList: "Expandir lista",
+    walkInProspect: "Prospecto espontáneo",
+    promoteFirst: "Promociona primero para ver el perfil completo",
   },
   fr: {
     section: "CRM VIP",
@@ -155,6 +162,8 @@ const UI = {
     high: "ELEVE",
     collapseList: "Reduire la liste",
     expandList: "Afficher la liste",
+    walkInProspect: "Prospect spontané",
+    promoteFirst: "Promouvoir d'abord pour voir le profil complet",
   },
 };
 
@@ -171,6 +180,22 @@ export default function VIPCrmTab() {
   const navigate = useNavigate();
   const { lang } = useLanguage();
   const tx = UI[lang] || UI.en;
+  const tEventDisplay = useTranslation("eventDisplay");
+  const normalizeEventCode = (value) => (
+    String(value || "")
+      .replace(/([a-z])([A-Z])/g, "$1_$2")
+      .replace(/[\s-]+/g, "_")
+      .toLowerCase()
+  );
+  const displayEvent = (rawCode) => {
+    const eventCode = normalizeEventCode(rawCode);
+    return eventDisplayMap[lang]?.[eventCode] ?? eventDisplayMap.en?.[eventCode] ?? eventCode;
+  };
+  const fromEventDisplay = (code) => {
+    const key = `eventDisplay.${code}`;
+    const translated = tEventDisplay(key);
+    return translated === key ? String(code || "").replace(/_/g, " ") : translated;
+  };
   const [showCreateVip, setShowCreateVip] = useState(false);
   const [outreachVip, setOutreachVip] = useState(null);
   const [search, setSearch] = useState("");
@@ -203,10 +228,15 @@ export default function VIPCrmTab() {
   const ctaEntries = Object.entries(vipDetail?.ctaCounts || {}).filter(([, count]) => (count || 0) > 0);
   const triggerLabel = (type) => {
     const key = `trigger_${String(type || "").toLowerCase()}`;
-    return tx[key] || String(type || "").replace(/_/g, " ");
+    return tx[key] || displayEvent(type) || fromEventDisplay(String(type || "").toLowerCase());
   };
-  const ctaLabel = (key) => tx[`cta_${key}`] || key.replace(/_/g, " ");
+  const ctaLabel = (key) => tx[`cta_${key}`] || displayEvent(key) || fromEventDisplay(key);
   const ctaMax = Math.max(...ctaEntries.map(([, count]) => Number(count) || 0), 1);
+  const timelineEvents = (vipDetail?.recentEvents || []).map((evt) => ({
+    ...evt,
+    type: normalizeEventCode(evt?.type || evt?.action || evt?.event || evt?.label),
+    label: displayEvent(evt?.type || evt?.action || evt?.event || evt?.label),
+  }));
 
   if (loading) {
     return (
@@ -299,29 +329,36 @@ export default function VIPCrmTab() {
               {visibleCandidates.length > 0 ? (
                 <>
                   <div className="ud-vip-list-divider">{tx.candidates}</div>
-                  {visibleCandidates.map((c) => (
-                    <div key={c.name} className="ud-vip-list-item ud-vip-candidate">
-                      <div className="ud-vip-avatar" style={{ opacity: 0.6 }}>{c.name?.charAt(0) || "C"}</div>
-                      <div className="ud-vip-list-info">
-                        <div className="ud-vip-list-name">{c.name}</div>
-                        <div className="ud-vip-list-meta" style={{ justifyContent: "space-between", width: "100%" }}>
-                          <span style={{ fontSize: 11, color: "var(--ud-text-muted)" }}>
-                            {(c.eventCount || c.events || 0)} {tx.eventsLabel}
-                          </span>
-                          <button
-                            className="ud-btn-promote"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handlePromote(c);
-                            }}
-                            type="button"
-                          >
-                            {tx.promote}
-                          </button>
+                  {visibleCandidates.map((c) => {
+                    const isWalkInCandidate = String(c.name || "").toLowerCase() === "walk-in prospect";
+                    return (
+                      <div
+                        key={c.name}
+                        className={`ud-vip-list-item ud-vip-candidate ${isWalkInCandidate ? "ud-vip-candidate--disabled" : ""}`}
+                        title={isWalkInCandidate ? tx.promoteFirst : undefined}
+                      >
+                        <div className="ud-vip-avatar" style={{ opacity: 0.6 }}>{c.name?.charAt(0) || "C"}</div>
+                        <div className="ud-vip-list-info">
+                          <div className="ud-vip-list-name">{isWalkInCandidate ? tx.walkInProspect : c.name}</div>
+                          <div className="ud-vip-list-meta" style={{ justifyContent: "space-between", width: "100%" }}>
+                            <span style={{ fontSize: 11, color: "var(--ud-text-muted)" }}>
+                              {(c.eventCount || c.events || 0)} {tx.eventsLabel}
+                            </span>
+                            <button
+                              className="ud-btn-promote"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePromote(c);
+                              }}
+                              type="button"
+                            >
+                              {tx.promote}
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </>
               ) : null}
             </div>
@@ -489,7 +526,7 @@ export default function VIPCrmTab() {
               </div>
 
               <div className="ud-vip-panel" style={{ marginTop: 12 }}>
-                <BehavioralTimeline title={tx.timeline} events={vipDetail.recentEvents || []} />
+                <BehavioralTimeline title={tx.timeline} events={timelineEvents} />
               </div>
 
               <div style={{ display: "flex", gap: 8, marginTop: 16 }}>

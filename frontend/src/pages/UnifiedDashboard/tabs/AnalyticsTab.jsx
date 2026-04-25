@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -18,9 +18,12 @@ import {
   YAxis,
 } from "recharts";
 import { useSector } from "../../../hooks/useSector";
+import { useRegion } from "../../../hooks/useRegion";
 import { useLanguage } from "../../../i18n";
-import { useDashboard } from "../DashboardDataProvider";
+import { getEffectiveLocale } from "../../../config/regionConfig";
+import { useDashboard } from "../useDashboard";
 import AiBadge from "../components/AiBadge";
+import DateRangePicker from "../components/DateRangePicker";
 import { SkeletonCard } from "../components/LoadingSkeleton";
 import SvgFunnel from "../components/SvgFunnel";
 import FunnelInsightTable from "../components/FunnelInsightTable";
@@ -170,54 +173,162 @@ const CHART_COLORS = {
   slate: "#94a3b8",
 };
 
+const DATE_RANGE_KEY = "ud_analytics_dateRange";
+
+const resolveRangeFromPreset = (preset, from, to) => {
+  const now = Date.now();
+  if (preset === "custom") {
+    const fromTs = from ? new Date(`${from}T00:00:00`).getTime() : null;
+    const toTs = to ? new Date(`${to}T23:59:59.999`).getTime() : null;
+    return { fromTs, toTs };
+  }
+  const days = preset === "last7d" ? 7 : preset === "last90d" ? 90 : 30;
+  const fromDate = new Date(now - (days - 1) * 86400000);
+  fromDate.setHours(0, 0, 0, 0);
+  const toDate = new Date(now);
+  toDate.setHours(23, 59, 59, 999);
+  return { fromTs: fromDate.getTime(), toTs: toDate.getTime() };
+};
+
+const parseInitialDateRange = () => {
+  try {
+    const raw = localStorage.getItem(DATE_RANGE_KEY);
+    if (!raw) {
+      const resolved = resolveRangeFromPreset("last30d");
+      return { preset: "last30d", from: null, to: null, ...resolved };
+    }
+    const parsed = JSON.parse(raw);
+    const preset = parsed?.preset || "last30d";
+    const from = parsed?.from || null;
+    const to = parsed?.to || null;
+    return { preset, from, to, ...resolveRangeFromPreset(preset, from, to) };
+  } catch {
+    const resolved = resolveRangeFromPreset("last30d");
+    return { preset: "last30d", from: null, to: null, ...resolved };
+  }
+};
+
+const getWeekStart = (timestamp) => {
+  const date = new Date(timestamp);
+  const day = (date.getDay() + 6) % 7;
+  date.setDate(date.getDate() - day);
+  date.setHours(0, 0, 0, 0);
+  return date.getTime();
+};
+
 export default function AnalyticsTab() {
   const { config, st } = useSector();
+  const { regionId } = useRegion();
   const { lang } = useLanguage();
-  const { analytics, vips, events, loading, funnelData, engagementTimeline, heatmapData } = useDashboard();
+  const { vips, events, loading } = useDashboard();
   const tx = { ...UI.en, ...(UI[lang] || {}) };
+  const locale = getEffectiveLocale(regionId, lang);
+  const dateTickFormatter = (value) => new Date(value).toLocaleDateString(locale, { month: "short", day: "numeric" });
+  const [dateRange, setDateRange] = useState(parseInitialDateRange);
+  const rangeFromTs = dateRange?.fromTs ?? null;
+  const rangeToTs = dateRange?.toTs ?? null;
+
+  useEffect(() => {
+    localStorage.setItem(
+      DATE_RANGE_KEY,
+      JSON.stringify({
+        preset: dateRange?.preset || "last30d",
+        from: dateRange?.from || null,
+        to: dateRange?.to || null,
+      })
+    );
+  }, [dateRange]);
+
+  const filteredEvents = useMemo(() => {
+    if (!rangeFromTs || !rangeToTs) return events || [];
+    return (events || []).filter((event) => {
+      const ts = new Date(event.timestamp).getTime();
+      return Number.isFinite(ts) && ts >= rangeFromTs && ts <= rangeToTs;
+    });
+  }, [events, rangeFromTs, rangeToTs]);
+
+  const timeBuckets = useMemo(() => {
+    if (!rangeFromTs || !rangeToTs || rangeToTs < rangeFromTs) return [];
+    const DAY = 86400000;
+    const totalDays = Math.max(1, Math.ceil((rangeToTs - rangeFromTs) / DAY) + 1);
+
+    if (totalDays <= 21) {
+      const buckets = [];
+      for (let i = 0; i < totalDays; i += 1) {
+        const start = rangeFromTs + i * DAY;
+        const end = Math.min(rangeToTs, start + DAY - 1);
+        buckets.push({
+          key: `d-${i}`,
+          start,
+          end,
+        });
+      }
+      return buckets;
+    }
+
+    const weekly = new Map();
+    for (let ts = rangeFromTs; ts <= rangeToTs; ts += DAY) {
+      const weekStart = getWeekStart(ts);
+      if (!weekly.has(weekStart)) {
+        weekly.set(weekStart, {
+          key: `w-${weekStart}`,
+          start: weekStart,
+          end: weekStart + 7 * DAY - 1,
+        });
+      }
+    }
+    return Array.from(weekly.values()).sort((a, b) => a.start - b.start);
+  }, [rangeFromTs, rangeToTs]);
   const categories = config.inventory?.categories || [];
   const unitTypes = (config.inventory?.typeFilters || []).filter((t) => t.id !== "all");
-  const vipIntentRows = heatmapData?.vipIntent || [];
-  const propertyDemandRows = heatmapData?.propertyDemand || [];
-  const colTotals = heatmapData?.colTotals || {};
-  const maxVipIntent = Math.max(
-    ...vipIntentRows.flatMap((row) => categories.map((cat) => Number(row?.[cat.id] || 0))),
-    1
-  );
-  const maxPropertyDemand = Math.max(
-    ...propertyDemandRows.flatMap((row) => unitTypes.map((t) => Number(row?.[t.id] || 0))),
-    1
-  );
-  const vipColTotals = {};
-  categories.forEach((cat) => {
-    vipColTotals[cat.id] = vipIntentRows.reduce((s, r) => s + (Number(r[cat.id]) || 0), 0);
-  });
-  const vipGrandTotal = Object.values(vipColTotals).reduce((s, v) => s + v, 0);
-  const propGrandTotal = colTotals._total || 0;
 
   const trendData = useMemo(() => {
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    const arDays = ["إثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت", "أحد"];
-    const frDays = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-    const esDays = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
-    const pickDays = lang === "ar" ? arDays : lang === "fr" ? frDays : lang === "es" ? esDays : days;
-    return (analytics.weeklyTrend || [0, 0, 0, 0, 0, 0, 0]).map((val, i) => ({
-      name: pickDays[i],
-      taps: val,
+    return timeBuckets.map((bucket) => ({
+      date: bucket.start,
+      taps: filteredEvents.filter((event) => {
+        const ts = new Date(event.timestamp).getTime();
+        return ts >= bucket.start && ts <= bucket.end;
+      }).length,
     }));
-  }, [analytics, lang]);
+  }, [timeBuckets, filteredEvents]);
   const isWeeklyEmpty = trendData.every((d) => d.taps === 0);
-  const hasEngagement = (engagementTimeline || []).some((d) => d.vip > 0 || d.registered > 0 || d.anonymous > 0);
 
   const deviceData = useMemo(() => {
-    if (!analytics.deviceBreakdown) return null;
+    const counts = { mobile: 0, desktop: 0, tablet: 0 };
+    filteredEvents.forEach((event) => {
+      const type = String(event.deviceType || "").toLowerCase();
+      if (type.includes("mobile")) counts.mobile += 1;
+      else if (type.includes("tablet")) counts.tablet += 1;
+      else if (type) counts.desktop += 1;
+    });
+    const total = counts.mobile + counts.desktop + counts.tablet;
+    if (total === 0) return null;
     const palette = [CHART_COLORS.red, CHART_COLORS.blue, CHART_COLORS.amber];
-    return Object.entries(analytics.deviceBreakdown).map(([key, val], i) => ({
-      name: key.charAt(0).toUpperCase() + key.slice(1),
-      value: val,
-      color: palette[i % palette.length],
-    }));
-  }, [analytics.deviceBreakdown]);
+    return Object.entries(counts)
+      .map(([key, val], i) => ({
+        name: key.charAt(0).toUpperCase() + key.slice(1),
+        value: Math.round((val / total) * 100),
+        color: palette[i % palette.length],
+      }))
+      .filter((row) => row.value > 0);
+  }, [filteredEvents]);
+
+  const engagementData = useMemo(() => {
+    return timeBuckets.map((bucket) => {
+      const rows = filteredEvents.filter((event) => {
+        const ts = new Date(event.timestamp).getTime();
+        return ts >= bucket.start && ts <= bucket.end;
+      });
+      return {
+        date: bucket.start,
+        [tx.vip]: rows.filter((event) => event.portalType === "vip").length,
+        [tx.registered]: rows.filter((event) => event.portalType === "registered" || event.portalType === "family").length,
+        [tx.anonymous]: rows.filter((event) => event.portalType !== "vip" && event.portalType !== "registered" && event.portalType !== "family").length,
+      };
+    });
+  }, [filteredEvents, timeBuckets, tx.vip, tx.registered, tx.anonymous]);
+
+  const hasEngagement = engagementData.some((row) => row[tx.vip] > 0 || row[tx.registered] > 0 || row[tx.anonymous] > 0);
 
   const scoreDistData = useMemo(() => {
     const buckets = [
@@ -239,26 +350,130 @@ export default function AnalyticsTab() {
   }, [vips]);
 
   const categoryData = useMemo(() => {
-    return config.inventory.categories.map((cat, i) => ({
-      name: st(cat.name),
-      interest: analytics.categoryInterest?.[cat.id] || 0,
-      fill: [CHART_COLORS.blue, CHART_COLORS.teal, CHART_COLORS.amber, CHART_COLORS.red, CHART_COLORS.navy][i % 5],
-    }));
-  }, [config, analytics, st]);
+    const rows = (config.inventory?.categories || []).map((cat) => ({ id: cat.id, name: st(cat.name), interest: 0 }));
+    filteredEvents.forEach((event) => {
+      const raw = String(event.tower || event.category || event.collection || "").toLowerCase();
+      if (!raw) return;
+      const matched = rows.find((cat) => raw === cat.id || raw.includes(cat.id) || cat.id.includes(raw));
+      if (matched) matched.interest += 1;
+    });
+    const palette = [CHART_COLORS.blue, CHART_COLORS.teal, CHART_COLORS.amber, CHART_COLORS.red, CHART_COLORS.navy];
+    return rows.map((row, index) => ({ ...row, fill: palette[index % palette.length] }));
+  }, [config.inventory, filteredEvents, st]);
   const isCategoryEmpty = categoryData.every((c) => c.interest === 0);
 
   const channelData = useMemo(() => {
-    if (!analytics.trafficSources) return null;
-    const ts = analytics.trafficSources;
+    const sourceCounts = { nfc: 0, direct: 0, referral: 0 };
+    filteredEvents.forEach((event) => {
+      const source = String(event.source || "").toLowerCase();
+      if (source === "nfc") sourceCounts.nfc += 1;
+      else if (source === "referral") sourceCounts.referral += 1;
+      else if (source) sourceCounts.direct += 1;
+    });
+    const total = sourceCounts.nfc + sourceCounts.direct + sourceCounts.referral;
+    if (total === 0) return null;
     return [
-      { name: "NFC", value: ts.nfc, color: CHART_COLORS.red },
-      { name: tx.direct, value: ts.direct, color: CHART_COLORS.blue },
-      { name: tx.referral, value: ts.referral, color: CHART_COLORS.amber },
+      { name: "NFC", value: Math.round((sourceCounts.nfc / total) * 100), color: CHART_COLORS.red },
+      { name: tx.direct, value: Math.round((sourceCounts.direct / total) * 100), color: CHART_COLORS.blue },
+      { name: tx.referral, value: Math.round((sourceCounts.referral / total) * 100), color: CHART_COLORS.amber },
     ];
-  }, [analytics.trafficSources, tx.direct, tx.referral]);
+  }, [filteredEvents, tx.direct, tx.referral]);
+
+  const funnelData = useMemo(() => {
+    const funnelMap = {
+      visit: [config.events?.portalEntry],
+      browse: [config.events?.itemView, config.events?.itemDetail],
+      engage: [config.events?.pricingRequest, config.events?.paymentPlan, config.events?.brochureDownload],
+      intent: [config.events?.booking, config.events?.contactAgent],
+      convert: [config.events?.booking],
+    };
+    let previous = 0;
+    return (config.funnel || []).map((step, index) => {
+      const types = new Set((funnelMap[step.id] || []).filter(Boolean));
+      const count = filteredEvents.filter((event) => types.has(event.type)).length;
+      const dropOff = index > 0 && previous > 0 ? Math.round((1 - count / previous) * 100) : null;
+      previous = count || previous;
+      return { name: st(step.label), value: count, color: step.color, dropOff };
+    });
+  }, [config.events, config.funnel, filteredEvents, st]);
+
+  const heatmapData = useMemo(() => {
+    const categoryRows = (config.inventory?.categories || []).map((cat) => ({
+      id: cat.id,
+      name: st(cat.name),
+    }));
+    const matchCategory = (event) => {
+      const raw = String(event.tower || event.category || event.collection || "").toLowerCase();
+      if (!raw) return null;
+      return categoryRows.find((cat) => raw === cat.id || raw.includes(cat.id) || cat.id.includes(raw))?.id || null;
+    };
+
+    const vipNames = Array.from(
+      new Set(
+        filteredEvents
+          .filter((event) => event.portalType === "vip" && event.vipName)
+          .map((event) => event.vipName)
+      )
+    ).slice(0, 8);
+
+    const vipIntent = vipNames.map((name) => {
+      const row = { id: name.toLowerCase().replace(/\s+/g, "-"), name, _total: 0 };
+      categoryRows.forEach((cat) => {
+        row[cat.id] = 0;
+      });
+      filteredEvents.forEach((event) => {
+        if (event.vipName !== name) return;
+        const catId = matchCategory(event);
+        if (!catId) return;
+        row[catId] += 1;
+        row._total += 1;
+      });
+      return row;
+    });
+
+    const effectiveTypes = unitTypes.length > 0 ? unitTypes : [{ id: "penthouse" }, { id: "3br" }, { id: "2br" }];
+    const propertyDemand = categoryRows.map((cat) => {
+      const row = { id: cat.id, name: cat.name, _total: 0 };
+      effectiveTypes.forEach((type) => {
+        row[type.id] = 0;
+      });
+      filteredEvents.forEach((event) => {
+        const catId = matchCategory(event);
+        if (catId !== cat.id) return;
+        const unitType = String(event.unitType || "").toLowerCase();
+        const matchType = effectiveTypes.find((type) => unitType.includes(type.id));
+        if (!matchType) return;
+        row[matchType.id] += 1;
+        row._total += 1;
+      });
+      return row;
+    });
+
+    const colTotals = {};
+    effectiveTypes.forEach((type) => {
+      colTotals[type.id] = propertyDemand.reduce((sum, row) => sum + Number(row[type.id] || 0), 0);
+    });
+    colTotals._total = Object.values(colTotals).reduce((sum, value) => sum + Number(value || 0), 0);
+    return { vipIntent, propertyDemand, colTotals };
+  }, [config.inventory, filteredEvents, st, unitTypes]);
+
+  const vipIntentRows = heatmapData.vipIntent || [];
+  const propertyDemandRows = heatmapData.propertyDemand || [];
+  const colTotals = heatmapData.colTotals || {};
+  const maxVipIntent = Math.max(...vipIntentRows.flatMap((row) => categories.map((cat) => Number(row?.[cat.id] || 0))), 1);
+  const maxPropertyDemand = Math.max(...propertyDemandRows.flatMap((row) => unitTypes.map((t) => Number(row?.[t.id] || 0))), 1);
+  const vipColTotals = {};
+  categories.forEach((cat) => {
+    vipColTotals[cat.id] = vipIntentRows.reduce((sum, row) => sum + Number(row?.[cat.id] || 0), 0);
+  });
+  const vipGrandTotal = Object.values(vipColTotals).reduce((sum, value) => sum + value, 0);
+  const propGrandTotal = colTotals._total || 0;
 
   const customTooltip = ({ active, payload, label }, valueMode = "count") => {
     if (!active || !payload?.length) return null;
+    const displayLabel = Number.isFinite(Number(label))
+      ? new Date(Number(label)).toLocaleDateString(locale, { month: "short", day: "numeric" })
+      : label;
     return (
       <div
         style={{
@@ -271,7 +486,7 @@ export default function AnalyticsTab() {
           boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
         }}
       >
-        {label ? <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 12 }}>{label}</div> : null}
+        {displayLabel ? <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 12 }}>{displayLabel}</div> : null}
         {payload.map((p, i) => (
           <div key={`${p.name}-${i}`} style={{ display: "flex", alignItems: "center", gap: 6, color: p.color || p.fill }}>
             <span style={{ width: 8, height: 8, borderRadius: 2, background: p.color || p.fill, display: "inline-block" }} />
@@ -300,7 +515,10 @@ export default function AnalyticsTab() {
         <div className="ud-section-label" style={{ margin: 0 }}>
           {tx.analytics}
         </div>
-        <AiBadge text={tx.ai} />
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+          <DateRangePicker value={dateRange} onChange={setDateRange} />
+          <AiBadge text={tx.ai} />
+        </div>
       </div>
 
       <div className="ud-grid-2">
@@ -322,7 +540,18 @@ export default function AnalyticsTab() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--ud-border-light)" vertical={false} />
-                  <XAxis dataKey="name" stroke="var(--ud-text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={dateTickFormatter}
+                    stroke="var(--ud-text-muted)"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    interval="preserveStartEnd"
+                    angle={-30}
+                    textAnchor="end"
+                    minTickGap={16}
+                  />
                   <YAxis stroke="var(--ud-text-muted)" fontSize={11} tickLine={false} axisLine={false} />
                   <Tooltip content={(props) => customTooltip(props, "count")} cursor={{ stroke: "var(--ud-border)", strokeDasharray: "3 3" }} />
                   <Area
@@ -418,16 +647,22 @@ export default function AnalyticsTab() {
           <div style={{ width: "100%", height: 240, marginTop: 12 }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
-                data={(engagementTimeline || []).map((d) => ({
-                  name: lang === "ar" ? d.dayAr : d.day,
-                  [tx.vip]: d.vip,
-                  [tx.registered]: d.registered,
-                  [tx.anonymous]: d.anonymous,
-                }))}
+                data={engagementData}
                 margin={{ top: 10, right: 16, left: 0, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--ud-border-light)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="var(--ud-text-muted)" tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={dateTickFormatter}
+                  tick={{ fontSize: 11 }}
+                  stroke="var(--ud-text-muted)"
+                  tickLine={false}
+                  axisLine={false}
+                  interval="preserveStartEnd"
+                  angle={-30}
+                  textAnchor="end"
+                  minTickGap={16}
+                />
                 <YAxis tick={{ fontSize: 11 }} stroke="var(--ud-text-muted)" tickLine={false} axisLine={false} />
                 <Tooltip content={(props) => customTooltip(props, "count")} />
                 <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} iconType="circle" />
@@ -448,7 +683,7 @@ export default function AnalyticsTab() {
         <div className="ud-card ud-funnel-visual">
           <div className="ud-card-title">{tx.conversionFunnel}</div>
           <div className="ud-card-subtitle">
-            {tx.conversionFunnelMeta} ({Math.min(events.length, 500)} {tx.count})
+            {tx.conversionFunnelMeta} ({filteredEvents.length} {tx.count})
           </div>
           <div style={{ marginTop: 16 }}>
             <SvgFunnel data={funnelData || []} />

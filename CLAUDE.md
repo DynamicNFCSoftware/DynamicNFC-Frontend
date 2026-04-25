@@ -1,7 +1,9 @@
 
 ## Session Startup
 
-Before starting any work, read `CLAUDE_HANDOFF.md` in the repo root. It contains the live infrastructure snapshot, in-flight work, and recent completions shared between Claude (claude.ai), Claude Code, and Cursor. Treat it as authoritative for "what's the current state" — more current than this file for anything that can drift (deployed functions, last commit, pending PRs).
+Before starting any work, read `CLAUDE_HANDOFF.md` in the repo root. It contains the live infrastructure snapshot, in-flight work, and recent completions shared between Claude (claude.ai), Claude Code, and Cursor.
+
+**Conflict authority:** If `CLAUDE_HANDOFF.md` conflicts with this file or with `memory/` files, **`CLAUDE_HANDOFF.md` wins** for anything that can drift (deployed functions, last commit, pending PRs, recent decisions). This file (`CLAUDE.md`) remains authoritative for **stable project rules** — brand language, architecture patterns, role split, design DNA, behavioral guidelines.
 
 ---
 
@@ -230,6 +232,20 @@ EmailCapture:     300s (5 minutes) — hidden on demo URLs
 ### Deprecated
 - Spring Boot backend on AWS — fully removed from active paths; `backend/` folder present but never modified.
 - Legacy jQuery / Paper.js from old card builder — dependencies still in root `package.json`, pending cleanup.
+
+### Repository Layout
+
+| Path | Purpose | Modification policy |
+|------|---------|---------------------|
+| `C:\Users\oguzh\DynamicNFC\` | Project root (Oguzhan's Windows local) | — |
+| `frontend/` | React + Vite app, primary active codebase | Edit freely within other constraints |
+| `functions/` | Firebase Cloud Functions (Node 22, v1) | Edit via explicit directive; treat `functions/index.js` as entry |
+| `backend/` | Spring Boot — **DEPRECATED** | Do not modify without explicit request |
+| `memory/` | Persistent decisions + feedback | Treat as source of truth for "why we do X" |
+| `CLAUDE_HANDOFF.md` (root) | Live sync file between Claude + Cursor + Claude Code | Authoritative on drift-prone state |
+| `.cursorrules` + `.cursor/rules/*.mdc` | Cursor's modular rule system | Oguzhan maintains manually — do not edit |
+
+Oguzhan's primary OS is **Windows** — terminal commands in directives must work in **PowerShell** (bash syntax is a secondary target for WSL / deploy scripts).
 
 ---
 
@@ -494,12 +510,50 @@ Review all generated code against this bar before delivering.
 - Match existing aesthetic — consistency > creativity
 
 ### Large File Protocol
-After any edit on files >500 lines, Cursor must:
-1. `wc -l <file>` — verify expected count
-2. `tail <file>` — verify proper closing
+After any edit on files >500 lines, verify integrity before moving on:
+
+**PowerShell / Windows (Oguzhan's local env — primary):**
+1. `(Get-Content "path\to\file").Length` — verify expected line count
+2. `Get-Content "path\to\file" -Tail 40` — verify proper closing
+3. `npm run build` — verify no syntax errors
+
+**Bash / WSL / macOS / Linux:**
+1. `wc -l <file>` — verify expected line count
+2. `tail -n 40 <file>` — verify proper closing
 3. `npm run build` — verify no syntax errors
 
 Known large files: `useDashboardData.js` (~1260L), `UnifiedLayout.jsx` (~750L), `CampaignsTab.jsx` (~771L), `campaignsTab.i18n.js` (~577L), `AutoDashboard.jsx` (1571L — scheduled for split in FAZ 5), `tenantService.js` (~500L).
+
+### Debug Conventions
+
+For non-obvious bugs, prefer **structured JSON diagnostic logs** over ad-hoc `console.log`. This keeps debug sessions traceable across Claude ↔ Cursor handoff and makes log lines grep-able.
+
+**Standard fields for every debug entry:**
+- `sessionId` — short id, e.g. `dbg-2026-04-23-A`
+- `runId` — increments per attempt within a session
+- `hypothesisId` — short code for what's being tested, e.g. `H1`, `H2`
+- `location` — `file:line` or function name
+- `message` — human-readable summary (one line)
+- `data` — payload being inspected
+- `timestamp: Date.now()`
+
+**Format rules:**
+- One log line = one JSON object. **No pretty-print multiline logs.**
+- For async phases, log both `beforeX` AND `xSuccess` / `xError` boundaries (so timing and failure points are visible in order)
+- Store persistent diagnostic output at `debug/<sessionId>-<short-name>.log` (gitignored)
+
+**Example:**
+```javascript
+console.log(JSON.stringify({
+  sessionId: "dbg-0423-A", runId: 2, hypothesisId: "H1",
+  location: "tenantService.seedSector:142",
+  message: "beforeBatchCommit",
+  data: { sector: "realEstate", region: "canada", docCount: 8 },
+  timestamp: Date.now()
+}));
+```
+
+**Cleanup rule — non-negotiable:** After the bug is fixed, the diagnostic logs in code AND the `debug/*.log` file must be deleted **in the same PR that ships the fix.** No merged code carries dormant debug scaffolding.
 
 ### Decision Framework
 When Oguzhan asks "what next?", prioritize:
@@ -621,13 +675,13 @@ Before marking any task done:
 - Loading + error states both handled (no silent failures)
 - Animations respect `prefers-reduced-motion`
 - Color contrast meets WCAG AA (4.5:1 for text)
-- No `console.log` in frontend code (functions logging is allowed)
+- No `console.log` in frontend code (functions logging is allowed; structured debug logs removed post-fix per Debug Conventions)
 - No broken `href="#"` links
 - Demo pages work without authentication
 - Demo interactions record to Firestore via `firestoreTracking.js`
 - Production pages wrapped with `ProtectedRoute`
 - Region + sector switch tested across all 4 regions and 3 sectors
-- Files >500 lines: `wc -l` + `tail` check after edit
+- Files >500 lines: line-count + tail check after edit (PowerShell or bash — see Large File Protocol)
 - Existing functionality not broken (adjacent pages check)
 - `npm run build` passes before deploy
 

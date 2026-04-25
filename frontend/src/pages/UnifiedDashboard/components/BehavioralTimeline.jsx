@@ -1,5 +1,5 @@
 import { useSector } from "../../../hooks/useSector";
-import { useLanguage } from "../../../i18n";
+import { useLanguage, useTranslation } from "../../../i18n";
 import { useMemo, useState } from "react";
 
 const EVENT_ICONS = {
@@ -79,6 +79,7 @@ const EVENT_LABELS = {
 export default function BehavioralTimeline({ events = [], title = "" }) {
   const { config } = useSector();
   const { lang } = useLanguage();
+  const tEventDisplay = useTranslation("eventDisplay");
   const [expanded, setExpanded] = useState(false);
   const [priorityFirst, setPriorityFirst] = useState(false);
 
@@ -109,10 +110,15 @@ export default function BehavioralTimeline({ events = [], title = "" }) {
       .toLowerCase()
   );
 
-  const getEventLabel = (eventType) => {
+  const getEventLabel = (event) => {
+    if (event?.label) return event.label;
+    const eventType = event?.type || event?.action || event?.event;
     const normalized = normalizeEventKey(eventType);
     const labels = EVENT_LABELS[lang] || EVENT_LABELS.en;
-    return labels[normalized] || EVENT_LABELS.en[normalized] || normalized.replace(/_/g, " ");
+    if (labels[normalized] || EVENT_LABELS.en[normalized]) return labels[normalized] || EVENT_LABELS.en[normalized];
+    const key = `eventDisplay.${normalized}`;
+    const translated = tEventDisplay(key);
+    return translated === key ? normalized.replace(/_/g, " ") : translated;
   };
   const getSeverity = (evt) => {
     const raw = String(evt?.severity || "").toLowerCase();
@@ -194,7 +200,7 @@ export default function BehavioralTimeline({ events = [], title = "" }) {
           <div className="ud-timeline-content">
             <div className="ud-timeline-event">
               <span className={`ud-timeline-severity-dot ud-timeline-severity-dot--${getSeverity(evt)}`} />
-              {getEventLabel(evt.type)}
+              {getEventLabel(evt)}
               {evt.item && <span className="ud-timeline-item-name">{itemJoiner}{evt.item}</span>}
             </div>
             <div className="ud-timeline-time">{formatTime(evt.timestamp)}</div>

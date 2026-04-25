@@ -1,10 +1,8 @@
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useLanguage } from "../../i18n";
-import {
-  DashboardDataProvider,
-  useDashboard as useDashboardData,
-} from "./DashboardDataProvider";
+import { DashboardDataProvider } from "./DashboardDataProvider";
+import { useDashboard as useDashboardData } from "./useDashboard";
 
 const SECTION_ROUTES = [
   { match: "/vip-crm", name: "VIPCrm" },

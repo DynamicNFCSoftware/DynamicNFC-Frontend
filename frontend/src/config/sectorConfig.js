@@ -25,13 +25,13 @@ const REAL_ESTATE = {
   identity: {
     sectorLabel: { en: 'Real Estate', ar: 'العقارات', es: 'Bienes Raíces', fr: 'Immobilier' },
     defaultProject: {
-      name: { en: 'Al Noor Residences', ar: 'مساكن النور', es: 'Residencias Al Noor' },
+      name: { en: 'Al Noor Residences', ar: 'مساكن النور', es: 'Residencias Al Noor', fr: 'Résidences Al Noor' },
       currency: 'SAR',
       currencySymbol: '\uFDFC',
       locale: 'ar-SA',
     },
     alternateProject: {
-      name: { en: 'Vista Residences', ar: 'فيستا ريزيدنسز', es: 'Residencias Vista' },
+      name: { en: 'Vista Residences', ar: 'فيستا ريزيدنسز', es: 'Residencias Vista', fr: 'Résidences Vista' },
       currency: 'CAD',
       currencySymbol: '$',
       locale: 'en-CA',
@@ -42,26 +42,26 @@ const REAL_ESTATE = {
 
   // --- Inventory ---
   inventory: {
-    itemLabel: { en: 'Unit', ar: 'وحدة', es: 'Unidad' },
-    itemLabelPlural: { en: 'Units', ar: 'وحدات', es: 'Unidades' },
-    categoryLabel: { en: 'Tower', ar: 'برج', es: 'Torre' },
-    categoryLabelPlural: { en: 'Towers', ar: 'أبراج', es: 'Torres' },
+    itemLabel: { en: 'Unit', ar: 'وحدة', es: 'Unidad', fr: 'Unité' },
+    itemLabelPlural: { en: 'Units', ar: 'وحدات', es: 'Unidades', fr: 'Unités' },
+    categoryLabel: { en: 'Tower', ar: 'برج', es: 'Torre', fr: 'Tour' },
+    categoryLabelPlural: { en: 'Towers', ar: 'أبراج', es: 'Torres', fr: 'Tours' },
     categories: [
-      { id: 'al_qamar', name: { en: 'Al Qamar', ar: 'القمر', es: 'Al Qamar' }, alias: 'Luna' },
-      { id: 'al_safwa', name: { en: 'Al Safwa', ar: 'الصفوة', es: 'Al Safwa' }, alias: 'Astra' },
-      { id: 'al_rawda', name: { en: 'Al Rawda', ar: 'الروضة', es: 'Al Rawda' }, alias: 'Nova' },
+      { id: 'al_qamar', name: { en: 'Al Qamar', ar: 'القمر', es: 'Al Qamar', fr: 'Al Qamar' }, alias: 'Luna' },
+      { id: 'al_safwa', name: { en: 'Al Safwa', ar: 'الصفوة', es: 'Al Safwa', fr: 'Al Safwa' }, alias: 'Astra' },
+      { id: 'al_rawda', name: { en: 'Al Rawda', ar: 'الروضة', es: 'Al Rawda', fr: 'Al Rawda' }, alias: 'Nova' },
     ],
     typeFilters: [
-      { id: 'all', label: { en: 'All', ar: 'الكل', es: 'Todos' } },
-      { id: 'penthouse', label: { en: 'Penthouse', ar: 'بنتهاوس', es: 'Penthouse' } },
-      { id: '3br', label: { en: '3 Bedroom', ar: '3 غرف نوم', es: '3 Habitaciones' } },
-      { id: '2br', label: { en: '2 Bedroom', ar: 'غرفتين نوم', es: '2 Habitaciones' } },
-      { id: 'studio', label: { en: 'Studio', ar: 'ستوديو', es: 'Estudio' } },
+      { id: 'all', label: { en: 'All', ar: 'الكل', es: 'Todos', fr: 'Tous' } },
+      { id: 'penthouse', label: { en: 'Penthouse', ar: 'بنتهاوس', es: 'Penthouse', fr: 'Penthouse' } },
+      { id: '3br', label: { en: '3 Bedroom', ar: '3 غرف نوم', es: '3 Habitaciones', fr: '3 chambres' } },
+      { id: '2br', label: { en: '2 Bedroom', ar: 'غرفتين نوم', es: '2 Habitaciones', fr: '2 chambres' } },
+      { id: 'studio', label: { en: 'Studio', ar: 'ستوديو', es: 'Estudio', fr: 'Studio' } },
     ],
     statusOptions: [
-      { id: 'available', label: { en: 'Available', ar: 'متاح', es: 'Disponible' }, color: '#22c55e' },
-      { id: 'reserved', label: { en: 'Reserved', ar: 'محجوز', es: 'Reservado' }, color: '#eab308' },
-      { id: 'sold', label: { en: 'Sold', ar: 'مُباع', es: 'Vendido' }, color: '#ef4444' },
+      { id: 'available', label: { en: 'Available', ar: 'متاح', es: 'Disponible', fr: 'Disponible' }, color: '#22c55e' },
+      { id: 'reserved', label: { en: 'Reserved', ar: 'محجوز', es: 'Reservado', fr: 'Réservé' }, color: '#eab308' },
+      { id: 'sold', label: { en: 'Sold', ar: 'مُباع', es: 'Vendido', fr: 'Vendu' }, color: '#ef4444' },
     ],
   },
   salesReps: {
@@ -118,24 +118,24 @@ const REAL_ESTATE = {
 
   // --- Conversion Funnel ---
   funnel: [
-    { id: 'visit', label: { en: 'Portal Visit', ar: 'زيارة البوابة', es: 'Visita al Portal' }, color: '#457b9d' },
-    { id: 'browse', label: { en: 'Unit Browsed', ar: 'تصفح الوحدة', es: 'Unidad Explorada' }, color: '#6ba3c7' },
-    { id: 'engage', label: { en: 'Pricing / Plan', ar: 'التسعير / الخطة', es: 'Precio / Plan' }, color: '#eab308' },
-    { id: 'intent', label: { en: 'Booking Request', ar: 'طلب حجز', es: 'Solicitud de Visita' }, color: '#f97316' },
-    { id: 'convert', label: { en: 'Viewing Booked', ar: 'تم حجز المعاينة', es: 'Visita Reservada' }, color: '#22c55e' },
+    { id: 'visit', label: { en: 'Portal Visit', ar: 'زيارة البوابة', es: 'Visita al Portal', fr: 'Visite du portail' }, color: '#457b9d' },
+    { id: 'browse', label: { en: 'Unit Browsed', ar: 'تصفح الوحدة', es: 'Unidad Explorada', fr: 'Unité explorée' }, color: '#6ba3c7' },
+    { id: 'engage', label: { en: 'Pricing / Plan', ar: 'التسعير / الخطة', es: 'Precio / Plan', fr: 'Prix / Plan' }, color: '#eab308' },
+    { id: 'intent', label: { en: 'Booking Request', ar: 'طلب حجز', es: 'Solicitud de Visita', fr: 'Demande de visite' }, color: '#f97316' },
+    { id: 'convert', label: { en: 'Viewing Booked', ar: 'تم حجز المعاينة', es: 'Visita Reservada', fr: 'Visite réservée' }, color: '#22c55e' },
   ],
 
   // --- Pipeline Kanban ---
   pipeline: {
-    stageLabel: { en: 'Sales Pipeline', ar: 'خط أنابيب المبيعات', es: 'Pipeline de Ventas' },
+    stageLabel: { en: 'Sales Pipeline', ar: 'خط أنابيب المبيعات', es: 'Pipeline de Ventas', fr: 'Pipeline commercial' },
     stages: [
-      { id: 'new_lead', label: { en: 'New Lead', ar: 'عميل جديد', es: 'Nuevo Prospecto' }, color: '#457b9d' },
-      { id: 'contacted', label: { en: 'Contacted', ar: 'تم التواصل', es: 'Contactado' }, color: '#6ba3c7' },
-      { id: 'viewing_scheduled', label: { en: 'Viewing Scheduled', ar: 'معاينة مجدولة', es: 'Visita Programada' }, color: '#eab308' },
-      { id: 'viewing_done', label: { en: 'Viewing Done', ar: 'تمت المعاينة', es: 'Visita Realizada' }, color: '#f97316' },
-      { id: 'negotiation', label: { en: 'Negotiation', ar: 'تفاوض', es: 'Negociación' }, color: '#a855f7' },
-      { id: 'offer_sent', label: { en: 'Offer Sent', ar: 'تم إرسال العرض', es: 'Oferta Enviada' }, color: '#ec4899' },
-      { id: 'closed_won', label: { en: 'Closed Won', ar: 'تم الإغلاق - ربح', es: 'Cerrado Ganado' }, color: '#22c55e' },
+      { id: 'new_lead', label: { en: 'New Lead', ar: 'عميل جديد', es: 'Nuevo Prospecto', fr: 'Nouveau prospect' }, color: '#457b9d' },
+      { id: 'contacted', label: { en: 'Contacted', ar: 'تم التواصل', es: 'Contactado', fr: 'Contacté' }, color: '#6ba3c7' },
+      { id: 'viewing_scheduled', label: { en: 'Viewing Scheduled', ar: 'معاينة مجدولة', es: 'Visita Programada', fr: 'Visite planifiée' }, color: '#eab308' },
+      { id: 'viewing_done', label: { en: 'Viewing Done', ar: 'تمت المعاينة', es: 'Visita Realizada', fr: 'Visite effectuée' }, color: '#f97316' },
+      { id: 'negotiation', label: { en: 'Negotiation', ar: 'تفاوض', es: 'Negociación', fr: 'Négociation' }, color: '#a855f7' },
+      { id: 'offer_sent', label: { en: 'Offer Sent', ar: 'تم إرسال العرض', es: 'Oferta Enviada', fr: 'Offre envoyée' }, color: '#ec4899' },
+      { id: 'closed_won', label: { en: 'Closed Won', ar: 'تم الإغلاق - ربح', es: 'Cerrado Ganado', fr: 'Affaire gagnée' }, color: '#22c55e' },
     ],
     // Auto-advance rules: when a VIP's latest events match, suggest or auto-move their deal
     // Each rule: { events: [...event types], targetStage, minCount, windowHours, onlyForward }
@@ -191,29 +191,29 @@ const REAL_ESTATE = {
   kpis: [
     {
       id: 'vip_sessions',
-      label: { en: 'VIP Sessions', ar: 'جلسات VIP', es: 'Sesiones VIP' },
-      subtitle: { en: 'Person known via NFC', ar: 'شخص معروف عبر NFC', es: 'Persona identificada por NFC' },
+      label: { en: 'VIP Sessions', ar: 'جلسات VIP', es: 'Sesiones VIP', fr: 'Sessions VIP' },
+      subtitle: { en: 'Person known via NFC', ar: 'شخص معروف عبر NFC', es: 'Persona identificada por NFC', fr: 'Personne identifiée via NFC' },
       icon: 'user-check',
       color: '#e63946',
     },
     {
       id: 'website_visitors',
-      label: { en: 'Website Visitors', ar: 'زوار الموقع', es: 'Visitantes Web' },
-      subtitle: { en: 'Standard traffic', ar: 'حركة مرور عادية', es: 'Tráfico estándar' },
+      label: { en: 'Website Visitors', ar: 'زوار الموقع', es: 'Visitantes Web', fr: 'Visiteurs du site' },
+      subtitle: { en: 'Standard traffic', ar: 'حركة مرور عادية', es: 'Tráfico estándar', fr: 'Trafic standard' },
       icon: 'globe',
       color: '#457b9d',
     },
     {
       id: 'bookings',
-      label: { en: 'Viewings Booked', ar: 'معاينات محجوزة', es: 'Visitas Reservadas' },
-      subtitle: { en: 'This month', ar: 'هذا الشهر', es: 'Este mes' },
+      label: { en: 'Viewings Booked', ar: 'معاينات محجوزة', es: 'Visitas Reservadas', fr: 'Visites réservées' },
+      subtitle: { en: 'This month', ar: 'هذا الشهر', es: 'Este mes', fr: 'Ce mois-ci' },
       icon: 'calendar',
       color: '#22c55e',
     },
     {
       id: 'conversion_lift',
-      label: { en: 'VIP Conversion Lift', ar: 'زيادة تحويل VIP', es: 'Aumento Conversión VIP' },
-      subtitle: { en: 'VIP vs standard rate', ar: 'VIP مقابل المعدل العادي', es: 'VIP vs tasa estándar' },
+      label: { en: 'VIP Conversion Lift', ar: 'زيادة تحويل VIP', es: 'Aumento Conversión VIP', fr: 'Gain de conversion VIP' },
+      subtitle: { en: 'VIP vs standard rate', ar: 'VIP مقابل المعدل العادي', es: 'VIP vs tasa estándar', fr: 'VIP vs taux standard' },
       icon: 'trending-up',
       color: '#f97316',
     },
@@ -221,10 +221,10 @@ const REAL_ESTATE = {
 
   // --- VIP Profile Labels ---
   vipProfile: {
-    whyCallNow: { en: 'Why Call Now?', ar: 'لماذا الاتصال الآن؟', es: '¿Por qué llamar ahora?' },
-    topItem: { en: 'Top Unit', ar: 'الوحدة المفضلة', es: 'Unidad Principal' },
-    lastSeen: { en: 'Last Seen', ar: 'آخر ظهور', es: 'Última Visita' },
-    nextBestAction: { en: 'Next Best Action', ar: 'أفضل إجراء تالي', es: 'Siguiente Mejor Acción' },
+    whyCallNow: { en: 'Why Call Now?', ar: 'لماذا الاتصال الآن؟', es: '¿Por qué llamar ahora?', fr: 'Pourquoi appeler maintenant ?' },
+    topItem: { en: 'Top Unit', ar: 'الوحدة المفضلة', es: 'Unidad Principal', fr: 'Unité principale' },
+    lastSeen: { en: 'Last Seen', ar: 'آخر ظهور', es: 'Última Visita', fr: 'Dernière activité' },
+    nextBestAction: { en: 'Next Best Action', ar: 'أفضل إجراء تالي', es: 'Siguiente Mejor Acción', fr: 'Prochaine meilleure action' },
   },
 
   // --- i18n namespace ---
@@ -241,13 +241,13 @@ const AUTOMOTIVE = {
   identity: {
     sectorLabel: { en: 'Automotive', ar: 'السيارات', es: 'Automotriz', fr: 'Automobile' },
     defaultProject: {
-      name: { en: 'Prestige Motors', ar: 'بريستيج موتورز', es: 'Prestige Motors' },
+      name: { en: 'Prestige Motors', ar: 'بريستيج موتورز', es: 'Prestige Motors', fr: 'Prestige Motors' },
       currency: 'SAR',
       currencySymbol: '\uFDFC',
       locale: 'ar-SA',
     },
     alternateProject: {
-      name: { en: 'Prestige Motors Vancouver', ar: 'بريستيج موتورز فانكوفر', es: 'Prestige Motors Vancouver' },
+      name: { en: 'Prestige Motors Vancouver', ar: 'بريستيج موتورز فانكوفر', es: 'Prestige Motors Vancouver', fr: 'Prestige Motors Vancouver' },
       currency: 'CAD',
       currencySymbol: '$',
       locale: 'en-CA',
@@ -258,28 +258,28 @@ const AUTOMOTIVE = {
 
   // --- Inventory ---
   inventory: {
-    itemLabel: { en: 'Vehicle', ar: 'مركبة', es: 'Vehículo' },
-    itemLabelPlural: { en: 'Vehicles', ar: 'مركبات', es: 'Vehículos' },
-    categoryLabel: { en: 'Collection', ar: 'مجموعة', es: 'Colección' },
-    categoryLabelPlural: { en: 'Collections', ar: 'مجموعات', es: 'Colecciones' },
+    itemLabel: { en: 'Vehicle', ar: 'مركبة', es: 'Vehículo', fr: 'Véhicule' },
+    itemLabelPlural: { en: 'Vehicles', ar: 'مركبات', es: 'Vehículos', fr: 'Véhicules' },
+    categoryLabel: { en: 'Collection', ar: 'مجموعة', es: 'Colección', fr: 'Collection' },
+    categoryLabelPlural: { en: 'Collections', ar: 'مجموعات', es: 'Colecciones', fr: 'Collections' },
     categories: [
-      { id: 'luxury_sedan', name: { en: 'Luxury Sedan', ar: 'سيدان فاخرة', es: 'Sedán de Lujo' } },
-      { id: 'performance', name: { en: 'Performance', ar: 'أداء', es: 'Alto Rendimiento' } },
-      { id: 'suv', name: { en: 'Luxury SUV', ar: 'SUV فاخرة', es: 'SUV de Lujo' } },
-      { id: 'electric', name: { en: 'Electric', ar: 'كهربائية', es: 'Eléctrico' } },
+      { id: 'luxury_sedan', name: { en: 'Luxury Sedan', ar: 'سيدان فاخرة', es: 'Sedán de Lujo', fr: 'Berline de luxe' } },
+      { id: 'performance', name: { en: 'Performance', ar: 'أداء', es: 'Alto Rendimiento', fr: 'Performance' } },
+      { id: 'suv', name: { en: 'Luxury SUV', ar: 'SUV فاخرة', es: 'SUV de Lujo', fr: 'SUV de luxe' } },
+      { id: 'electric', name: { en: 'Electric', ar: 'كهربائية', es: 'Eléctrico', fr: 'Électrique' } },
     ],
     typeFilters: [
-      { id: 'all', label: { en: 'All', ar: 'الكل', es: 'Todos' } },
-      { id: 'sedan', label: { en: 'Sedan', ar: 'سيدان', es: 'Sedán' } },
-      { id: 'suv', label: { en: 'SUV', ar: 'SUV', es: 'SUV' } },
-      { id: 'coupe', label: { en: 'Coupé', ar: 'كوبيه', es: 'Coupé' } },
-      { id: 'electric', label: { en: 'Electric', ar: 'كهربائية', es: 'Eléctrico' } },
+      { id: 'all', label: { en: 'All', ar: 'الكل', es: 'Todos', fr: 'Tous' } },
+      { id: 'sedan', label: { en: 'Sedan', ar: 'سيدان', es: 'Sedán', fr: 'Berline' } },
+      { id: 'suv', label: { en: 'SUV', ar: 'SUV', es: 'SUV', fr: 'SUV' } },
+      { id: 'coupe', label: { en: 'Coupé', ar: 'كوبيه', es: 'Coupé', fr: 'Coupé' } },
+      { id: 'electric', label: { en: 'Electric', ar: 'كهربائية', es: 'Eléctrico', fr: 'Électrique' } },
     ],
     statusOptions: [
-      { id: 'in_stock', label: { en: 'In Stock', ar: 'متوفر', es: 'En Stock' }, color: '#22c55e' },
-      { id: 'reserved', label: { en: 'Reserved', ar: 'محجوز', es: 'Reservado' }, color: '#eab308' },
-      { id: 'sold', label: { en: 'Sold', ar: 'مُباع', es: 'Vendido' }, color: '#ef4444' },
-      { id: 'incoming', label: { en: 'Incoming', ar: 'قادم', es: 'En Camino' }, color: '#457b9d' },
+      { id: 'in_stock', label: { en: 'In Stock', ar: 'متوفر', es: 'En Stock', fr: 'En stock' }, color: '#22c55e' },
+      { id: 'reserved', label: { en: 'Reserved', ar: 'محجوز', es: 'Reservado', fr: 'Réservé' }, color: '#eab308' },
+      { id: 'sold', label: { en: 'Sold', ar: 'مُباع', es: 'Vendido', fr: 'Vendu' }, color: '#ef4444' },
+      { id: 'incoming', label: { en: 'Incoming', ar: 'قادم', es: 'En Camino', fr: 'Arrivage' }, color: '#457b9d' },
     ],
   },
   salesReps: {
@@ -336,24 +336,24 @@ const AUTOMOTIVE = {
 
   // --- Conversion Funnel ---
   funnel: [
-    { id: 'visit', label: { en: 'Showroom Visit', ar: 'زيارة صالة العرض', es: 'Visita al Showroom' }, color: '#457b9d' },
-    { id: 'browse', label: { en: 'Vehicle Explored', ar: 'استكشاف المركبة', es: 'Vehículo Explorado' }, color: '#6ba3c7' },
-    { id: 'engage', label: { en: 'Quote / Finance', ar: 'عرض سعر / تمويل', es: 'Cotización / Financiamiento' }, color: '#eab308' },
-    { id: 'intent', label: { en: 'Test Drive Request', ar: 'طلب تجربة قيادة', es: 'Solicitud de Prueba' }, color: '#f97316' },
-    { id: 'convert', label: { en: 'Purchase / Lease', ar: 'شراء / تأجير', es: 'Compra / Arrendamiento' }, color: '#22c55e' },
+    { id: 'visit', label: { en: 'Showroom Visit', ar: 'زيارة صالة العرض', es: 'Visita al Showroom', fr: 'Visite du showroom' }, color: '#457b9d' },
+    { id: 'browse', label: { en: 'Vehicle Explored', ar: 'استكشاف المركبة', es: 'Vehículo Explorado', fr: 'Véhicule exploré' }, color: '#6ba3c7' },
+    { id: 'engage', label: { en: 'Quote / Finance', ar: 'عرض سعر / تمويل', es: 'Cotización / Financiamiento', fr: 'Devis / Financement' }, color: '#eab308' },
+    { id: 'intent', label: { en: 'Test Drive Request', ar: 'طلب تجربة قيادة', es: 'Solicitud de Prueba', fr: 'Demande d’essai routier' }, color: '#f97316' },
+    { id: 'convert', label: { en: 'Purchase / Lease', ar: 'شراء / تأجير', es: 'Compra / Arrendamiento', fr: 'Achat / Location' }, color: '#22c55e' },
   ],
 
   // --- Pipeline Kanban ---
   pipeline: {
-    stageLabel: { en: 'Sales Pipeline', ar: 'خط أنابيب المبيعات', es: 'Pipeline de Ventas' },
+    stageLabel: { en: 'Sales Pipeline', ar: 'خط أنابيب المبيعات', es: 'Pipeline de Ventas', fr: 'Pipeline commercial' },
     stages: [
-      { id: 'new_lead', label: { en: 'New Lead', ar: 'عميل جديد', es: 'Nuevo Prospecto' }, color: '#457b9d' },
-      { id: 'contacted', label: { en: 'Contacted', ar: 'تم التواصل', es: 'Contactado' }, color: '#6ba3c7' },
-      { id: 'test_drive', label: { en: 'Test Drive', ar: 'تجربة قيادة', es: 'Prueba de Manejo' }, color: '#eab308' },
-      { id: 'quote_sent', label: { en: 'Quote Sent', ar: 'تم إرسال العرض', es: 'Cotización Enviada' }, color: '#f97316' },
-      { id: 'negotiation', label: { en: 'Negotiation', ar: 'تفاوض', es: 'Negociación' }, color: '#a855f7' },
-      { id: 'financing', label: { en: 'Financing', ar: 'تمويل', es: 'Financiamiento' }, color: '#ec4899' },
-      { id: 'closed_won', label: { en: 'Closed Won', ar: 'تم الإغلاق - ربح', es: 'Cerrado Ganado' }, color: '#22c55e' },
+      { id: 'new_lead', label: { en: 'New Lead', ar: 'عميل جديد', es: 'Nuevo Prospecto', fr: 'Nouveau prospect' }, color: '#457b9d' },
+      { id: 'contacted', label: { en: 'Contacted', ar: 'تم التواصل', es: 'Contactado', fr: 'Contacté' }, color: '#6ba3c7' },
+      { id: 'test_drive', label: { en: 'Test Drive', ar: 'تجربة قيادة', es: 'Prueba de Manejo', fr: 'Essai routier' }, color: '#eab308' },
+      { id: 'quote_sent', label: { en: 'Quote Sent', ar: 'تم إرسال العرض', es: 'Cotización Enviada', fr: 'Devis envoyé' }, color: '#f97316' },
+      { id: 'negotiation', label: { en: 'Negotiation', ar: 'تفاوض', es: 'Negociación', fr: 'Négociation' }, color: '#a855f7' },
+      { id: 'financing', label: { en: 'Financing', ar: 'تمويل', es: 'Financiamiento', fr: 'Financement' }, color: '#ec4899' },
+      { id: 'closed_won', label: { en: 'Closed Won', ar: 'تم الإغلاق - ربح', es: 'Cerrado Ganado', fr: 'Affaire gagnée' }, color: '#22c55e' },
     ],
     autoAdvanceRules: [
       { events: ['contact_advisor'], targetStage: 'contacted', minCount: 1, windowHours: 168, onlyForward: true },
@@ -407,29 +407,29 @@ const AUTOMOTIVE = {
   kpis: [
     {
       id: 'vip_sessions',
-      label: { en: 'VIP Sessions', ar: 'جلسات VIP', es: 'Sesiones VIP' },
-      subtitle: { en: 'Person known via NFC', ar: 'شخص معروف عبر NFC', es: 'Persona identificada por NFC' },
+      label: { en: 'VIP Sessions', ar: 'جلسات VIP', es: 'Sesiones VIP', fr: 'Sessions VIP' },
+      subtitle: { en: 'Person known via NFC', ar: 'شخص معروف عبر NFC', es: 'Persona identificada por NFC', fr: 'Personne identifiée via NFC' },
       icon: 'user-check',
       color: '#e63946',
     },
     {
       id: 'website_visitors',
-      label: { en: 'Showroom Visitors', ar: 'زوار صالة العرض', es: 'Visitantes del Showroom' },
-      subtitle: { en: 'Standard traffic', ar: 'حركة مرور عادية', es: 'Tráfico estándar' },
+      label: { en: 'Showroom Visitors', ar: 'زوار صالة العرض', es: 'Visitantes del Showroom', fr: 'Visiteurs du showroom' },
+      subtitle: { en: 'Standard traffic', ar: 'حركة مرور عادية', es: 'Tráfico estándar', fr: 'Trafic standard' },
       icon: 'globe',
       color: '#457b9d',
     },
     {
       id: 'bookings',
-      label: { en: 'Test Drives Booked', ar: 'تجارب قيادة محجوزة', es: 'Pruebas Reservadas' },
-      subtitle: { en: 'This month', ar: 'هذا الشهر', es: 'Este mes' },
+      label: { en: 'Test Drives Booked', ar: 'تجارب قيادة محجوزة', es: 'Pruebas Reservadas', fr: 'Essais routiers réservés' },
+      subtitle: { en: 'This month', ar: 'هذا الشهر', es: 'Este mes', fr: 'Ce mois-ci' },
       icon: 'car',
       color: '#22c55e',
     },
     {
       id: 'conversion_lift',
-      label: { en: 'VIP Conversion Lift', ar: 'زيادة تحويل VIP', es: 'Aumento Conversión VIP' },
-      subtitle: { en: 'VIP vs standard rate', ar: 'VIP مقابل المعدل العادي', es: 'VIP vs tasa estándar' },
+      label: { en: 'VIP Conversion Lift', ar: 'زيادة تحويل VIP', es: 'Aumento Conversión VIP', fr: 'Gain de conversion VIP' },
+      subtitle: { en: 'VIP vs standard rate', ar: 'VIP مقابل المعدل العادي', es: 'VIP vs tasa estándar', fr: 'VIP vs taux standard' },
       icon: 'trending-up',
       color: '#f97316',
     },
@@ -437,10 +437,10 @@ const AUTOMOTIVE = {
 
   // --- VIP Profile Labels ---
   vipProfile: {
-    whyCallNow: { en: 'Why Call Now?', ar: 'لماذا الاتصال الآن؟', es: '¿Por qué llamar ahora?' },
-    topItem: { en: 'Top Model', ar: 'الموديل الأعلى', es: 'Modelo Principal' },
-    lastSeen: { en: 'Last Seen', ar: 'آخر ظهور', es: 'Última Visita' },
-    nextBestAction: { en: 'Next Best Action', ar: 'أفضل إجراء تالي', es: 'Siguiente Mejor Acción' },
+    whyCallNow: { en: 'Why Call Now?', ar: 'لماذا الاتصال الآن؟', es: '¿Por qué llamar ahora?', fr: 'Pourquoi appeler maintenant ?' },
+    topItem: { en: 'Top Model', ar: 'الموديل الأعلى', es: 'Modelo Principal', fr: 'Modèle principal' },
+    lastSeen: { en: 'Last Seen', ar: 'آخر ظهور', es: 'Última Visita', fr: 'Dernière activité' },
+    nextBestAction: { en: 'Next Best Action', ar: 'أفضل إجراء تالي', es: 'Siguiente Mejor Acción', fr: 'Prochaine meilleure action' },
   },
 
   // --- i18n namespace ---
@@ -731,9 +731,9 @@ export function getLeadTemperature(score, sectorId, lang = "en", thresholds = {}
   const warm = thresholds?.warm ?? 40;
 
   const labels = {
-    hot: { en: "Hot Lead", ar: "عميل ساخن" },
-    warm: { en: "Warm Lead", ar: "عميل دافئ" },
-    cold: { en: "Cold Lead", ar: "عميل بارد" },
+    hot: { en: "Hot Lead", ar: "عميل ساخن", es: "Lead caliente", fr: "Prospect chaud" },
+    warm: { en: "Warm Lead", ar: "عميل دافئ", es: "Lead templado", fr: "Prospect tiède" },
+    cold: { en: "Cold Lead", ar: "عميل بارد", es: "Lead frío", fr: "Prospect froid" },
   };
   const colors = { hot: "#e63946", warm: "#e9c46a", cold: "#457b9d" };
 

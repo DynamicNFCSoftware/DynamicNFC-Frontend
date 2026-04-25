@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
 import { getSectorSchema } from "../../../config/developerThemes";
-import { useDashboard } from "../DashboardDataProvider";
+import { useDashboard } from "../useDashboard";
 import { SkeletonCard } from "../components/LoadingSkeleton";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 
@@ -188,14 +188,15 @@ const UI = {
 };
 
 /* ─── Helpers ─── */
-function timeAgo(ts) {
+function timeAgo(ts, lang = "en") {
   if (!ts) return "-";
   const d = Date.now() - new Date(ts).getTime();
   const mins = Math.floor(d / 60000);
-  if (mins < 60) return `${mins}m`;
+  if (mins < 60) return lang === "ar" ? `منذ ${mins} د` : lang === "es" ? `hace ${mins}m` : lang === "fr" ? `il y a ${mins}m` : `${mins}m`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  return `${Math.floor(hrs / 24)}d`;
+  if (hrs < 24) return lang === "ar" ? `منذ ${hrs} س` : lang === "es" ? `hace ${hrs}h` : lang === "fr" ? `il y a ${hrs}h` : `${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  return lang === "ar" ? `منذ ${days} ي` : lang === "es" ? `hace ${days}d` : lang === "fr" ? `il y a ${days}j` : `${days}d`;
 }
 
 function TrendArrow({ value, label }) {
@@ -322,6 +323,7 @@ function HotUnitCard({ unit, tx }) {
 
 /* ─── Unit Detail Drawer ─── */
 function UnitDrawer({ cat, tx, st, formatValue, onClose, onCreateDeal }) {
+  const { lang } = useLanguage();
   if (!cat) return null;
   return (
     <div className="ud-inv-drawer-backdrop" onClick={onClose}>
@@ -380,7 +382,7 @@ function UnitDrawer({ cat, tx, st, formatValue, onClose, onCreateDeal }) {
                   <span>{u.views} {tx.views}</span>
                   <span>{u.pricing} {tx.pricing}</span>
                   <span>{u.bookings} {tx.bookings}</span>
-                  <span>{tx.lastActivity}: {timeAgo(u.lastTapAt)}</span>
+                  <span>{tx.lastActivity}: {timeAgo(u.lastTapAt, lang)}</span>
                 </div>
                 {u.sparkline && (
                   <div style={{ marginTop: 4 }}>

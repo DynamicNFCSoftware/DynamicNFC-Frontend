@@ -4,11 +4,11 @@ import html2canvas from "html2canvas";
 import { useDashboard } from "../DashboardContext";
 
 const LABELS = {
-  en: { export: "Export PDF", exporting: "Generating...", section: "Section" },
-  ar: { export: "تصدير PDF", exporting: "جارٍ الإنشاء...", section: "القسم" },
-  fr: { export: "Exporter PDF", exporting: "Génération...", section: "Section" },
-  es: { export: "Exportar PDF", exporting: "Generando...", section: "Sección" },
-  tr: { export: "PDF İndir", exporting: "Oluşturuluyor...", section: "Bölüm" },
+  en: { export: "Export PDF", exporting: "Generating...", section: "Section", exportFailed: "PDF export failed. Check console." },
+  ar: { export: "تصدير PDF", exporting: "جارٍ الإنشاء...", section: "القسم", exportFailed: "فشل تصدير PDF. يرجى مراجعة وحدة التحكم." },
+  fr: { export: "Exporter PDF", exporting: "Génération...", section: "Section", exportFailed: "Échec de l'export PDF. Vérifiez la console." },
+  es: { export: "Exportar PDF", exporting: "Generando...", section: "Sección", exportFailed: "Falló la exportación de PDF. Revisa la consola." },
+  tr: { export: "PDF İndir", exporting: "Oluşturuluyor...", section: "Bölüm", exportFailed: "PDF dışa aktarma başarısız. Konsolu kontrol edin." },
 };
 
 const MODE_LABELS = {
@@ -260,7 +260,7 @@ export default function ExportPDF() {
       pdf.save(`DynamicNFC_${safeSection}_${mode}_${dateStr}.pdf`);
     } catch (e) {
       console.error("PDF export failed:", e);
-      alert("PDF export failed. Check console.");
+      alert(L.exportFailed);
     } finally {
       setBusy(false);
     }

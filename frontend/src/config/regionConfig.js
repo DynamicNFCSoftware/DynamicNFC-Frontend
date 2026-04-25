@@ -161,6 +161,16 @@ export function formatCurrency(value, regionId) {
   }
 }
 
+export function getEffectiveLocale(regionId, lang) {
+  const map = {
+    gulf: { ar: "ar-SA", en: "en-US" },
+    usa: { en: "en-US", es: "es-US" },
+    mexico: { es: "es-MX", en: "en-US" },
+    canada: { en: "en-CA", fr: "fr-CA" },
+  };
+  return map[regionId]?.[lang] || "en-US";
+}
+
 export function getPersonas(sectorId, regionId) {
   const region = getRegion(regionId);
   return region.personas[sectorId] || region.personas.real_estate;

@@ -24,6 +24,15 @@ const TEMPLATES = {
       { icon: "🏗️", title: "مخطط الطابق", body: (n) => `${n} فتح مخطط طابق 3 غرف B-801` },
       { icon: "⚡", title: "حاسبة العائد", body: (n) => `${n} أجرى توقعات العائد` },
     ],
+    es: [
+      { icon: "🔥", title: "Alerta de lead caliente", body: (n) => `${n} vio precios 3 veces en 24h` },
+      { icon: "📋", title: "Nueva solicitud de visita", body: (n) => `${n} solicitó una visita para Penthouse A-1201` },
+      { icon: "📊", title: "Aumento de score", body: (n) => `El score de ${n} subió +15 puntos` },
+      { icon: "📄", title: "Brochure descargado", body: (n) => `${n} descargó el brochure del proyecto` },
+      { icon: "💰", title: "Plan de pago visto", body: (n) => `${n} revisó el plan de pago 60/40` },
+      { icon: "🏗️", title: "Plano abierto", body: (n) => `${n} abrió el plano 3BR B-801` },
+      { icon: "⚡", title: "Calculadora ROI usada", body: (n) => `${n} ejecutó proyecciones ROI` },
+    ],
     fr: [
       { icon: "🔥", title: "Alerte prospect chaud", body: (n) => `${n} a consulté les prix 3 fois en 24h` },
       { icon: "📋", title: "Nouvelle demande de visite", body: (n) => `${n} a demandé une visite pour Penthouse A-1201` },
@@ -50,6 +59,14 @@ const TEMPLATES = {
       { icon: "⚙️", title: "تكوين محفوظ", body: (n) => `${n} حفظ تكوين G63 أسود` },
       { icon: "💰", title: "حاسبة التمويل", body: (n) => `${n} استخدم حاسبة التمويل` },
       { icon: "📄", title: "تحميل الكتيب", body: (n) => `${n} حمّل كتيب المركبة` },
+    ],
+    es: [
+      { icon: "🔥", title: "Alerta de lead caliente", body: (n) => `${n} solicitó cotización para AMG GT 63 S` },
+      { icon: "🚗", title: "Prueba de manejo reservada", body: (n) => `${n} reservó una prueba de manejo para G-Class G63` },
+      { icon: "📊", title: "Aumento de score", body: (n) => `El score de ${n} subió +12 puntos` },
+      { icon: "⚙️", title: "Configuración guardada", body: (n) => `${n} guardó un G63 personalizado en Obsidian Black` },
+      { icon: "💰", title: "Calculadora financiera", body: (n) => `${n} usó la calculadora financiera` },
+      { icon: "📄", title: "Brochure descargado", body: (n) => `${n} descargó el brochure del vehículo` },
     ],
     fr: [
       { icon: "🔥", title: "Alerte prospect chaud", body: (n) => `${n} a demandé un devis pour AMG GT 63 S` },

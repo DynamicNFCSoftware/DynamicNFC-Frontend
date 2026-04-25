@@ -1,3 +1,5 @@
+import { translate } from "../../../i18n";
+
 export const STATUS_ORDER = { draft: 0, active: 1, paused: 2, archived: 3 };
 export const STATUS_COLORS = { draft: "#6ba3c7", active: "#2a9d8f", paused: "#e9c46a", archived: "#999" };
 export const STATUS_ICONS = {
@@ -53,28 +55,32 @@ export function formatDate(d) {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 }
 
-export function timeAgo(d) {
+export function timeAgo(d, lang = "en") {
   if (!d) return "—";
   const date = d.toDate ? d.toDate() : new Date(d);
   const diff = Date.now() - date.getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 60) return lang === "ar" ? `منذ ${mins} د` : lang === "es" ? `hace ${mins}m` : lang === "fr" ? `il y a ${mins}m` : `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
+  if (hrs < 24) return lang === "ar" ? `منذ ${hrs} س` : lang === "es" ? `hace ${hrs}h` : lang === "fr" ? `il y a ${hrs}h` : `${hrs}h ago`;
   const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
+  return lang === "ar" ? `منذ ${days} ي` : lang === "es" ? `hace ${days}d` : lang === "fr" ? `il y a ${days}j` : `${days}d ago`;
 }
 
-export function sourceLabel(source, tx) {
-  if (source === "cards_tab_assign") return tx.sourceCardsTab || "Cards Tab";
-  if (source === "manual") return tx.sourceManual || "Manual";
-  if (source === "api") return tx.sourceApi || "API";
-  return source || "—";
+export function sourceLabel(source, tx, lang = "en") {
+  const value = String(source || "");
+  if (!value) return "—";
+  if (tx?.[`source_${value}`]) return tx[`source_${value}`];
+  if (tx?.[value]) return tx[value];
+  const translated = translate("eventDisplay", lang, value);
+  return translated === `eventDisplay.${value}` ? value.replace(/_/g, " ") : translated;
 }
 
-export function objectiveLabel(obj, tx) {
+export function objectiveLabel(obj, tx, lang = "en") {
   if (!obj) return "—";
-  return tx[`obj_${obj}`] || obj;
+  if (tx?.[`obj_${obj}`]) return tx[`obj_${obj}`];
+  const translated = translate("eventDisplay", lang, obj);
+  return translated === `eventDisplay.${obj}` ? String(obj).replace(/_/g, " ") : translated;
 }
 
 export function channelBadges(channels, tx) {

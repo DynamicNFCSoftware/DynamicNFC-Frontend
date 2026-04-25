@@ -1,14 +1,102 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useLanguage } from "../../../i18n";
+import { registerTranslations, useLanguage, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
-import { useDashboard } from "../DashboardDataProvider";
+import { useDashboard } from "../useDashboard";
 import SectorSwitcher from "../components/SectorSwitcher";
 import { getTenantSettings, resetToDemo, updateLastActivity, updateTenantSettings } from "../../../services/tenantService";
+
+registerTranslations("settingsTab", {
+  en: {
+    section: "Settings",
+    profile: "Profile",
+    email: "Email",
+    sector: "Sector",
+    project: "Project",
+    dataMode: "Data Mode",
+    tenantData: "Tenant Data",
+    demoData: "Demo Data",
+    accountPreferences: "Account Preferences",
+    savedToFirestorePrefs: "Saved to Firestore preferences",
+    language: "Language",
+    theme: "Theme",
+    notifications: "Notifications",
+    light: "Light",
+    dark: "Dark",
+    enabled: "Enabled",
+    disabled: "Disabled",
+    switchSector: "Switch Sector",
+    switchSectorSubtitle: "Switch between Real Estate and Automotive",
+  },
+  ar: {
+    section: "الإعدادات",
+    profile: "الملف الشخصي",
+    email: "البريد الإلكتروني",
+    sector: "القطاع",
+    project: "المشروع",
+    dataMode: "وضع البيانات",
+    tenantData: "بيانات المستأجر",
+    demoData: "بيانات تجريبية",
+    accountPreferences: "تفضيلات الحساب",
+    savedToFirestorePrefs: "يتم الحفظ تلقائياً في Firestore",
+    language: "اللغة",
+    theme: "المظهر",
+    notifications: "الإشعارات",
+    light: "فاتح",
+    dark: "داكن",
+    enabled: "مفعلة",
+    disabled: "متوقفة",
+    switchSector: "تبديل القطاع",
+    switchSectorSubtitle: "تبديل بين العقارات والسيارات",
+  },
+  es: {
+    section: "Configuración",
+    profile: "Perfil",
+    email: "Correo",
+    sector: "Sector",
+    project: "Proyecto",
+    dataMode: "Modo de datos",
+    tenantData: "Datos del tenant",
+    demoData: "Datos demo",
+    accountPreferences: "Preferencias de cuenta",
+    savedToFirestorePrefs: "Guardado en preferencias de Firestore",
+    language: "Idioma",
+    theme: "Tema",
+    notifications: "Notificaciones",
+    light: "Claro",
+    dark: "Oscuro",
+    enabled: "Activadas",
+    disabled: "Desactivadas",
+    switchSector: "Cambiar sector",
+    switchSectorSubtitle: "Cambiar entre Real Estate y Automotive",
+  },
+  fr: {
+    section: "Paramètres",
+    profile: "Profil",
+    email: "E-mail",
+    sector: "Secteur",
+    project: "Projet",
+    dataMode: "Mode de données",
+    tenantData: "Données locataire",
+    demoData: "Données démo",
+    accountPreferences: "Préférences du compte",
+    savedToFirestorePrefs: "Enregistré dans les préférences Firestore",
+    language: "Langue",
+    theme: "Thème",
+    notifications: "Notifications",
+    light: "Clair",
+    dark: "Sombre",
+    enabled: "Active",
+    disabled: "Désactivé",
+    switchSector: "Changer de secteur",
+    switchSectorSubtitle: "Basculer entre immobilier et automobile",
+  },
+});
 
 export default function SettingsTab() {
   const { config, st, sectorId } = useSector();
   const { lang, setLang } = useLanguage();
+  const t = useTranslation("settingsTab");
   const { user } = useAuth();
   const { vips, events, dataMode, refresh, thresholds, updateThresholds } = useDashboard();
 
@@ -24,10 +112,11 @@ export default function SettingsTab() {
   const confirmDialogRef = useRef(null);
   const previousFocusRef = useRef(null);
   const effectiveThresholds = thresholds || { hot: hotThreshold, warm: warmThreshold };
-  const t = (labels, fallback = "") => labels?.[lang] || labels?.en || fallback;
+  const tl = (labels, fallback = "") => labels?.[lang] || labels?.en || fallback;
   const isAr = lang === "ar";
   const isEn = lang === "en";
   const isEs = lang === "es";
+  const isFr = lang === "fr";
 
   const onHotThresholdChange = (nextHot) => {
     const safeHot = Number(nextHot);
@@ -55,7 +144,6 @@ export default function SettingsTab() {
     getTenantSettings(user.uid)
       .then((settings) => {
         if (cancelled) return;
-        if (settings.language && settings.language !== lang) setLang(settings.language);
         if (settings.theme) {
           setTheme(settings.theme);
           localStorage.setItem("ud-theme", settings.theme);
@@ -101,7 +189,7 @@ export default function SettingsTab() {
       await refresh();
       setToast({
         type: "success",
-        message: t({
+        message: tl({
           en: "Demo data restored successfully.",
           ar: "تمت إعادة بيانات العرض التجريبي بنجاح.",
           es: "Datos demo restaurados correctamente.",
@@ -110,7 +198,7 @@ export default function SettingsTab() {
       });
       setShowResetConfirm(false);
     } catch (err) {
-      setResetError(err?.message || t({
+      setResetError(err?.message || tl({
         en: "Reset failed. Please try again.",
         ar: "فشلت إعادة التهيئة. حاول مرة أخرى.",
         es: "Fallo el reinicio. Intenta de nuevo.",
@@ -118,7 +206,7 @@ export default function SettingsTab() {
       }));
       setToast({
         type: "error",
-        message: t({
+        message: tl({
           en: "Reset failed. Please try again.",
           ar: "فشلت إعادة التهيئة. حاول مرة أخرى.",
           es: "Fallo el reinicio. Intenta de nuevo.",
@@ -154,14 +242,23 @@ export default function SettingsTab() {
   }, [toast]);
 
   const handleExportCSV = () => {
-    const headers = ["Name", "Email", "Score", "Top Item", "Last Seen", "Status"];
+    const headers = [
+      tl({ en: "Name", ar: "الاسم", es: "Nombre", fr: "Nom" }),
+      tl({ en: "Email", ar: "البريد الإلكتروني", es: "Correo", fr: "E-mail" }),
+      tl({ en: "Score", ar: "الدرجة", es: "Puntaje", fr: "Score" }),
+      tl({ en: "Top Item", ar: "العنصر الأعلى", es: "Elemento principal", fr: "Article principal" }),
+      tl({ en: "Last Seen", ar: "آخر ظهور", es: "Última actividad", fr: "Dernière activité" }),
+      tl({ en: "Status", ar: "الحالة", es: "Estado", fr: "Statut" }),
+    ];
     const rows = vips.map((v) => [
       v.name,
       v.email,
       v.score,
       v.topItem || "",
       v.lastSeen instanceof Date ? v.lastSeen.toISOString() : "",
-      v.atRisk ? "At Risk" : "Active",
+      v.atRisk
+        ? tl({ en: "At Risk", ar: "معرّض للخطر", es: "En riesgo", fr: "À risque" })
+        : tl({ en: "Active", ar: "نشط", es: "Activo", fr: "Actif" }),
     ]);
     const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -173,7 +270,7 @@ export default function SettingsTab() {
     URL.revokeObjectURL(url);
     setToast({
       type: "success",
-      message: t({
+      message: tl({
         en: "CSV exported successfully.",
         ar: "تم تصدير CSV بنجاح.",
         es: "CSV exportado correctamente.",
@@ -181,80 +278,82 @@ export default function SettingsTab() {
       }),
     });
   };
+  const handleResetDemo = () => executeResetDemo();
 
   return (
     <div>
-      <div className="ud-section-label">{t({ en: "Settings", ar: "الإعدادات", es: "Configuracion", fr: "Paramètres" })}</div>
+      <div className="ud-section-label">{t("section")}</div>
 
       <div className="ud-card" style={{ marginBottom: 16 }}>
-        <div className="ud-card-title">{t({ en: "Profile", ar: "الملف الشخصي", es: "Perfil", fr: "Profil" })}</div>
+        <div className="ud-card-title">{t("profile")}</div>
         <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-            <span style={{ color: "var(--ud-text-muted)" }}>Email</span>
+            <span style={{ color: "var(--ud-text-muted)" }}>{t("email")}</span>
             <span style={{ color: "var(--ud-text)" }}>{user?.email || "admin@dynamicnfc.ca"}</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-            <span style={{ color: "var(--ud-text-muted)" }}>{t({ en: "Sector", ar: "القطاع", es: "Sector", fr: "Secteur" })}</span>
+            <span style={{ color: "var(--ud-text-muted)" }}>{t("sector")}</span>
             <span style={{ color: "var(--ud-text)" }}>{st(config.identity.sectorLabel)}</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-            <span style={{ color: "var(--ud-text-muted)" }}>{t({ en: "Project", ar: "المشروع", es: "Proyecto", fr: "Projet" })}</span>
+            <span style={{ color: "var(--ud-text-muted)" }}>{t("project")}</span>
             <span style={{ color: "var(--ud-text)" }}>{st(config.identity.defaultProject.name)}</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-            <span style={{ color: "var(--ud-text-muted)" }}>{t({ en: "Data Mode", ar: "وضع البيانات", es: "Modo de datos", fr: "Mode de données" })}</span>
+            <span style={{ color: "var(--ud-text-muted)" }}>{t("dataMode")}</span>
             <span style={{ color: dataMode === "tenant" ? "#22c55e" : "#eab308", fontWeight: 500, fontSize: 12 }}>
               {dataMode === "tenant"
-                ? t({ en: "Tenant Data", ar: "بيانات المستأجر", es: "Datos del tenant", fr: "Données locataire" })
-                : t({ en: "Demo Data", ar: "بيانات تجريبية", es: "Datos demo", fr: "Données démo" })}
+                ? t("tenantData")
+                : t("demoData")}
             </span>
           </div>
         </div>
       </div>
 
       <div className="ud-card" style={{ marginBottom: 16 }}>
-        <div className="ud-card-title">{t({ en: "Account Preferences", ar: "تفضيلات الحساب", es: "Preferencias de cuenta", fr: "Préférences du compte" })}</div>
-        <div className="ud-card-subtitle">{t({ en: "Saved to Firestore preferences", ar: "يتم الحفظ تلقائياً في Firestore", es: "Guardado en preferencias de Firestore", fr: "Enregistré dans les préférences Firestore" })}</div>
+        <div className="ud-card-title">{t("accountPreferences")}</div>
+        <div className="ud-card-subtitle">{t("savedToFirestorePrefs")}</div>
         <div style={{ marginTop: 12, display: "grid", gap: 10 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 13, color: "var(--ud-text-secondary)" }}>{t({ en: "Language", ar: "اللغة", es: "Idioma", fr: "Langue" })}</span>
+            <span style={{ fontSize: 13, color: "var(--ud-text-secondary)" }}>{t("language")}</span>
             <div style={{ display: "flex", gap: 6 }}>
               <button type="button" onClick={() => handleLanguageChange("en")} className="ud-btn-theme" style={{ border: isEn ? "1px solid #457b9d" : undefined }}>EN</button>
               <button type="button" onClick={() => handleLanguageChange("ar")} className="ud-btn-theme" style={{ border: isAr ? "1px solid #457b9d" : undefined }}>AR</button>
               <button type="button" onClick={() => handleLanguageChange("es")} className="ud-btn-theme" style={{ border: isEs ? "1px solid #457b9d" : undefined }}>ES</button>
+              <button type="button" onClick={() => handleLanguageChange("fr")} className="ud-btn-theme" style={{ border: isFr ? "1px solid #457b9d" : undefined }}>FR</button>
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 13, color: "var(--ud-text-secondary)" }}>{t({ en: "Theme", ar: "المظهر", es: "Tema", fr: "Thème" })}</span>
+            <span style={{ fontSize: 13, color: "var(--ud-text-secondary)" }}>{t("theme")}</span>
             <div style={{ display: "flex", gap: 6 }}>
-              <button type="button" onClick={() => handleThemeChange("light")} className="ud-btn-theme" style={{ border: theme === "light" ? "1px solid #457b9d" : undefined }}>{t({ en: "Light", ar: "فاتح", es: "Claro", fr: "Clair" })}</button>
-              <button type="button" onClick={() => handleThemeChange("dark")} className="ud-btn-theme" style={{ border: theme === "dark" ? "1px solid #457b9d" : undefined }}>{t({ en: "Dark", ar: "داكن", es: "Oscuro", fr: "Sombre" })}</button>
+              <button type="button" onClick={() => handleThemeChange("light")} className="ud-btn-theme" style={{ border: theme === "light" ? "1px solid #457b9d" : undefined }}>{t("light")}</button>
+              <button type="button" onClick={() => handleThemeChange("dark")} className="ud-btn-theme" style={{ border: theme === "dark" ? "1px solid #457b9d" : undefined }}>{t("dark")}</button>
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 13, color: "var(--ud-text-secondary)" }}>{t({ en: "Notifications", ar: "الإشعارات", es: "Notificaciones", fr: "Notifications" })}</span>
+            <span style={{ fontSize: 13, color: "var(--ud-text-secondary)" }}>{t("notifications")}</span>
             <button type="button" className="ud-btn-theme" onClick={() => handleNotifications(!notifications)}>
               {notifications
-                ? t({ en: "Enabled", ar: "مفعلة", es: "Activadas", fr: "Active" })
-                : t({ en: "Disabled", ar: "متوقفة", es: "Desactivadas", fr: "Désactivé" })}
+                ? t("enabled")
+                : t("disabled")}
             </button>
           </div>
         </div>
       </div>
 
       <div className="ud-card" style={{ marginBottom: 16 }}>
-        <div className="ud-card-title">{t({ en: "Switch Sector", ar: "تبديل القطاع", es: "Cambiar sector", fr: "Changer de secteur" })}</div>
-        <div className="ud-card-subtitle">{t({ en: "Switch between Real Estate and Automotive", ar: "تبديل بين العقارات والسيارات", es: "Cambiar entre Real Estate y Automotive", fr: "Basculer entre immobilier et automobile" })}</div>
+        <div className="ud-card-title">{t("switchSector")}</div>
+        <div className="ud-card-subtitle">{t("switchSectorSubtitle")}</div>
         <SectorSwitcher />
       </div>
 
       <div className="ud-card" style={{ marginBottom: 16 }}>
-        <div className="ud-card-title">{t({ en: "Scoring Configuration", ar: "إعدادات التسجيل", es: "Configuracion de scoring", fr: "Configuration du scoring" })}</div>
-        <div className="ud-card-subtitle">{t({ en: "Adjust lead classification thresholds", ar: "تعديل عتبات تصنيف العملاء", es: "Ajustar umbrales de clasificacion de leads", fr: "Ajuster les seuils de classification des leads" })}</div>
+        <div className="ud-card-title">{tl({ en: "Scoring Configuration", ar: "إعدادات التسجيل", es: "Configuracion de scoring", fr: "Configuration du scoring" })}</div>
+        <div className="ud-card-subtitle">{tl({ en: "Adjust lead classification thresholds", ar: "تعديل عتبات تصنيف العملاء", es: "Ajustar umbrales de clasificacion de leads", fr: "Ajuster les seuils de classification des leads" })}</div>
 
         <div style={{ marginTop: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontSize: 12, color: "var(--ud-text-secondary)" }}>🔥 {t({ en: "Hot threshold", ar: "عتبة ساخن", es: "Umbral caliente", fr: "Seuil chaud" })}</span>
+            <span style={{ fontSize: 12, color: "var(--ud-text-secondary)" }}>🔥 {tl({ en: "Hot threshold", ar: "عتبة ساخن", es: "Umbral caliente", fr: "Seuil chaud" })}</span>
             <span style={{ fontSize: 14, fontWeight: 600, color: "#e63946" }}>{effectiveThresholds.hot}</span>
           </div>
           <input
@@ -269,7 +368,7 @@ export default function SettingsTab() {
 
         <div style={{ marginTop: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontSize: 12, color: "var(--ud-text-secondary)" }}>🟡 {t({ en: "Warm threshold", ar: "عتبة دافئ", es: "Umbral tibio", fr: "Seuil tiède" })}</span>
+            <span style={{ fontSize: 12, color: "var(--ud-text-secondary)" }}>🟡 {tl({ en: "Warm threshold", ar: "عتبة دافئ", es: "Umbral tibio", fr: "Seuil tiède" })}</span>
             <span style={{ fontSize: 14, fontWeight: 600, color: "#eab308" }}>{effectiveThresholds.warm}</span>
           </div>
           <input
@@ -283,7 +382,7 @@ export default function SettingsTab() {
         </div>
 
         <div style={{ marginTop: 12, padding: 10, borderRadius: 6, background: "var(--ud-bg-secondary)", fontSize: 12, color: "var(--ud-text-muted)" }}>
-          {t({
+          {tl({
             en: `≥${effectiveThresholds.hot} = Hot | ${effectiveThresholds.warm}-${effectiveThresholds.hot - 1} = Warm | <${effectiveThresholds.warm} = Cold`,
             ar: `≥${effectiveThresholds.hot} = ساخن | ${effectiveThresholds.warm}-${effectiveThresholds.hot - 1} = دافئ | <${effectiveThresholds.warm} = بارد`,
             es: `≥${effectiveThresholds.hot} = Caliente | ${effectiveThresholds.warm}-${effectiveThresholds.hot - 1} = Tibio | <${effectiveThresholds.warm} = Frio`,
@@ -293,9 +392,9 @@ export default function SettingsTab() {
       </div>
 
       <div className="ud-card" style={{ marginBottom: 16 }}>
-        <div className="ud-card-title">{t({ en: "Data Export", ar: "تصدير البيانات", es: "Exportar datos", fr: "Export de données" })}</div>
+        <div className="ud-card-title">{tl({ en: "Data Export", ar: "تصدير البيانات", es: "Exportar datos", fr: "Export de données" })}</div>
         <div className="ud-card-subtitle">
-          {t({
+          {tl({
             en: `${vips.length} VIPs, ${events.length} events`,
             ar: `${vips.length} VIP، ${events.length} حدث`,
             es: `${vips.length} VIP, ${events.length} eventos`,
@@ -321,13 +420,13 @@ export default function SettingsTab() {
           }}
           type="button"
         >
-          📊 {t({ en: "Export VIPs as CSV", ar: "تصدير VIP كـ CSV", es: "Exportar VIPs como CSV", fr: "Exporter les VIP en CSV" })}
+          📊 {tl({ en: "Export VIPs as CSV", ar: "تصدير VIP كـ CSV", es: "Exportar VIPs como CSV", fr: "Exporter les VIP en CSV" })}
         </button>
       </div>
 
       <div className="ud-card">
         <div style={{ marginBottom: 12, padding: 10, borderRadius: 8, background: "rgba(69,123,157,0.12)", border: "1px solid rgba(69,123,157,0.25)", fontSize: 12, color: "var(--ud-text-secondary)" }}>
-          {t({
+          {tl({
             en: "Retention policy: tenant data is marked after 15 days of inactivity, then permanently deleted after an extra 1-day grace period.",
             ar: "سياسة الاحتفاظ: بعد 15 يوماً بدون نشاط يتم وضع الحساب بانتظار الحذف، ثم يُحذف نهائياً بعد يوم إضافي (فترة سماح).",
             es: "Politica de retencion: los datos del tenant se marcan tras 15 dias sin actividad y se eliminan definitivamente tras 1 dia de gracia.",
@@ -358,7 +457,7 @@ export default function SettingsTab() {
             transition: "all 0.15s",
           }}
         >
-          🔄 {t({ en: "Reset to Demo Data", ar: "إعادة التهيئة للعرض التجريبي", es: "Reiniciar datos demo", fr: "Réinitialiser les données démo" })}
+          🔄 {tl({ en: "Reset to Demo Data", ar: "إعادة التهيئة للعرض التجريبي", es: "Reiniciar datos demo", fr: "Réinitialiser les données démo" })}
         </button>
         {resetError && (
           <div style={{ marginTop: 8, fontSize: 12, color: "#e63946" }}>{resetError}</div>
@@ -378,12 +477,12 @@ export default function SettingsTab() {
           >
             <div className="ud-modal-header">
               <h3 className="ud-modal-title" id="reset-confirm-title">
-                {t({ en: "Confirm Reset", ar: "تأكيد إعادة التهيئة", es: "Confirmar reinicio", fr: "Confirmer la réinitialisation" })}
+                {tl({ en: "Confirm Reset", ar: "تأكيد إعادة التهيئة", es: "Confirmar reinicio", fr: "Confirmer la réinitialisation" })}
               </h3>
             </div>
             <div className="ud-modal-body" style={{ padding: "16px 20px" }}>
               <p style={{ fontSize: 13, color: "var(--ud-text-secondary)", margin: 0, lineHeight: 1.5 }}>
-                {t({
+                {tl({
                   en: "This will replace all your current data with fresh demo data. This action cannot be undone.",
                   ar: "سيؤدي هذا إلى استبدال جميع بياناتك الحالية ببيانات تجريبية جديدة. لا يمكن التراجع عن هذا الإجراء.",
                   es: "Esto reemplazara todos tus datos actuales con datos demo nuevos. Esta accion no se puede deshacer.",

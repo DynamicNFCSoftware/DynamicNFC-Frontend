@@ -1,15 +1,22 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLanguage } from "../../../i18n";
+import { useLanguage, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
-import { useDashboard } from "../DashboardDataProvider";
+import { useRegion } from "../../../hooks/useRegion";
+import { getEffectiveLocale } from "../../../config/regionConfig";
+import { useDashboard } from "../useDashboard";
 import ActivityFeed from "../components/ActivityFeed";
 import AiBadge from "../components/AiBadge";
 import CallQueue from "../components/CallQueue";
+import DateRangePicker from "../components/DateRangePicker";
 import KpiCard from "../components/KpiCard";
 import MiniSparkline from "../components/MiniSparkline";
 import { SkeletonCard, SkeletonKPIs } from "../components/LoadingSkeleton";
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+
+const WEEKLY_RANGE_KEY = "ud_overview_weeklyTrend_dateRange";
+const WEEK_PRESETS = ["last4w", "last8w", "last12w", "custom"];
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 const UI = {
   en: {
@@ -39,6 +46,22 @@ const UI = {
     liveWindow: "New events (10m)",
     noConversionData: "No conversion actions yet",
     todayWorkflow: "Today's workflow",
+    weeklyTrend: {
+      title: "Last 8 Weeks",
+      realEstate: { vip: "VIP Taps", standard: "Public Taps" },
+      automotive: { vip: "VIP Sessions", standard: "Standard Sessions" },
+      yacht: { vip: "VIP Inquiries", standard: "Public Inquiries" },
+      empty: {
+        title: "Not enough data yet",
+        desc: "Tap events will appear here as your VIP invitees engage.",
+      },
+    },
+    topConfigs: {
+      title: "Top Saved Configurations",
+      saves: "saves",
+      empty: "No saved configurations yet",
+      unknown: "Unknown configuration",
+    },
   },
   ar: {
     section: "نظرة عامة",
@@ -67,6 +90,22 @@ const UI = {
     liveWindow: "أحداث جديدة (10د)",
     noConversionData: "لا توجد إجراءات تحويل بعد",
     todayWorkflow: "مهام اليوم",
+    weeklyTrend: {
+      title: "آخر 8 أسابيع",
+      realEstate: { vip: "نقرات VIP", standard: "نقرات عامة" },
+      automotive: { vip: "جلسات VIP", standard: "جلسات عادية" },
+      yacht: { vip: "استفسارات VIP", standard: "استفسارات عامة" },
+      empty: {
+        title: "لا توجد بيانات كافية بعد",
+        desc: "ستظهر أحداث النقر هنا عند تفاعل المدعوين من كبار الشخصيات.",
+      },
+    },
+    topConfigs: {
+      title: "أكثر التكوينات المحفوظة",
+      saves: "حفظ",
+      empty: "لا توجد تكوينات محفوظة بعد",
+      unknown: "تكوين غير معروف",
+    },
   },
   es: {
     section: "Vista general",
@@ -95,6 +134,22 @@ const UI = {
     liveWindow: "Eventos nuevos (10m)",
     noConversionData: "Aun no hay acciones de conversion",
     todayWorkflow: "Flujo de hoy",
+    weeklyTrend: {
+      title: "Últimas 8 semanas",
+      realEstate: { vip: "Toques VIP", standard: "Toques públicos" },
+      automotive: { vip: "Sesiones VIP", standard: "Sesiones estándar" },
+      yacht: { vip: "Consultas VIP", standard: "Consultas públicas" },
+      empty: {
+        title: "Aún no hay suficientes datos",
+        desc: "Los eventos aparecerán aquí a medida que interactúen tus invitados VIP.",
+      },
+    },
+    topConfigs: {
+      title: "Configuraciones más guardadas",
+      saves: "guardados",
+      empty: "Aún no hay configuraciones guardadas",
+      unknown: "Configuración desconocida",
+    },
   },
   fr: {
     section: "Vue générale",
@@ -123,19 +178,82 @@ const UI = {
     liveWindow: "Nouveaux événements (10m)",
     noConversionData: "Aucune action de conversion pour le moment",
     todayWorkflow: "Flux du jour",
+    weeklyTrend: {
+      title: "8 dernières semaines",
+      realEstate: { vip: "Interactions VIP", standard: "Interactions publiques" },
+      automotive: { vip: "Sessions VIP", standard: "Sessions standard" },
+      yacht: { vip: "Demandes VIP", standard: "Demandes publiques" },
+      empty: {
+        title: "Pas assez de données pour l'instant",
+        desc: "Les événements d'interaction apparaîtront ici au fur et à mesure que vos invités VIP s'engagent.",
+      },
+    },
+    topConfigs: {
+      title: "Configurations les plus sauvegardées",
+      saves: "sauvegardes",
+      empty: "Aucune configuration sauvegardée",
+      unknown: "Configuration inconnue",
+    },
   },
   tr: {
     todayWorkflow: "Bugunun is akisi",
   },
 };
 
+const resolveWeeklyRange = (value) => {
+  const now = Date.now();
+  const preset = value?.preset || "last8w";
+  if (preset !== "custom") {
+    const days = preset === "last4w" ? 28 : preset === "last12w" ? 84 : 56;
+    const fromDate = new Date(now - (days - 1) * 86400000);
+    fromDate.setHours(0, 0, 0, 0);
+    const toDate = new Date(now);
+    toDate.setHours(23, 59, 59, 999);
+    return { preset, from: null, to: null, fromTs: fromDate.getTime(), toTs: toDate.getTime() };
+  }
+  const fromTs = value?.from ? new Date(`${value.from}T00:00:00`).getTime() : null;
+  const toTs = value?.to ? new Date(`${value.to}T23:59:59.999`).getTime() : null;
+  return { preset: "custom", from: value?.from || null, to: value?.to || null, fromTs, toTs };
+};
+
+function WeeklyTooltip({ active, payload, label, formatter }) {
+  if (!active || !payload?.length) return null;
+  const displayLabel = formatter ? formatter(label) : label;
+  return (
+    <div className="ud-weekly-tooltip">
+      <div className="ud-weekly-tooltip__label">{displayLabel}</div>
+      {payload.map((p) => (
+        <div key={p.dataKey} className="ud-weekly-tooltip__row">
+          <span className="ud-weekly-tooltip__swatch" style={{ backgroundColor: p.color }} />
+          <span className="ud-weekly-tooltip__name">{p.name}</span>
+          <span className="ud-weekly-tooltip__value">{p.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function OverviewTab() {
   const { config, st } = useSector();
+  const { region, regionId } = useRegion();
   const { lang } = useLanguage();
+  const tActivity = useTranslation("activityFeed");
   const navigate = useNavigate();
   const [feedFilter, setFeedFilter] = useState("all");
+  const [weeklyTrendRange, setWeeklyTrendRange] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(WEEKLY_RANGE_KEY) || "{}");
+      return resolveWeeklyRange(saved?.preset ? saved : { preset: "last8w" });
+    } catch {
+      return resolveWeeklyRange({ preset: "last8w" });
+    }
+  });
   const { kpis, events, vips, analytics, loading, sparklines, feedCounts, callQueue, alerts } = useDashboard();
   const tx = { ...UI.en, ...(UI[lang] || {}) };
+  const locale = getEffectiveLocale(regionId, lang);
+  const dateTickFormatter = (value) => new Date(value).toLocaleDateString(locale, { month: "short", day: "numeric" });
+  const weeklyTrendLabels = tx.weeklyTrend?.[config.id] || tx.weeklyTrend?.realEstate;
+  const accentColor = region?.sidebarAccent || "var(--ud-accent)";
 
   const labelCategory = st(config.inventory.categoryLabel).toLowerCase();
 
@@ -143,10 +261,10 @@ export default function OverviewTab() {
   const conversionWindowText = `${tx.chartWindow}: ${Math.min(events.length, 500)} ${tx.last500Events}`;
   const FEED_FILTERS = [
     { id: "all", label: { en: "All", ar: "الكل", es: "Todos", fr: "Tous" } },
-    { id: "vip", label: { en: "VIP", ar: "VIP", es: "VIP", fr: "VIP" } },
-    { id: "registered", label: { en: "Registered", ar: "مسجّل", es: "Registrado", fr: "Enregistré" } },
-    { id: "lead", label: { en: "Lead", ar: "عميل", es: "Lead", fr: "Lead" } },
-    { id: "anonymous", label: { en: "Anonymous", ar: "مجهول", es: "Anonimo", fr: "Anonyme" } },
+    { id: "vip", label: { en: tActivity("personLabels.vip"), ar: tActivity("personLabels.vip"), es: tActivity("personLabels.vip"), fr: tActivity("personLabels.vip") } },
+    { id: "registered", label: { en: tActivity("personLabels.registered"), ar: tActivity("personLabels.registered"), es: tActivity("personLabels.registered"), fr: tActivity("personLabels.registered") } },
+    { id: "lead", label: { en: tActivity("personLabels.lead"), ar: tActivity("personLabels.lead"), es: tActivity("personLabels.lead"), fr: tActivity("personLabels.lead") } },
+    { id: "anonymous", label: { en: tActivity("personLabels.anonymous"), ar: tActivity("personLabels.anonymous"), es: tActivity("personLabels.anonymous"), fr: tActivity("personLabels.anonymous") } },
   ];
   const filteredEvents = useMemo(() => {
     if (feedFilter === "all") return events;
@@ -176,6 +294,73 @@ export default function OverviewTab() {
     const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
     return events.filter((e) => new Date(e.timestamp).getTime() >= tenMinutesAgo).length;
   }, [events]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      WEEKLY_RANGE_KEY,
+      JSON.stringify({ preset: weeklyTrendRange?.preset || "last8w", from: weeklyTrendRange?.from || null, to: weeklyTrendRange?.to || null })
+    );
+  }, [weeklyTrendRange]);
+
+  const weeklyTrendData = useMemo(() => {
+    const fromTs = weeklyTrendRange?.fromTs;
+    const toTs = weeklyTrendRange?.toTs;
+    if (!fromTs || !toTs || toTs < fromTs) return [];
+    const getWeekStart = (timestamp) => {
+      const d = new Date(timestamp);
+      const day = (d.getDay() + 6) % 7;
+      d.setDate(d.getDate() - day);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    };
+    const presetBuckets = { last4w: 4, last8w: 8, last12w: 12 };
+    const bucketCount = presetBuckets[weeklyTrendRange?.preset] || Math.max(1, Math.ceil((toTs - fromTs + 1) / WEEK_MS));
+    const lastWeekStart = getWeekStart(toTs);
+    const weekStarts = Array.from({ length: bucketCount }, (_, index) => lastWeekStart - (bucketCount - 1 - index) * WEEK_MS);
+    const rows = weekStarts.map((weekStart) => ({
+      weekStart,
+      weekEnd: weekStart + WEEK_MS - 1,
+      vip: 0,
+      standard: 0,
+    }));
+
+    events.forEach((event) => {
+      const ts = new Date(event.timestamp).getTime();
+      if (!Number.isFinite(ts) || ts < fromTs || ts > toTs) return;
+      const weekIndex = Math.floor((ts - weekStarts[0]) / WEEK_MS);
+      if (weekIndex < 0 || weekIndex >= rows.length) return;
+      const isVipEvent = Boolean(event.vipId || event.metadata?.vipId || event.vipName);
+      if (isVipEvent) rows[weekIndex].vip += 1;
+      else rows[weekIndex].standard += 1;
+    });
+
+    return rows;
+  }, [events, weeklyTrendRange]);
+  const weeklyTrendTotal = weeklyTrendData.reduce((sum, row) => sum + row.vip + row.standard, 0);
+
+  const topSavedConfigurations = useMemo(() => {
+    if (config.id !== "automotive") return [];
+    const saveEvents = events.filter((event) => {
+      const raw = String(event.rawEvent || event.event || event.type || "").toLowerCase();
+      return raw === "config_save" || raw === "save_config" || raw === "save_configuration" || raw === "savedconfigurations";
+    });
+
+    const grouped = {};
+    saveEvents.forEach((event) => {
+      const key =
+        event.item ||
+        event.metadata?.configurationName ||
+        event.metadata?.vehicleName ||
+        event.metadata?.vehicleId ||
+        tx.topConfigs.unknown;
+      grouped[key] = (grouped[key] || 0) + 1;
+    });
+
+    return Object.entries(grouped)
+      .map(([name, saves]) => ({ name, saves }))
+      .sort((a, b) => b.saves - a.saves)
+      .slice(0, 5);
+  }, [config.id, events, tx.topConfigs.unknown]);
   const WORKFLOW_STEPS = [
     {
       id: "hot",
@@ -296,6 +481,89 @@ export default function OverviewTab() {
           );
         })}
       </div>
+
+      <div className="ud-card" style={{ marginTop: 16, marginBottom: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+          <div>
+            <div className="ud-card-title">{tx.weeklyTrend.title}</div>
+            <div className="ud-card-subtitle">
+              {weeklyTrendLabels.vip} vs {weeklyTrendLabels.standard}
+            </div>
+          </div>
+          <DateRangePicker value={weeklyTrendRange} onChange={setWeeklyTrendRange} presets={WEEK_PRESETS} />
+        </div>
+        <div style={{ width: "100%", height: 240, marginTop: 12 }}>
+          {weeklyTrendTotal < 5 ? (
+            <div className="ud-weekly-empty">
+              <svg className="ud-weekly-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <path d="M3 3v18h18" />
+                <path d="m7 15 4-4 3 3 4-5" />
+              </svg>
+              <div className="ud-weekly-empty__title">{tx.weeklyTrend.empty.title}</div>
+              <div className="ud-weekly-empty__desc">{tx.weeklyTrend.empty.desc}</div>
+            </div>
+          ) : (
+            <ResponsiveContainer minWidth={100} minHeight={100}>
+              <AreaChart data={weeklyTrendData} margin={{ top: 12, right: 12, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="ud-overview-vip-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={accentColor} stopOpacity={0.4} />
+                    <stop offset="95%" stopColor={accentColor} stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--ud-border-light)" vertical={false} />
+                <XAxis
+                  dataKey="weekStart"
+                  tickFormatter={dateTickFormatter}
+                  tick={{ fontSize: 12, fill: "var(--ud-text-muted)" }}
+                  tickLine={false}
+                  axisLine={false}
+                  interval="preserveStartEnd"
+                  angle={-30}
+                  textAnchor="end"
+                  minTickGap={16}
+                />
+                <YAxis tickCount={5} allowDecimals={false} tick={{ fontSize: 12, fill: "var(--ud-text-muted)" }} tickLine={false} axisLine={false} />
+                <Tooltip content={(props) => <WeeklyTooltip {...props} formatter={dateTickFormatter} />} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Area type="monotone" dataKey="vip" name={weeklyTrendLabels.vip} stroke={accentColor} fill="url(#ud-overview-vip-grad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="standard" name={weeklyTrendLabels.standard} stroke="var(--ud-text-muted)" fill="var(--ud-text-muted)" fillOpacity={0.12} strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </div>
+
+      {config.id === "automotive" ? (
+        <div className="ud-card" style={{ marginBottom: 16 }}>
+          <div className="ud-card-title">{tx.topConfigs.title}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
+            {topSavedConfigurations.length === 0 ? (
+              <div className="ud-card-subtitle">{tx.topConfigs.empty}</div>
+            ) : (
+              topSavedConfigurations.map((row, index) => (
+                <div
+                  key={`${row.name}-${index}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    border: "1px solid var(--ud-border)",
+                    borderRadius: 8,
+                    padding: "8px 10px",
+                    background: "var(--ud-bg-secondary)",
+                  }}
+                >
+                  <span style={{ fontSize: 13, color: "var(--ud-text)" }}>{row.name}</span>
+                  <span style={{ fontSize: 12, color: "var(--ud-text-muted)" }}>
+                    {row.saves} {tx.topConfigs.saves}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      ) : null}
 
       <div className="ud-card" style={{ marginBottom: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
@@ -428,8 +696,8 @@ export default function OverviewTab() {
                       );
                     }}
                   />
-                  <Bar dataKey="vip" fill="#b8860b" radius={[0, 4, 4, 0]} barSize={8} name="VIP" />
-                  <Bar dataKey="standard" fill="#457b9d" radius={[0, 4, 4, 0]} barSize={8} name="Standard" />
+                  <Bar dataKey="vip" fill="#b8860b" radius={[0, 4, 4, 0]} barSize={8} name={tx.conversionLegendVip} />
+                  <Bar dataKey="standard" fill="#457b9d" radius={[0, 4, 4, 0]} barSize={8} name={tx.conversionLegendStandard} />
                 </BarChart>
               </ResponsiveContainer>
             )}

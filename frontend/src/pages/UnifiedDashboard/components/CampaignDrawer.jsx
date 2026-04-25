@@ -9,6 +9,9 @@ import {
   YAxis,
 } from "recharts";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useRegion } from "../../../hooks/useRegion";
+import eventDisplayMap from "../../../i18n/eventDisplayMap";
+import { getEffectiveLocale } from "../../../config/regionConfig";
 import { getCampaignAudit } from "../../../services/tenantService";
 import {
   STATUS_COLORS,
@@ -31,10 +34,12 @@ export default function CampaignDrawer({
   linkedDealsCount = 0,
   weightedDealsScore = 0,
   tapMetrics = null,
+  lang = "en",
 }) {
   const [audit, setAudit] = useState([]);
   const [auditLoading, setAuditLoading] = useState(true);
   const { user } = useAuth();
+  const { regionId, currency: regionCurrency } = useRegion();
 
   useEffect(() => {
     if (!campaign?.id || !user?.uid) return;
@@ -64,6 +69,23 @@ export default function CampaignDrawer({
   const tapSeries = tapMetrics?.series || [];
   const budget = Number(campaign.budget || 0);
   const spent = Number(campaign.spent || 0);
+  const locale = getEffectiveLocale(regionId, lang);
+  const currency = regionCurrency || "USD";
+  const formatCurrency = (value) => new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(Number(value || 0));
+  const normalizeCode = (value) => (
+    String(value || "")
+      .replace(/([a-z])([A-Z])/g, "$1_$2")
+      .replace(/[\s-]+/g, "_")
+      .toLowerCase()
+  );
+  const audienceCode = normalizeCode(campaign.targetAudience);
+  const audienceText = audienceCode
+    ? (eventDisplayMap[lang]?.[audienceCode] ?? eventDisplayMap.en?.[audienceCode] ?? tx[`aud_${audienceCode}`] ?? campaign.targetAudience)
+    : "—";
   const budgetPercentRaw = budget > 0 ? (spent / budget) * 100 : 0;
   const budgetPercent = Math.max(0, Math.min(100, budgetPercentRaw));
   const budgetBarColor = budgetPercentRaw > 80 ? "#e63946" : budgetPercentRaw >= 50 ? "#e9c46a" : "#2a9d8f";
@@ -98,7 +120,7 @@ export default function CampaignDrawer({
 
         <div className="ud-cmp-drawer__grid">
           <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.client}</span><span>{campaign.client || "—"}</span></div>
-          <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.source}</span><span>{sourceLabel(campaign.source, tx)}</span></div>
+          <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.source}</span><span>{sourceLabel(campaign.source, tx, lang)}</span></div>
           <div className="ud-cmp-drawer__field"><span className="ud-cmp-drawer__label">{tx.cards}</span><span>{campaign.activeCards || 0} / {campaign.totalCards || 0}</span></div>
           <div className="ud-cmp-drawer__field">
             <span className="ud-cmp-drawer__label">{tx.budgetLabel}</span>
@@ -111,7 +133,7 @@ export default function CampaignDrawer({
                   />
                 </div>
                 <span className="ud-cmp-budget-track__text">
-                  {`${spent.toLocaleString()} / ${budget.toLocaleString()} (%${Math.round(budgetPercentRaw)})`}
+                  {`${formatCurrency(spent)} / ${formatCurrency(budget)} (%${Math.round(budgetPercentRaw)})`}
                 </span>
               </div>
             ) : (
@@ -130,11 +152,11 @@ export default function CampaignDrawer({
         <div className="ud-cmp-drawer__strategy">
           <div className="ud-cmp-drawer__field">
             <span className="ud-cmp-drawer__label">{tx.objectiveLabel}</span>
-            <span>{objectiveLabel(campaign.objective, tx)}</span>
+            <span>{objectiveLabel(campaign.objective, tx, lang)}</span>
           </div>
           <div className="ud-cmp-drawer__field">
             <span className="ud-cmp-drawer__label">{tx.audienceLabel}</span>
-            <span>{campaign.targetAudience ? (tx[`aud_${campaign.targetAudience}`] || campaign.targetAudience) : "—"}</span>
+            <span>{audienceText}</span>
           </div>
           <div className="ud-cmp-drawer__field">
             <span className="ud-cmp-drawer__label">{tx.channelLabel}</span>
@@ -192,7 +214,7 @@ export default function CampaignDrawer({
             </ResponsiveContainer>
           </div>
         ) : (
-          <div className="ud-cmp-drawer__empty">{tx.noTapData}</div>
+          <div className="ud-cmp-drawer__empty">{tx.noPerformanceData}</div>
         )}
 
         {/* ── Audit Trail ──────────────── */}
@@ -214,7 +236,7 @@ export default function CampaignDrawer({
                     "{entry.oldName}" → "{entry.newName}"
                   </span>
                 )}
-                <span className="ud-cmp-drawer__audit-time">{timeAgo(entry.timestamp)}</span>
+                <span className="ud-cmp-drawer__audit-time">{timeAgo(entry.timestamp, lang)}</span>
               </li>
             ))}
           </ul>

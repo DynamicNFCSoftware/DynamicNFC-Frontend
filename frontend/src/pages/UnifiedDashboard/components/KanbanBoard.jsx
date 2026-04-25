@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSector } from "../../../hooks/useSector";
 import { useLanguage } from "../../../i18n";
 import { useRegion } from "../../../hooks/useRegion";
+import { getEffectiveLocale } from "../../../config/regionConfig";
 import AiBadge from "./AiBadge";
 import LeadBadge from "./LeadBadge";
 
@@ -41,8 +42,8 @@ const TriggerChip = ({ trigger, lang }) => {
   );
 };
 
-export default function KanbanBoard({ deals: initialDeals, suggestedDeals, currency, dealStages = [], onDealsChange, onStageChange, onAcceptSuggestion, thresholds: runtimeThresholds }) {
-  const { region } = useRegion();
+export default function KanbanBoard({ deals: initialDeals, suggestedDeals, currency, locale: localeProp, dealStages = [], onDealsChange, onStageChange, onAcceptSuggestion, thresholds: runtimeThresholds }) {
+  const { region, regionId } = useRegion();
   const resolvedCurrency = currency || region?.currency || "AED";
   const [deals, setDeals] = useState(initialDeals || []);
   const [draggedDeal, setDraggedDeal] = useState(null);
@@ -50,6 +51,7 @@ export default function KanbanBoard({ deals: initialDeals, suggestedDeals, curre
   const [toast, setToast] = useState(null);
   const { config, st } = useSector();
   const { lang } = useLanguage();
+  const locale = localeProp || getEffectiveLocale(regionId, lang);
   const pipelineStages = useMemo(() => {
     if (!Array.isArray(dealStages) || dealStages.length === 0) return config.pipeline.stages;
     const stageSet = new Set(dealStages);
@@ -96,12 +98,10 @@ export default function KanbanBoard({ deals: initialDeals, suggestedDeals, curre
 
   const formatValue = (val) => {
     if (!val) return "";
-    return new Intl.NumberFormat(region?.locale || "en-AE", {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: resolvedCurrency,
-      notation: "compact",
-      compactDisplay: "short",
-      maximumFractionDigits: 1,
+      maximumFractionDigits: 0,
     }).format(val);
   };
 

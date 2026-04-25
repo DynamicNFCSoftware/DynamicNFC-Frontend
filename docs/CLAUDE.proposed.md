@@ -24,6 +24,10 @@ Primary AI rules are modularized under:
 Entrypoint:
 - `.cursorrules` (minimal index + conflict policy)
 
+## Session Startup
+- Before starting any task, read `CLAUDE_HANDOFF.md` at repository root.
+- If `CLAUDE_HANDOFF.md` conflicts with older docs (`CLAUDE.md`, memory files, legacy notes), treat HANDOFF as authoritative.
+
 ## Repository Boundaries
 - Root: `C:\Users\oguzh\DynamicNFC`
 - Frontend: `frontend/` (React + Vite)

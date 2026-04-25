@@ -3,12 +3,14 @@ import { createPortal } from "react-dom";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLanguage } from "../../i18n";
+import "../../i18n/eventDisplayMap";
 import { SectorProvider, useSector } from "../../hooks/useSector";
 import { useRegion } from "../../hooks/useRegion";
 import { REGION_LIST, getProjectName, getPersonas } from "../../config/regionConfig";
 import logoFallback from "../../../logo_l_check.png";
 import AiBadge from "./components/AiBadge";
-import { DashboardDataProvider, useDashboard } from "./DashboardDataProvider";
+import { DashboardDataProvider } from "./DashboardDataProvider";
+import { useDashboard } from "./useDashboard";
 import ExportPDF from "./components/ExportPDF";
 import NotificationSystem from "./components/NotificationSystem";
 import SectorSwitcher from "./components/SectorSwitcher";
@@ -49,6 +51,9 @@ const LAYOUT_TEXT = {
     setupSub: "Preparing your tenant data for first-time access.",
     toggleTheme: "Toggle theme",
     close: "Close",
+    languageLabel: "Language",
+    preparingRegionLoadingTenantData: "Preparing your region · Loading tenant data",
+    preparingShowroomLoadingTenantData: "Preparing showroom · Loading tenant data",
   },
   ar: {
     aiBadge: "مدعوم بذكاء DynamicNFC",
@@ -81,6 +86,9 @@ const LAYOUT_TEXT = {
     setupSub: "يتم تجهيز بيانات Tenant الخاصة بك لأول مرة.",
     toggleTheme: "تبديل النمط",
     close: "إغلاق",
+    languageLabel: "اللغة",
+    preparingRegionLoadingTenantData: "جارٍ تجهيز منطقتك · جارٍ تحميل بيانات المستأجر",
+    preparingShowroomLoadingTenantData: "جارٍ تجهيز صالة العرض · جارٍ تحميل بيانات المستأجر",
   },
   es: {
     aiBadge: "Impulsado por DynamicNFC Intelligence",
@@ -113,6 +121,9 @@ const LAYOUT_TEXT = {
     setupSub: "Preparando datos de tu tenant para el primer acceso.",
     toggleTheme: "Cambiar tema",
     close: "Cerrar",
+    languageLabel: "Idioma",
+    preparingRegionLoadingTenantData: "Preparando tu región · Cargando datos del tenant",
+    preparingShowroomLoadingTenantData: "Preparando showroom · Cargando datos del tenant",
   },
   fr: {
     aiBadge: "Propulse par DynamicNFC Intelligence",
@@ -145,6 +156,9 @@ const LAYOUT_TEXT = {
     setupSub: "Preparation des donnees locataire pour le premier acces.",
     toggleTheme: "Basculer le thème",
     close: "Fermer",
+    languageLabel: "Langue",
+    preparingRegionLoadingTenantData: "Préparation de votre région · Chargement des données du locataire",
+    preparingShowroomLoadingTenantData: "Préparation du showroom · Chargement des données du locataire",
   },
 };
 const NAVBAR_LOGO_PATH = "/assets/images/logo.png";
@@ -632,14 +646,14 @@ function LayoutContent({
             <div className="ud-card" style={{ marginTop: 24, padding: 0, overflow: "hidden" }}>
               <RegionMorphLoader
                 region={safeRegion}
-                statusText="Preparing your region · Loading tenant data"
+                statusText={tx.preparingRegionLoadingTenantData}
               />
             </div>
           ) : isAutomotive ? (
             <div className="ud-card" style={{ marginTop: 24, padding: 0, overflow: "hidden" }}>
               <AutomotiveMorphLoader
                 region={safeRegion}
-                statusText="Preparing showroom · Loading tenant data"
+                statusText={tx.preparingShowroomLoadingTenantData}
               />
             </div>
           ) : isYacht ? (
@@ -721,7 +735,7 @@ function LayoutContent({
               )}
             </div>
             {(region?.languages || ["en"]).length > 1 && (
-              <div className="ud-lang-toggle" role="group" aria-label={tx.languageLabel || "Language"}>
+              <div className="ud-lang-toggle" role="group" aria-label={tx.languageLabel}>
                 {(region?.languages || ["en"]).map((l) => (
                   <button
                     key={l}

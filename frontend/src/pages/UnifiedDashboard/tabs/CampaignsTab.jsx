@@ -3,8 +3,10 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useLanguage } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
+import { useRegion } from "../../../hooks/useRegion";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useDashboard } from "../DashboardDataProvider";
+import { useDashboard } from "../useDashboard";
+import { getEffectiveLocale } from "../../../config/regionConfig";
 import { SkeletonTable } from "../components/LoadingSkeleton";
 import { createTenantCampaign, updateTenantCampaign } from "../../../services/tenantService";
 import { db } from "../../../firebase";
@@ -27,14 +29,25 @@ import {
   sourceLabel,
 } from "../components/campaignUtils";
 import { campaignsReducer, initialState } from "./useCampaignsReducer";
+import eventDisplayMap from "../../../i18n/eventDisplayMap";
 
 /* ═══ Helpers ═══ */
-const formatMoney = (n) => {
-  const value = Number(n || 0);
-  if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
-  if (value >= 1e3) return `${(value / 1e3).toFixed(1)}K`;
-  return value.toFixed(0);
-};
+const normalizeCode = (value) => (
+  String(value || "")
+    .replace(/([a-z])([A-Z])/g, "$1_$2")
+    .replace(/[\s-]+/g, "_")
+    .toLowerCase()
+);
+
+const formatCurrencyCompact = (value, locale, currency) => (
+  new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    notation: "compact",
+    compactDisplay: "short",
+    maximumFractionDigits: 1,
+  }).format(Number(value || 0))
+);
 
 /* ═══ KPI Card ═══ */
 function KpiCard({ icon, label, value, accent, onClick, isActive }) {
@@ -115,6 +128,7 @@ const SORT_OPTS = [
 /* ═══════════════════ MAIN ═══════════════════ */
 export default function CampaignsTab() {
   const { user } = useAuth();
+  const { regionId, currency: regionCurrency } = useRegion();
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -132,6 +146,8 @@ export default function CampaignsTab() {
     loadMoreCampaigns,
   } = dashboard;
   const tx = useMemo(() => ({ ...UI.en, ...(UI[lang] || {}) }), [lang]);
+  const locale = useMemo(() => getEffectiveLocale(regionId, lang), [regionId, lang]);
+  const currency = regionCurrency || "USD";
   const conversionWeights = useMemo(() => {
     const configured =
       analytics?.settings?.campaignConversionWeights ||
@@ -549,7 +565,7 @@ export default function CampaignsTab() {
         <KpiCard
           icon="💰"
           label={tx.kpiTotalBudget}
-          value={kpis.activeBudgetTotal.toLocaleString()}
+          value={formatCurrencyCompact(kpis.activeBudgetTotal, locale, currency)}
           accent="#2a9d8f"
         />
       </div>
@@ -562,9 +578,9 @@ export default function CampaignsTab() {
               key={src}
               className={`ud-cmp-source-filter-badge${sourceFilter === src ? " ud-cmp-source-filter-badge--active" : ""}`}
               onClick={() => dispatch({ type: "SET_SOURCE_FILTER", payload: sourceFilter === src ? "all" : src })}
-              title={`${sourceLabel(src, tx)}: ${count}`}
+              title={`${sourceLabel(src, tx, lang)}: ${count}`}
             >
-              {sourceLabel(src, tx)} ({count})
+              {sourceLabel(src, tx, lang)} ({count})
             </span>
           )
         ))}
@@ -658,6 +674,8 @@ export default function CampaignsTab() {
                   const convRate = tapCount > 0 ? ((wScore / tapCount) * 100).toFixed(1) : "0.0";
                   const budget = Number(c.budget || 0);
                   const spent = Number(c.spent || 0);
+                  const objectiveCode = normalizeCode(c.objective);
+                  const objectiveText = eventDisplayMap[lang]?.[objectiveCode] ?? eventDisplayMap.en?.[objectiveCode] ?? objectiveLabel(c.objective, tx, lang);
                   const budgetPercentRaw = budget > 0 ? (spent / budget) * 100 : 0;
                   const budgetPercent = Math.max(0, Math.min(100, budgetPercentRaw));
                   const budgetBarColor = spent > budget ? "#e63946" : "#22c55e";
@@ -708,7 +726,7 @@ export default function CampaignsTab() {
                               />
                             </div>
                             <div className="ud-cmp-budget-cell__text">
-                              ${formatMoney(spent)} / ${formatMoney(budget)}
+                              {formatCurrencyCompact(spent, locale, currency)} / {formatCurrencyCompact(budget, locale, currency)}
                             </div>
                           </div>
                         ) : (
@@ -716,7 +734,7 @@ export default function CampaignsTab() {
                         )}
                       </td>
                       <td>{c.client || "—"}</td>
-                      <td className="ud-cmp-obj-cell">{objectiveLabel(c.objective, tx)}</td>
+                      <td className="ud-cmp-obj-cell">{objectiveText}</td>
                       <td>
                         <div className="ud-cmp-performance-cell">
                           <span>{tapCount}</span>
@@ -734,7 +752,7 @@ export default function CampaignsTab() {
                       <td>
                         <SourceBadge
                           source={c.source}
-                          label={tx[`source_${c.source}`] || sourceLabel(c.source, tx)}
+                          label={tx[`source_${c.source}`] || sourceLabel(c.source, tx, lang)}
                         />
                       </td>
                       <td>{formatDate(c.updatedAt || c.createdAt)}</td>
@@ -791,6 +809,7 @@ export default function CampaignsTab() {
         <CampaignDrawer
           campaign={selectedCampaign}
           tx={tx}
+          lang={lang}
           onClose={() => dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: null })}
           onRename={(c) => startRename(c)}
           onEdit={(c) => {

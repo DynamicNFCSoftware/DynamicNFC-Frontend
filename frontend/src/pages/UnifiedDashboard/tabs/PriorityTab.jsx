@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
-import { useLanguage } from "../../../i18n";
+import { useLanguage, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
-import { useDashboard } from "../DashboardDataProvider";
+import { useDashboard } from "../useDashboard";
 import AiBadge from "../components/AiBadge";
 import LeadBadge from "../components/LeadBadge";
 import { SkeletonTable } from "../components/LoadingSkeleton";
@@ -225,6 +225,12 @@ export default function PriorityTab() {
   const [expandedVipId, setExpandedVipId] = useState(null);
   const { vips, loading, salesReps, thresholds } = useDashboard();
   const tx = { ...UI.en, ...(UI[lang] || {}) };
+  const tEventDisplay = useTranslation("eventDisplay");
+  const fromEventDisplay = (code) => {
+    const key = `eventDisplay.${code}`;
+    const translated = tEventDisplay(key);
+    return translated === key ? String(code || "").replace(/_/g, " ") : translated;
+  };
 
   const getNextAction = (vip) => {
     if (vip.atRisk) return ({ ar: "اتصل فوراً — خطر فقدان", es: "Llamar ahora — alto riesgo", en: "Call now — at risk of losing", fr: "Appeler maintenant — risque de perte" }[lang] || "Call now — at risk of losing");
@@ -330,7 +336,7 @@ export default function PriorityTab() {
                 <span className="ud-pv-col ud-pv-col--trigger">
                   {vip.triggers && vip.triggers.length > 0 ? (
                     <span className={`ud-pv-trigger ud-pv-trigger--${vip.triggers[0].severity || "med"}`}>
-                      {vip.triggers[0].icon} {vip.triggers[0].type.replace(/_/g, " ")}
+                      {vip.triggers[0].icon} {fromEventDisplay(vip.triggers[0].type)}
                     </span>
                   ) : <span style={{ color: "var(--ud-text-muted)" }}>—</span>}
                 </span>
@@ -401,7 +407,7 @@ export default function PriorityTab() {
                           <div className="ud-pv-trigger-wrap">
                             {vip.triggers.map((t, ti) => (
                               <span key={ti} className={`ud-pv-trigger ud-pv-trigger--${t.severity || "med"}`}>
-                                {t.icon} {t.type.replace(/_/g, " ")}
+                                {t.icon} {fromEventDisplay(t.type)}
                               </span>
                             ))}
                           </div>

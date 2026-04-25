@@ -196,7 +196,7 @@ export default function AddCampaignModal({
             {tx.cancel}
           </button>
           <button className="ud-cmp-btn ud-cmp-btn--primary" onClick={handleSave} disabled={busy}>
-            {busy ? tx.saving : submitLabel || tx.createCampaign}
+            {busy ? (tx.save || "Save") : submitLabel || (isEditMode ? tx.saveChanges : tx.create)}
           </button>
         </div>
       </div>

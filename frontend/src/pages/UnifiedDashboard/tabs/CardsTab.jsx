@@ -1,10 +1,10 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLanguage } from "../../../i18n";
+import { useLanguage, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
 import { getSectorSchema } from "../../../config/developerThemes";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useDashboard } from "../DashboardDataProvider";
+import { useDashboard } from "../useDashboard";
 import { SkeletonTable } from "../components/LoadingSkeleton";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { updateCardAssignment, updateCardStatus } from "../../../services/tenantService";
@@ -353,14 +353,15 @@ const UI = {
 };
 
 /* ═══ Helpers ═══ */
-function timeAgo(ts) {
+function timeAgo(ts, lang = "en") {
   if (!ts) return "-";
   const d = Date.now() - new Date(ts).getTime();
   const mins = Math.floor(d / 60000);
-  if (mins < 60) return `${mins}m`;
+  if (mins < 60) return lang === "ar" ? `منذ ${mins} د` : lang === "es" ? `hace ${mins}m` : lang === "fr" ? `il y a ${mins}m` : `${mins}m`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  return `${Math.floor(hrs / 24)}d`;
+  if (hrs < 24) return lang === "ar" ? `منذ ${hrs} س` : lang === "es" ? `hace ${hrs}h` : lang === "fr" ? `il y a ${hrs}h` : `${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  return lang === "ar" ? `منذ ${days} ي` : lang === "es" ? `hace ${days}d` : lang === "fr" ? `il y a ${days}j` : `${days}d`;
 }
 
 function daysAgo(ts) {
@@ -504,7 +505,7 @@ function ConfirmDialog({ title, description, onCancel, onConfirm, confirmLabel, 
 }
 
 /* ═══ Expanded Card Detail ═══ */
-function CardDetail({ card, tx, onCreateDeal, onClose, salesReps = [], onReassign, busy, onToggleStatus, statusBusy, parentLabel }) {
+function CardDetail({ card, tx, onCreateDeal, onClose, salesReps = [], onReassign, busy, onToggleStatus, statusBusy, parentLabel, lang, tEventDisplay }) {
   const [repId, setRepId] = useState(card?.assignedRepId || "");
   if (!card) return null;
   const health = healthStatus(card);
@@ -534,7 +535,7 @@ function CardDetail({ card, tx, onCreateDeal, onClose, salesReps = [], onReassig
         <div className="ud-ci-detail__meta">
           <span>{parentLabel}: <b>{card.tower}</b></span>
           <span>{tx.type}: <b>{card.type !== "-" ? card.type : "—"}</b></span>
-          <span>{tx.lastActivity}: <b>{timeAgo(card.lastTapAt)}</b></span>
+          <span>{tx.lastActivity}: <b>{timeAgo(card.lastTapAt, lang)}</b></span>
         </div>
 
         {/* Sparkline */}
@@ -601,7 +602,7 @@ function CardDetail({ card, tx, onCreateDeal, onClose, salesReps = [], onReassig
             {card.linkedDeals.slice(0, 5).map((d) => (
               <div key={d.id} className="ud-ci-detail__deal-row">
                 <span className="ud-ci-detail__deal-name">{d.name}</span>
-                <span className="ud-ci-detail__deal-stage">{d.stage?.replace(/_/g, " ")}</span>
+                <span className="ud-ci-detail__deal-stage">{tEventDisplay(d.stage || "")}</span>
               </div>
             ))}
           </div>
@@ -643,6 +644,12 @@ export default function CardsTab() {
   const navigate = useNavigate();
   const { cards, loading, dataMode, salesReps } = useDashboard();
   const tx = useMemo(() => ({ ...UI.en, ...(UI[lang] || {}) }), [lang]);
+  const tEventDisplayNs = useTranslation("eventDisplay");
+  const tEventDisplay = useCallback((code) => {
+    const key = `eventDisplay.${String(code || "")}`;
+    const translated = tEventDisplayNs(key);
+    return translated === key ? String(code || "").replace(/_/g, " ") : translated;
+  }, [tEventDisplayNs]);
   const schema = useMemo(() => getSectorSchema(activeSectorId || sectorId, lang), [activeSectorId, sectorId, lang]);
 
   const [search, setSearch] = useState("");
@@ -796,7 +803,15 @@ export default function CardsTab() {
       setToolbarBusy(true);
       try {
         await Promise.all(selectedIds.map((id) => updateCardStatus(user.uid, id, newStatus)));
-        showToast(`${selectedIds.length} cards ${newStatus === "paused" ? "paused" : "resumed"}`, "success");
+        showToast(
+          ({
+            en: `${selectedIds.length} cards ${newStatus === "paused" ? "paused" : "resumed"}`,
+            ar: `${selectedIds.length} بطاقة ${newStatus === "paused" ? "تم إيقافها" : "تم استئنافها"}`,
+            es: `${selectedIds.length} tarjetas ${newStatus === "paused" ? "pausadas" : "reanudades"}`,
+            fr: `${selectedIds.length} cartes ${newStatus === "paused" ? "mises en pause" : "réactivées"}`,
+          }[lang] || `${selectedIds.length} cards updated`),
+          "success"
+        );
         setSelectedIds([]);
         setConfirmAction(null);
       } catch (err) {
@@ -806,7 +821,7 @@ export default function CardsTab() {
         setToolbarBusy(false);
       }
     },
-    [user, selectedIds, tx, showToast]
+    [user, selectedIds, tx, showToast, lang]
   );
 
   const handleBulkCampaign = useCallback(async () => {
@@ -926,7 +941,7 @@ export default function CardsTab() {
       {/* Bulk Action Toolbar */}
       {selectedIds.length > 0 && (
         <div className="ud-ci-bulk-bar">
-          <span className="ud-ci-bulk-count">{selectedIds.length} selected</span>
+          <span className="ud-ci-bulk-count">{selectedIds.length} {tx.selected}</span>
           <button className="ud-ci-bulk-btn" onClick={() => setConfirmAction("pause")}>{tx.bulkPause}</button>
           <button className="ud-ci-bulk-btn" onClick={() => setConfirmAction("resume")}>{tx.bulkResume}</button>
           <button className="ud-ci-bulk-btn ud-ci-bulk-btn--primary" onClick={() => setConfirmAction("campaign")}>{tx.bulkLaunch}</button>
@@ -1020,13 +1035,15 @@ export default function CardsTab() {
         onToggleStatus={handleToggleStatus}
         statusBusy={statusBusy}
         parentLabel={schema.parentLabel}
+        lang={lang}
+        tEventDisplay={tEventDisplay}
       />
 
       {/* Confirm Dialogs */}
       {confirmAction === "pause" && (
         <ConfirmDialog
           title={tx.bulkPause}
-          description={`${selectedIds.length} cards will be paused.`}
+          description={({ en: `${selectedIds.length} cards will be paused.`, ar: `سيتم إيقاف ${selectedIds.length} بطاقة.`, es: `Se pausarán ${selectedIds.length} tarjetas.`, fr: `${selectedIds.length} cartes seront mises en pause.` }[lang] || `${selectedIds.length} cards will be paused.`)}
           onCancel={() => setConfirmAction(null)}
           onConfirm={() => handleBulkStatusChange("paused")}
           confirmLabel={tx.bulkPause}
@@ -1037,7 +1054,7 @@ export default function CardsTab() {
       {confirmAction === "resume" && (
         <ConfirmDialog
           title={tx.bulkResume}
-          description={`${selectedIds.length} cards will be resumed.`}
+          description={({ en: `${selectedIds.length} cards will be resumed.`, ar: `سيتم استئناف ${selectedIds.length} بطاقة.`, es: `Se reanudarán ${selectedIds.length} tarjetas.`, fr: `${selectedIds.length} cartes seront réactivées.` }[lang] || `${selectedIds.length} cards will be resumed.`)}
           onCancel={() => setConfirmAction(null)}
           onConfirm={() => handleBulkStatusChange("active")}
           confirmLabel={tx.bulkResume}
@@ -1048,7 +1065,7 @@ export default function CardsTab() {
       {confirmAction === "campaign" && (
         <ConfirmDialog
           title={tx.bulkLaunch}
-          description={`Create a draft campaign from ${selectedIds.length} cards.`}
+          description={({ en: `Create a draft campaign from ${selectedIds.length} cards.`, ar: `أنشئ حملة مسودة من ${selectedIds.length} بطاقة.`, es: `Crear una campaña borrador desde ${selectedIds.length} tarjetas.`, fr: `Créer une campagne brouillon à partir de ${selectedIds.length} cartes.` }[lang] || `Create a draft campaign from ${selectedIds.length} cards.`)}
           onCancel={() => { setConfirmAction(null); setBulkCampaignName(""); setBulkNameError(""); }}
           onConfirm={handleBulkCampaign}
           confirmLabel={tx.bulkLaunch}

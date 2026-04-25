@@ -27,12 +27,12 @@ export default function CreateVipModal({ onClose, onSubmit }) {
   };
 
   const fields = [
-    { key: "fullName", label: { en: "Full Name", ar: "الاسم الكامل", fr: "Nom complet" }, type: "text", required: true },
-    { key: "email", label: { en: "Email", ar: "البريد الإلكتروني", fr: "E-mail" }, type: "email" },
-    { key: "phone", label: { en: "Phone", ar: "الهاتف", fr: "Téléphone" }, type: "tel" },
-    { key: "campaign", label: { en: "Campaign", ar: "الحملة", fr: "Campagne" }, type: "text" },
-    { key: "cardId", label: { en: "Card ID", ar: "معرف البطاقة", fr: "ID carte" }, type: "text", placeholder: "e.g. VISTA005" },
-    { key: "notes", label: { en: "Notes", ar: "ملاحظات", fr: "Notes" }, type: "textarea" },
+    { key: "fullName", label: { en: "Full Name", ar: "الاسم الكامل", es: "Nombre completo", fr: "Nom complet" }, type: "text", required: true },
+    { key: "email", label: { en: "Email", ar: "البريد الإلكتروني", es: "Correo electrónico", fr: "E-mail" }, type: "email" },
+    { key: "phone", label: { en: "Phone", ar: "الهاتف", es: "Teléfono", fr: "Téléphone" }, type: "tel" },
+    { key: "campaign", label: { en: "Campaign", ar: "الحملة", es: "Campaña", fr: "Campagne" }, type: "text" },
+    { key: "cardId", label: { en: "Card ID", ar: "معرف البطاقة", es: "ID de tarjeta", fr: "ID carte" }, type: "text", placeholder: "e.g. VISTA005" },
+    { key: "notes", label: { en: "Notes", ar: "ملاحظات", es: "Notas", fr: "Notes" }, type: "textarea" },
   ];
 
   useEffect(() => {
