@@ -4,6 +4,7 @@ import { useLanguage, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
 import { useRegion } from "../../../hooks/useRegion";
 import { getEffectiveLocale } from "../../../config/regionConfig";
+import eventDisplayMap from "../../../i18n/eventDisplayMap";
 import { useDashboard } from "../useDashboard";
 import ActivityFeed from "../components/ActivityFeed";
 import AiBadge from "../components/AiBadge";
@@ -276,20 +277,39 @@ export default function OverviewTab() {
   const conversionBars = useMemo(() => {
     const conv = analytics?.conv || {};
     const rows = [
-      { label: { en: "Unit viewed", ar: "عرض الوحدة", es: "Unidad vista", fr: "Unité consultée" }, keys: ["view_unit", "vehicle_view", "unit_detail_opened", "vehicle_detail_opened"] },
-      { label: { en: "Pricing / quote", ar: "السعر / العرض", es: "Precio / cotizacion", fr: "Tarif / devis" }, keys: ["request_pricing", "request_quote", "pricing_request", "quote_request"] },
-      { label: { en: "Brochure", ar: "البروشور", es: "Folleto", fr: "Brochure" }, keys: ["download_brochure", "brochure_download"] },
-      { label: { en: "Booking", ar: "الحجز", es: "Reserva", fr: "Réservation" }, keys: ["book_viewing", "test_drive_request"] },
-      { label: { en: "Contact agent", ar: "تواصل مع الوكيل", es: "Contactar asesor", fr: "Contacter conseiller" }, keys: ["contact_agent", "contact_advisor"] },
+      { id: "view_unit", label: { en: "Unit viewed", ar: "عرض الوحدة", es: "Unidad vista", fr: "Unité consultée" }, keys: ["view_unit", "vehicle_view", "unit_detail_opened", "vehicle_detail_opened"] },
+      { id: "request_pricing", label: { en: "Pricing / quote", ar: "السعر / العرض", es: "Precio / cotizacion", fr: "Tarif / devis" }, keys: ["request_pricing", "request_quote", "pricing_request", "quote_request"] },
+      { id: "download_brochure", label: { en: "Brochure", ar: "البروشور", es: "Folleto", fr: "Brochure" }, keys: ["download_brochure", "brochure_download"] },
+      { id: "book_viewing", label: { en: "Booking", ar: "الحجز", es: "Reserva", fr: "Réservation" }, keys: ["book_viewing", "test_drive_request"] },
+      { id: "contact_agent", label: { en: "Contact agent", ar: "تواصل مع الوكيل", es: "Contactar asesor", fr: "Contacter conseiller" }, keys: ["contact_agent", "contact_advisor"] },
     ];
     return rows
       .map((row) => {
         const vip = row.keys.reduce((sum, key) => sum + Number(conv[key]?.vip || 0), 0);
         const standard = row.keys.reduce((sum, key) => sum + Number(conv[key]?.std || 0), 0);
-        return { name: row.label[lang] || row.label.en, vip, standard, total: vip + standard };
+        const mappedLabel = eventDisplayMap[lang]?.[row.id] || eventDisplayMap.en?.[row.id];
+        return { id: row.id, name: mappedLabel || row.label[lang] || row.label.en, vip, standard, total: vip + standard, keys: row.keys };
       })
       .filter((row) => row.total > 0);
   }, [analytics, lang]);
+  const actionSparklineRows = useMemo(() => {
+    const DAYS = 7;
+    const now = Date.now();
+    return conversionBars.map((row) => {
+      const series = new Array(DAYS).fill(0);
+      events.forEach((event) => {
+        const eventType = String(event.type || event.event || "").toLowerCase();
+        if (!row.keys.includes(eventType)) return;
+        const ts = new Date(event.timestamp).getTime();
+        if (!Number.isFinite(ts)) return;
+        const dayAge = Math.floor((now - ts) / 86400000);
+        if (dayAge >= 0 && dayAge < DAYS) {
+          series[DAYS - 1 - dayAge] += 1;
+        }
+      });
+      return { ...row, series };
+    });
+  }, [conversionBars, events]);
   const liveEvents10m = useMemo(() => {
     const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
     return events.filter((e) => new Date(e.timestamp).getTime() >= tenMinutesAgo).length;
@@ -664,6 +684,17 @@ export default function OverviewTab() {
               {tx.liveWindow}: <strong style={{ color: "var(--ud-text)" }}>{liveEvents10m}</strong>
             </div>
           </div>
+          {actionSparklineRows.length > 0 ? (
+            <div className="ud-overview-action-sparklines">
+              {actionSparklineRows.map((row) => (
+                <div key={row.id} className="ud-overview-action-tile">
+                  <div className="ud-overview-action-tile__label">{row.name}</div>
+                  <div className="ud-overview-action-tile__count">{row.total}</div>
+                  <MiniSparkline data={row.series} width={84} height={20} color="#457b9d" />
+                </div>
+              ))}
+            </div>
+          ) : null}
           <div style={{ width: "100%", height: 180, marginTop: 8 }}>
             {conversionBars.length === 0 ? (
               <div style={{ textAlign: "center", padding: "42px 0", color: "var(--ud-text-muted)", fontSize: 13 }}>{tx.noConversionData}</div>

@@ -765,6 +765,13 @@ function LayoutContent({
           <Outlet />
         </div>
       </main>
+      <NotificationSystem
+        dataMode={dataMode}
+        events={events}
+        sectorId={sectorId}
+        regionId={regionId}
+        lang={lang}
+      />
     </div>
   );
 }

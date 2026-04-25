@@ -1,6 +1,7 @@
 import { useSector } from "../../../hooks/useSector";
 import { useLanguage, useTranslation } from "../../../i18n";
 import { useMemo, useState } from "react";
+import { decayFactor } from "../../../utils/scoring";
 
 const EVENT_ICONS = {
   portalEntry: "🚪",
@@ -176,6 +177,12 @@ export default function BehavioralTimeline({ events = [], title = "" }) {
     es: "Ordenado por severidad",
     fr: "Trie par severite",
   }[lang] || "Sorted by severity");
+  const decayTooltip = ({
+    en: "Time-decay score multiplier (half-life: 7 days)",
+    ar: "معامل تضاؤل الدرجة بمرور الوقت (نصف العمر: 7 أيام)",
+    es: "Multiplicador de decaimiento de puntuacion (vida media: 7 dias)",
+    fr: "Multiplicateur de decroissance temporelle (demi-vie : 7 jours)",
+  }[lang] || "Time-decay score multiplier (half-life: 7 days)");
 
   return (
     <div className="ud-timeline">
@@ -203,7 +210,18 @@ export default function BehavioralTimeline({ events = [], title = "" }) {
               {getEventLabel(evt)}
               {evt.item && <span className="ud-timeline-item-name">{itemJoiner}{evt.item}</span>}
             </div>
-            <div className="ud-timeline-time">{formatTime(evt.timestamp)}</div>
+            <div className="ud-timeline-time">
+              {formatTime(evt.timestamp)}
+              {(() => {
+                const decay = decayFactor(evt.timestamp);
+                if (decay >= 0.98) return null;
+                return (
+                  <span className="ud-timeline-decay-chip" title={decayTooltip}>
+                    ×{decay.toFixed(2)}
+                  </span>
+                );
+              })()}
+            </div>
           </div>
         </div>
       ))}

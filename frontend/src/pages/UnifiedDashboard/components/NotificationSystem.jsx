@@ -106,11 +106,20 @@ const UI = {
   },
 };
 
-export default function NotificationSystem({ dataMode, events = [] }) {
+export default function NotificationSystem({
+  dataMode,
+  events = [],
+  sectorId: sectorIdProp,
+  regionId: regionIdProp,
+  lang: langProp,
+}) {
   const [notifications, setNotifications] = useState([]);
-  const { sectorId, config } = useSector();
-  const { regionId } = useRegion();
-  const { lang } = useLanguage();
+  const { sectorId: hookSectorId, config } = useSector();
+  const { regionId: hookRegionId } = useRegion();
+  const { lang: hookLang } = useLanguage();
+  const sectorId = sectorIdProp || hookSectorId;
+  const regionId = regionIdProp || hookRegionId;
+  const lang = langProp || hookLang;
   const tx = UI[lang] || UI.en;
   const timerRef = useRef(null);
   const idCounter = useRef(0);
@@ -158,7 +167,7 @@ export default function NotificationSystem({ dataMode, events = [] }) {
       addNotification();
       timerRef.current = setInterval(() => {
         addNotification();
-      }, 20000 + Math.random() * 10000);
+      }, 25000);
     }, 8000);
 
     return () => {
@@ -206,7 +215,7 @@ export default function NotificationSystem({ dataMode, events = [] }) {
       {notifications.map((n) => (
         <div
           key={n.id}
-          className={`ud-notif-card${n.removing ? " ud-notif-card--removing" : ""}`}
+          className={`ud-notif ${n.removing ? "ud-notif-exit" : "ud-notif-enter"}`}
         >
           <span className="ud-notif-icon" aria-hidden="true">{n.icon}</span>
           <div className="ud-notif-body">
@@ -215,7 +224,7 @@ export default function NotificationSystem({ dataMode, events = [] }) {
           </div>
           <button
             type="button"
-            className="ud-notif-dismiss"
+            className="ud-notif-close"
             onClick={() => removeNotification(n.id)}
             aria-label={tx.dismiss}
           >

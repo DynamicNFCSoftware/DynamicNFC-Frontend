@@ -1414,6 +1414,21 @@
   font-size: 10px;
   color: rgba(255, 255, 255, 0.25);
   margin-top: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ud-timeline-decay-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: rgba(148, 163, 184, 0.95);
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: rgba(15, 23, 42, 0.35);
 }
 
 /* ── Modal ── */
@@ -2455,6 +2470,35 @@
 .ud-vip-candidate--disabled {
   cursor: not-allowed !important;
   opacity: 0.85;
+}
+
+.ud-overview-action-sparklines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+.ud-overview-action-tile {
+  min-width: 132px;
+  padding: 8px 10px;
+  border: 1px solid var(--ud-border);
+  border-radius: 8px;
+  background: var(--ud-bg-secondary);
+}
+
+.ud-overview-action-tile__label {
+  font-size: 11px;
+  color: var(--ud-text-muted);
+  margin-bottom: 2px;
+}
+
+.ud-overview-action-tile__count {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ud-text);
+  margin-bottom: 4px;
 }
 
 .ud-vip-selected {

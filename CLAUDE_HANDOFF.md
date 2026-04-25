@@ -22,15 +22,15 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-24 EOD by Claude (session: FAZ 5 Step 1 complete, QA pending)
+Last updated: 2026-04-24 EOD by Claude (session: FAZ 5 Step 1 shipped to origin/main)
 
 ---
 
 ## Tomorrow's Pickup — READ FIRST
 
-**Where we stopped:** FAZ 5 Step 1 is **code-complete** across 4 patches (A / B / A2 / A2 hotfix). Build PASS. Working tree dirty with ~24 files changed; nothing committed yet.
+**Where we stopped:** FAZ 5 Step 1 is **SHIPPED** across 4 patches (A / B / A2 / A2 hotfix). Build PASS. Commits `80a58c6e` + `b31876d9` pushed to `origin/main`.
 
-**What's pending before FAZ 5 Step 2:** Manual visual QA by Oguzhan across `/unified` tabs in all 4 languages × 4 regions. The QA session was interrupted by a scope-creep detour (DashboardDataProvider split, resolved — see Recently Completed).
+**What's pending before FAZ 5 Step 2:** Manual visual QA by Oguzhan across `/unified` tabs in all 4 languages × 4 regions, then retire legacy dashboards in Step 2.
 
 **First action tomorrow:**
 1. Oguzhan runs local dev, executes the QA checklist in §Manual QA Protocol below.
@@ -165,12 +165,13 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## In-Flight Work
 
-- **Post-Patch-A2 QA** — Oguzhan runs manual QA checklist above before FAZ 5 Step 2 directive is issued. [Oguzhan]
+- **FAZ 5 Step 2 prep** — run manual QA checklist above, collect findings, then issue hard-retire directive for legacy dashboards. [Oguzhan + Claude]
 
 ---
 
 ## Recently Completed
 
+- FAZ 5 Step 1 SHIPPED (2026-04-24): commits `80a58c6e` + `b31876d9` pushed to `origin/main`. Migration, translation coverage, and hotfix scope from A/B/A2/A2-hotfix are now on main branch. [Claude]
 - DashboardDataProvider split (2026-04-24, scope-creep recovered): `useDashboard.js` extracted from `DashboardDataProvider.jsx` to fix Fast Refresh warning. 11 import sites updated. Build PASS, HMR clean. `DashboardContext.jsx` has same issue but only `ExportPDF.jsx` consumes it — deferred to FAZ 6 per `memory/project_faz6_tech_debt.md`. Scope-creep feedback captured in `memory/feedback_scope_creep.md`. [CC]
 - FAZ 5 Step 1 Patch A2 hotfix (2026-04-24): `getLeadTemperature()` label parity completed (EN/AR preserved, ES/FR added) to remove LeadBadge fallback-to-EN behavior in /unified. Build PASS. [Cursor]
 - FAZ 5 Step 1 Patch A2 (2026-04-23): full /unified translation coverage across Pipeline/VIPCrm/Priority/Analytics/Campaigns/Inventory/Cards/Settings + all modals. Event display mapping layer introduced at `i18n/eventDisplayMap.js` (44 codes × 4 languages). Persona label propagation fixed. SoS flagged in Open Questions. Audit at `docs/TRANSLATION_GAP_AUDIT_2026-04-23_A2.md`. [Cursor]
