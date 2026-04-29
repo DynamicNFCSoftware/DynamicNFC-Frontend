@@ -64,9 +64,9 @@ const UI = {
       unknown: "Unknown configuration",
     },
     kpiNfcRoi: "NFC ROI",
-    kpiAvgSession: "Avg. Session",
+    kpiAvgSession: "Avg. VIP Session",
     kpiNfcRoiSub: "Closed value vs card cost",
-    kpiAvgSessionSub: "Session duration average",
+    kpiAvgSessionSub: "Identified visitor sessions",
   },
   ar: {
     section: "نظرة عامة",
@@ -112,9 +112,9 @@ const UI = {
       unknown: "تكوين غير معروف",
     },
     kpiNfcRoi: "عائد NFC",
-    kpiAvgSession: "متوسط الجلسة",
+    kpiAvgSession: "متوسط جلسة VIP",
     kpiNfcRoiSub: "القيمة المغلقة مقابل تكلفة البطاقات",
-    kpiAvgSessionSub: "متوسط مدة الجلسة",
+    kpiAvgSessionSub: "جلسات الزوار المعروفين",
   },
   es: {
     section: "Vista general",
@@ -160,9 +160,9 @@ const UI = {
       unknown: "Configuración desconocida",
     },
     kpiNfcRoi: "ROI NFC",
-    kpiAvgSession: "Sesión promedio",
+    kpiAvgSession: "Sesión VIP promedio",
     kpiNfcRoiSub: "Valor cerrado vs costo de tarjetas",
-    kpiAvgSessionSub: "Duración promedio de sesión",
+    kpiAvgSessionSub: "Sesiones de visitantes identificados",
   },
   fr: {
     section: "Vue générale",
@@ -208,9 +208,9 @@ const UI = {
       unknown: "Configuration inconnue",
     },
     kpiNfcRoi: "ROI NFC",
-    kpiAvgSession: "Session moy.",
+    kpiAvgSession: "Session VIP moy.",
     kpiNfcRoiSub: "Valeur clôturée vs coût des cartes",
-    kpiAvgSessionSub: "Durée moyenne des sessions",
+    kpiAvgSessionSub: "Sessions de visiteurs identifiés",
   },
   tr: {
     todayWorkflow: "Bugunun is akisi",
@@ -298,9 +298,11 @@ export default function OverviewTab() {
     events.forEach((event) => {
       const ts = new Date(event.timestamp).getTime();
       if (!Number.isFinite(ts)) return;
+      if (String(event.portalType || "").toLowerCase() === "anonymous") return;
+      const identity = event.vipName || event.userName || event.leadName || event.sessionId;
+      if (!identity) return;
       const sessionKey =
-        event.sessionId ||
-        `${event.portalType || "anon"}:${event.vipName || event.userName || event.leadName || "visitor"}:${new Date(ts).toDateString()}`;
+        `${event.portalType || "named"}:${identity}:${new Date(ts).toDateString()}`;
       if (!sessions[sessionKey]) sessions[sessionKey] = { min: ts, max: ts };
       if (ts < sessions[sessionKey].min) sessions[sessionKey].min = ts;
       if (ts > sessions[sessionKey].max) sessions[sessionKey].max = ts;
