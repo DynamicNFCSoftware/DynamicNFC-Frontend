@@ -22,7 +22,7 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-29 by Cursor (session: Sprint 1B1 data integrity hotfix in PR, branch `cursor/sprint-1b1-data-integrity`)
+Last updated: 2026-04-29 EOD by Claude (session: Sprint 1B1 SHIPPED to origin/main, squash commit `87bbb2a3`)
 
 ---
 
@@ -179,13 +179,18 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ---
 
+
 ## In-Flight Work
 
-- **Sprint 1B1 — Data Integrity Hotfix [Cursor] (IN PR):** branch `cursor/sprint-1b1-data-integrity`, commits `23a58d48` + `bd9b3225` + `e4e64a59` + `a0259c7f` + `9b93fb73`. Scope: strict region persona mapping, VIP detail reset on sector/region switch, promote flow unified through modal, sidebar VIP count source normalized, walk-in candidates anonymized. Build PASS (`cd frontend && npm run build`, 2026-04-29).
+(none — Sprint 1B1 SHIPPED clean. Sprint 1B2 directive ready to issue.)
 
 ---
 
 ## Recently Completed
+
+- Sprint 1B1 SHIPPED (2026-04-29): squash commit `87bbb2a3` to origin/main. PR #3 merged. 5 bugs fixed: persona/region pool consistency (Bug 1), VIP detail panel sector-reset (Bug 2), Walk-in Promote modal RE skip (Bug 3), VIP count badge SSOT (Bug 4), Walk-in candidate anonymized to "Walk-in Prospect" 4-lang label (Bug 5). VIPCrmTab.jsx net -28 lines (code simplicity mandate respected). QA Round 8 PASSED 5/6 (T1-T6). Build PASS, working tree clean. [Claude+Cursor, Oguzhan QA Round 8]
+- Cursor Bugbot flagged 2 LOW-severity issues post-merge: redundant vipCandidates computation in useDashboardData.js (dead code shadow), and `.filter()` callback ignoring element parameter in VIPCrmTab.jsx local-promoted dedup. Both deferred to Sprint 1B2 Item 0 cleanup (same files Cursor will touch). [Bugbot, 2026-04-29]
+- T2 Bug 1 partial finding: family-type personas (Ahmed Al-Fahad in Gulf RE, Chloe/William/Rebecca in Canada RE) do not surface in VIP CRM tab. Sprint 1B1 fixed VIP-type names; family surfacing is separate. Confirmed by Oguzhan: Ahmed Al-Fahad does NOT appear in any other tab either (Pipeline, Activity Feed, Kanban). Routed to Sprint 1B2 Item 0a as product decision (3 options pending). [Oguzhan QA, 2026-04-29]
 
 - Sprint 1A.1 + 1A.2 SHIPPED (2026-04-28): commit `ef1aeea0` pushed to origin/main (15 files changed, +757 / -139). NotificationSystem cross-tab realtime fixed via `BroadcastChannel("dnfc_tracking")` listener in mock mode + payload normalization + sector-aware label resolution. Sector-aware mock toasts (RE/Auto/Yacht event pools driven by `getPersonas(sector, region)` + `getEventLabel(code, lang, sector)`). Promote modal hierarchy fixed (red primary, ghost cancel, reusable button classes in UnifiedLayout.css). Toast position migrated bottom-right → top-right with newest-on-top stack. Walk-in Promote Automotive path verified working (modal + hide + local VIP entry). QA Round 7: 4/5 critical PASS, T1 RE modal FAIL deferred to 1B (sector-conditional bug), T5 VIP CRM list FAIL pre-existing (verified non-regression via git stash baseline). Audit docs `docs/SPRINT_1A_HOTFIX_AUDIT.md` + `docs/SCHEMA_AUDIT_2026.md` committed alongside. Rebase pulled 54 chore-only bot commits cleanly with no conflicts. [Cursor implementation + Oguzhan QA + Claude audit & directive]
 - Sprint 1A SHIPPED (2026-04-24): commit `36a434ab` pushed to origin/main. NotificationSystem mounted in UnifiedLayout (dead import for entire FAZ 5 cycle now revived). KPI animations (AnimatedCounter wired to KpiCard). Per-action 7-day sparklines in OverviewTab Conversion Actions. Decay multiplier chip in BehavioralTimeline (×0.xx, hidden when >= 0.98). New helper: frontend/src/utils/scoring.js. Cross-tab realtime verification deferred to Sprint 1A.1 (blocked on missing demo mode toggle). [Cursor + Oguzhan QA]
@@ -230,9 +235,15 @@ Also historical context:
 
 ## Open Strategic Items (priority order)
 
-1. **Sprint 1B split decided (2026-04-29):**
-   - **1B1 (data integrity):** **IN PR** on `cursor/sprint-1b1-data-integrity`.
-   - **1B2 (legacy migration, ~3h Cursor):** Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs (4 SIMPLE items from `docs/LEGACY_DASHBOARD_AUDIT.md`).
+1. **Sprint 1B2 — Legacy Migration + Cleanup [Cursor, ~4h]:** Directive ready (`SPRINT_1B2_DIRECTIVE.md`). Scope expanded post-1B1 merge:
+   - **Item 0a — Family persona surfacing decision** (product call, A/B/C options in directive)
+   - **Item 0b — Bugbot dead code cleanup** (`useDashboardData.js` redundant vipCandidates)
+   - **Item 0c — Bugbot filter callback fix** (`VIPCrmTab.jsx` local-promoted `.filter()`)
+   - **Item 1 — Reissue Portal Link button** (VIP detail panel, 4-lang toast)
+   - **Item 2 — "How This Works" Help modal** (topbar `?`, brand-locked content, 4-lang)
+   - **Item 3 — Zero Engagement badge in InventoryTab** (badge + filter chip, 4-lang)
+   - **Item 4 — NFC ROI + Avg Session Time KPIs** (OverviewTab, all 3 sectors, 4-lang)
+   
 2. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns.
 3. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
 4. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
