@@ -280,6 +280,7 @@ export default function VIPCrmTab() {
     setPromotedCandidates((prev) => (prev.includes(candidateId) ? prev : [...prev, candidateId]));
   };
   const onPromoteClick = (candidate) => {
+    // Keep a single sector-agnostic flow: click -> confirm modal -> promote.
     setPendingCandidate(candidate);
     setShowPromoteConfirm(true);
   };
