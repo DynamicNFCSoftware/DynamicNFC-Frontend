@@ -37,3 +37,18 @@ Required scenario QA:
 Real example: NotificationSystem cross-tab realtime was "shipped" in Sprint 1A because code compiled and was wired up — but no one opened two tabs to verify. Bug went undetected until Sprint 1A.1 QA Round 5. Demo's primary wow-factor was silently broken for ~1 week.
 
 This protocol prevents that pattern.
+
+## Rule 4 — Definition of Done for AI agents (CC, Cursor, Claude.ai)
+
+A task is NOT done until verified-on-origin. Before reporting "done":
+
+1. Run `git status` — must show "nothing to commit, working tree clean" or all intended changes staged
+2. Run `git log --oneline -1` — confirm the commit you intended is HEAD
+3. Run `git push origin main` (or current branch) — confirm "Writing objects" + remote ref update
+4. Run `git status` again — must show "Your branch is up to date with 'origin/main'"
+
+Only then report "done, commit X pushed to origin/main."
+
+Never say "I committed" without push. Never say "I pushed" without `git status` confirmation. The user has been burned by AI agents reporting "done" when work was only local — most recently Sprint 1A.1+1A.2 protocol writeup (CC committed but did not push, caught by manual `git status` check on 2026-04-28).
+
+This rule applies symmetrically with Rule 1: just as Cursor "FIXED" needs human QA, AI "DONE" needs git origin verification.
