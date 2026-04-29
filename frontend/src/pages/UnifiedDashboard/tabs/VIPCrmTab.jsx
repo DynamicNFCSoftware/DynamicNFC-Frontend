@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguage, useTranslation } from "../../../i18n";
-import eventDisplayMap from "../../../i18n/eventDisplayMap";
+import { getEventLabel } from "../../../i18n/eventDisplayMap";
+import { useSector } from "../../../hooks/useSector";
+import { useRegion } from "../../../hooks/useRegion";
 import { useDashboard } from "../useDashboard";
 import BehavioralTimeline from "../components/BehavioralTimeline";
 import CreateVipModal from "../components/CreateVipModal";
@@ -13,6 +15,7 @@ const UI = {
     section: "VIP CRM",
     search: "Search VIPs...",
     addVip: "Add VIP",
+    vipCount: "VIPs",
     sessions: "Sessions",
     events: "Events",
     topUnit: "Top unit",
@@ -47,11 +50,17 @@ const UI = {
     expandList: "Expand list",
     walkInProspect: "Walk-in Prospect",
     promoteFirst: "Promote first to view full profile",
+    cancel: "Cancel",
+    promoteWalkInTitle: "Promote Walk-in to VIP?",
+    promoteWalkInBody: "This will move the candidate to your VIP list. The lead will be tagged for priority follow-up.",
+    promoteConfirm: "Promote",
+    vipPromotedSuccess: "VIP promoted successfully - Walk-in Prospect added to your VIP list",
   },
   ar: {
     section: "إدارة VIP",
     search: "بحث VIP...",
     addVip: "إضافة VIP",
+    vipCount: "عملاء VIP",
     sessions: "جلسات",
     events: "تفاعلات",
     topUnit: "أعلى وحدة",
@@ -86,11 +95,17 @@ const UI = {
     expandList: "توسيع القائمة",
     walkInProspect: "عميل محتمل زائر",
     promoteFirst: "قم بالترقية أولاً لعرض الملف الكامل",
+    cancel: "إلغاء",
+    promoteWalkInTitle: "ترقية الزائر إلى VIP؟",
+    promoteWalkInBody: "سيؤدي ذلك إلى نقل المرشح إلى قائمة VIP الخاصة بك مع وسمه بمتابعة ذات أولوية.",
+    promoteConfirm: "ترقية",
+    vipPromotedSuccess: "تمت الترقية بنجاح - تمت إضافة الزائر إلى قائمة VIP",
   },
   es: {
     section: "CRM VIP",
     search: "Buscar VIP...",
     addVip: "Agregar VIP",
+    vipCount: "VIPs",
     sessions: "Sesiones",
     events: "Eventos",
     topUnit: "Unidad top",
@@ -125,11 +140,17 @@ const UI = {
     expandList: "Expandir lista",
     walkInProspect: "Prospecto espontáneo",
     promoteFirst: "Promociona primero para ver el perfil completo",
+    cancel: "Cancelar",
+    promoteWalkInTitle: "¿Promover visitante a VIP?",
+    promoteWalkInBody: "Esto movera al candidato a tu lista VIP y se marcara para seguimiento prioritario.",
+    promoteConfirm: "Promover",
+    vipPromotedSuccess: "VIP promovido correctamente - Prospecto espontaneo agregado a la lista VIP",
   },
   fr: {
     section: "CRM VIP",
     search: "Rechercher des VIP...",
     addVip: "Ajouter VIP",
+    vipCount: "VIP",
     sessions: "Sessions",
     events: "Evenements",
     topUnit: "Unite principale",
@@ -164,6 +185,11 @@ const UI = {
     expandList: "Afficher la liste",
     walkInProspect: "Prospect spontané",
     promoteFirst: "Promouvoir d'abord pour voir le profil complet",
+    cancel: "Annuler",
+    promoteWalkInTitle: "Promouvoir le visiteur en VIP ?",
+    promoteWalkInBody: "Cette action déplacera le candidat vers votre liste VIP avec un suivi prioritaire.",
+    promoteConfirm: "Promouvoir",
+    vipPromotedSuccess: "VIP promu avec succès - Prospect spontané ajouté à votre liste VIP",
   },
 };
 
@@ -175,10 +201,29 @@ const IDLE_SUFFIX = {
   fr: "j inactif",
 };
 
+const normalizeWalkInText = (value) => String(value || "")
+  .toLowerCase()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .replace(/[\u2019']/g, "")
+  .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
+  .trim();
+
+const WALK_IN_ALIASES = [
+  "walk in prospect",
+  "walk in visitor",
+  "prospecto espontaneo",
+  "prospect spontane",
+  "عميل محتمل زائر",
+  "زائر حضوري",
+];
+
 export default function VIPCrmTab() {
   const location = useLocation();
   const navigate = useNavigate();
   const { lang } = useLanguage();
+  const { config } = useSector();
+  const { regionId } = useRegion();
   const tx = UI[lang] || UI.en;
   const tEventDisplay = useTranslation("eventDisplay");
   const normalizeEventCode = (value) => (
@@ -189,7 +234,7 @@ export default function VIPCrmTab() {
   );
   const displayEvent = (rawCode) => {
     const eventCode = normalizeEventCode(rawCode);
-    return eventDisplayMap[lang]?.[eventCode] ?? eventDisplayMap.en?.[eventCode] ?? eventCode;
+    return getEventLabel(eventCode, lang, config.id);
   };
   const fromEventDisplay = (code) => {
     const key = `eventDisplay.${code}`;
@@ -201,11 +246,42 @@ export default function VIPCrmTab() {
   const [search, setSearch] = useState("");
   const [listCollapsed, setListCollapsed] = useState(false);
   const [dismissedCandidates, setDismissedCandidates] = useState([]);
+  const [promotedCandidates, setPromotedCandidates] = useState([]);
+  const [showPromoteConfirm, setShowPromoteConfirm] = useState(false);
+  const [pendingCandidate, setPendingCandidate] = useState(null);
+  const [promoteToast, setPromoteToast] = useState("");
   const { vips, vipCandidates, selectedVipId, setSelectedVipId, vipDetail, loading } = useDashboard();
+  const isWalkInCandidate = (candidate) => {
+    const name = normalizeWalkInText(candidate?.name);
+    if (!name) return false;
+
+    const localizedLabel = normalizeWalkInText(tx.walkInProspect);
+    if (localizedLabel && name === localizedLabel) return true;
+
+    if (name.includes("walk in")) return true;
+
+    return WALK_IN_ALIASES.some((alias) => name === normalizeWalkInText(alias));
+  };
+
+  const effectiveVips = useMemo(() => {
+    const baseVips = vips || [];
+    const existingNames = new Set(baseVips.map((vip) => normalizeWalkInText(vip?.name)));
+    const localPromotedVips = promotedCandidates
+      .filter((name) => !existingNames.has(normalizeWalkInText(name)))
+      .map((name) => ({
+        id: `local-promoted-${normalizeWalkInText(name).replace(/\s+/g, "-") || "vip"}`,
+        name,
+        score: 0,
+        velocity: { idleDays: 0 },
+        triggers: [],
+        __localPromoted: true,
+      }));
+    return [...baseVips, ...localPromotedVips];
+  }, [promotedCandidates, vips]);
 
   const filteredVips = useMemo(() => (
-    (vips || []).filter((vip) => (vip.name || "").toLowerCase().includes(search.toLowerCase()))
-  ), [vips, search]);
+    effectiveVips.filter((vip) => (vip.name || "").toLowerCase().includes(search.toLowerCase()))
+  ), [effectiveVips, search]);
 
   const visibleCandidates = useMemo(() => (
     (vipCandidates || []).filter((c) => !dismissedCandidates.includes(c.name))
@@ -217,10 +293,34 @@ export default function VIPCrmTab() {
     navigate(location.pathname, { replace: true, state: {} });
   }, [location.pathname, location.state, navigate]);
 
+  useEffect(() => {
+    setDismissedCandidates([]);
+    setPromotedCandidates([]);
+    setShowPromoteConfirm(false);
+    setPendingCandidate(null);
+    setPromoteToast("");
+  }, [config.id, regionId]);
+
   const handlePromote = (candidate) => {
-    setDismissedCandidates((prev) => [...prev, candidate.name]);
+    setDismissedCandidates((prev) => (prev.includes(candidate.name) ? prev : [...prev, candidate.name]));
+    setPromotedCandidates((prev) => (prev.includes(candidate.name) ? prev : [...prev, candidate.name]));
     const existing = (vips || []).find((vip) => vip.name?.toLowerCase() === candidate.name?.toLowerCase());
     if (existing?.id) setSelectedVipId?.(existing.id);
+  };
+  const onPromoteClick = (candidate) => {
+    if (!isWalkInCandidate(candidate)) {
+      handlePromote(candidate);
+      return;
+    }
+    setPendingCandidate(candidate);
+    setShowPromoteConfirm(true);
+  };
+  const confirmPromoteWalkIn = () => {
+    if (!pendingCandidate) return;
+    handlePromote(pendingCandidate);
+    setShowPromoteConfirm(false);
+    setPendingCandidate(null);
+    setPromoteToast(tx.vipPromotedSuccess);
   };
 
   const topItemName = vipDetail?.topItem?.name || vipDetail?.topItem || tx.notAvailable;
@@ -250,6 +350,14 @@ export default function VIPCrmTab() {
   return (
     <div className={`ud-vip-tab ud-vip-lang-${lang} ${lang === "ar" ? "ud-vip-rtl" : ""}`} dir={lang === "ar" ? "rtl" : "ltr"}>
       <div className="ud-section-label">{tx.section}</div>
+      {promoteToast ? (
+        <div className="ud-card" style={{ marginBottom: 10, borderColor: "rgba(42,157,143,0.35)", background: "rgba(42,157,143,0.08)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 12, color: "#2a9d8f" }}>{promoteToast}</span>
+            <button type="button" className="ud-btn-theme" onClick={() => setPromoteToast("")}>×</button>
+          </div>
+        </div>
+      ) : null}
       <div className="ud-card ud-vip-crm-card">
         <div className="ud-vip-toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 10 }}>
           <input
@@ -284,6 +392,9 @@ export default function VIPCrmTab() {
           >
             + {tx.addVip}
           </button>
+          <span className="ud-vip-count-chip" title={`${tx.vipCount}: ${effectiveVips.length}`}>
+            {tx.vipCount}: {effectiveVips.length}
+          </span>
         </div>
 
         <div className={`ud-vip-split ${listCollapsed ? "ud-vip-split--collapsed" : ""}`}>
@@ -298,7 +409,12 @@ export default function VIPCrmTab() {
                 >
                   <div className="ud-vip-avatar">{vip.name?.charAt(0) || "V"}</div>
                   <div className="ud-vip-list-info">
-                    <div className="ud-vip-list-name">{vip.name}</div>
+                    <div className="ud-vip-list-name">
+                      {vip.name}
+                      {vip.__localPromoted ? (
+                        <span style={{ marginInlineStart: 6, fontSize: 10, color: "var(--ud-accent)" }}>• local</span>
+                      ) : null}
+                    </div>
                     <div className="ud-vip-list-meta">
                       <span
                         className="ud-vip-score-badge"
@@ -330,16 +446,16 @@ export default function VIPCrmTab() {
                 <>
                   <div className="ud-vip-list-divider">{tx.candidates}</div>
                   {visibleCandidates.map((c) => {
-                    const isWalkInCandidate = String(c.name || "").toLowerCase() === "walk-in prospect";
+                    const walkInCandidate = isWalkInCandidate(c);
                     return (
                       <div
                         key={c.name}
-                        className={`ud-vip-list-item ud-vip-candidate ${isWalkInCandidate ? "ud-vip-candidate--disabled" : ""}`}
-                        title={isWalkInCandidate ? tx.promoteFirst : undefined}
+                        className={`ud-vip-list-item ud-vip-candidate ${walkInCandidate ? "ud-vip-candidate--disabled" : ""}`}
+                        title={walkInCandidate ? tx.promoteFirst : undefined}
                       >
                         <div className="ud-vip-avatar" style={{ opacity: 0.6 }}>{c.name?.charAt(0) || "C"}</div>
                         <div className="ud-vip-list-info">
-                          <div className="ud-vip-list-name">{isWalkInCandidate ? tx.walkInProspect : c.name}</div>
+                          <div className="ud-vip-list-name">{walkInCandidate ? tx.walkInProspect : c.name}</div>
                           <div className="ud-vip-list-meta" style={{ justifyContent: "space-between", width: "100%" }}>
                             <span style={{ fontSize: 11, color: "var(--ud-text-muted)" }}>
                               {(c.eventCount || c.events || 0)} {tx.eventsLabel}
@@ -348,7 +464,7 @@ export default function VIPCrmTab() {
                               className="ud-btn-promote"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handlePromote(c);
+                                onPromoteClick(c);
                               }}
                               type="button"
                             >
@@ -551,6 +667,26 @@ export default function VIPCrmTab() {
       </div>
 
       {outreachVip ? <OutreachModal vip={outreachVip} onClose={() => setOutreachVip(null)} /> : null}
+      {showPromoteConfirm ? (
+        <div className="ud-modal-overlay" onClick={() => setShowPromoteConfirm(false)}>
+          <div className="ud-modal" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
+            <div className="ud-modal-header">
+              <h3 className="ud-modal-title">{tx.promoteWalkInTitle}</h3>
+            </div>
+            <div className="ud-modal-body" style={{ padding: "16px 20px" }}>
+              <p style={{ margin: 0, fontSize: 13, color: "var(--ud-text-secondary)" }}>{tx.promoteWalkInBody}</p>
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, padding: "0 20px 16px" }}>
+              <button type="button" className="ud-btn-ghost" onClick={() => setShowPromoteConfirm(false)}>
+                {tx.cancel}
+              </button>
+              <button type="button" className="ud-btn-primary ud-btn-primary--danger" onClick={confirmPromoteWalkIn}>
+                {tx.promoteConfirm}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       {showCreateVip ? (
         <CreateVipModal
           onClose={() => setShowCreateVip(false)}

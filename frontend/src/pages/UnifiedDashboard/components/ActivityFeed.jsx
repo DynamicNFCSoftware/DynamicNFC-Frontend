@@ -1,4 +1,6 @@
 import { registerTranslations, useTranslation } from "../../../i18n";
+import { useSector } from "../../../hooks/useSector";
+import { getEventLabel } from "../../../i18n/eventDisplayMap";
 
 registerTranslations("activityFeed", {
   en: {
@@ -47,6 +49,7 @@ function formatRelativeTime(ts, lang = "en") {
 }
 
 export default function ActivityFeed({ events = [], maxItems = 15, labels, lang = "en" }) {
+  const { config } = useSector();
   const tx = labels || { empty: "" };
   const tActivity = useTranslation("activityFeed");
   const tEventDisplay = useTranslation("eventDisplay");
@@ -75,7 +78,7 @@ export default function ActivityFeed({ events = [], maxItems = 15, labels, lang 
   };
   const localizeDescription = (event) => {
     const key = toEventKey(event);
-    const action = fromEventDisplay(key);
+    const action = getEventLabel(key, lang, config?.id) || fromEventDisplay(key);
     const actor = localizeActor(event);
     const item = event?.item || event?.unitName || "";
     return item ? `${actor} — ${action} -> ${item}` : `${actor} — ${action}`;

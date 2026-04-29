@@ -813,11 +813,11 @@
 /* ── Notification Toasts ── */
 .ud-notif-container {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   inset-inline-end: 20px;
   z-index: 1000;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   gap: 8px;
   max-width: 360px;
   pointer-events: none;
@@ -2501,6 +2501,23 @@
   margin-bottom: 4px;
 }
 
+.ud-toggle-pill {
+  border: 1px solid var(--ud-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ud-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.ud-toggle-pill--active {
+  border-color: var(--ud-accent);
+  color: var(--ud-accent);
+  background: var(--ud-accent-bg);
+}
+
 .ud-vip-selected {
   background: var(--ud-accent-bg);
   border: 0.5px solid var(--ud-accent);
@@ -2563,6 +2580,66 @@
   background: transparent;
   color: var(--ud-accent);
   cursor: pointer;
+}
+
+.ud-vip-count-chip {
+  font-size: 11px;
+  color: var(--ud-text-muted);
+  border: 1px solid var(--ud-border);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: var(--ud-bg-secondary);
+  white-space: nowrap;
+}
+
+.ud-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--ud-accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ud-btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.ud-btn-primary.ud-btn-sm {
+  padding: 6px 12px;
+  font-size: 11px;
+}
+
+.ud-btn-primary--danger {
+  background: #e63946;
+  border-color: rgba(230, 57, 70, 0.4);
+}
+
+.ud-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--ud-border);
+  background: transparent;
+  color: var(--ud-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ud-btn-ghost:hover {
+  border-color: var(--ud-accent);
+  color: var(--ud-accent);
 }
 
 .ud-portal-flyout-backdrop {

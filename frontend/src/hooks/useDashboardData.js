@@ -10,6 +10,7 @@ import { normalizeSectorId } from "../utils/sectorId";
 
 const HEARTBEAT_MS = 12 * 60 * 60 * 1000;
 const CAMPAIGNS_PAGE_SIZE = 20;
+const DATA_MODE_KEY = "ud_data_mode";
 const EVENT_ALIAS = {
   comparison_view: "compare_units",
   explore_payment_plan: "payment_plan_viewed",
@@ -81,7 +82,10 @@ export default function useDashboardData() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dataMode] = useState("tenant");
+  const [dataMode, setDataModeState] = useState(() => {
+    const stored = localStorage.getItem(DATA_MODE_KEY);
+    return stored === "mock" ? "mock" : "tenant";
+  });
   const [seedingInProgress, setSeedingInProgress] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -1121,6 +1125,12 @@ export default function useDashboardData() {
     }
   }, [locale, region.currency, currencySymbol]);
 
+  const setDataMode = useCallback((nextMode) => {
+    const resolved = nextMode === "mock" ? "mock" : "tenant";
+    setDataModeState(resolved);
+    localStorage.setItem(DATA_MODE_KEY, resolved);
+  }, []);
+
   const refresh = useCallback(() => {
     setRefreshKey((v) => v + 1);
     if (user?.uid) updateLastActivity(user.uid, { force: true }).catch(() => {});
@@ -1257,6 +1267,7 @@ export default function useDashboardData() {
     loading,
     error,
     dataMode,
+    setDataMode,
     refresh,
     formatValue,
     seedingInProgress,

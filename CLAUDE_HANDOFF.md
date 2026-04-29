@@ -22,22 +22,27 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-24 EOD by Claude (session: FAZ 5 Step 1 shipped to origin/main)
+Last updated: 2026-04-28 EOD by Cursor (session: Sprint 1A.2 hotfix implementation pass, not committed)
 
 ---
 
+
 ## Tomorrow's Pickup — READ FIRST
 
-**Where we stopped:** FAZ 5 Step 1 is **SHIPPED** across 4 patches (A / B / A2 / A2 hotfix). Build PASS. Commits `80a58c6e` + `b31876d9` pushed to `origin/main`.
+**Where we stopped:** Sprint 1A shipped (`36a434ab` on origin/main). Sprint 1A.1 hotfix in progress with Cursor (3 items: Demo Mode toggle in Settings, Walk-in Promote UX hybrid, sector-aware action labels via eventDisplayMap restructure).
 
-**What's pending before FAZ 5 Step 2:** Manual visual QA by Oguzhan across `/unified` tabs in all 4 languages × 4 regions, then retire legacy dashboards in Step 2.
+**Why 1A.1 exists:** Sprint 1A successfully mounted NotificationSystem (the toast notification system that was a dead import in UnifiedLayout.jsx for the entire FAZ 5 cycle). However, QA Round 4 found that the demo mode path — which is what makes the mock auto-fire toast (every 25s) and the cross-tab demo realtime toast actually visible to a presenter — has no user-facing toggle. Settings shows `Data Mode: Tenant Data` as static text only. Sprint 1A.1 fixes this plus 2 other pre-existing UX gaps surfaced during testing.
 
-**First action tomorrow:**
-1. Oguzhan runs local dev, executes the QA checklist in §Manual QA Protocol below.
-2. Report findings to Claude in `[TAB] [LANG] [REGION] — "seen" → expected "translation"` format.
-3. Claude issues Patch A3 (if gaps found) + SoS decision mini-fix, OR proceeds straight to FAZ 5 Step 2 (hard retire) directive.
+**First action when 1A.1 returns from Cursor:** QA Round 5 (~7 min):
+- Settings → Demo Mode toggle visible + persistent (localStorage)
+- Switch to Demo → toast every 25s on Overview with sector+region+lang aware persona
+- Cross-tab demo: Tab1 /unified Demo + Tab2 /enterprise/crmdemo/khalid → click "Request Pricing" in Tab2 → Tab1 toast within 3s
+- Walk-in Promote: confirmation modal → confirm → toast + row hidden (UI state only, no Firestore write)
+- Switch sector Auto/Yacht/RealEstate → action labels update everywhere (sparklines, ActivityFeed, BehavioralTimeline, Campaigns)
 
-**Do NOT start FAZ 5 Step 2 or FAZ 6 before QA is complete.** Four stacked patches without validation is risky — assume bugs exist until demonstrated otherwise.
+**On QA pass:** commit `fix(unified): Sprint 1A.1 hotfix — Demo Mode toggle + Walk-in Promote UX + sector-aware labels` → push → Sprint 1B directive (Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs).
+
+**On QA fail:** isolate the failing item, hotfix Sprint 1A.2, do not block on the others.
 
 ---
 
@@ -165,11 +170,44 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## In-Flight Work
 
-- **FAZ 5 Step 2 prep** — run manual QA checklist above, collect findings, then issue hard-retire directive for legacy dashboards. [Oguzhan + Claude]
+### EOD 2026-04-28 — Sprint 1A.2 hotfix implementation (Cursor), NOT committed
+Working tree intentionally dirty (no stash/reset). Scoped unified-dashboard hotfix pass applied; build verified PASS.
 
----
+Implementation ledger (file path + range + status):
+- **Bug 3 (critical) — Cross-tab realtime toast in Demo Mode:** `frontend/src/pages/UnifiedDashboard/components/NotificationSystem.jsx` (L8-L145, L184-L257) — **FIXED (code complete, QA pending)**. Added BroadcastChannel `dnfc_tracking` listener in mock mode, payload normalization/alias mapping, and localized sector-aware event labeling via `getEventLabel(eventCode, lang, sector)`.
+- **Bug 1 — Walk-in Promote hide + local sidebar count:** `frontend/src/pages/UnifiedDashboard/tabs/VIPCrmTab.jsx` (L240-L324, L374-L449) — **FIXED (code complete, QA pending)**. Candidate row now hides immediately via local state; promoted candidate persists as local UI-only VIP entry for component lifetime (no Firestore write).
+- **Bug 5 — Sector-aware mock toast labels/personas/units (RE/Auto/Yacht):** `frontend/src/pages/UnifiedDashboard/components/NotificationSystem.jsx` (L8-L182) — **FIXED (code complete, QA pending)**. Mock auto-fire now uses sector event code sets + `getPersonas(sector, region)` + config-driven unit/category labels with localized `getEventLabel(...)`.
+- **Bug 2 — Walk-in modal button hierarchy/styling:** `frontend/src/pages/UnifiedDashboard/tabs/VIPCrmTab.jsx` (L639-L655) + `frontend/src/pages/UnifiedDashboard/UnifiedLayout.css` (L2575-L2660) — **FIXED (code complete, QA pending)**. Promote button is primary-danger (red), cancel is ghost style, shared reusable button classes added.
+- **Bug 4 — Toast position/order:** `frontend/src/pages/UnifiedDashboard/UnifiedLayout.css` (L814-L824) — **FIXED (code complete, QA pending)**. Toast stack moved to top-right with newest toast rendered on top.
+
+Validation:
+- `frontend` → `npm run build` — **PASS** (Vite production build completed, no compile errors).
+
+### EOD 2026-04-24 — Sprint 1A.1 partial QA, NOT committed
+Working tree dirty, 12 files modified + 1 audit doc untracked. NOT pushed.
+
+QA Round 5 results:
+- Test 1 Demo toggle: PASS
+- Test 2 Mock auto-fire: PASS (cosmetic: toast appears bottom-right, expected top-right; Sprint 1B fix)
+- Test 3 Cross-tab realtime: FAIL — no toast in /unified when demo portal fires CTA
+- Test 4 Walk-in Promote: FAIL — confirmation modal does not appear despite Cursor audit claim "Item 2 FIXED". Candidate row vanishes silently. Possible Vite HMR cache issue, retry tomorrow with full restart.
+- Tests 5-6: deferred to tomorrow
+
+Resume tomorrow:
+1. Browser/Vite restart, retry Test 4 (cache hypothesis)
+2. Run Test 5 (sector-aware labels Auto/RE/Yacht switch)
+3. Run Test 6 (Sprint 1A regression: KPI animation, sparklines, decay chip)
+4. Consolidate all failures into Sprint 1A.2 directive
+5. Single commit: Sprint 1A.1 + 1A.2 together (1A.1 was never committed — work merges cleanly)
+6. Push → Sprint 1B directive
+
+- **FAZ 5 Step 2 prep** — ~~run manual QA checklist above, collect findings, then issue hard-retire directive for legacy dashboards~~ — **CANCELLED 2026-04-24** (decision logged in Recently Completed). [Oguzhan + Claude]
 
 ## Recently Completed
+
+- Sprint 1A SHIPPED (2026-04-24): commit `36a434ab` pushed to origin/main. NotificationSystem mounted in UnifiedLayout (dead import for entire FAZ 5 cycle now revived). KPI animations (AnimatedCounter wired to KpiCard). Per-action 7-day sparklines in OverviewTab Conversion Actions. Decay multiplier chip in BehavioralTimeline (×0.xx, hidden when >= 0.98). New helper: frontend/src/utils/scoring.js. Cross-tab realtime verification deferred to Sprint 1A.1 (blocked on missing demo mode toggle). [Cursor + Oguzhan QA]
+- Legacy retire decision REVERSED (2026-04-24): /enterprise/crmdemo/dashboard + /automotive/dashboard remain accessible permanently. Hard retire cancelled per Oguzhan ("kesinlikle silinmemeli"). Migration sprints will copy valuable features into /unified without removing the legacy surfaces. CC audit `docs/LEGACY_DASHBOARD_AUDIT.md` remains the source of truth for what to migrate (12 must-migrate items spread across Sprint 1A → 1A.1 → 1B → 2 → 3). [decision]
+
 
 - FAZ 5 Step 1 SHIPPED (2026-04-24): commits `80a58c6e` + `b31876d9` pushed to `origin/main`. Migration, translation coverage, and hotfix scope from A/B/A2/A2-hotfix are now on main branch. [Claude]
 - DashboardDataProvider split (2026-04-24, scope-creep recovered): `useDashboard.js` extracted from `DashboardDataProvider.jsx` to fix Fast Refresh warning. 11 import sites updated. Build PASS, HMR clean. `DashboardContext.jsx` has same issue but only `ExportPDF.jsx` consumes it — deferred to FAZ 6 per `memory/project_faz6_tech_debt.md`. Scope-creep feedback captured in `memory/feedback_scope_creep.md`. [CC]
@@ -209,16 +247,17 @@ Also historical context:
 
 ## Open Strategic Items (priority order)
 
-1. **FAZ 5 Step 2** — legacy hard retire: delete `/enterprise/crmdemo/dashboard` + `/automotive/dashboard`, remove all callers, redirect to `/unified`. **Blocked by Post-Patch-A2 QA sign-off.**
-2. **SoS mini-fix** — small follow-up to Patch A2 once Oguzhan clarifies meaning.
-3. **FAZ 6 — Full FR + ES rollout** — add FR/ES namespaces to all 18 page-level files, fix LanguageContext toggle (EN→AR→ES→FR 4-cycle), add dev-mode console.warn on missing translation keys, visual QA across all 4 languages. **Blocks Canada + Mexico deploys.** Also includes: `DashboardContext.jsx` split (parked tech debt), large file splits (AnalyticsTab, CardsTab).
-4. Per-region demo rollout — `useRegion()` across CRM + Auto portals (separate from translation work).
-5. Yacht public page + /yacht/demo portals (region-aware day one).
-6. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
-7. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
-8. Apple Developer Account enrollment.
-9. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
-10. Sentry setup.
+1. **Sprint 1A.1 hotfix** — in flight with Cursor. Unblocks NotificationSystem manual cross-tab realtime test.
+2. **Sprint 1B** — Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs (4 SIMPLE items from `docs/LEGACY_DASHBOARD_AUDIT.md`). Directive to be written after 1A.1 QA passes.
+3. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns.
+4. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
+5. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
+6. Yacht public page + /yacht/demo portals (region-aware day one).
+7. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
+8. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
+9. Apple Developer Account enrollment.
+10. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
+11. Sentry setup.
 
 ---
 
@@ -231,3 +270,6 @@ Also historical context:
 - **Translation coverage** — if a new page/component is added, verify all 4 language dicts are populated. Silent EN fallback means missing keys are invisible without explicit check. Run a namespace parity check (EN key count == AR == ES == FR) before claiming coverage.
 - **LanguageContext toggle** — 3-lang cycle shipped while `SUPPORTED_LANGS` has 4. If anyone changes the cycle logic, confirm FR is included.
 - **Working tree uncommitted state (2026-04-24)** — 24 files dirty from FAZ 5 Step 1 patches. If more work starts before commit, merge risk grows. Consider committing as `feat(unified): FAZ 5 Step 1 — dashboard migration + 4-language coverage` once QA passes.
+- **NotificationSystem dataMode source** — `useDashboard()` and `DashboardDataProvider.jsx` are the source of truth. After Sprint 1A.1 ships, `dataMode` will be settable from SettingsTab and persisted to localStorage. Anyone modifying NotificationSystem behavior must verify both `tenant` and `mock` paths. Mock auto-fire is the demo "wow"; realtime stream is the in-meeting magic. Both must keep working.
+- **eventDisplayMap shape change in Sprint 1A.1** — moves from flat `{lang: {code: label}}` to sector-aware `{GENERIC + SECTOR_OVERRIDES}` with a `getEventLabel(code, lang, sector)` helper. Backward-compat flat export retained. If a future patch adds a new event code, register it in BOTH the generic layer (if sector-agnostic) AND the relevant sector overrides (if terminology differs).
+- **Walk-in Promote is UI-only demo** — clicking confirms hides the row in component state, no Firestore write, no real VIP creation. Refresh resets. Real promote flow is FAZ 6 / Tenant Mode hardening scope. Anyone implementing real promote must remove the UI-only state guard before wiring backend.

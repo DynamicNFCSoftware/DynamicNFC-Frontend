@@ -10,7 +10,8 @@ import {
 } from "recharts";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useRegion } from "../../../hooks/useRegion";
-import eventDisplayMap from "../../../i18n/eventDisplayMap";
+import { useSector } from "../../../hooks/useSector";
+import { getEventLabel } from "../../../i18n/eventDisplayMap";
 import { getEffectiveLocale } from "../../../config/regionConfig";
 import { getCampaignAudit } from "../../../services/tenantService";
 import {
@@ -40,6 +41,7 @@ export default function CampaignDrawer({
   const [auditLoading, setAuditLoading] = useState(true);
   const { user } = useAuth();
   const { regionId, currency: regionCurrency } = useRegion();
+  const { config } = useSector();
 
   useEffect(() => {
     if (!campaign?.id || !user?.uid) return;
@@ -84,8 +86,12 @@ export default function CampaignDrawer({
   );
   const audienceCode = normalizeCode(campaign.targetAudience);
   const audienceText = audienceCode
-    ? (eventDisplayMap[lang]?.[audienceCode] ?? eventDisplayMap.en?.[audienceCode] ?? tx[`aud_${audienceCode}`] ?? campaign.targetAudience)
+    ? (getEventLabel(audienceCode, lang, config.id) || tx[`aud_${audienceCode}`] || campaign.targetAudience)
     : "—";
+  const objectiveCode = normalizeCode(campaign.objective);
+  const objectiveText = objectiveCode
+    ? (getEventLabel(objectiveCode, lang, config.id) || objectiveLabel(campaign.objective, tx, lang))
+    : objectiveLabel(campaign.objective, tx, lang);
   const budgetPercentRaw = budget > 0 ? (spent / budget) * 100 : 0;
   const budgetPercent = Math.max(0, Math.min(100, budgetPercentRaw));
   const budgetBarColor = budgetPercentRaw > 80 ? "#e63946" : budgetPercentRaw >= 50 ? "#e9c46a" : "#2a9d8f";
@@ -152,7 +158,7 @@ export default function CampaignDrawer({
         <div className="ud-cmp-drawer__strategy">
           <div className="ud-cmp-drawer__field">
             <span className="ud-cmp-drawer__label">{tx.objectiveLabel}</span>
-            <span>{objectiveLabel(campaign.objective, tx, lang)}</span>
+            <span>{objectiveText}</span>
           </div>
           <div className="ud-cmp-drawer__field">
             <span className="ud-cmp-drawer__label">{tx.audienceLabel}</span>

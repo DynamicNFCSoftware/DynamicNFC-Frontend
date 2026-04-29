@@ -209,4 +209,157 @@ const eventDisplayMap = {
 
 registerTranslations("eventDisplay", eventDisplayMap);
 
+const SECTOR_OVERRIDES = {
+  real_estate: {
+    en: {
+      view_unit: "Unit Viewed",
+      request_pricing: "Request Pricing",
+      book_viewing: "Booking Request",
+      vehicle_view: "Unit Viewed",
+      test_drive_request: "Booking Request",
+      lease_plan_viewed: "Payment Plan Viewed",
+    },
+    ar: {
+      view_unit: "عرض الوحدة",
+      request_pricing: "طلب التسعير",
+      book_viewing: "طلب معاينة",
+      vehicle_view: "عرض الوحدة",
+      test_drive_request: "طلب معاينة",
+      lease_plan_viewed: "عرض خطة الدفع",
+    },
+    es: {
+      view_unit: "Unidad Vista",
+      request_pricing: "Solicitar Precio",
+      book_viewing: "Solicitud de Visita",
+      vehicle_view: "Unidad Vista",
+      test_drive_request: "Solicitud de Visita",
+      lease_plan_viewed: "Plan de Pago Visto",
+    },
+    fr: {
+      view_unit: "Unité Consultée",
+      request_pricing: "Demande de Prix",
+      book_viewing: "Demande de Visite",
+      vehicle_view: "Unité Consultée",
+      test_drive_request: "Demande de Visite",
+      lease_plan_viewed: "Plan de Paiement Consulté",
+    },
+  },
+  automotive: {
+    en: {
+      view_unit: "Vehicle Viewed",
+      vehicle_view: "Vehicle Viewed",
+      request_pricing: "Quote Requested",
+      request_quote: "Quote Requested",
+      book_viewing: "Test Drive Booked",
+      test_drive_request: "Test Drive Requested",
+      finance_calculator: "Finance Calculator Used",
+      lease_plan_viewed: "Lease Plan Viewed",
+      compare_units: "Vehicles Compared",
+      compare_vehicles: "Vehicles Compared",
+    },
+    ar: {
+      view_unit: "تمت معاينة السيارة",
+      vehicle_view: "تمت معاينة السيارة",
+      request_pricing: "طلب عرض سعر",
+      request_quote: "طلب عرض سعر",
+      book_viewing: "تم حجز تجربة القيادة",
+      test_drive_request: "طلب تجربة قيادة",
+      finance_calculator: "استخدام حاسبة التمويل",
+      lease_plan_viewed: "عرض خطة التأجير",
+      compare_units: "مقارنة المركبات",
+      compare_vehicles: "مقارنة المركبات",
+    },
+    es: {
+      view_unit: "Vehículo Visto",
+      vehicle_view: "Vehículo Visto",
+      request_pricing: "Cotización Solicitada",
+      request_quote: "Cotización Solicitada",
+      book_viewing: "Prueba de Manejo Reservada",
+      test_drive_request: "Prueba de Manejo Solicitada",
+      finance_calculator: "Calculadora Financiera Usada",
+      lease_plan_viewed: "Plan de Leasing Visto",
+      compare_units: "Vehículos Comparados",
+      compare_vehicles: "Vehículos Comparados",
+    },
+    fr: {
+      view_unit: "Véhicule Consulté",
+      vehicle_view: "Véhicule Consulté",
+      request_pricing: "Devis Demandé",
+      request_quote: "Devis Demandé",
+      book_viewing: "Essai Routier Réservé",
+      test_drive_request: "Essai Routier Demandé",
+      finance_calculator: "Calculateur Financier Utilisé",
+      lease_plan_viewed: "Plan de Location Consulté",
+      compare_units: "Véhicules Comparés",
+      compare_vehicles: "Véhicules Comparés",
+    },
+  },
+  yacht: {
+    en: {
+      view_unit: "Yacht Viewed",
+      vehicle_view: "Yacht Viewed",
+      request_pricing: "Quote Requested",
+      request_quote: "Quote Requested",
+      book_viewing: "Showing Booked",
+      test_drive_request: "Showing Requested",
+      compare_units: "Yachts Compared",
+      compare_vehicles: "Yachts Compared",
+    },
+    ar: {
+      view_unit: "تمت معاينة اليخت",
+      vehicle_view: "تمت معاينة اليخت",
+      request_pricing: "طلب عرض سعر",
+      request_quote: "طلب عرض سعر",
+      book_viewing: "تم حجز معاينة",
+      test_drive_request: "طلب معاينة",
+      compare_units: "مقارنة اليخوت",
+      compare_vehicles: "مقارنة اليخوت",
+    },
+    es: {
+      view_unit: "Yate Visto",
+      vehicle_view: "Yate Visto",
+      request_pricing: "Cotización Solicitada",
+      request_quote: "Cotización Solicitada",
+      book_viewing: "Visita Reservada",
+      test_drive_request: "Visita Solicitada",
+      compare_units: "Yates Comparados",
+      compare_vehicles: "Yates Comparados",
+    },
+    fr: {
+      view_unit: "Yacht Consulté",
+      vehicle_view: "Yacht Consulté",
+      request_pricing: "Devis Demandé",
+      request_quote: "Devis Demandé",
+      book_viewing: "Visite Réservée",
+      test_drive_request: "Visite Demandée",
+      compare_units: "Yachts Comparés",
+      compare_vehicles: "Yachts Comparés",
+    },
+  },
+};
+
+function normalizeSector(sector) {
+  const value = String(sector || "").toLowerCase().replace(/[\s-]/g, "_");
+  if (value === "realestate") return "real_estate";
+  if (value === "real_estate") return "real_estate";
+  if (value === "automotive") return "automotive";
+  if (value === "yacht" || value === "yachts") return "yacht";
+  return "real_estate";
+}
+
+export function getEventLabel(eventCode, lang = "en", sector = "real_estate") {
+  const code = String(eventCode || "")
+    .replace(/([a-z])([A-Z])/g, "$1_$2")
+    .replace(/[\s-]+/g, "_")
+    .toLowerCase();
+  const sectorKey = normalizeSector(sector);
+  return (
+    SECTOR_OVERRIDES[sectorKey]?.[lang]?.[code]
+    || SECTOR_OVERRIDES[sectorKey]?.en?.[code]
+    || eventDisplayMap[lang]?.[code]
+    || eventDisplayMap.en?.[code]
+    || code
+  );
+}
+
 export default eventDisplayMap;

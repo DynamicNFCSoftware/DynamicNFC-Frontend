@@ -2,6 +2,7 @@ import { useSector } from "../../../hooks/useSector";
 import { useLanguage, useTranslation } from "../../../i18n";
 import { useMemo, useState } from "react";
 import { decayFactor } from "../../../utils/scoring";
+import { getEventLabel as getSectorEventLabel } from "../../../i18n/eventDisplayMap";
 
 const EVENT_ICONS = {
   portalEntry: "🚪",
@@ -115,6 +116,8 @@ export default function BehavioralTimeline({ events = [], title = "" }) {
     if (event?.label) return event.label;
     const eventType = event?.type || event?.action || event?.event;
     const normalized = normalizeEventKey(eventType);
+    const sectorAwareLabel = getSectorEventLabel(normalized, lang, config.id);
+    if (sectorAwareLabel && sectorAwareLabel !== normalized) return sectorAwareLabel;
     const labels = EVENT_LABELS[lang] || EVENT_LABELS.en;
     if (labels[normalized] || EVENT_LABELS.en[normalized]) return labels[normalized] || EVENT_LABELS.en[normalized];
     const key = `eventDisplay.${normalized}`;

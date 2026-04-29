@@ -691,7 +691,7 @@ function LayoutContent({
           <div className="ud-topbar-actions">
             <div className="ud-live-indicator">
               <span className="ud-live-dot" />
-              {dataMode === "live" ? tx.live : tx.demo}
+              {dataMode === "tenant" ? tx.live : tx.demo}
             </div>
             <div className="ud-region-wrap" style={{ position: "relative" }}>
               <button

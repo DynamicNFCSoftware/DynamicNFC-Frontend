@@ -4,7 +4,7 @@ import { useLanguage, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
 import { useRegion } from "../../../hooks/useRegion";
 import { getEffectiveLocale } from "../../../config/regionConfig";
-import eventDisplayMap from "../../../i18n/eventDisplayMap";
+import { getEventLabel } from "../../../i18n/eventDisplayMap";
 import { useDashboard } from "../useDashboard";
 import ActivityFeed from "../components/ActivityFeed";
 import AiBadge from "../components/AiBadge";
@@ -287,11 +287,11 @@ export default function OverviewTab() {
       .map((row) => {
         const vip = row.keys.reduce((sum, key) => sum + Number(conv[key]?.vip || 0), 0);
         const standard = row.keys.reduce((sum, key) => sum + Number(conv[key]?.std || 0), 0);
-        const mappedLabel = eventDisplayMap[lang]?.[row.id] || eventDisplayMap.en?.[row.id];
+        const mappedLabel = getEventLabel(row.id, lang, config.id);
         return { id: row.id, name: mappedLabel || row.label[lang] || row.label.en, vip, standard, total: vip + standard, keys: row.keys };
       })
       .filter((row) => row.total > 0);
-  }, [analytics, lang]);
+  }, [analytics, lang, config.id]);
   const actionSparklineRows = useMemo(() => {
     const DAYS = 7;
     const now = Date.now();

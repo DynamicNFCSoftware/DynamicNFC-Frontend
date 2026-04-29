@@ -29,7 +29,7 @@ import {
   sourceLabel,
 } from "../components/campaignUtils";
 import { campaignsReducer, initialState } from "./useCampaignsReducer";
-import eventDisplayMap from "../../../i18n/eventDisplayMap";
+import { getEventLabel } from "../../../i18n/eventDisplayMap";
 
 /* ═══ Helpers ═══ */
 const normalizeCode = (value) => (
@@ -133,7 +133,7 @@ export default function CampaignsTab() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { lang } = useLanguage();
-  useSector();
+  const { config } = useSector();
   const dashboard = useDashboard() || {};
   const {
     campaigns = [],
@@ -675,7 +675,7 @@ export default function CampaignsTab() {
                   const budget = Number(c.budget || 0);
                   const spent = Number(c.spent || 0);
                   const objectiveCode = normalizeCode(c.objective);
-                  const objectiveText = eventDisplayMap[lang]?.[objectiveCode] ?? eventDisplayMap.en?.[objectiveCode] ?? objectiveLabel(c.objective, tx, lang);
+                  const objectiveText = getEventLabel(objectiveCode, lang, config.id) || objectiveLabel(c.objective, tx, lang);
                   const budgetPercentRaw = budget > 0 ? (spent / budget) * 100 : 0;
                   const budgetPercent = Math.max(0, Math.min(100, budgetPercentRaw));
                   const budgetBarColor = spent > budget ? "#e63946" : "#22c55e";

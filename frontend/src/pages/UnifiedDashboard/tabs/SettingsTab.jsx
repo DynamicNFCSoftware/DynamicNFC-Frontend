@@ -98,7 +98,7 @@ export default function SettingsTab() {
   const { lang, setLang } = useLanguage();
   const t = useTranslation("settingsTab");
   const { user } = useAuth();
-  const { vips, events, dataMode, refresh, thresholds, updateThresholds } = useDashboard();
+  const { vips, events, dataMode, setDataMode, refresh, thresholds, updateThresholds } = useDashboard();
 
   const [hotThreshold, setHotThreshold] = useState(config.scoring.thresholds.hot);
   const [warmThreshold, setWarmThreshold] = useState(config.scoring.thresholds.warm);
@@ -299,13 +299,24 @@ export default function SettingsTab() {
             <span style={{ color: "var(--ud-text-muted)" }}>{t("project")}</span>
             <span style={{ color: "var(--ud-text)" }}>{st(config.identity.defaultProject.name)}</span>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13, gap: 12 }}>
             <span style={{ color: "var(--ud-text-muted)" }}>{t("dataMode")}</span>
-            <span style={{ color: dataMode === "tenant" ? "#22c55e" : "#eab308", fontWeight: 500, fontSize: 12 }}>
-              {dataMode === "tenant"
-                ? t("tenantData")
-                : t("demoData")}
-            </span>
+            <div style={{ display: "flex", gap: 6 }}>
+              <button
+                type="button"
+                className={`ud-toggle-pill ${dataMode === "tenant" ? "ud-toggle-pill--active" : ""}`}
+                onClick={() => setDataMode?.("tenant")}
+              >
+                {t("tenantData")}
+              </button>
+              <button
+                type="button"
+                className={`ud-toggle-pill ${dataMode === "mock" ? "ud-toggle-pill--active" : ""}`}
+                onClick={() => setDataMode?.("mock")}
+              >
+                {t("demoData")}
+              </button>
+            </div>
           </div>
         </div>
       </div>

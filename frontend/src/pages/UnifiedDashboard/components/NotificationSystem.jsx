@@ -3,80 +3,76 @@ import { useSector } from "../../../hooks/useSector";
 import { useRegion } from "../../../hooks/useRegion";
 import { useLanguage } from "../../../i18n";
 import { getPersonas } from "../../../config/regionConfig";
+import { getEventLabel } from "../../../i18n/eventDisplayMap";
 
-const TEMPLATES = {
-  real_estate: {
-    en: [
-      { icon: "🔥", title: "Hot Lead Alert", body: (n) => `${n} viewed pricing 3 times in 24h` },
-      { icon: "📋", title: "New Booking Request", body: (n) => `${n} requested a viewing for Penthouse A-1201` },
-      { icon: "📊", title: "Score Jump", body: (n) => `${n}'s lead score increased by +15 points` },
-      { icon: "📄", title: "Brochure Downloaded", body: (n) => `${n} downloaded the project brochure` },
-      { icon: "💰", title: "Payment Plan Viewed", body: (n) => `${n} viewed the 60/40 payment plan` },
-      { icon: "🏗️", title: "Floor Plan Opened", body: (n) => `${n} opened floor plan for 3BR B-801` },
-      { icon: "⚡", title: "ROI Calculator Used", body: (n) => `${n} ran ROI projections` },
-    ],
-    ar: [
-      { icon: "🔥", title: "تنبيه عميل ساخن", body: (n) => `${n} شاهد التسعير 3 مرات في 24 ساعة` },
-      { icon: "📋", title: "طلب حجز جديد", body: (n) => `${n} طلب معاينة بنتهاوس A-1201` },
-      { icon: "📊", title: "ارتفاع الدرجة", body: (n) => `درجة ${n} ارتفعت +15 نقطة` },
-      { icon: "📄", title: "تحميل الكتيب", body: (n) => `${n} حمّل كتيب المشروع` },
-      { icon: "💰", title: "خطة الدفع", body: (n) => `${n} شاهد خطة الدفع 60/40` },
-      { icon: "🏗️", title: "مخطط الطابق", body: (n) => `${n} فتح مخطط طابق 3 غرف B-801` },
-      { icon: "⚡", title: "حاسبة العائد", body: (n) => `${n} أجرى توقعات العائد` },
-    ],
-    es: [
-      { icon: "🔥", title: "Alerta de lead caliente", body: (n) => `${n} vio precios 3 veces en 24h` },
-      { icon: "📋", title: "Nueva solicitud de visita", body: (n) => `${n} solicitó una visita para Penthouse A-1201` },
-      { icon: "📊", title: "Aumento de score", body: (n) => `El score de ${n} subió +15 puntos` },
-      { icon: "📄", title: "Brochure descargado", body: (n) => `${n} descargó el brochure del proyecto` },
-      { icon: "💰", title: "Plan de pago visto", body: (n) => `${n} revisó el plan de pago 60/40` },
-      { icon: "🏗️", title: "Plano abierto", body: (n) => `${n} abrió el plano 3BR B-801` },
-      { icon: "⚡", title: "Calculadora ROI usada", body: (n) => `${n} ejecutó proyecciones ROI` },
-    ],
-    fr: [
-      { icon: "🔥", title: "Alerte prospect chaud", body: (n) => `${n} a consulté les prix 3 fois en 24h` },
-      { icon: "📋", title: "Nouvelle demande de visite", body: (n) => `${n} a demandé une visite pour Penthouse A-1201` },
-      { icon: "📊", title: "Score en hausse", body: (n) => `Le score de ${n} a augmenté de +15 points` },
-      { icon: "📄", title: "Brochure téléchargée", body: (n) => `${n} a téléchargé la brochure du projet` },
-      { icon: "💰", title: "Plan de paiement consulté", body: (n) => `${n} a consulté le plan de paiement 60/40` },
-      { icon: "🏗️", title: "Plan d'étage ouvert", body: (n) => `${n} a ouvert le plan d'étage 3BR B-801` },
-      { icon: "⚡", title: "Calculateur ROI utilisé", body: (n) => `${n} a lancé des projections ROI` },
-    ],
-  },
-  automotive: {
-    en: [
-      { icon: "🔥", title: "Hot Lead Alert", body: (n) => `${n} requested a quote for AMG GT 63 S` },
-      { icon: "🚗", title: "Test Drive Booked", body: (n) => `${n} booked a test drive for G-Class G63` },
-      { icon: "📊", title: "Score Jump", body: (n) => `${n}'s lead score increased by +12 points` },
-      { icon: "⚙️", title: "Configuration Saved", body: (n) => `${n} saved a custom G63 in Obsidian Black` },
-      { icon: "💰", title: "Finance Calculator", body: (n) => `${n} used the finance calculator` },
-      { icon: "📄", title: "Brochure Downloaded", body: (n) => `${n} downloaded the vehicle brochure` },
-    ],
-    ar: [
-      { icon: "🔥", title: "تنبيه عميل ساخن", body: (n) => `${n} طلب عرض سعر AMG GT 63 S` },
-      { icon: "🚗", title: "تجربة قيادة محجوزة", body: (n) => `${n} حجز تجربة قيادة G-Class G63` },
-      { icon: "📊", title: "ارتفاع الدرجة", body: (n) => `درجة ${n} ارتفعت +12 نقطة` },
-      { icon: "⚙️", title: "تكوين محفوظ", body: (n) => `${n} حفظ تكوين G63 أسود` },
-      { icon: "💰", title: "حاسبة التمويل", body: (n) => `${n} استخدم حاسبة التمويل` },
-      { icon: "📄", title: "تحميل الكتيب", body: (n) => `${n} حمّل كتيب المركبة` },
-    ],
-    es: [
-      { icon: "🔥", title: "Alerta de lead caliente", body: (n) => `${n} solicitó cotización para AMG GT 63 S` },
-      { icon: "🚗", title: "Prueba de manejo reservada", body: (n) => `${n} reservó una prueba de manejo para G-Class G63` },
-      { icon: "📊", title: "Aumento de score", body: (n) => `El score de ${n} subió +12 puntos` },
-      { icon: "⚙️", title: "Configuración guardada", body: (n) => `${n} guardó un G63 personalizado en Obsidian Black` },
-      { icon: "💰", title: "Calculadora financiera", body: (n) => `${n} usó la calculadora financiera` },
-      { icon: "📄", title: "Brochure descargado", body: (n) => `${n} descargó el brochure del vehículo` },
-    ],
-    fr: [
-      { icon: "🔥", title: "Alerte prospect chaud", body: (n) => `${n} a demandé un devis pour AMG GT 63 S` },
-      { icon: "🚗", title: "Essai routier réservé", body: (n) => `${n} a réservé un essai routier pour G-Class G63` },
-      { icon: "📊", title: "Score en hausse", body: (n) => `Le score de ${n} a augmenté de +12 points` },
-      { icon: "⚙️", title: "Configuration sauvegardée", body: (n) => `${n} a sauvegardé un G63 Obsidian Black` },
-      { icon: "💰", title: "Calculateur financier", body: (n) => `${n} a utilisé le calculateur financier` },
-      { icon: "📄", title: "Brochure téléchargée", body: (n) => `${n} a téléchargé la brochure du véhicule` },
-    ],
-  },
+const CROSS_TAB_CHANNEL = "dnfc_tracking";
+
+const ICON_BY_EVENT = {
+  request_pricing: "💰",
+  request_quote: "💰",
+  book_viewing: "📋",
+  test_drive_request: "🚗",
+  vehicle_view: "👀",
+  view_unit: "👀",
+  view_floor_plan: "🏗️",
+  compare_units: "⚖️",
+  compare_vehicles: "⚖️",
+  payment_plan_viewed: "💳",
+  lease_plan_viewed: "💳",
+  roi_calculator: "📈",
+  finance_calculator: "📈",
+  download_brochure: "📄",
+  save_configuration: "⚙️",
+  contact_agent: "📞",
+  contact_advisor: "📞",
+};
+
+const EVENT_ALIAS = {
+  pricing_request: "request_pricing",
+  request_payment: "payment_plan_viewed",
+  request_payment_plan: "payment_plan_viewed",
+  request_quote: "request_quote",
+  quote_request: "request_quote",
+  cta_booking: "book_viewing",
+  book_test_drive: "test_drive_request",
+  use_roi_calculator: "roi_calculator",
+  roi_calculator_click: "roi_calculator",
+  floorplan_view: "view_floor_plan",
+  floorplan_download: "download_brochure",
+  brochure_download: "download_brochure",
+  compare_add: "compare_units",
+  unit_compare: "compare_units",
+  unit_view: "view_unit",
+};
+
+const MOCK_EVENT_CODES = {
+  real_estate: [
+    "request_pricing",
+    "book_viewing",
+    "payment_plan_viewed",
+    "download_brochure",
+    "view_floor_plan",
+    "roi_calculator",
+    "compare_units",
+  ],
+  automotive: [
+    "request_quote",
+    "test_drive_request",
+    "finance_calculator",
+    "download_brochure",
+    "vehicle_view",
+    "save_configuration",
+    "compare_vehicles",
+  ],
+  yacht: [
+    "request_quote",
+    "book_viewing",
+    "payment_plan_viewed",
+    "download_brochure",
+    "view_unit",
+    "contact_advisor",
+    "compare_units",
+  ],
 };
 
 const UI = {
@@ -85,26 +81,46 @@ const UI = {
     liveBody: "A new event was captured",
     notifications: "Notifications",
     dismiss: "Dismiss",
+    visitor: "Visitor",
   },
   ar: {
     liveTitle: "نشاط مباشر جديد",
     liveBody: "تم تسجيل حدث جديد",
     notifications: "الإشعارات",
     dismiss: "إغلاق",
+    visitor: "زائر",
   },
   es: {
     liveTitle: "Nueva actividad en vivo",
     liveBody: "Se capturo un nuevo evento",
     notifications: "Notificaciones",
     dismiss: "Cerrar",
+    visitor: "Visitante",
   },
   fr: {
     liveTitle: "Nouvelle activite en direct",
     liveBody: "Un nouvel evenement a ete capture",
     notifications: "Notifications",
     dismiss: "Fermer",
+    visitor: "Visiteur",
   },
 };
+
+function normalizeSector(rawSector) {
+  const value = String(rawSector || "").toLowerCase().replace(/[\s-]/g, "_");
+  if (value === "realestate" || value === "real_estate") return "real_estate";
+  if (value === "automotive") return "automotive";
+  if (value === "yacht" || value === "yachts") return "yacht";
+  return "real_estate";
+}
+
+function normalizeEventCode(rawEvent) {
+  const normalized = String(rawEvent || "")
+    .replace(/([a-z])([A-Z])/g, "$1_$2")
+    .replace(/[\s-]+/g, "_")
+    .toLowerCase();
+  return EVENT_ALIAS[normalized] || normalized || "manual";
+}
 
 export default function NotificationSystem({
   dataMode,
@@ -124,27 +140,46 @@ export default function NotificationSystem({
   const timerRef = useRef(null);
   const idCounter = useRef(0);
   const lastRealtimeEventRef = useRef(null);
+  const lastCrossTabEventRef = useRef(null);
+  const sectorKey = normalizeSector(sectorId);
+
+  const pushLiveNotification = useCallback((payload = {}) => {
+    const eventCode = normalizeEventCode(payload.event || payload.type || "manual");
+    const actor = payload.vipName || payload.userName || payload.leadName || tx.visitor;
+    const item = payload.unitName || payload.item || payload.vehicleName || payload.unitId || payload.vehicleId;
+    const eventLabel = getEventLabel(eventCode, lang, sectorKey);
+    const body = item ? `${actor} - ${eventLabel} -> ${item}` : `${actor} - ${eventLabel}`;
+
+    const realtimeNotif = {
+      id: ++idCounter.current,
+      icon: ICON_BY_EVENT[eventCode] || "⚡",
+      title: tx.liveTitle,
+      body,
+      timestamp: new Date(),
+      removing: false,
+    };
+
+    setNotifications((prev) => [realtimeNotif, ...prev].slice(0, 8));
+  }, [lang, sectorKey, tx.liveTitle, tx.visitor]);
 
   const addNotification = useCallback(() => {
-    const templates = TEMPLATES[sectorId]?.[lang] || TEMPLATES.real_estate.en;
     const personas = getPersonas(sectorId, regionId);
     const names = personas.map((p) => p.name);
-    const template = templates[Math.floor(Math.random() * templates.length)];
-    const name = names.length > 0 ? names[Math.floor(Math.random() * names.length)] : "VIP";
-    // Inject config-derived unit names into templates that reference specific units
+    const eventCodes = MOCK_EVENT_CODES[sectorKey] || MOCK_EVENT_CODES.real_estate;
+    const eventCode = eventCodes[Math.floor(Math.random() * eventCodes.length)];
+    const name = names.length > 0 ? names[Math.floor(Math.random() * names.length)] : tx.visitor;
     const cats = config?.inventory?.categories || [];
     const randomCat = cats.length > 0 ? cats[Math.floor(Math.random() * cats.length)] : null;
-    const unitExample = randomCat ? (randomCat.name?.[lang] || randomCat.name?.en || randomCat.id) : null;
-
-    // Replace hardcoded unit refs in body with config-derived names
-    const bodyText = unitExample
-      ? template.body(name).replace(/Penthouse A-1201|3BR B-801|AMG GT 63 S|G-Class G63/g, unitExample)
-      : template.body(name);
+    const unitExample = randomCat
+      ? (randomCat.name?.[lang] || randomCat.name?.en || randomCat.id)
+      : null;
+    const eventLabel = getEventLabel(eventCode, lang, sectorKey);
+    const bodyText = unitExample ? `${name} - ${eventLabel} -> ${unitExample}` : `${name} - ${eventLabel}`;
 
     const notif = {
       id: ++idCounter.current,
-      icon: template.icon,
-      title: template.title,
+      icon: ICON_BY_EVENT[eventCode] || "⚡",
+      title: eventLabel,
       body: bodyText,
       timestamp: new Date(),
       removing: false,
@@ -158,7 +193,7 @@ export default function NotificationSystem({
         setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
       }, 400);
     }, 6000);
-  }, [lang, sectorId, regionId]);
+  }, [config, lang, regionId, sectorId, sectorKey, tx.visitor]);
 
   useEffect(() => {
     if (dataMode !== "mock") return undefined;
@@ -198,6 +233,29 @@ export default function NotificationSystem({
 
     setNotifications((prev) => [realtimeNotif, ...prev].slice(0, 8));
   }, [events, dataMode, lang]);
+
+  useEffect(() => {
+    if (dataMode !== "mock") return undefined;
+
+    let bc;
+    try {
+      bc = new BroadcastChannel(CROSS_TAB_CHANNEL);
+      bc.onmessage = (incoming) => {
+        const payload = incoming?.data;
+        if (!payload || (!payload.event && !payload.type)) return;
+        const key = payload.id || `${payload.vipName || payload.userName || payload.leadName || "visitor"}-${payload.timestamp || Date.now()}`;
+        if (lastCrossTabEventRef.current === key) return;
+        lastCrossTabEventRef.current = key;
+        pushLiveNotification(payload);
+      };
+    } catch (_) {
+      // BroadcastChannel may be unavailable in older/private browser contexts.
+    }
+
+    return () => {
+      bc?.close?.();
+    };
+  }, [dataMode, pushLiveNotification]);
 
   const removeNotification = useCallback((id) => {
     setNotifications((prev) =>
