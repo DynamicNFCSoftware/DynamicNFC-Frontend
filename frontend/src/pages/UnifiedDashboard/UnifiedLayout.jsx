@@ -354,6 +354,7 @@ function UnifiedLayoutInner() {
   const { user } = useAuth();
   const location = useLocation();
   const { vips } = useDashboard();
+  const vipCrmCount = Array.isArray(vips) ? vips.length : 0;
   const tx = LAYOUT_TEXT[lang] || LAYOUT_TEXT.en;
   const projectName = getProjectName(config.id, regionId, lang);
   const portalLinks = getPortalLinks(config.id, tx, regionId, lang);
@@ -510,8 +511,8 @@ function UnifiedLayoutInner() {
                   >
                     <span className="ud-nav-icon">{tab.icon}</span>
                     <span className="ud-nav-label">{getTabLabel(tab)}</span>
-                    {tab.path === "vip-crm" && (vips?.length || 0) > 0 ? (
-                      <span className="ud-nav-badge">{vips.length}</span>
+                    {tab.path === "vip-crm" && vipCrmCount > 0 ? (
+                      <span className="ud-nav-badge">{vipCrmCount}</span>
                     ) : null}
                   </NavLink>
                 ))}
