@@ -323,6 +323,7 @@ function UnifiedLayoutInner() {
   const [flyoutPos, setFlyoutPos] = useState({ top: 0, left: 0 });
   const portalBtnRef = useRef(null);
   const [theme, setTheme] = useState(() => localStorage.getItem("ud-theme") || "light");
+  const [showFamilyInVipCrm, setShowFamilyInVipCrm] = useState(() => localStorage.getItem("ud_show_family_buyers") === "1");
 
   const togglePortalFlyout = useCallback(() => {
     // Compute position BEFORE toggling state so the flyout renders in the right place
@@ -354,7 +355,11 @@ function UnifiedLayoutInner() {
   const { user } = useAuth();
   const location = useLocation();
   const { vips } = useDashboard();
-  const vipCrmCount = Array.isArray(vips) ? vips.length : 0;
+  const familyPersonaCount = useMemo(
+    () => (getPersonas(config.id, regionId) || []).filter((persona) => persona?.type === "family").length,
+    [config.id, regionId]
+  );
+  const vipCrmCount = (Array.isArray(vips) ? vips.length : 0) + (showFamilyInVipCrm ? familyPersonaCount : 0);
   const tx = LAYOUT_TEXT[lang] || LAYOUT_TEXT.en;
   const projectName = getProjectName(config.id, regionId, lang);
   const portalLinks = getPortalLinks(config.id, tx, regionId, lang);
@@ -404,6 +409,15 @@ function UnifiedLayoutInner() {
       return [...prev, activeGroupId];
     });
   }, [activeGroupId, sidebarCollapsed]);
+
+  useEffect(() => {
+    const onFamilyFilterChanged = (event) => {
+      const enabled = Boolean(event?.detail?.enabled);
+      setShowFamilyInVipCrm(enabled);
+    };
+    window.addEventListener("ud-family-filter-changed", onFamilyFilterChanged);
+    return () => window.removeEventListener("ud-family-filter-changed", onFamilyFilterChanged);
+  }, []);
 
   const getTabLabel = (tab) => {
     if (tab.dynamicLabel && tab.path === "inventory") {

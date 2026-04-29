@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguage, useTranslation } from "../../../i18n";
 import { getEventLabel } from "../../../i18n/eventDisplayMap";
+import { getPersonas } from "../../../config/regionConfig";
 import { useSector } from "../../../hooks/useSector";
 import { useRegion } from "../../../hooks/useRegion";
 import { useDashboard } from "../useDashboard";
@@ -55,6 +56,9 @@ const UI = {
     promoteWalkInBody: "This will move the candidate to your VIP list. The lead will be tagged for priority follow-up.",
     promoteConfirm: "Promote",
     vipPromotedSuccess: "VIP promoted successfully - Walk-in Prospect added to your VIP list",
+    showFamilyBuyers: "Show family buyers",
+    familyBadge: "Family",
+    viewFamilyBuyers: "View {{count}} family buyers →",
   },
   ar: {
     section: "إدارة VIP",
@@ -100,6 +104,9 @@ const UI = {
     promoteWalkInBody: "سيؤدي ذلك إلى نقل المرشح إلى قائمة VIP الخاصة بك مع وسمه بمتابعة ذات أولوية.",
     promoteConfirm: "ترقية",
     vipPromotedSuccess: "تمت الترقية بنجاح - تمت إضافة الزائر إلى قائمة VIP",
+    showFamilyBuyers: "إظهار المشترين العائليين",
+    familyBadge: "عائلي",
+    viewFamilyBuyers: "عرض {{count}} مشترين عائليين ←",
   },
   es: {
     section: "CRM VIP",
@@ -145,6 +152,9 @@ const UI = {
     promoteWalkInBody: "Esto movera al candidato a tu lista VIP y se marcara para seguimiento prioritario.",
     promoteConfirm: "Promover",
     vipPromotedSuccess: "VIP promovido correctamente - Prospecto espontaneo agregado a la lista VIP",
+    showFamilyBuyers: "Mostrar compradores familiares",
+    familyBadge: "Familiar",
+    viewFamilyBuyers: "Ver {{count}} compradores familiares →",
   },
   fr: {
     section: "CRM VIP",
@@ -190,6 +200,9 @@ const UI = {
     promoteWalkInBody: "Cette action déplacera le candidat vers votre liste VIP avec un suivi prioritaire.",
     promoteConfirm: "Promouvoir",
     vipPromotedSuccess: "VIP promu avec succès - Prospect spontané ajouté à votre liste VIP",
+    showFamilyBuyers: "Afficher acheteurs familiaux",
+    familyBadge: "Familial",
+    viewFamilyBuyers: "Voir {{count}} acheteurs familiaux →",
   },
 };
 
@@ -233,7 +246,21 @@ export default function VIPCrmTab() {
   const [showPromoteConfirm, setShowPromoteConfirm] = useState(false);
   const [pendingCandidate, setPendingCandidate] = useState(null);
   const [promoteToast, setPromoteToast] = useState("");
+  const [showFamilyBuyers, setShowFamilyBuyers] = useState(false);
   const { vips, vipCandidates, selectedVipId, setSelectedVipId, vipDetail, loading } = useDashboard();
+  const familyRows = useMemo(() => {
+    const personas = getPersonas(config.id, regionId) || [];
+    return personas
+      .filter((persona) => persona?.type === "family")
+      .map((persona, index) => ({
+        id: `family-${persona.id || index}`,
+        name: persona.name,
+        score: 0,
+        velocity: { idleDays: 0 },
+        triggers: [],
+        isFamily: true,
+      }));
+  }, [config.id, regionId]);
   const effectiveVips = useMemo(() => {
     const baseVips = vips || [];
     const existingNames = new Set(baseVips.map((vip) => String(vip?.name || "").toLowerCase()));
@@ -253,9 +280,15 @@ export default function VIPCrmTab() {
     return [...baseVips, ...localPromotedVips];
   }, [promotedCandidates, tx.walkInProspect, vips]);
 
+  const visibleVipRows = useMemo(
+    () => (showFamilyBuyers ? [...effectiveVips, ...familyRows] : effectiveVips),
+    [effectiveVips, familyRows, showFamilyBuyers]
+  );
   const filteredVips = useMemo(() => (
-    effectiveVips.filter((vip) => (vip.name || "").toLowerCase().includes(search.toLowerCase()))
-  ), [effectiveVips, search]);
+    visibleVipRows.filter((vip) => (vip.name || "").toLowerCase().includes(search.toLowerCase()))
+  ), [visibleVipRows, search]);
+
+  const familyHintLabel = tx.viewFamilyBuyers.replace("{{count}}", String(familyRows.length));
 
   const visibleCandidates = useMemo(() => (
     (vipCandidates || []).filter((c) => !dismissedCandidates.includes(c.id || c.name))
@@ -274,7 +307,15 @@ export default function VIPCrmTab() {
     setShowPromoteConfirm(false);
     setPendingCandidate(null);
     setPromoteToast("");
+    setShowFamilyBuyers(false);
+    localStorage.setItem("ud_show_family_buyers", "0");
+    window.dispatchEvent(new CustomEvent("ud-family-filter-changed", { detail: { enabled: false } }));
   }, [config.id, regionId, setSelectedVipId]);
+
+  useEffect(() => {
+    localStorage.setItem("ud_show_family_buyers", showFamilyBuyers ? "1" : "0");
+    window.dispatchEvent(new CustomEvent("ud-family-filter-changed", { detail: { enabled: showFamilyBuyers } }));
+  }, [showFamilyBuyers]);
 
   const handlePromote = (candidate) => {
     const candidateId = candidate?.id || candidate?.name;
@@ -368,8 +409,15 @@ export default function VIPCrmTab() {
           >
             + {tx.addVip}
           </button>
-          <span className="ud-vip-count-chip" title={`${tx.vipCount}: ${effectiveVips.length}`}>
-            {tx.vipCount}: {effectiveVips.length}
+          <button
+            type="button"
+            className={`ud-inv-chip ${showFamilyBuyers ? "ud-inv-chip--active" : ""}`}
+            onClick={() => setShowFamilyBuyers((prev) => !prev)}
+          >
+            {tx.showFamilyBuyers}
+          </button>
+          <span className="ud-vip-count-chip" title={`${tx.vipCount}: ${visibleVipRows.length}`}>
+            {tx.vipCount}: {visibleVipRows.length}
           </span>
         </div>
 
@@ -387,6 +435,9 @@ export default function VIPCrmTab() {
                   <div className="ud-vip-list-info">
                     <div className="ud-vip-list-name">
                       {vip.name}
+                      {vip.isFamily ? (
+                        <span className="ud-vip-family-badge">{tx.familyBadge}</span>
+                      ) : null}
                       {vip.__localPromoted ? (
                         <span style={{ marginInlineStart: 6, fontSize: 10, color: "var(--ud-accent)" }}>• local</span>
                       ) : null}
@@ -416,6 +467,15 @@ export default function VIPCrmTab() {
                 <div style={{ fontSize: 12, color: "var(--ud-text-muted)", padding: "8px 4px" }}>
                   {tx.noResults}
                 </div>
+              ) : null}
+              {!showFamilyBuyers && familyRows.length > 0 ? (
+                <button
+                  type="button"
+                  className="ud-vip-family-hint"
+                  onClick={() => setShowFamilyBuyers(true)}
+                >
+                  {familyHintLabel}
+                </button>
               ) : null}
 
               {visibleCandidates.length > 0 ? (

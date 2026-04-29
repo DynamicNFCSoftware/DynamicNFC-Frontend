@@ -2548,6 +2548,18 @@
   color: var(--ud-text);
 }
 
+.ud-vip-family-badge {
+  margin-inline-start: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b7280;
+  background: rgba(107, 114, 128, 0.12);
+  border: 1px solid rgba(107, 114, 128, 0.25);
+  border-radius: 999px;
+  padding: 2px 7px;
+  vertical-align: middle;
+}
+
 .ud-vip-list-meta {
   display: flex;
   align-items: center;
@@ -2570,6 +2582,18 @@
   letter-spacing: 0.05em;
   color: var(--ud-text-muted);
   opacity: 0.7;
+}
+
+.ud-vip-family-hint {
+  margin: 8px 10px 4px;
+  background: transparent;
+  border: none;
+  color: var(--ud-accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-align: start;
 }
 
 .ud-btn-promote {
