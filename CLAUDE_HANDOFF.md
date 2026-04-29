@@ -22,7 +22,7 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-29 EOD by Claude (session: Sprint 1B1 SHIPPED to origin/main, squash commit `87bbb2a3`)
+Last updated: 2026-04-29 by Cursor (session: Sprint 1B2 legacy migration + cleanup in PR on `cursor/sprint-1b2-legacy-migration`)
 
 ---
 
@@ -182,7 +182,15 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## In-Flight Work
 
-(none — Sprint 1B1 SHIPPED clean. Sprint 1B2 directive ready to issue.)
+- Sprint 1B2 IN PR (2026-04-29): branch `cursor/sprint-1b2-legacy-migration` with 7 item commits complete:
+  - `83cfb9c9` Item 0b dead-code cleanup (`useDashboardData.js` redundant `vipCandidates`)
+  - `95c1d4d9` Item 0c promoted-candidate dedupe `.filter()` callback made element-aware
+  - `f48fc4f9` Item 0a family-buyer surfacing (VIP CRM chip + family badge + hint link + sidebar count sync)
+  - `6d4de9d2` Item 1 Reissue Portal Link (clipboard copy + 4-lang toast)
+  - `1d0653a5` Item 2 How This Works modal (topbar `?`, brand-locked content, ESC/backdrop/X close)
+  - `33b3a736` Item 3 Zero Engagement badge + filter chip in InventoryTab
+  - `31813993` Item 4 NFC ROI + Avg Session KPI tiles in OverviewTab (all sectors)
+  Build PASS: `cd frontend && npm run build` ✅
 
 ---
 
@@ -235,24 +243,15 @@ Also historical context:
 
 ## Open Strategic Items (priority order)
 
-1. **Sprint 1B2 — Legacy Migration + Cleanup [Cursor, ~4h]:** Directive ready (`SPRINT_1B2_DIRECTIVE.md`). Scope expanded post-1B1 merge:
-   - **Item 0a — Family persona surfacing decision** (product call, A/B/C options in directive)
-   - **Item 0b — Bugbot dead code cleanup** (`useDashboardData.js` redundant vipCandidates)
-   - **Item 0c — Bugbot filter callback fix** (`VIPCrmTab.jsx` local-promoted `.filter()`)
-   - **Item 1 — Reissue Portal Link button** (VIP detail panel, 4-lang toast)
-   - **Item 2 — "How This Works" Help modal** (topbar `?`, brand-locked content, 4-lang)
-   - **Item 3 — Zero Engagement badge in InventoryTab** (badge + filter chip, 4-lang)
-   - **Item 4 — NFC ROI + Avg Session Time KPIs** (OverviewTab, all 3 sectors, 4-lang)
-   
-2. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns.
-3. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
-4. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
-5. Yacht public page + /yacht/demo portals (region-aware day one).
-6. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
-7. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
-8. Apple Developer Account enrollment.
-9. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
-10. Sentry setup.
+1. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns.
+2. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
+3. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
+4. Yacht public page + /yacht/demo portals (region-aware day one).
+5. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
+6. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
+7. Apple Developer Account enrollment.
+8. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
+9. Sentry setup.
 
 ---
 
