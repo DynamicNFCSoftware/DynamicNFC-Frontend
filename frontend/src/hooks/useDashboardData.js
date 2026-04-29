@@ -72,6 +72,7 @@ const toType = (eventName, sectorId) => {
   return SECTOR_EVENT_ALIAS[sectorId]?.[normalized] || normalized;
 };
 const toPersonKey = (event) => event.vipName || event.userName || event.leadName || event.sessionId || "anon";
+const WALK_IN_CANDIDATE_ID = "walk-in-prospect";
 
 export default function useDashboardData() {
   const { sectorId: legacySectorId, activeSectorId } = useSector();
@@ -117,8 +118,7 @@ export default function useDashboardData() {
         const sectorMatch = normalizeSectorId(row?.sector) === sectorId;
         if (!sectorMatch) return false;
         const rowRegion = String(row?.region || "").toLowerCase().trim();
-        // Backward compatibility: keep rows that predate region enrichment.
-        if (!rowRegion) return true;
+        if (!rowRegion) return false;
         return rowRegion === String(regionId || "").toLowerCase().trim();
       }),
     [sectorId, regionId]
@@ -148,7 +148,6 @@ export default function useDashboardData() {
 
     const init = async () => {
       if (seedingRef.current) {
-        console.log("[TENANT] Init already in progress, skipping duplicate");
         return;
       }
       seedingRef.current = true;
@@ -744,18 +743,20 @@ export default function useDashboardData() {
       }))
       .sort((a, b) => b.decayedScore - a.decayedScore);
 
-    const registeredMap = normalizedEvents
-      .filter((e) => e.portalType === "registered" && e.userName)
-      .reduce((acc, e) => {
-        const key = e.userName;
-        acc[key] = acc[key] || [];
-        acc[key].push({ type: e.type, timestamp: e.timestamp });
-        return acc;
-      }, {});
-    const vipCandidates = Object.entries(registeredMap)
-      .map(([name, evs]) => ({ name, score: calculateDecayedScore(evs, sectorId), events: evs.length }))
-      .filter((p) => p.score >= 50)
-      .sort((a, b) => b.score - a.score);
+    const registeredEvents = normalizedEvents.filter(
+      (e) => e.portalType === "registered" || e.portalType === "family"
+    );
+    const vipCandidates = registeredEvents.length > 0
+      ? [{
+          id: WALK_IN_CANDIDATE_ID,
+          name: WALK_IN_CANDIDATE_ID,
+          score: calculateDecayedScore(
+            registeredEvents.map((e) => ({ type: e.type, timestamp: e.timestamp })),
+            sectorId
+          ),
+          events: registeredEvents.length,
+        }]
+      : [];
 
     const vipHeatMap = {};
     normalizedEvents
@@ -1092,19 +1093,27 @@ export default function useDashboardData() {
   // CC-S2-5: VIP candidates (registered users not yet VIP, with >= 3 events)
   const vipCandidates = useMemo(() => {
     const vipNames = new Set(vips.map((v) => (v.name || "").toLowerCase()));
-    const cands = {};
+    const walkInCandidate = {
+      id: WALK_IN_CANDIDATE_ID,
+      name: WALK_IN_CANDIDATE_ID,
+      eventCount: 0,
+      events: 0,
+      ctaCount: 0,
+      firstSeen: null,
+      lastSeen: null,
+    };
     normalizedEvents.forEach((e) => {
       if (e.portalType !== "registered" && e.portalType !== "family") return;
       const name = e.personName || e.userName;
       if (!name || vipNames.has(name.toLowerCase())) return;
-      if (!cands[name]) cands[name] = { name, eventCount: 0, ctaCount: 0, firstSeen: null, lastSeen: null };
-      cands[name].eventCount++;
+      walkInCandidate.eventCount++;
+      walkInCandidate.events++;
       const ts = safeDate(e.timestamp);
-      if (!cands[name].firstSeen || ts < cands[name].firstSeen) cands[name].firstSeen = ts;
-      if (!cands[name].lastSeen || ts > cands[name].lastSeen) cands[name].lastSeen = ts;
-      if (["request_pricing", "book_viewing", "download_brochure"].includes(e.type)) cands[name].ctaCount++;
+      if (!walkInCandidate.firstSeen || ts < walkInCandidate.firstSeen) walkInCandidate.firstSeen = ts;
+      if (!walkInCandidate.lastSeen || ts > walkInCandidate.lastSeen) walkInCandidate.lastSeen = ts;
+      if (["request_pricing", "book_viewing", "download_brochure"].includes(e.type)) walkInCandidate.ctaCount++;
     });
-    return Object.values(cands).filter((c) => c.eventCount >= 3).sort((a, b) => b.eventCount - a.eventCount).slice(0, 10);
+    return walkInCandidate.eventCount >= 3 ? [walkInCandidate] : [];
   }, [normalizedEvents, vips]);
 
   // Region-aware currency formatter

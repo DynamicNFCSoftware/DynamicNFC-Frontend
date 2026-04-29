@@ -26,8 +26,8 @@ const GULF = {
       { id: 'fam1', name: 'Ahmed Al-Fahad', email: 'ahmed@alnoor.sa', type: 'family', role: { en: 'Family Buyer', ar: 'مشتري عائلي', es: 'Comprador Familiar' } },
     ],
     automotive: [
-      { id: 'vip1', name: 'Sultan Al-Otaibi', email: 'sultan@prestige.sa', type: 'vip', role: { en: 'VIP Collector', ar: 'جامع VIP', es: 'Coleccionista VIP' } },
-      { id: 'vip2', name: 'Omar Al-Dhaheri', email: 'khalid@prestige.sa', type: 'vip', role: { en: 'VIP Client', ar: 'عميل VIP', es: 'Cliente VIP' } },
+      { id: 'vip1', name: 'Khalid Al-Mansouri', email: 'khalid@prestige.sa', type: 'vip', role: { en: 'VIP Collector', ar: 'جامع VIP', es: 'Coleccionista VIP' } },
+      { id: 'vip2', name: 'Sultan Al-Otaibi', email: 'sultan@prestige.sa', type: 'vip', role: { en: 'VIP Client', ar: 'عميل VIP', es: 'Cliente VIP' } },
     ],
     yacht: [
       { id: 'vip1', name: 'Prince Nasser Al-Saud', email: 'nasser@gulfmarina.sa', type: 'vip', role: { en: 'VIP Owner', ar: 'مالك VIP', es: 'Propietario VIP' } },
@@ -55,8 +55,8 @@ const USA = {
   },
   personas: {
     real_estate: [
-      { id: 'vip1', name: 'Daniel Roberts', email: 'james@skyline.com', type: 'vip', role: { en: 'VIP Investor', ar: 'مستثمر VIP', es: 'Inversor VIP' } },
-      { id: 'vip2', name: 'Olivia Parker', email: 'sarah@skyline.com', type: 'vip', role: { en: 'VIP Buyer', ar: 'مشترية VIP', es: 'Compradora VIP' } },
+      { id: 'vip1', name: 'James Mitchell', email: 'james@skyline.com', type: 'vip', role: { en: 'VIP Investor', ar: 'مستثمر VIP', es: 'Inversor VIP' } },
+      { id: 'vip2', name: 'Sarah Chen', email: 'sarah@skyline.com', type: 'vip', role: { en: 'VIP Buyer', ar: 'مشترية VIP', es: 'Compradora VIP' } },
       { id: 'fam1', name: 'Robert Williams', email: 'robert@skyline.com', type: 'family', role: { en: 'Family Buyer', ar: 'مشتري عائلي', es: 'Comprador Familiar' } },
     ],
     automotive: [
@@ -123,9 +123,11 @@ const CANADA = {
   },
   personas: {
     real_estate: [
-      { id: 'vip1', name: 'James Mitchell', email: 'james@vista.ca', type: 'vip', role: { en: 'VIP Investor', ar: 'مستثمر VIP', es: 'Inversor VIP', fr: 'Investisseur VIP' } },
-      { id: 'vip2', name: 'Sarah Chen', email: 'sarah@vista.ca', type: 'vip', role: { en: 'VIP Buyer', ar: 'مشترية VIP', es: 'Compradora VIP', fr: 'Acheteuse VIP' } },
-      { id: 'fam1', name: 'Michael Tremblay', email: 'emily@vista.ca', type: 'family', role: { en: 'Family Buyer', ar: 'مشتري عائلي', es: 'Comprador Familiar', fr: 'Acheteur Familial' } },
+      { id: 'vip1', name: 'Marc Patel', email: 'marc@vista.ca', type: 'vip', role: { en: 'VIP Investor', ar: 'مستثمر VIP', es: 'Inversor VIP', fr: 'Investisseur VIP' } },
+      { id: 'vip2', name: 'Ethan Chen', email: 'ethan@vista.ca', type: 'vip', role: { en: 'VIP Buyer', ar: 'مشتري VIP', es: 'Comprador VIP', fr: 'Acheteur VIP' } },
+      { id: 'fam1', name: 'Chloe Thompson', email: 'chloe@vista.ca', type: 'family', role: { en: 'Family Buyer', ar: 'مشتري عائلي', es: 'Compradora Familiar', fr: 'Acheteuse Familiale' } },
+      { id: 'fam2', name: 'William Sullivan', email: 'william@vista.ca', type: 'family', role: { en: 'Family Buyer', ar: 'مشتري عائلي', es: 'Comprador Familiar', fr: 'Acheteur Familial' } },
+      { id: 'fam3', name: 'Rebecca Nakamura', email: 'rebecca@vista.ca', type: 'family', role: { en: 'Family Buyer', ar: 'مشتري عائلي', es: 'Compradora Familiar', fr: 'Acheteuse Familiale' } },
     ],
     automotive: [
       { id: 'vip1', name: 'David Thompson', email: 'david@prestige.ca', type: 'vip', role: { en: 'VIP Collector', ar: 'جامع VIP', es: 'Coleccionista VIP', fr: 'Collectionneur VIP' } },
@@ -172,8 +174,25 @@ export function getEffectiveLocale(regionId, lang) {
 }
 
 export function getPersonas(sectorId, regionId) {
-  const region = getRegion(regionId);
-  return region.personas[sectorId] || region.personas.real_estate;
+  const normalizedRegionId = String(regionId || "").toLowerCase().trim();
+  const region = REGIONS[normalizedRegionId];
+
+  if (!region) {
+    if (import.meta.env.DEV) {
+      throw new Error(`[regionConfig] Unknown regionId "${regionId}" passed to getPersonas("${sectorId}", "${regionId}")`);
+    }
+    return [];
+  }
+
+  const personas = region.personas?.[sectorId];
+  if (!personas) {
+    if (import.meta.env.DEV) {
+      throw new Error(`[regionConfig] Unknown sectorId "${sectorId}" for region "${normalizedRegionId}" in getPersonas()`);
+    }
+    return [];
+  }
+
+  return personas;
 }
 
 export function getProjectName(sectorId, regionId, lang) {
