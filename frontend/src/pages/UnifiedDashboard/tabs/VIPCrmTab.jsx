@@ -138,7 +138,7 @@ const UI = {
     high: "ALTO",
     collapseList: "Colapsar lista",
     expandList: "Expandir lista",
-    walkInProspect: "Prospecto espontáneo",
+    walkInProspect: "Prospecto de visita",
     promoteFirst: "Promociona primero para ver el perfil completo",
     cancel: "Cancelar",
     promoteWalkInTitle: "¿Promover visitante a VIP?",
@@ -201,23 +201,6 @@ const IDLE_SUFFIX = {
   fr: "j inactif",
 };
 
-const normalizeWalkInText = (value) => String(value || "")
-  .toLowerCase()
-  .normalize("NFD")
-  .replace(/[\u0300-\u036f]/g, "")
-  .replace(/[\u2019']/g, "")
-  .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
-  .trim();
-
-const WALK_IN_ALIASES = [
-  "walk in prospect",
-  "walk in visitor",
-  "prospecto espontaneo",
-  "prospect spontane",
-  "عميل محتمل زائر",
-  "زائر حضوري",
-];
-
 export default function VIPCrmTab() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -251,40 +234,28 @@ export default function VIPCrmTab() {
   const [pendingCandidate, setPendingCandidate] = useState(null);
   const [promoteToast, setPromoteToast] = useState("");
   const { vips, vipCandidates, selectedVipId, setSelectedVipId, vipDetail, loading } = useDashboard();
-  const isWalkInCandidate = (candidate) => {
-    const name = normalizeWalkInText(candidate?.name);
-    if (!name) return false;
-
-    const localizedLabel = normalizeWalkInText(tx.walkInProspect);
-    if (localizedLabel && name === localizedLabel) return true;
-
-    if (name.includes("walk in")) return true;
-
-    return WALK_IN_ALIASES.some((alias) => name === normalizeWalkInText(alias));
-  };
-
   const effectiveVips = useMemo(() => {
     const baseVips = vips || [];
-    const existingNames = new Set(baseVips.map((vip) => normalizeWalkInText(vip?.name)));
+    const existingNames = new Set(baseVips.map((vip) => String(vip?.name || "").toLowerCase()));
     const localPromotedVips = promotedCandidates
-      .filter((name) => !existingNames.has(normalizeWalkInText(name)))
-      .map((name) => ({
-        id: `local-promoted-${normalizeWalkInText(name).replace(/\s+/g, "-") || "vip"}`,
-        name,
+      .filter(() => !existingNames.has(String(tx.walkInProspect || "").toLowerCase()))
+      .map((candidateId) => ({
+        id: `local-promoted-${candidateId || "vip"}`,
+        name: tx.walkInProspect,
         score: 0,
         velocity: { idleDays: 0 },
         triggers: [],
         __localPromoted: true,
       }));
     return [...baseVips, ...localPromotedVips];
-  }, [promotedCandidates, vips]);
+  }, [promotedCandidates, tx.walkInProspect, vips]);
 
   const filteredVips = useMemo(() => (
     effectiveVips.filter((vip) => (vip.name || "").toLowerCase().includes(search.toLowerCase()))
   ), [effectiveVips, search]);
 
   const visibleCandidates = useMemo(() => (
-    (vipCandidates || []).filter((c) => !dismissedCandidates.includes(c.name))
+    (vipCandidates || []).filter((c) => !dismissedCandidates.includes(c.id || c.name))
   ), [vipCandidates, dismissedCandidates]);
 
   useEffect(() => {
@@ -294,24 +265,21 @@ export default function VIPCrmTab() {
   }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
+    setSelectedVipId?.(null);
     setDismissedCandidates([]);
     setPromotedCandidates([]);
     setShowPromoteConfirm(false);
     setPendingCandidate(null);
     setPromoteToast("");
-  }, [config.id, regionId]);
+  }, [config.id, regionId, setSelectedVipId]);
 
   const handlePromote = (candidate) => {
-    setDismissedCandidates((prev) => (prev.includes(candidate.name) ? prev : [...prev, candidate.name]));
-    setPromotedCandidates((prev) => (prev.includes(candidate.name) ? prev : [...prev, candidate.name]));
-    const existing = (vips || []).find((vip) => vip.name?.toLowerCase() === candidate.name?.toLowerCase());
-    if (existing?.id) setSelectedVipId?.(existing.id);
+    const candidateId = candidate?.id || candidate?.name;
+    if (!candidateId) return;
+    setDismissedCandidates((prev) => (prev.includes(candidateId) ? prev : [...prev, candidateId]));
+    setPromotedCandidates((prev) => (prev.includes(candidateId) ? prev : [...prev, candidateId]));
   };
   const onPromoteClick = (candidate) => {
-    if (!isWalkInCandidate(candidate)) {
-      handlePromote(candidate);
-      return;
-    }
     setPendingCandidate(candidate);
     setShowPromoteConfirm(true);
   };
@@ -321,6 +289,10 @@ export default function VIPCrmTab() {
     setShowPromoteConfirm(false);
     setPendingCandidate(null);
     setPromoteToast(tx.vipPromotedSuccess);
+  };
+  const closePromoteModal = () => {
+    setShowPromoteConfirm(false);
+    setPendingCandidate(null);
   };
 
   const topItemName = vipDetail?.topItem?.name || vipDetail?.topItem || tx.notAvailable;
@@ -446,16 +418,15 @@ export default function VIPCrmTab() {
                 <>
                   <div className="ud-vip-list-divider">{tx.candidates}</div>
                   {visibleCandidates.map((c) => {
-                    const walkInCandidate = isWalkInCandidate(c);
                     return (
                       <div
-                        key={c.name}
-                        className={`ud-vip-list-item ud-vip-candidate ${walkInCandidate ? "ud-vip-candidate--disabled" : ""}`}
-                        title={walkInCandidate ? tx.promoteFirst : undefined}
+                        key={c.id || c.name}
+                        className="ud-vip-list-item ud-vip-candidate ud-vip-candidate--disabled"
+                        title={tx.promoteFirst}
                       >
-                        <div className="ud-vip-avatar" style={{ opacity: 0.6 }}>{c.name?.charAt(0) || "C"}</div>
+                        <div className="ud-vip-avatar" style={{ opacity: 0.6 }}>{tx.walkInProspect?.charAt(0) || "W"}</div>
                         <div className="ud-vip-list-info">
-                          <div className="ud-vip-list-name">{walkInCandidate ? tx.walkInProspect : c.name}</div>
+                          <div className="ud-vip-list-name">{tx.walkInProspect}</div>
                           <div className="ud-vip-list-meta" style={{ justifyContent: "space-between", width: "100%" }}>
                             <span style={{ fontSize: 11, color: "var(--ud-text-muted)" }}>
                               {(c.eventCount || c.events || 0)} {tx.eventsLabel}
@@ -668,7 +639,7 @@ export default function VIPCrmTab() {
 
       {outreachVip ? <OutreachModal vip={outreachVip} onClose={() => setOutreachVip(null)} /> : null}
       {showPromoteConfirm ? (
-        <div className="ud-modal-overlay" onClick={() => setShowPromoteConfirm(false)}>
+        <div className="ud-modal-overlay" onClick={closePromoteModal}>
           <div className="ud-modal" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
             <div className="ud-modal-header">
               <h3 className="ud-modal-title">{tx.promoteWalkInTitle}</h3>
@@ -677,7 +648,7 @@ export default function VIPCrmTab() {
               <p style={{ margin: 0, fontSize: 13, color: "var(--ud-text-secondary)" }}>{tx.promoteWalkInBody}</p>
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, padding: "0 20px 16px" }}>
-              <button type="button" className="ud-btn-ghost" onClick={() => setShowPromoteConfirm(false)}>
+              <button type="button" className="ud-btn-ghost" onClick={closePromoteModal}>
                 {tx.cancel}
               </button>
               <button type="button" className="ud-btn-primary ud-btn-primary--danger" onClick={confirmPromoteWalkIn}>
