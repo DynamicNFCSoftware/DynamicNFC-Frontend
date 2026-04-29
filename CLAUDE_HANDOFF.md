@@ -22,7 +22,7 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-28 EOD by Claude (session: Sprint 1A.1 + 1A.2 SHIPPED to origin/main, commit `ef1aeea0`)
+Last updated: 2026-04-29 by Cursor (session: Sprint 1B1 data integrity hotfix in PR, branch `cursor/sprint-1b1-data-integrity`)
 
 ---
 
@@ -181,7 +181,7 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## In-Flight Work
 
-(none — Sprint 1A.2 closed clean. Sprint 1B directive pending session start with split decision.)
+- **Sprint 1B1 — Data Integrity Hotfix [Cursor] (IN PR):** branch `cursor/sprint-1b1-data-integrity`, commits `23a58d48` + `bd9b3225` + `e4e64a59` + `a0259c7f` + `9b93fb73`. Scope: strict region persona mapping, VIP detail reset on sector/region switch, promote flow unified through modal, sidebar VIP count source normalized, walk-in candidates anonymized. Build PASS (`cd frontend && npm run build`, 2026-04-29).
 
 ---
 
@@ -230,10 +230,9 @@ Also historical context:
 
 ## Open Strategic Items (priority order)
 
-1. **Sprint 1B (split decision pending)** — Now scoped to 9 items. Recommended split:
-   - **1B1 (data integrity, ~6h Cursor):** Persona/region pool consistency (CLAUDE.md §12 enforcement), VIP CRM right panel sector-reset, Walk-in Promote RE modal fix, VIP count badge region accuracy, VIP CANDIDATES persona pool audit. Sales-impact: removes embarrassing demo failures (Gulf personas in Mexico RE listings, AMG GT in RE context).
+1. **Sprint 1B split decided (2026-04-29):**
+   - **1B1 (data integrity):** **IN PR** on `cursor/sprint-1b1-data-integrity`.
    - **1B2 (legacy migration, ~3h Cursor):** Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs (4 SIMPLE items from `docs/LEGACY_DASHBOARD_AUDIT.md`).
-   - Decision on split before directive write.
 2. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns.
 3. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
 4. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
