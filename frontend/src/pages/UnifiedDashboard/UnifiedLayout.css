@@ -1527,6 +1527,41 @@
   margin: 0 0 12px;
 }
 
+.ud-help-modal {
+  max-width: 620px;
+}
+
+.ud-help-modal-section {
+  border: 1px solid var(--ud-border);
+  border-radius: 10px;
+  background: var(--ud-bg-secondary);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.ud-help-modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.ud-help-modal-section--rule {
+  border-color: rgba(230, 57, 70, 0.35);
+  background: rgba(230, 57, 70, 0.08);
+}
+
+.ud-help-modal-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ud-text);
+  margin-bottom: 6px;
+}
+
+.ud-help-modal-text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ud-text-muted);
+}
+
 .ud-copy-btn {
   all: unset;
   cursor: pointer;
@@ -2100,6 +2135,11 @@
   color: var(--ud-text);
   border-color: var(--ud-text-muted);
   background: var(--ud-nav-hover);
+}
+
+.ud-help-btn {
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .ud-live-indicator {
