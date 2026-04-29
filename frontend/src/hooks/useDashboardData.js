@@ -743,21 +743,6 @@ export default function useDashboardData() {
       }))
       .sort((a, b) => b.decayedScore - a.decayedScore);
 
-    const registeredEvents = normalizedEvents.filter(
-      (e) => e.portalType === "registered" || e.portalType === "family"
-    );
-    const vipCandidates = registeredEvents.length > 0
-      ? [{
-          id: WALK_IN_CANDIDATE_ID,
-          name: WALK_IN_CANDIDATE_ID,
-          score: calculateDecayedScore(
-            registeredEvents.map((e) => ({ type: e.type, timestamp: e.timestamp })),
-            sectorId
-          ),
-          events: registeredEvents.length,
-        }]
-      : [];
-
     const vipHeatMap = {};
     normalizedEvents
       .filter((e) => e.portalType === "vip" && e.vipName)
@@ -832,7 +817,6 @@ export default function useDashboardData() {
       conv,
       vipHeat,
       people,
-      vipCandidates,
       funnelData,
     };
   }, [normalizedEvents, sectorId, sectorEvents, vips]);
