@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguage, useTranslation } from "../../../i18n";
 import { getEventLabel } from "../../../i18n/eventDisplayMap";
-import { getPersonas } from "../../../config/regionConfig";
 import { useSector } from "../../../hooks/useSector";
 import { useRegion } from "../../../hooks/useRegion";
 import { useDashboard } from "../useDashboard";
@@ -254,21 +253,17 @@ export default function VIPCrmTab() {
   const [showPromoteConfirm, setShowPromoteConfirm] = useState(false);
   const [pendingCandidate, setPendingCandidate] = useState(null);
   const [promoteToast, setPromoteToast] = useState("");
-  const [showFamilyBuyers, setShowFamilyBuyers] = useState(false);
-  const { vips, vipCandidates, selectedVipId, setSelectedVipId, vipDetail, loading } = useDashboard();
-  const familyRows = useMemo(() => {
-    const personas = getPersonas(config.id, regionId) || [];
-    return personas
-      .filter((persona) => persona?.type === "family")
-      .map((persona, index) => ({
-        id: `family-${persona.id || index}`,
-        name: persona.name,
-        score: 0,
-        velocity: { idleDays: 0 },
-        triggers: [],
-        isFamily: true,
-      }));
-  }, [config.id, regionId]);
+  const {
+    vips,
+    vipCandidates,
+    selectedVipId,
+    setSelectedVipId,
+    vipDetail,
+    loading,
+    showFamilyBuyers,
+    setShowFamilyBuyers,
+    familyBuyerCount,
+  } = useDashboard();
   const effectiveVips = useMemo(() => {
     const baseVips = vips || [];
     const existingNames = new Set(baseVips.map((vip) => String(vip?.name || "").toLowerCase()));
@@ -288,15 +283,11 @@ export default function VIPCrmTab() {
     return [...baseVips, ...localPromotedVips];
   }, [promotedCandidates, tx.walkInProspect, vips]);
 
-  const visibleVipRows = useMemo(
-    () => (showFamilyBuyers ? [...effectiveVips, ...familyRows] : effectiveVips),
-    [effectiveVips, familyRows, showFamilyBuyers]
-  );
   const filteredVips = useMemo(() => (
-    visibleVipRows.filter((vip) => (vip.name || "").toLowerCase().includes(search.toLowerCase()))
-  ), [visibleVipRows, search]);
+    effectiveVips.filter((vip) => (vip.name || "").toLowerCase().includes(search.toLowerCase()))
+  ), [effectiveVips, search]);
 
-  const familyHintLabel = tx.viewFamilyBuyers.replace("{{count}}", String(familyRows.length));
+  const familyHintLabel = tx.viewFamilyBuyers.replace("{{count}}", String(familyBuyerCount || 0));
 
   const visibleCandidates = useMemo(() => (
     (vipCandidates || []).filter((c) => !dismissedCandidates.includes(c.id || c.name))
@@ -316,14 +307,7 @@ export default function VIPCrmTab() {
     setPendingCandidate(null);
     setPromoteToast("");
     setShowFamilyBuyers(false);
-    localStorage.setItem("ud_show_family_buyers", "0");
-    window.dispatchEvent(new CustomEvent("ud-family-filter-changed", { detail: { enabled: false } }));
   }, [config.id, regionId, setSelectedVipId]);
-
-  useEffect(() => {
-    localStorage.setItem("ud_show_family_buyers", showFamilyBuyers ? "1" : "0");
-    window.dispatchEvent(new CustomEvent("ud-family-filter-changed", { detail: { enabled: showFamilyBuyers } }));
-  }, [showFamilyBuyers]);
 
   const handlePromote = (candidate) => {
     const candidateId = candidate?.id || candidate?.name;
@@ -365,7 +349,7 @@ export default function VIPCrmTab() {
   const getReissueCardId = (vip) => {
     if (vip?.cardId) return vip.cardId;
     const sectorPrefix = { real_estate: "RE", automotive: "AU", yacht: "YA" }[config.id] || "RE";
-    const vipOnlyRows = visibleVipRows.filter((row) => !row?.isFamily);
+    const vipOnlyRows = effectiveVips.filter((row) => !row?.isFamily);
     const rowIndex = vipOnlyRows.findIndex((row) => row.id === vip?.id);
     const ordinal = rowIndex >= 0 ? rowIndex + 1 : 1;
     return `${sectorPrefix}-${String(regionId || "gulf").toUpperCase()}-V${String(ordinal).padStart(3, "0")}`;
@@ -442,8 +426,8 @@ export default function VIPCrmTab() {
           >
             {tx.showFamilyBuyers}
           </button>
-          <span className="ud-vip-count-chip" title={`${tx.vipCount}: ${visibleVipRows.length}`}>
-            {tx.vipCount}: {visibleVipRows.length}
+          <span className="ud-vip-count-chip" title={`${tx.vipCount}: ${effectiveVips.length}`}>
+            {tx.vipCount}: {effectiveVips.length}
           </span>
         </div>
 
@@ -494,7 +478,7 @@ export default function VIPCrmTab() {
                   {tx.noResults}
                 </div>
               ) : null}
-              {!showFamilyBuyers && familyRows.length > 0 ? (
+              {!showFamilyBuyers && familyBuyerCount > 0 ? (
                 <button
                   type="button"
                   className="ud-vip-family-hint"
