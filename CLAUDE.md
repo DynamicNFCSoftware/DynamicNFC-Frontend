@@ -684,6 +684,7 @@ Before marking any task done:
 - Files >500 lines: line-count + tail check after edit (PowerShell or bash — see Large File Protocol)
 - Existing functionality not broken (adjacent pages check)
 - `npm run build` passes before deploy
+- **QA Verification Protocol** — see `docs/QA_VERIFICATION_PROTOCOL.md`. Cursor "FIXED" = hypothesis, not fact. Always run manual scenario QA before commit. Post-sprint bug → `git stash` baseline check before blaming the sprint. Demo wow-features need actual two-tab / sector-switch / modal-open verification, not just build PASS.
 
 ---
 
