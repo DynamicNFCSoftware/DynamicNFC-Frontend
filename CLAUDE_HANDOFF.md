@@ -22,27 +22,35 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-28 EOD by Cursor (session: Sprint 1A.2 hotfix implementation pass, not committed)
+Last updated: 2026-04-28 EOD by Claude (session: Sprint 1A.1 + 1A.2 SHIPPED to origin/main, commit `ef1aeea0`)
 
 ---
 
 
 ## Tomorrow's Pickup — READ FIRST
 
-**Where we stopped:** Sprint 1A shipped (`36a434ab` on origin/main). Sprint 1A.1 hotfix in progress with Cursor (3 items: Demo Mode toggle in Settings, Walk-in Promote UX hybrid, sector-aware action labels via eventDisplayMap restructure).
+**Where we stopped:** Sprint 1A.1 + 1A.2 SHIPPED (commit `ef1aeea0` on origin/main, 2026-04-28). NotificationSystem cross-tab realtime, sector-aware mock toasts, Promote modal hierarchy, toast position top-right, and Walk-in Promote (Automotive path) all PASS in QA Round 7. Demo's primary wow-factor (cross-tab realtime + sector-appropriate auto-fire) is now production-ready in /unified.
 
-**Why 1A.1 exists:** Sprint 1A successfully mounted NotificationSystem (the toast notification system that was a dead import in UnifiedLayout.jsx for the entire FAZ 5 cycle). However, QA Round 4 found that the demo mode path — which is what makes the mock auto-fire toast (every 25s) and the cross-tab demo realtime toast actually visible to a presenter — has no user-facing toggle. Settings shows `Data Mode: Tenant Data` as static text only. Sprint 1A.1 fixes this plus 2 other pre-existing UX gaps surfaced during testing.
+**QA Round 7 results (2026-04-28):**
+- T2 Sector toasts (RE/Auto/Yacht): **PASS** — all 3 sectors fire sector-appropriate event codes via `getEventLabel(code, lang, sector)`.
+- T3 Cross-tab realtime: **PASS** — Khalid Al-Mansouri (Auto) + Ahmed Al-Fahad (RE) toasts visible in /unified within 5s of portal CTA click in second tab.
+- T4 Toast position: **PASS** — top-right corner, newest on top.
+- T1 Walk-in Promote (Auto only): **PASS** — modal opens, Promote button is brand red primary, Cancel ghost, candidate hides post-confirm, "+local" badge appears in VIP list.
+- T1 Walk-in Promote (RE): **FAIL** — modal skipped entirely, candidate added directly to VIP list. Sector-conditional code path bug. Deferred to Sprint 1B.
+- T5 Regression: **PARTIAL FAIL** — VIP CRM list shows persona/region pool inconsistency (Gulf personas appearing in USA/Mexico/Canada RE; Khalid Al-Mansouri Auto-Gulf persona appearing in RE across all regions). Right panel state leak when sector switches (e.g., "AMG GT 63 S E Performance" stays as TOP UNIT in Mexico RE context). VIP count badge mismatch (Gulf=4, others=5).
 
-**First action when 1A.1 returns from Cursor:** QA Round 5 (~7 min):
-- Settings → Demo Mode toggle visible + persistent (localStorage)
-- Switch to Demo → toast every 25s on Overview with sector+region+lang aware persona
-- Cross-tab demo: Tab1 /unified Demo + Tab2 /enterprise/crmdemo/khalid → click "Request Pricing" in Tab2 → Tab1 toast within 3s
-- Walk-in Promote: confirmation modal → confirm → toast + row hidden (UI state only, no Firestore write)
-- Switch sector Auto/Yacht/RealEstate → action labels update everywhere (sparklines, ActivityFeed, BehavioralTimeline, Campaigns)
+**Critical: T5 bugs are NOT regressions.** Verified pre-existing via `git stash` baseline check before 1A.2 commit — same persona pool inconsistency exists in Sprint 1A baseline (`36a434ab`). Sprint 1A.2 is not responsible. Bugs are real and need fixing, just not as 1A.3 hotfix.
 
-**On QA pass:** commit `fix(unified): Sprint 1A.1 hotfix — Demo Mode toggle + Walk-in Promote UX + sector-aware labels` → push → Sprint 1B directive (Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs).
+**Bugs surfaced — deferred to Sprint 1B (data integrity sub-sprint):**
+1. **Persona/region pool inconsistency (HIGH):** RE sector shows Gulf personas regardless of active region. Khalid Al-Mansouri (Auto-Gulf persona per CLAUDE.md §3) appearing in RE listings across all 4 regions. CLAUDE.md persona table needs strict enforcement in `getPersonas(sector, regionId)` selector. **Pre-existing, not 1A.2 introduced.**
+2. **VIP CRM right panel state leak (MEDIUM):** When sector changes RE→Auto→Yacht, the right-side VIP detail panel keeps showing stale data (e.g., AMG GT vehicle name in Mexico RE context). Detail panel needs to subscribe to sector/region change and reset selected VIP.
+3. **Walk-in Promote modal skipped on RE (HIGH):** In Real Estate sector, clicking "Promote" on Walk-in candidate skips the confirmation modal entirely — direct UI mutation. Modal works correctly in Automotive sector. Likely sector-conditional code path in `VIPCrmTab.jsx` promote handler — generic helper needed (per CLAUDE.md code simplicity mandate).
+4. **VIP count badge inconsistency (LOW):** Sidebar VIP CRM count shows "5" in USA/Mexico/Canada RE but "4" in Gulf RE. Count logic appears region-mismatched.
+5. **VIP CANDIDATES region-aware persona may need review:** Different "candidate" personas appear per region (Robert Williams in USA, Diego Fernandez in Mexico, Michael Tremblay in Canada, Ahmed Al-Fahad in Gulf — but Ahmed Al-Fahad is supposed to be a Gulf RE VIP, not a candidate per CLAUDE.md §3). Looks intentional but Bug #1 suggests pool selection has issues.
 
-**On QA fail:** isolate the failing item, hotfix Sprint 1A.2, do not block on the others.
+**First action when starting next session:** Read this Tomorrow's Pickup, then write Sprint 1B directive. Scope decision needed: 1B is now ~9 items (5 data integrity bugs above + 4 original simple items: Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs). **Recommend splitting into 1B1 (data integrity) and 1B2 (legacy migration)** — 1B1 first because it touches demo accuracy (sales-blocking risk during persona-driven sector demos).
+
+**Open Question for next session:** Confirm Sprint 1B split decision before writing directive.
 
 ---
 
@@ -70,10 +78,11 @@ Verify method: run `firebase functions:list`, paste output here on change.
 - Last deploy: [fill when next deploy happens]
 - Bundle hash: [fill]
 
-### Working tree state (end of 2026-04-24)
-- Branch: dirty, not committed
-- `git diff --stat`: ~24 files changed, ~972 insertions, ~267 deletions (from cumulative Patch A + B + A2 + hotfix + DashboardDataProvider split)
-- Known clean diff boundaries: legacy dashboards untouched, main site pages untouched, demo portals untouched, /admin untouched, LanguageContext.jsx untouched, backend/ untouched
+### Working tree state (end of 2026-04-28)
+- Branch: **clean** — `ef1aeea0` is HEAD on origin/main, Sprint 1A.1 + 1A.2 + audit docs committed and pushed.
+- `git status`: nothing to commit, working tree clean.
+- Push history: `185c5ebb` (local commit) → `git pull --rebase origin main` (54 chore-only bot commits absorbed) → `ef1aeea0` (final pushed hash).
+- Known clean diff boundaries: legacy dashboards untouched, main site pages untouched, demo portals untouched, /admin untouched, LanguageContext.jsx untouched, backend/ untouched.
 
 ---
 
@@ -166,45 +175,19 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 2. **Campaign description field** (e.g., "early interest campaign for Prestige Motors Vancouver") — tenant-generated content or hardcoded seed data? If seed data, should stay EN as-is (real customers will write in their own language). Leaning: leave as-is, not a bug.
 
+3. **Sprint 1B split decision** — single 9-item directive or split into 1B1 (data integrity, 5 items) + 1B2 (legacy migration, 4 items)? Recommend split. Decision before next directive write.
+
 ---
 
 ## In-Flight Work
 
-### EOD 2026-04-28 — Sprint 1A.2 hotfix implementation (Cursor), NOT committed
-Working tree intentionally dirty (no stash/reset). Scoped unified-dashboard hotfix pass applied; build verified PASS.
+(none — Sprint 1A.2 closed clean. Sprint 1B directive pending session start with split decision.)
 
-Implementation ledger (file path + range + status):
-- **Bug 3 (critical) — Cross-tab realtime toast in Demo Mode:** `frontend/src/pages/UnifiedDashboard/components/NotificationSystem.jsx` (L8-L145, L184-L257) — **FIXED (code complete, QA pending)**. Added BroadcastChannel `dnfc_tracking` listener in mock mode, payload normalization/alias mapping, and localized sector-aware event labeling via `getEventLabel(eventCode, lang, sector)`.
-- **Bug 1 — Walk-in Promote hide + local sidebar count:** `frontend/src/pages/UnifiedDashboard/tabs/VIPCrmTab.jsx` (L240-L324, L374-L449) — **FIXED (code complete, QA pending)**. Candidate row now hides immediately via local state; promoted candidate persists as local UI-only VIP entry for component lifetime (no Firestore write).
-- **Bug 5 — Sector-aware mock toast labels/personas/units (RE/Auto/Yacht):** `frontend/src/pages/UnifiedDashboard/components/NotificationSystem.jsx` (L8-L182) — **FIXED (code complete, QA pending)**. Mock auto-fire now uses sector event code sets + `getPersonas(sector, region)` + config-driven unit/category labels with localized `getEventLabel(...)`.
-- **Bug 2 — Walk-in modal button hierarchy/styling:** `frontend/src/pages/UnifiedDashboard/tabs/VIPCrmTab.jsx` (L639-L655) + `frontend/src/pages/UnifiedDashboard/UnifiedLayout.css` (L2575-L2660) — **FIXED (code complete, QA pending)**. Promote button is primary-danger (red), cancel is ghost style, shared reusable button classes added.
-- **Bug 4 — Toast position/order:** `frontend/src/pages/UnifiedDashboard/UnifiedLayout.css` (L814-L824) — **FIXED (code complete, QA pending)**. Toast stack moved to top-right with newest toast rendered on top.
-
-Validation:
-- `frontend` → `npm run build` — **PASS** (Vite production build completed, no compile errors).
-
-### EOD 2026-04-24 — Sprint 1A.1 partial QA, NOT committed
-Working tree dirty, 12 files modified + 1 audit doc untracked. NOT pushed.
-
-QA Round 5 results:
-- Test 1 Demo toggle: PASS
-- Test 2 Mock auto-fire: PASS (cosmetic: toast appears bottom-right, expected top-right; Sprint 1B fix)
-- Test 3 Cross-tab realtime: FAIL — no toast in /unified when demo portal fires CTA
-- Test 4 Walk-in Promote: FAIL — confirmation modal does not appear despite Cursor audit claim "Item 2 FIXED". Candidate row vanishes silently. Possible Vite HMR cache issue, retry tomorrow with full restart.
-- Tests 5-6: deferred to tomorrow
-
-Resume tomorrow:
-1. Browser/Vite restart, retry Test 4 (cache hypothesis)
-2. Run Test 5 (sector-aware labels Auto/RE/Yacht switch)
-3. Run Test 6 (Sprint 1A regression: KPI animation, sparklines, decay chip)
-4. Consolidate all failures into Sprint 1A.2 directive
-5. Single commit: Sprint 1A.1 + 1A.2 together (1A.1 was never committed — work merges cleanly)
-6. Push → Sprint 1B directive
-
-- **FAZ 5 Step 2 prep** — ~~run manual QA checklist above, collect findings, then issue hard-retire directive for legacy dashboards~~ — **CANCELLED 2026-04-24** (decision logged in Recently Completed). [Oguzhan + Claude]
+---
 
 ## Recently Completed
 
+- Sprint 1A.1 + 1A.2 SHIPPED (2026-04-28): commit `ef1aeea0` pushed to origin/main (15 files changed, +757 / -139). NotificationSystem cross-tab realtime fixed via `BroadcastChannel("dnfc_tracking")` listener in mock mode + payload normalization + sector-aware label resolution. Sector-aware mock toasts (RE/Auto/Yacht event pools driven by `getPersonas(sector, region)` + `getEventLabel(code, lang, sector)`). Promote modal hierarchy fixed (red primary, ghost cancel, reusable button classes in UnifiedLayout.css). Toast position migrated bottom-right → top-right with newest-on-top stack. Walk-in Promote Automotive path verified working (modal + hide + local VIP entry). QA Round 7: 4/5 critical PASS, T1 RE modal FAIL deferred to 1B (sector-conditional bug), T5 VIP CRM list FAIL pre-existing (verified non-regression via git stash baseline). Audit docs `docs/SPRINT_1A_HOTFIX_AUDIT.md` + `docs/SCHEMA_AUDIT_2026.md` committed alongside. Rebase pulled 54 chore-only bot commits cleanly with no conflicts. [Cursor implementation + Oguzhan QA + Claude audit & directive]
 - Sprint 1A SHIPPED (2026-04-24): commit `36a434ab` pushed to origin/main. NotificationSystem mounted in UnifiedLayout (dead import for entire FAZ 5 cycle now revived). KPI animations (AnimatedCounter wired to KpiCard). Per-action 7-day sparklines in OverviewTab Conversion Actions. Decay multiplier chip in BehavioralTimeline (×0.xx, hidden when >= 0.98). New helper: frontend/src/utils/scoring.js. Cross-tab realtime verification deferred to Sprint 1A.1 (blocked on missing demo mode toggle). [Cursor + Oguzhan QA]
 - Legacy retire decision REVERSED (2026-04-24): /enterprise/crmdemo/dashboard + /automotive/dashboard remain accessible permanently. Hard retire cancelled per Oguzhan ("kesinlikle silinmemeli"). Migration sprints will copy valuable features into /unified without removing the legacy surfaces. CC audit `docs/LEGACY_DASHBOARD_AUDIT.md` remains the source of truth for what to migrate (12 must-migrate items spread across Sprint 1A → 1A.1 → 1B → 2 → 3). [decision]
 
@@ -235,10 +218,10 @@ Flagged during Patch A2 — candidates for FAZ 6 split refactor:
 - `CampaignsTab.jsx` — **798L** (at boundary)
 - `OverviewTab.jsx` — **746L** (growing — was 674 after Patch A, 746 after Patch B)
 - `InventoryTab.jsx` — **660L**
-- `VIPCrmTab.jsx` — **513L**
+- `VIPCrmTab.jsx` — **513L** (likely grew with 1A.2 Walk-in Promote local state — re-measure before next edit)
 
 Also historical context:
-- `AutoDashboard.jsx` (legacy) — **1571L** — retires in FAZ 5 Step 2, no split needed
+- `AutoDashboard.jsx` (legacy) — **1571L** — retires CANCELLED, no split needed (kept accessible)
 - `useDashboardData.js` — ~1260L
 - `UnifiedLayout.jsx` — ~750L
 - `tenantService.js` — ~500L
@@ -247,17 +230,19 @@ Also historical context:
 
 ## Open Strategic Items (priority order)
 
-1. **Sprint 1A.1 hotfix** — in flight with Cursor. Unblocks NotificationSystem manual cross-tab realtime test.
-2. **Sprint 1B** — Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs (4 SIMPLE items from `docs/LEGACY_DASHBOARD_AUDIT.md`). Directive to be written after 1A.1 QA passes.
-3. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns.
-4. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
-5. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
-6. Yacht public page + /yacht/demo portals (region-aware day one).
-7. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
-8. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
-9. Apple Developer Account enrollment.
-10. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
-11. Sentry setup.
+1. **Sprint 1B (split decision pending)** — Now scoped to 9 items. Recommended split:
+   - **1B1 (data integrity, ~6h Cursor):** Persona/region pool consistency (CLAUDE.md §12 enforcement), VIP CRM right panel sector-reset, Walk-in Promote RE modal fix, VIP count badge region accuracy, VIP CANDIDATES persona pool audit. Sales-impact: removes embarrassing demo failures (Gulf personas in Mexico RE listings, AMG GT in RE context).
+   - **1B2 (legacy migration, ~3h Cursor):** Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs (4 SIMPLE items from `docs/LEGACY_DASHBOARD_AUDIT.md`).
+   - Decision on split before directive write.
+2. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns.
+3. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
+4. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
+5. Yacht public page + /yacht/demo portals (region-aware day one).
+6. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
+7. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
+8. Apple Developer Account enrollment.
+9. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
+10. Sentry setup.
 
 ---
 
@@ -269,7 +254,7 @@ Also historical context:
 - Large file line counts — `wc -l` + `tail` check after every edit on files >500L.
 - **Translation coverage** — if a new page/component is added, verify all 4 language dicts are populated. Silent EN fallback means missing keys are invisible without explicit check. Run a namespace parity check (EN key count == AR == ES == FR) before claiming coverage.
 - **LanguageContext toggle** — 3-lang cycle shipped while `SUPPORTED_LANGS` has 4. If anyone changes the cycle logic, confirm FR is included.
-- **Working tree uncommitted state (2026-04-24)** — 24 files dirty from FAZ 5 Step 1 patches. If more work starts before commit, merge risk grows. Consider committing as `feat(unified): FAZ 5 Step 1 — dashboard migration + 4-language coverage` once QA passes.
-- **NotificationSystem dataMode source** — `useDashboard()` and `DashboardDataProvider.jsx` are the source of truth. After Sprint 1A.1 ships, `dataMode` will be settable from SettingsTab and persisted to localStorage. Anyone modifying NotificationSystem behavior must verify both `tenant` and `mock` paths. Mock auto-fire is the demo "wow"; realtime stream is the in-meeting magic. Both must keep working.
-- **eventDisplayMap shape change in Sprint 1A.1** — moves from flat `{lang: {code: label}}` to sector-aware `{GENERIC + SECTOR_OVERRIDES}` with a `getEventLabel(code, lang, sector)` helper. Backward-compat flat export retained. If a future patch adds a new event code, register it in BOTH the generic layer (if sector-agnostic) AND the relevant sector overrides (if terminology differs).
-- **Walk-in Promote is UI-only demo** — clicking confirms hides the row in component state, no Firestore write, no real VIP creation. Refresh resets. Real promote flow is FAZ 6 / Tenant Mode hardening scope. Anyone implementing real promote must remove the UI-only state guard before wiring backend.
+- **NotificationSystem dataMode source** — `useDashboard()` and `DashboardDataProvider.jsx` are the source of truth. `dataMode` is settable from SettingsTab and persisted to localStorage (Sprint 1A.1). Anyone modifying NotificationSystem behavior must verify both `tenant` and `mock` paths. Mock auto-fire is the demo "wow"; cross-tab realtime stream is the in-meeting magic. Both must keep working.
+- **eventDisplayMap shape (Sprint 1A.1)** — flat `{lang: {code: label}}` deprecated. New shape: `{GENERIC + SECTOR_OVERRIDES}` with `getEventLabel(code, lang, sector)` helper. Backward-compat flat export retained. If a future patch adds a new event code, register it in BOTH the generic layer (if sector-agnostic) AND the relevant sector overrides (if terminology differs).
+- **Walk-in Promote is UI-only demo** — clicking confirms hides the row in component state, no Firestore write, no real VIP creation. Refresh resets. Real promote flow is FAZ 6 / Tenant Mode hardening scope. Anyone implementing real promote must remove the UI-only state guard before wiring backend. **Currently works only in Automotive sector** — RE path skips modal entirely (Sprint 1B fix scope).
+- **Persona/region pool inconsistency** — `getPersonas(sector, regionId)` selector does not strictly enforce CLAUDE.md §12 persona table. Gulf personas leak into other regions in RE sector. **Pre-existing bug, predates Sprint 1A.** Sprint 1B1 fix scope.
