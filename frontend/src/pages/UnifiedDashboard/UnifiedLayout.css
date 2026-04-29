@@ -4273,6 +4273,9 @@ a:focus-visible {
   font-weight: 600;
   font-size: 14px;
   color: var(--ud-text, #fff);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .ud-inv-hot-card__tower {
   font-size: 11px;
@@ -4280,6 +4283,19 @@ a:focus-visible {
   background: rgba(69,123,157,0.1);
   padding: 2px 8px;
   border-radius: 6px;
+}
+
+.ud-inv-zero-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(230, 57, 70, 0.45);
+  background: rgba(230, 57, 70, 0.12);
+  color: #e63946;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 .ud-inv-hot-card__metrics {
   font-size: 12px;
