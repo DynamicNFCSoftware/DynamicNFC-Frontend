@@ -238,7 +238,10 @@ export default function VIPCrmTab() {
     const baseVips = vips || [];
     const existingNames = new Set(baseVips.map((vip) => String(vip?.name || "").toLowerCase()));
     const localPromotedVips = promotedCandidates
-      .filter(() => !existingNames.has(String(tx.walkInProspect || "").toLowerCase()))
+      .filter((candidateId) => (
+        !existingNames.has(String(candidateId || tx.walkInProspect || "").toLowerCase()) &&
+        !existingNames.has(String(tx.walkInProspect || "").toLowerCase())
+      ))
       .map((candidateId) => ({
         id: `local-promoted-${candidateId || "vip"}`,
         name: tx.walkInProspect,
