@@ -306,7 +306,6 @@ export default function VIPCrmTab() {
     setShowPromoteConfirm(false);
     setPendingCandidate(null);
     setPromoteToast("");
-    setShowFamilyBuyers(false);
   }, [config.id, regionId, setSelectedVipId]);
 
   const handlePromote = (candidate) => {

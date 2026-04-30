@@ -90,7 +90,18 @@ export default function useDashboardData() {
   });
   const [seedingInProgress, setSeedingInProgress] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [showFamilyBuyers, setShowFamilyBuyers] = useState(false);
+  const [showFamilyBuyers, _setShowFamilyBuyers] = useState(() => {
+    try { return localStorage.getItem("ud:vip:showFamily") === "1"; }
+    catch { return false; }
+  });
+  const setShowFamilyBuyers = (next) => {
+    _setShowFamilyBuyers((prev) => {
+      const value = typeof next === "function" ? next(prev) : next;
+      try { localStorage.setItem("ud:vip:showFamily", value ? "1" : "0"); }
+      catch {}
+      return value;
+    });
+  };
 
   // FIX R2-5: Scoring thresholds (persisted in localStorage)
   const [thresholds, setThresholds] = useState({
