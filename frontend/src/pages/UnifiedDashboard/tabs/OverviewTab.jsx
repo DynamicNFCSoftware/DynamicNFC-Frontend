@@ -63,6 +63,10 @@ const UI = {
       empty: "No saved configurations yet",
       unknown: "Unknown configuration",
     },
+    kpiNfcRoi: "NFC ROI",
+    kpiAvgSession: "Avg. VIP Session",
+    kpiNfcRoiSub: "Closed value vs card cost",
+    kpiAvgSessionSub: "Identified visitor sessions",
   },
   ar: {
     section: "نظرة عامة",
@@ -107,6 +111,10 @@ const UI = {
       empty: "لا توجد تكوينات محفوظة بعد",
       unknown: "تكوين غير معروف",
     },
+    kpiNfcRoi: "عائد NFC",
+    kpiAvgSession: "متوسط جلسة VIP",
+    kpiNfcRoiSub: "القيمة المغلقة مقابل تكلفة البطاقات",
+    kpiAvgSessionSub: "جلسات الزوار المعروفين",
   },
   es: {
     section: "Vista general",
@@ -151,6 +159,10 @@ const UI = {
       empty: "Aún no hay configuraciones guardadas",
       unknown: "Configuración desconocida",
     },
+    kpiNfcRoi: "ROI NFC",
+    kpiAvgSession: "Sesión VIP promedio",
+    kpiNfcRoiSub: "Valor cerrado vs costo de tarjetas",
+    kpiAvgSessionSub: "Sesiones de visitantes identificados",
   },
   fr: {
     section: "Vue générale",
@@ -195,6 +207,10 @@ const UI = {
       empty: "Aucune configuration sauvegardée",
       unknown: "Configuration inconnue",
     },
+    kpiNfcRoi: "ROI NFC",
+    kpiAvgSession: "Session VIP moy.",
+    kpiNfcRoiSub: "Valeur clôturée vs coût des cartes",
+    kpiAvgSessionSub: "Sessions de visiteurs identifiés",
   },
   tr: {
     todayWorkflow: "Bugunun is akisi",
@@ -234,6 +250,23 @@ function WeeklyTooltip({ active, payload, label, formatter }) {
   );
 }
 
+function formatDuration(totalMs) {
+  if (!Number.isFinite(totalMs) || totalMs <= 0) return "—";
+  const totalSeconds = Math.floor(totalMs / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}m ${String(seconds).padStart(2, "0")}s`;
+}
+
+function toTimestampMs(value) {
+  if (typeof value === "number") return Number.isFinite(value) ? value : NaN;
+  if (!value) return NaN;
+  if (value instanceof Date) return value.getTime();
+  if (typeof value?.toMillis === "function") return value.toMillis();
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : NaN;
+}
+
 export default function OverviewTab() {
   const { config, st } = useSector();
   const { region, regionId } = useRegion();
@@ -249,7 +282,7 @@ export default function OverviewTab() {
       return resolveWeeklyRange({ preset: "last8w" });
     }
   });
-  const { kpis, events, vips, analytics, loading, sparklines, feedCounts, callQueue, alerts } = useDashboard();
+  const { kpis, events, vips, deals, cards, analytics, loading, sparklines, feedCounts, callQueue, alerts } = useDashboard();
   const tx = { ...UI.en, ...(UI[lang] || {}) };
   const locale = getEffectiveLocale(regionId, lang);
   const dateTickFormatter = (value) => new Date(value).toLocaleDateString(locale, { month: "short", day: "numeric" });
@@ -259,6 +292,74 @@ export default function OverviewTab() {
   const labelCategory = st(config.inventory.categoryLabel).toLowerCase();
 
   const hasAlertActivity = (alerts?.hotLeads || 0) > 0 || (alerts?.activeAlerts || 0) > 0;
+  const nfcRoiDisplay = useMemo(() => {
+    const totalDealValueClosed = (deals || [])
+      .filter((deal) => ["closed", "closed_won"].includes(String(deal?.stage || "").toLowerCase()))
+      .reduce((sum, deal) => sum + Number(deal?.value || 0), 0);
+    const cardsIssued = Array.isArray(cards) ? cards.length : 0;
+    const nfcCardCost = 25;
+    if (!cardsIssued || !totalDealValueClosed) return "—";
+    const ratio = totalDealValueClosed / (cardsIssued * nfcCardCost);
+    return Number.isFinite(ratio) && ratio > 0 ? `${ratio.toFixed(1)}x` : "—";
+  }, [cards, deals]);
+  const avgSessionDisplay = useMemo(() => {
+    const SESSION_IDLE_GAP_MS = 30 * 60 * 1000;
+    const MAX_SESSION_MS = 4 * 60 * 60 * 1000;
+    const userEvents = new Map();
+
+    events.forEach((event) => {
+      if (String(event.portalType || "").toLowerCase() === "anonymous") return;
+      const identity = event.userId || event.vipId || event.vipName || event.userName || event.leadName;
+      if (!identity) return;
+      const ts = toTimestampMs(event.timestamp || event.createdAt || event.ts);
+      if (!Number.isFinite(ts)) return;
+      const key = `${event.portalType || "named"}:${identity}`;
+      const timeline = userEvents.get(key) || [];
+      timeline.push(ts);
+      userEvents.set(key, timeline);
+    });
+
+    const durations = [];
+    let droppedOutliers = 0;
+    userEvents.forEach((timeline) => {
+      const sorted = timeline.slice().sort((a, b) => a - b);
+      if (sorted.length < 2) return;
+      let sessionStart = sorted[0];
+      let previous = sorted[0];
+
+      for (let idx = 1; idx < sorted.length; idx += 1) {
+        const current = sorted[idx];
+        if (current - previous > SESSION_IDLE_GAP_MS) {
+          const duration = previous - sessionStart;
+          if (duration > 0) {
+            if (duration <= MAX_SESSION_MS) durations.push(duration);
+            else droppedOutliers += 1;
+          }
+          sessionStart = current;
+        }
+        previous = current;
+      }
+
+      const finalDuration = previous - sessionStart;
+      if (finalDuration > 0) {
+        if (finalDuration <= MAX_SESSION_MS) durations.push(finalDuration);
+        else droppedOutliers += 1;
+      }
+    });
+
+    if (import.meta.env.DEV && droppedOutliers > 0) {
+      console.warn(JSON.stringify({
+        location: "OverviewTab.avgSessionDisplay",
+        message: "Dropped outlier session durations over 4 hours",
+        data: { droppedOutliers, maxSessionMinutes: 240 },
+        timestamp: Date.now(),
+      }));
+    }
+
+    if (durations.length === 0) return "—";
+    const avgMs = durations.reduce((sum, duration) => sum + duration, 0) / durations.length;
+    return formatDuration(avgMs);
+  }, [events]);
   const conversionWindowText = `${tx.chartWindow}: ${Math.min(events.length, 500)} ${tx.last500Events}`;
   const FEED_FILTERS = [
     { id: "all", label: { en: "All", ar: "الكل", es: "Todos", fr: "Tous" } },
@@ -500,6 +601,22 @@ export default function OverviewTab() {
             />
           );
         })}
+        <KpiCard
+          key="nfc_roi"
+          label={tx.kpiNfcRoi}
+          value={0}
+          subtitle={tx.kpiNfcRoiSub}
+          color="#8b5cf6"
+          displayOverride={nfcRoiDisplay}
+        />
+        <KpiCard
+          key="avg_session"
+          label={tx.kpiAvgSession}
+          value={0}
+          subtitle={tx.kpiAvgSessionSub}
+          color="#0ea5e9"
+          displayOverride={avgSessionDisplay}
+        />
       </div>
 
       <div className="ud-card" style={{ marginTop: 16, marginBottom: 16 }}>

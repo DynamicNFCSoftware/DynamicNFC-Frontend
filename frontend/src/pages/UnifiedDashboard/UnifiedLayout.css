@@ -703,7 +703,7 @@
 /* Keep desktop/tablet sidebar state-driven by toggle.
    Off-canvas behavior starts only at <= 768px. */
 
-@media (max-width: 1024px) {
+@media (max-width: 767px) {
   /* Mobile/tablet: sidebar off-canvas, hamburger to open */
   .ud-layout,
   .ud-layout.ud-collapsed {
@@ -1527,6 +1527,41 @@
   margin: 0 0 12px;
 }
 
+.ud-help-modal {
+  max-width: 620px;
+}
+
+.ud-help-modal-section {
+  border: 1px solid var(--ud-border);
+  border-radius: 10px;
+  background: var(--ud-bg-secondary);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.ud-help-modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.ud-help-modal-section--rule {
+  border-color: rgba(230, 57, 70, 0.35);
+  background: rgba(230, 57, 70, 0.08);
+}
+
+.ud-help-modal-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ud-text);
+  margin-bottom: 6px;
+}
+
+.ud-help-modal-text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ud-text-muted);
+}
+
 .ud-copy-btn {
   all: unset;
   cursor: pointer;
@@ -1564,7 +1599,7 @@
 /* ── Mobile Hamburger ── */
 .ud-hamburger {
   all: unset;
-  display: none !important;
+  display: none;
   cursor: pointer;
   padding: 8px;
   color: rgba(255, 255, 255, 0.6);
@@ -2102,6 +2137,11 @@
   background: var(--ud-nav-hover);
 }
 
+.ud-help-btn {
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .ud-live-indicator {
   display: flex;
   align-items: center;
@@ -2548,6 +2588,18 @@
   color: var(--ud-text);
 }
 
+.ud-vip-family-badge {
+  margin-inline-start: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b7280;
+  background: rgba(107, 114, 128, 0.12);
+  border: 1px solid rgba(107, 114, 128, 0.25);
+  border-radius: 999px;
+  padding: 2px 7px;
+  vertical-align: middle;
+}
+
 .ud-vip-list-meta {
   display: flex;
   align-items: center;
@@ -2570,6 +2622,18 @@
   letter-spacing: 0.05em;
   color: var(--ud-text-muted);
   opacity: 0.7;
+}
+
+.ud-vip-family-hint {
+  margin: 8px 10px 4px;
+  background: transparent;
+  border: none;
+  color: var(--ud-accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-align: start;
 }
 
 .ud-btn-promote {
@@ -4209,6 +4273,9 @@ a:focus-visible {
   font-weight: 600;
   font-size: 14px;
   color: var(--ud-text, #fff);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .ud-inv-hot-card__tower {
   font-size: 11px;
@@ -4216,6 +4283,19 @@ a:focus-visible {
   background: rgba(69,123,157,0.1);
   padding: 2px 8px;
   border-radius: 6px;
+}
+
+.ud-inv-zero-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(230, 57, 70, 0.45);
+  background: rgba(230, 57, 70, 0.12);
+  color: #e63946;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 .ud-inv-hot-card__metrics {
   font-size: 12px;

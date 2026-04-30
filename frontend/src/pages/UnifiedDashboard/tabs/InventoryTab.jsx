@@ -52,6 +52,8 @@ const UI = {
     topUnit: "Top unit",
     sparkline7d: "7d",
     typeBreakdown: "Interest by Type",
+    zeroEngagement: "Zero Engagement",
+    zeroEngagementFilter: "Zero Engagement",
   },
   ar: {
     sectionSuffix: "التوزيع",
@@ -96,6 +98,8 @@ const UI = {
     topUnit: "أعلى وحدة",
     sparkline7d: "7 أيام",
     typeBreakdown: "الاهتمام حسب النوع",
+    zeroEngagement: "لا يوجد تفاعل",
+    zeroEngagementFilter: "لا يوجد تفاعل",
   },
   es: {
     sectionSuffix: "Distribución",
@@ -140,6 +144,8 @@ const UI = {
     topUnit: "Unidad principal",
     sparkline7d: "7d",
     typeBreakdown: "Interés por Tipo",
+    zeroEngagement: "Sin interacción",
+    zeroEngagementFilter: "Sin interacción",
   },
   fr: {
     sectionSuffix: "Répartition",
@@ -184,6 +190,8 @@ const UI = {
     topUnit: "Unité principale",
     sparkline7d: "7j",
     typeBreakdown: "Intérêt par Type",
+    zeroEngagement: "Aucun engagement",
+    zeroEngagementFilter: "Aucun engagement",
   },
 };
 
@@ -283,11 +291,16 @@ function KpiCard({ icon, label, value, sub, accent }) {
 }
 
 /* ─── Hot Unit Card ─── */
-function HotUnitCard({ unit, tx }) {
+function HotUnitCard({ unit, tx, isZeroEngagement }) {
   return (
     <div className="ud-inv-hot-card">
       <div className="ud-inv-hot-card__header">
-        <span className="ud-inv-hot-card__name">{unit.name}</span>
+        <span className="ud-inv-hot-card__name">
+          {unit.name}
+          {isZeroEngagement ? (
+            <span className="ud-inv-zero-badge">{tx.zeroEngagement}</span>
+          ) : null}
+        </span>
         <span className="ud-inv-hot-card__tower">{unit.tower}</span>
       </div>
       <div className="ud-inv-hot-card__metrics">
@@ -449,6 +462,15 @@ export default function InventoryTab() {
   const [selectedCat, setSelectedCat] = useState(null);
   const [typeFilter, setTypeFilter] = useState("all");
   const [sortKey, setSortKey] = useState("interest");
+  const [showZeroEngagementOnly, setShowZeroEngagementOnly] = useState(false);
+  const isZeroEngagement = useCallback(
+    (unit) => (
+      Number(unit?.views || 0) === 0 &&
+      Number(unit?.totalTaps || 0) === 0 &&
+      Number(unit?.interestedVips?.length || 0) === 0
+    ),
+    []
+  );
 
   const typeFilters = useMemo(() => {
     const tf = config.inventory?.typeFilters || [];
@@ -476,6 +498,16 @@ export default function InventoryTab() {
   const totalInterest = useMemo(
     () => sortedCats.reduce((s, c) => s + c.interest, 0) || 1,
     [sortedCats]
+  );
+  const hotUnits = useMemo(() => {
+    if (Array.isArray(inventoryMetrics?.hotUnits) && inventoryMetrics.hotUnits.length > 0) {
+      return inventoryMetrics.hotUnits;
+    }
+    return [...(cards || [])].sort((a, b) => Number(b?.views || 0) - Number(a?.views || 0)).slice(0, 8);
+  }, [inventoryMetrics, cards]);
+  const filteredHotUnits = useMemo(
+    () => (showZeroEngagementOnly ? hotUnits.filter((unit) => isZeroEngagement(unit)) : hotUnits),
+    [hotUnits, isZeroEngagement, showZeroEngagementOnly]
   );
 
   const kpi = inventoryMetrics?.kpis || {};
@@ -548,6 +580,12 @@ export default function InventoryTab() {
       {/* ── Filters Row ── */}
       <div className="ud-inv-filters">
         <div className="ud-inv-type-chips">
+          <button
+            className={`ud-inv-chip ${showZeroEngagementOnly ? "ud-inv-chip--active" : ""}`}
+            onClick={() => setShowZeroEngagementOnly((prev) => !prev)}
+          >
+            {tx.zeroEngagementFilter}
+          </button>
           <button
             className={`ud-inv-chip ${typeFilter === "all" ? "ud-inv-chip--active" : ""}`}
             onClick={() => setTypeFilter("all")}
@@ -667,13 +705,13 @@ export default function InventoryTab() {
       </div>
 
       {/* ── Hot Units Spotlight ── */}
-      {inventoryMetrics?.hotUnits && inventoryMetrics.hotUnits.length > 0 && (
+      {filteredHotUnits.length > 0 && (
         <div className="ud-card ud-inv-hot-section">
           <div className="ud-card-title">{"🔥"} {tx.hotUnits}</div>
           <div className="ud-card-subtitle">{tx.hotUnitsDesc}</div>
           <div className="ud-inv-hot-grid">
-            {inventoryMetrics.hotUnits.map((u) => (
-              <HotUnitCard key={u.id || u.name} unit={u} tx={tx} />
+            {filteredHotUnits.map((u) => (
+              <HotUnitCard key={u.id || u.name} unit={u} tx={tx} isZeroEngagement={isZeroEngagement(u)} />
             ))}
           </div>
         </div>

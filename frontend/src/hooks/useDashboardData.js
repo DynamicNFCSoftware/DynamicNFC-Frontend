@@ -4,6 +4,7 @@ import { db } from "../firebase";
 import { useSector } from "./useSector";
 import { useAuth } from "../contexts/AuthContext";
 import { useRegion } from "./useRegion";
+import { getPersonas } from "../config/regionConfig";
 import { calculateDecayedScore, calculateVelocity, detectSalesTriggers, getSectorConfig } from "../config/sectorConfig";
 import { checkTenantExists, seedTenantData, updateLastActivity } from "../services/tenantService";
 import { normalizeSectorId } from "../utils/sectorId";
@@ -89,6 +90,7 @@ export default function useDashboardData() {
   });
   const [seedingInProgress, setSeedingInProgress] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showFamilyBuyers, setShowFamilyBuyers] = useState(false);
 
   // FIX R2-5: Scoring thresholds (persisted in localStorage)
   const [thresholds, setThresholds] = useState({
@@ -354,7 +356,7 @@ export default function useDashboardData() {
   // Alias for backward compat
   const events = normalizedEvents || [];
 
-  const vips = useMemo(() => {
+  const scoredVips = useMemo(() => {
     const vipEvents = normalizedEvents.filter((e) => e.portalType === "vip" && !!e.vipName);
     const byVip = {};
     vipEvents.forEach((evt) => {
@@ -403,12 +405,42 @@ export default function useDashboardData() {
       .sort((a, b) => b.score - a.score);
   }, [normalizedEvents, sectorRawLeads, sectorId]);
 
+  const familyPersonas = useMemo(
+    () => (getPersonas(sectorId, regionId) || []).filter((persona) => persona?.type === "family"),
+    [sectorId, regionId]
+  );
+  const familyBuyerCount = familyPersonas.length;
+
+  const vips = useMemo(() => {
+    if (!showFamilyBuyers) return scoredVips;
+    const existingNames = new Set(scoredVips.map((vip) => String(vip?.name || "").toLowerCase()));
+    const familyRows = familyPersonas
+      .filter((persona) => !existingNames.has(String(persona?.name || "").toLowerCase()))
+      .map((persona, index) => ({
+        id: `family-${persona.id || index}`,
+        name: persona.name,
+        email: persona.email || "",
+        score: 0,
+        lastSeen: null,
+        topItem: null,
+        events: [],
+        alert: null,
+        alerts: [],
+        triggers: [],
+        trigger: "",
+        velocity: { idleDays: 0, totalSessions: 0, eventsPerDay: 0 },
+        atRisk: false,
+        isFamily: true,
+      }));
+    return [...scoredVips, ...familyRows];
+  }, [scoredVips, showFamilyBuyers, familyPersonas]);
+
   // Build a name→VIP lookup so deals can pull real intent scores
   const vipByName = useMemo(() => {
     const map = {};
-    vips.forEach((v) => { if (v.name) map[v.name.toLowerCase()] = v; });
+    scoredVips.forEach((v) => { if (v.name) map[v.name.toLowerCase()] = v; });
     return map;
-  }, [vips]);
+  }, [scoredVips]);
 
   const deals = useMemo(
     () =>
@@ -451,7 +483,7 @@ export default function useDashboardData() {
   const suggestedDeals = useMemo(() => {
     const dealLeadNames = new Set(deals.map((d) => (d.leadName || "").toLowerCase()));
     const DEAL_TRIGGERS = ["pricing_3x", "booking_request", "quote_requested", "test_drive"];
-    return vips
+    return scoredVips
       .filter((v) => {
         if (dealLeadNames.has((v.name || "").toLowerCase())) return false;
         const hasTrigger = (v.triggers || []).some((t) => DEAL_TRIGGERS.includes(t.type));
@@ -470,7 +502,7 @@ export default function useDashboardData() {
             ? "contacted"
             : "new_lead",
       }));
-  }, [vips, deals]);
+  }, [scoredVips, deals]);
 
   // Auto-advance: check existing deals against VIP events and sectorConfig rules
   const pendingAdvances = useMemo(() => {
@@ -743,21 +775,6 @@ export default function useDashboardData() {
       }))
       .sort((a, b) => b.decayedScore - a.decayedScore);
 
-    const registeredEvents = normalizedEvents.filter(
-      (e) => e.portalType === "registered" || e.portalType === "family"
-    );
-    const vipCandidates = registeredEvents.length > 0
-      ? [{
-          id: WALK_IN_CANDIDATE_ID,
-          name: WALK_IN_CANDIDATE_ID,
-          score: calculateDecayedScore(
-            registeredEvents.map((e) => ({ type: e.type, timestamp: e.timestamp })),
-            sectorId
-          ),
-          events: registeredEvents.length,
-        }]
-      : [];
-
     const vipHeatMap = {};
     normalizedEvents
       .filter((e) => e.portalType === "vip" && e.vipName)
@@ -823,19 +840,18 @@ export default function useDashboardData() {
         })
       ),
       scoreDist: [
-        { band: "0-20", count: vips.filter((v) => v.score <= 20).length, color: "#6ba3c7" },
-        { band: "21-40", count: vips.filter((v) => v.score > 20 && v.score <= 40).length, color: "#457b9d" },
-        { band: "41-60", count: vips.filter((v) => v.score > 40 && v.score <= 60).length, color: "#eab308" },
-        { band: "61-80", count: vips.filter((v) => v.score > 60 && v.score <= 80).length, color: "#f97316" },
-        { band: "81-100", count: vips.filter((v) => v.score > 80).length, color: "#e63946" },
+        { band: "0-20", count: scoredVips.filter((v) => v.score <= 20).length, color: "#6ba3c7" },
+        { band: "21-40", count: scoredVips.filter((v) => v.score > 20 && v.score <= 40).length, color: "#457b9d" },
+        { band: "41-60", count: scoredVips.filter((v) => v.score > 40 && v.score <= 60).length, color: "#eab308" },
+        { band: "61-80", count: scoredVips.filter((v) => v.score > 60 && v.score <= 80).length, color: "#f97316" },
+        { band: "81-100", count: scoredVips.filter((v) => v.score > 80).length, color: "#e63946" },
       ],
       conv,
       vipHeat,
       people,
-      vipCandidates,
       funnelData,
     };
-  }, [normalizedEvents, sectorId, sectorEvents, vips]);
+  }, [normalizedEvents, sectorId, sectorEvents, scoredVips]);
 
   const kpis = useMemo(() => {
     const activeVips = new Set(normalizedEvents.filter((e) => e.portalType === "vip").map((e) => e.vipName).filter(Boolean)).size;
@@ -889,11 +905,11 @@ export default function useDashboardData() {
 
   // FIX R2-2: Alerts computed from VIP data + thresholds
   const alerts = useMemo(() => {
-    const hotLeads = vips.filter((v) => v.score >= thresholds.hot).length;
-    const activeAlerts = vips.filter((v) => v.triggers && v.triggers.length > 0).length;
-    const avgScore = vips.length > 0 ? Math.round(vips.reduce((s, v) => s + v.score, 0) / vips.length) : 0;
+    const hotLeads = scoredVips.filter((v) => v.score >= thresholds.hot).length;
+    const activeAlerts = scoredVips.filter((v) => v.triggers && v.triggers.length > 0).length;
+    const avgScore = scoredVips.length > 0 ? Math.round(scoredVips.reduce((s, v) => s + v.score, 0) / scoredVips.length) : 0;
     return { hotLeads, activeAlerts, avgScore };
-  }, [vips, thresholds]);
+  }, [scoredVips, thresholds]);
 
   // CC-3: KPI sparklines — 7-day daily counts per KPI
   const sparklines = useMemo(() => {
@@ -929,7 +945,7 @@ export default function useDashboardData() {
 
   // CC-5: Call queue — VIPs with triggers, sorted by score
   const callQueue = useMemo(() => {
-    return vips
+    return scoredVips
       .filter((v) => v.triggers && v.triggers.length > 0)
       .sort((a, b) => (b.score || 0) - (a.score || 0))
       .slice(0, 5)
@@ -943,7 +959,7 @@ export default function useDashboardData() {
         topItem: v.topItem,
         idleDays: v.velocity?.idleDays || 0,
       }));
-  }, [vips]);
+  }, [scoredVips]);
 
   // CC-6: Funnel data with drop-off
   const funnelData = useMemo(() => {
@@ -987,7 +1003,7 @@ export default function useDashboardData() {
   const [selectedVipId, setSelectedVipId] = useState(null);
   const vipDetail = useMemo(() => {
     if (!selectedVipId) return null;
-    const vip = vips.find((v) => v.id === selectedVipId);
+    const vip = scoredVips.find((v) => v.id === selectedVipId);
     if (!vip) return null;
     const vipEvts = normalizedEvents.filter((e) => e.vipName === vip.name || e.personName === vip.name);
     const itemCounts = {};
@@ -1007,7 +1023,7 @@ export default function useDashboardData() {
       totalSessions: new Set(ts.map((t) => new Date(t).toDateString())).size,
       recentEvents: vipEvts.slice(0, 20),
     };
-  }, [selectedVipId, vips, normalizedEvents]);
+  }, [selectedVipId, scoredVips, normalizedEvents]);
 
   // CC-S2-3: Heatmap data (VIP intent × category + property demand)
   // Seeded pseudo-random for consistent demo fill values
@@ -1020,7 +1036,7 @@ export default function useDashboardData() {
       const lower = raw.toLowerCase();
       return cats.find((c) => c.id === lower || lower.includes((c.name?.en || "").toLowerCase()))?.id || null;
     };
-    const vipIntent = vips.slice(0, 8).map((v) => {
+    const vipIntent = scoredVips.slice(0, 8).map((v) => {
       const vEvts = normalizedEvents.filter((e) => e.vipName === v.name);
       const row = { name: v.name, id: v.id };
       let rowTotal = 0;
@@ -1061,7 +1077,7 @@ export default function useDashboardData() {
     colTotals._total = Object.values(colTotals).reduce((s, v) => s + v, 0);
 
     return { vipIntent, propertyDemand, colTotals };
-  }, [vips, normalizedEvents, sectorId]);
+  }, [scoredVips, normalizedEvents, sectorId]);
 
   // CC-S2-4: Owner/sales rep workload (region-aware)
   const salesReps = useMemo(() => {
@@ -1080,7 +1096,7 @@ export default function useDashboardData() {
     };
     const reps = regionReps || FALLBACK[regionId] || FALLBACK.gulf;
     return reps.map((rep) => {
-      const assigned = vips.filter((v) => v.assignedRep === rep.id || v.assignedRep === rep.name);
+      const assigned = scoredVips.filter((v) => v.assignedRep === rep.id || v.assignedRep === rep.name);
       return {
         ...rep,
         totalVips: assigned.length,
@@ -1088,11 +1104,11 @@ export default function useDashboardData() {
         dueToday: assigned.filter((v) => v.triggers?.some((t) => t.severity === "high")).length,
       };
     });
-  }, [vips, sectorId, regionId]);
+  }, [scoredVips, sectorId, regionId]);
 
   // CC-S2-5: VIP candidates (registered users not yet VIP, with >= 3 events)
   const vipCandidates = useMemo(() => {
-    const vipNames = new Set(vips.map((v) => (v.name || "").toLowerCase()));
+    const vipNames = new Set(scoredVips.map((v) => (v.name || "").toLowerCase()));
     const walkInCandidate = {
       id: WALK_IN_CANDIDATE_ID,
       name: WALK_IN_CANDIDATE_ID,
@@ -1114,7 +1130,7 @@ export default function useDashboardData() {
       if (["request_pricing", "book_viewing", "download_brochure"].includes(e.type)) walkInCandidate.ctaCount++;
     });
     return walkInCandidate.eventCount >= 3 ? [walkInCandidate] : [];
-  }, [normalizedEvents, vips]);
+  }, [normalizedEvents, scoredVips]);
 
   // Region-aware currency formatter
   const formatValue = useCallback((val) => {
@@ -1194,7 +1210,7 @@ export default function useDashboardData() {
         .filter((c) => matchCat(c.tower))
         .map((c) => ({
           ...c,
-          interestedVips: vips.filter((v) => (v.topItem || "").toLowerCase() === c.name.toLowerCase()).map((v) => ({ name: v.name, score: v.score })),
+          interestedVips: scoredVips.filter((v) => (v.topItem || "").toLowerCase() === c.name.toLowerCase()).map((v) => ({ name: v.name, score: v.score })),
         }));
 
       // By unit type breakdown
@@ -1246,7 +1262,7 @@ export default function useDashboardData() {
       totalPipelineValue,
       lowStockCategories,
     };
-  }, [normalizedEvents, vips, deals, cards, sectorId]);
+  }, [normalizedEvents, scoredVips, deals, cards, sectorId]);
 
   /* ═══ Return ═══ */
   return {
@@ -1277,6 +1293,9 @@ export default function useDashboardData() {
     error,
     dataMode,
     setDataMode,
+    showFamilyBuyers,
+    setShowFamilyBuyers,
+    familyBuyerCount,
     refresh,
     formatValue,
     seedingInProgress,

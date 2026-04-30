@@ -27,7 +27,7 @@ const UI = {
     candidates: "VIP candidates",
     promote: "Promote →",
     reachOut: "Reach out",
-    reissue: "Reissue link",
+    reissue: "Reissue Portal Link",
     eventsLabel: "events",
     noTriggers: "No active trigger yet",
     noCta: "No CTA activity yet",
@@ -55,6 +55,11 @@ const UI = {
     promoteWalkInBody: "This will move the candidate to your VIP list. The lead will be tagged for priority follow-up.",
     promoteConfirm: "Promote",
     vipPromotedSuccess: "VIP promoted successfully - Walk-in Prospect added to your VIP list",
+    portalLinkCopied: "Portal link copied to clipboard",
+    portalLinkCopyFailed: "Clipboard permission unavailable",
+    showFamilyBuyers: "Show family buyers",
+    familyBadge: "Family",
+    viewFamilyBuyers: "View {{count}} family buyers →",
   },
   ar: {
     section: "إدارة VIP",
@@ -72,7 +77,7 @@ const UI = {
     candidates: "مرشحون للترقية",
     promote: "ترقية →",
     reachOut: "تواصل",
-    reissue: "إعادة إصدار الرابط",
+    reissue: "إعادة إصدار رابط البوابة",
     eventsLabel: "تفاعل",
     noTriggers: "لا توجد محفزات نشطة",
     noCta: "لا توجد نشاطات CTA بعد",
@@ -100,6 +105,11 @@ const UI = {
     promoteWalkInBody: "سيؤدي ذلك إلى نقل المرشح إلى قائمة VIP الخاصة بك مع وسمه بمتابعة ذات أولوية.",
     promoteConfirm: "ترقية",
     vipPromotedSuccess: "تمت الترقية بنجاح - تمت إضافة الزائر إلى قائمة VIP",
+    portalLinkCopied: "تم نسخ رابط البوابة إلى الحافظة",
+    portalLinkCopyFailed: "تعذر الوصول إلى الحافظة",
+    showFamilyBuyers: "إظهار المشترين العائليين",
+    familyBadge: "عائلي",
+    viewFamilyBuyers: "عرض {{count}} مشترين عائليين ←",
   },
   es: {
     section: "CRM VIP",
@@ -117,7 +127,7 @@ const UI = {
     candidates: "Candidatos VIP",
     promote: "Promover →",
     reachOut: "Contactar",
-    reissue: "Reemitir enlace",
+    reissue: "Reemitir enlace del portal",
     eventsLabel: "eventos",
     noTriggers: "Sin triggers activos",
     noCta: "Sin actividad CTA aun",
@@ -145,6 +155,11 @@ const UI = {
     promoteWalkInBody: "Esto movera al candidato a tu lista VIP y se marcara para seguimiento prioritario.",
     promoteConfirm: "Promover",
     vipPromotedSuccess: "VIP promovido correctamente - Prospecto espontaneo agregado a la lista VIP",
+    portalLinkCopied: "Enlace del portal copiado al portapapeles",
+    portalLinkCopyFailed: "Permiso de portapapeles no disponible",
+    showFamilyBuyers: "Mostrar compradores familiares",
+    familyBadge: "Familiar",
+    viewFamilyBuyers: "Ver {{count}} compradores familiares →",
   },
   fr: {
     section: "CRM VIP",
@@ -162,7 +177,7 @@ const UI = {
     candidates: "Candidats VIP",
     promote: "Promouvoir →",
     reachOut: "Contacter",
-    reissue: "Reemettre le lien",
+    reissue: "Réémettre le lien du portail",
     eventsLabel: "evenements",
     noTriggers: "Aucun declencheur actif",
     noCta: "Aucune activite CTA",
@@ -190,6 +205,11 @@ const UI = {
     promoteWalkInBody: "Cette action déplacera le candidat vers votre liste VIP avec un suivi prioritaire.",
     promoteConfirm: "Promouvoir",
     vipPromotedSuccess: "VIP promu avec succès - Prospect spontané ajouté à votre liste VIP",
+    portalLinkCopied: "Lien du portail copié dans le presse-papiers",
+    portalLinkCopyFailed: "Autorisation du presse-papiers indisponible",
+    showFamilyBuyers: "Afficher acheteurs familiaux",
+    familyBadge: "Familial",
+    viewFamilyBuyers: "Voir {{count}} acheteurs familiaux →",
   },
 };
 
@@ -233,12 +253,25 @@ export default function VIPCrmTab() {
   const [showPromoteConfirm, setShowPromoteConfirm] = useState(false);
   const [pendingCandidate, setPendingCandidate] = useState(null);
   const [promoteToast, setPromoteToast] = useState("");
-  const { vips, vipCandidates, selectedVipId, setSelectedVipId, vipDetail, loading } = useDashboard();
+  const {
+    vips,
+    vipCandidates,
+    selectedVipId,
+    setSelectedVipId,
+    vipDetail,
+    loading,
+    showFamilyBuyers,
+    setShowFamilyBuyers,
+    familyBuyerCount,
+  } = useDashboard();
   const effectiveVips = useMemo(() => {
     const baseVips = vips || [];
     const existingNames = new Set(baseVips.map((vip) => String(vip?.name || "").toLowerCase()));
     const localPromotedVips = promotedCandidates
-      .filter(() => !existingNames.has(String(tx.walkInProspect || "").toLowerCase()))
+      .filter((candidateId) => (
+        !existingNames.has(String(candidateId || tx.walkInProspect || "").toLowerCase()) &&
+        !existingNames.has(String(tx.walkInProspect || "").toLowerCase())
+      ))
       .map((candidateId) => ({
         id: `local-promoted-${candidateId || "vip"}`,
         name: tx.walkInProspect,
@@ -253,6 +286,8 @@ export default function VIPCrmTab() {
   const filteredVips = useMemo(() => (
     effectiveVips.filter((vip) => (vip.name || "").toLowerCase().includes(search.toLowerCase()))
   ), [effectiveVips, search]);
+
+  const familyHintLabel = tx.viewFamilyBuyers.replace("{{count}}", String(familyBuyerCount || 0));
 
   const visibleCandidates = useMemo(() => (
     (vipCandidates || []).filter((c) => !dismissedCandidates.includes(c.id || c.name))
@@ -271,6 +306,7 @@ export default function VIPCrmTab() {
     setShowPromoteConfirm(false);
     setPendingCandidate(null);
     setPromoteToast("");
+    setShowFamilyBuyers(false);
   }, [config.id, regionId, setSelectedVipId]);
 
   const handlePromote = (candidate) => {
@@ -310,6 +346,24 @@ export default function VIPCrmTab() {
     type: normalizeEventCode(evt?.type || evt?.action || evt?.event || evt?.label),
     label: displayEvent(evt?.type || evt?.action || evt?.event || evt?.label),
   }));
+  const getReissueCardId = (vip) => {
+    if (vip?.cardId) return vip.cardId;
+    const sectorPrefix = { real_estate: "RE", automotive: "AU", yacht: "YA" }[config.id] || "RE";
+    const vipOnlyRows = effectiveVips.filter((row) => !row?.isFamily);
+    const rowIndex = vipOnlyRows.findIndex((row) => row.id === vip?.id);
+    const ordinal = rowIndex >= 0 ? rowIndex + 1 : 1;
+    return `${sectorPrefix}-${String(regionId || "gulf").toUpperCase()}-V${String(ordinal).padStart(3, "0")}`;
+  };
+  const handleReissuePortalLink = async (vip) => {
+    if (!vip) return;
+    const portalUrl = `https://dynamicnfc.ca/c/${getReissueCardId(vip)}`;
+    try {
+      await navigator.clipboard.writeText(portalUrl);
+      setPromoteToast(tx.portalLinkCopied);
+    } catch {
+      setPromoteToast(tx.portalLinkCopyFailed);
+    }
+  };
 
   if (loading) {
     return (
@@ -365,6 +419,13 @@ export default function VIPCrmTab() {
           >
             + {tx.addVip}
           </button>
+          <button
+            type="button"
+            className={`ud-inv-chip ${showFamilyBuyers ? "ud-inv-chip--active" : ""}`}
+            onClick={() => setShowFamilyBuyers((prev) => !prev)}
+          >
+            {tx.showFamilyBuyers}
+          </button>
           <span className="ud-vip-count-chip" title={`${tx.vipCount}: ${effectiveVips.length}`}>
             {tx.vipCount}: {effectiveVips.length}
           </span>
@@ -384,6 +445,9 @@ export default function VIPCrmTab() {
                   <div className="ud-vip-list-info">
                     <div className="ud-vip-list-name">
                       {vip.name}
+                      {vip.isFamily ? (
+                        <span className="ud-vip-family-badge">{tx.familyBadge}</span>
+                      ) : null}
                       {vip.__localPromoted ? (
                         <span style={{ marginInlineStart: 6, fontSize: 10, color: "var(--ud-accent)" }}>• local</span>
                       ) : null}
@@ -413,6 +477,15 @@ export default function VIPCrmTab() {
                 <div style={{ fontSize: 12, color: "var(--ud-text-muted)", padding: "8px 4px" }}>
                   {tx.noResults}
                 </div>
+              ) : null}
+              {!showFamilyBuyers && familyBuyerCount > 0 ? (
+                <button
+                  type="button"
+                  className="ud-vip-family-hint"
+                  onClick={() => setShowFamilyBuyers(true)}
+                >
+                  {familyHintLabel}
+                </button>
               ) : null}
 
               {visibleCandidates.length > 0 ? (
@@ -621,7 +694,7 @@ export default function VIPCrmTab() {
                 <button className="ud-btn-primary" onClick={() => setOutreachVip(vipDetail)} type="button">
                   {tx.reachOut}
                 </button>
-                <button className="ud-btn-theme" type="button" onClick={() => window.open(vipDetail.portalUrl || "/enterprise/crmdemo", "_blank")}>
+                <button className="ud-btn-theme" type="button" onClick={() => handleReissuePortalLink(vipDetail)}>
                   {tx.reissue}
                 </button>
               </div>

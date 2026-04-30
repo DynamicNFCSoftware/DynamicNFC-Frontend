@@ -4,6 +4,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLanguage } from "../../i18n";
 import "../../i18n/eventDisplayMap";
+import HelpModal from "../../components/HelpModal/HelpModal";
 import { SectorProvider, useSector } from "../../hooks/useSector";
 import { useRegion } from "../../hooks/useRegion";
 import { REGION_LIST, getProjectName, getPersonas } from "../../config/regionConfig";
@@ -54,6 +55,14 @@ const LAYOUT_TEXT = {
     languageLabel: "Language",
     preparingRegionLoadingTenantData: "Preparing your region · Loading tenant data",
     preparingShowroomLoadingTenantData: "Preparing showroom · Loading tenant data",
+    helpButton: "How This Works",
+    helpTitle: "How This Works",
+    helpVipHeading: "VIP Traffic",
+    helpVipBody: "Enters via NFC Magic Link. Identity known via vip_id. Use insights for 1-to-1 outreach. Goal: booked viewings uplift.",
+    helpStandardHeading: "Standard Traffic",
+    helpStandardBody: "Enters via Ads, SEO, Direct. Identity unknown via anon_id. Use segments and content to optimize marketing.",
+    helpRuleHeading: "Key Rule:",
+    helpRuleBody: "The actions are shared and non-linear. The only difference between VIP and Standard is identity and how you activate follow-up.",
   },
   ar: {
     aiBadge: "مدعوم بذكاء DynamicNFC",
@@ -89,6 +98,14 @@ const LAYOUT_TEXT = {
     languageLabel: "اللغة",
     preparingRegionLoadingTenantData: "جارٍ تجهيز منطقتك · جارٍ تحميل بيانات المستأجر",
     preparingShowroomLoadingTenantData: "جارٍ تجهيز صالة العرض · جارٍ تحميل بيانات المستأجر",
+    helpButton: "كيف يعمل هذا",
+    helpTitle: "كيف يعمل هذا",
+    helpVipHeading: "حركة VIP",
+    helpVipBody: "يدخل عبر رابط NFC السحري. الهوية معروفة عبر vip_id. استخدم الرؤى للتواصل الفردي. الهدف: زيادة المعاينات المحجوزة.",
+    helpStandardHeading: "الحركة العادية",
+    helpStandardBody: "يدخل عبر الإعلانات وتحسين محركات البحث والوصول المباشر. الهوية غير معروفة عبر anon_id. استخدم الشرائح والمحتوى لتحسين التسويق.",
+    helpRuleHeading: "القاعدة الأساسية:",
+    helpRuleBody: "الإجراءات مشتركة وغير خطية. الفرق الوحيد بين VIP والعادي هو الهوية وكيفية تفعيل المتابعة.",
   },
   es: {
     aiBadge: "Impulsado por DynamicNFC Intelligence",
@@ -124,6 +141,14 @@ const LAYOUT_TEXT = {
     languageLabel: "Idioma",
     preparingRegionLoadingTenantData: "Preparando tu región · Cargando datos del tenant",
     preparingShowroomLoadingTenantData: "Preparando showroom · Cargando datos del tenant",
+    helpButton: "Cómo funciona",
+    helpTitle: "Cómo funciona",
+    helpVipHeading: "Tráfico VIP",
+    helpVipBody: "Entra por NFC Magic Link. La identidad se conoce mediante vip_id. Usa los insights para outreach 1 a 1. Objetivo: aumentar visitas agendadas.",
+    helpStandardHeading: "Tráfico estándar",
+    helpStandardBody: "Entra por Ads, SEO y tráfico Direct. La identidad no se conoce mediante anon_id. Usa segmentos y contenido para optimizar marketing.",
+    helpRuleHeading: "Regla clave:",
+    helpRuleBody: "Las acciones son compartidas y no lineales. La única diferencia entre VIP y Standard es la identidad y cómo activas el seguimiento.",
   },
   fr: {
     aiBadge: "Propulse par DynamicNFC Intelligence",
@@ -159,6 +184,14 @@ const LAYOUT_TEXT = {
     languageLabel: "Langue",
     preparingRegionLoadingTenantData: "Préparation de votre région · Chargement des données du locataire",
     preparingShowroomLoadingTenantData: "Préparation du showroom · Chargement des données du locataire",
+    helpButton: "Comment ça marche",
+    helpTitle: "Comment ça marche",
+    helpVipHeading: "Trafic VIP",
+    helpVipBody: "Entre via NFC Magic Link. Identité connue via vip_id. Utilisez ces insights pour un outreach 1-to-1. Objectif : augmenter les visites réservées.",
+    helpStandardHeading: "Trafic standard",
+    helpStandardBody: "Entre via Ads, SEO et Direct. Identité inconnue via anon_id. Utilisez segments et contenus pour optimiser le marketing.",
+    helpRuleHeading: "Règle clé :",
+    helpRuleBody: "Les actions sont partagées et non linéaires. La seule différence entre VIP et Standard est l'identité et la façon d'activer le suivi.",
   },
 };
 const NAVBAR_LOGO_PATH = "/assets/images/logo.png";
@@ -633,6 +666,7 @@ function LayoutContent({
   const { sectorId } = useSector();
   const navigate = useNavigate();
   const tx = LAYOUT_TEXT[lang] || LAYOUT_TEXT.en;
+  const [showHelpModal, setShowHelpModal] = useState(false);
   if (seedingInProgress) {
     const sectorLower = (sectorId || "").toLowerCase().replace(/[-_]/g, "");
     const isRealEstate = sectorLower === "realestate";
@@ -750,6 +784,15 @@ function LayoutContent({
                 ))}
               </div>
             )}
+            <button
+              type="button"
+              className="ud-btn-icon ud-help-btn"
+              onClick={() => setShowHelpModal(true)}
+              aria-label={tx.helpButton}
+              title={tx.helpButton}
+            >
+              ?
+            </button>
             <button type="button" className="ud-btn-icon" onClick={toggleTheme} aria-label={tx.toggleTheme}>
               {theme === "dark" ? (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
@@ -766,6 +809,7 @@ function LayoutContent({
           <Outlet />
         </div>
       </main>
+      <HelpModal open={showHelpModal} onClose={() => setShowHelpModal(false)} tx={tx} />
       <NotificationSystem
         dataMode={dataMode}
         events={events}
