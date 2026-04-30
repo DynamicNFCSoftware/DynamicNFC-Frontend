@@ -177,6 +177,8 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 3. **GitHub Actions bot commits** — `chore(summary): update day/hour github activity log` runs frequently (54 commits in Sprint 1A.2 window, 6 in current window). Forces git pull --rebase before every push. Decision pending: reduce frequency, squash, or remove. Not blocking but friction. [Tech Debt — Repo Hygiene]
 
+4. **Suspense key=pathname remount pattern** — `App.jsx:169` uses `<AnimatePresence mode="wait"><Suspense key={location.pathname}>` which unmounts/remounts the entire route subtree on every nav. Provider state inside UnifiedLayout (DashboardDataProvider) loses all useState values on tab switch. localStorage persist used as workaround for `showFamilyBuyers` (Sprint 1B3) but pattern likely affects other states. Needs architectural review — options: route-group keying, provider lift above AnimatedRoutes, or stateful route wrapper. [Tech Debt — Architecture]
+
 ---
 
 
@@ -189,6 +191,7 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## Recently Completed
 
+- Sprint 1B3 (2026-04-30): VIP CRM family chip state persisted to localStorage. Survives tab switches and browser reload. Workaround for broader `<Suspense key=pathname>` remount pattern. [CC + Claude]
 - Git hygiene (2026-04-30): .firebase/*.cache moved to .gitignore + git rm --cached. Eliminates CRLF noise + deploy cache churn. Commit 1e039108. [CC]
 - Repo state reset (2026-04-30): 15 CRLF-only modified files reverted via git checkout. Working tree returned to genuine clean state for first time since Sprint 1B2. [CC]
 - SoS → WoW i18n fix (2026-04-30): InventoryTab.jsx ES + FR wow label corrected from "SoS" (typo) to "WoW" (BI standard). Resolves Open Question #1. [CC]
@@ -256,18 +259,16 @@ Also historical context:
 
 ## Open Strategic Items (priority order)
 
-1. **Sprint 1B3 — Optional minor cleanup** (~30 min, OPTIONAL, can be folded into Sprint 2): Lift VIP CRM family chip state from VIPCrmTab into UnifiedLayoutInner so chip ON state persists across tab navigation (T2 d debt). Touches `UnifiedLayout.jsx` + `VIPCrmTab.jsx`. Consider folding into Sprint 2 if a touching task already exists.
+1. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns. **Add: Mobile topbar overflow menu (T8 noted) — collapse Theme/Readable/Export into 3-dot at <768px breakpoint.**
 
-2. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns. **Add: Mobile topbar overflow menu (T8 noted) — collapse Theme/Readable/Export into 3-dot at <768px breakpoint.**
-
-3. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
-4. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
-5. Yacht public page + /yacht/demo portals (region-aware day one).
-6. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
-7. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
-8. Apple Developer Account enrollment.
-9. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
-10. Sentry setup.
+2. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
+3. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
+4. Yacht public page + /yacht/demo portals (region-aware day one).
+5. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
+6. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
+7. Apple Developer Account enrollment.
+8. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
+9. Sentry setup.
 
 ---
 
