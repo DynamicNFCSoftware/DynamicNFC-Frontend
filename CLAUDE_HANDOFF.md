@@ -79,7 +79,7 @@ Verify method: run `firebase functions:list`, paste output here on change.
 - Bundle hash: [fill]
 
 ### Working tree state (end of 2026-04-30)
-- HEAD: `6107ae14` on origin/main, in sync.
+- HEAD: `14a8a0ec` on origin/main, in sync.
 - Working tree: **CLEAN** (genuine — first true clean state since Sprint 1B2 squash).
 - Last sync: 2026-04-30 (rebase absorbed 6 chore-only bot commits, then pushed SoS→WoW i18n fix + .firebase gitignore).
 - Known clean diff boundaries: legacy dashboards untouched, main site pages untouched, demo portals untouched, /admin untouched, LanguageContext.jsx untouched, backend/ untouched.
