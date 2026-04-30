@@ -703,7 +703,7 @@
 /* Keep desktop/tablet sidebar state-driven by toggle.
    Off-canvas behavior starts only at <= 768px. */
 
-@media (max-width: 1024px) {
+@media (max-width: 767px) {
   /* Mobile/tablet: sidebar off-canvas, hamburger to open */
   .ud-layout,
   .ud-layout.ud-collapsed {
@@ -1599,7 +1599,7 @@
 /* ── Mobile Hamburger ── */
 .ud-hamburger {
   all: unset;
-  display: none !important;
+  display: none;
   cursor: pointer;
   padding: 8px;
   color: rgba(255, 255, 255, 0.6);
