@@ -78,10 +78,10 @@ Verify method: run `firebase functions:list`, paste output here on change.
 - Last deploy: [fill when next deploy happens]
 - Bundle hash: [fill]
 
-### Working tree state (end of 2026-04-28)
-- Branch: **clean** — `ef1aeea0` is HEAD on origin/main, Sprint 1A.1 + 1A.2 + audit docs committed and pushed.
-- `git status`: nothing to commit, working tree clean.
-- Push history: `185c5ebb` (local commit) → `git pull --rebase origin main` (54 chore-only bot commits absorbed) → `ef1aeea0` (final pushed hash).
+### Working tree state (end of 2026-04-30)
+- HEAD: `6107ae14` on origin/main, in sync.
+- Working tree: **CLEAN** (genuine — first true clean state since Sprint 1B2 squash).
+- Last sync: 2026-04-30 (rebase absorbed 6 chore-only bot commits, then pushed SoS→WoW i18n fix + .firebase gitignore).
 - Known clean diff boundaries: legacy dashboards untouched, main site pages untouched, demo portals untouched, /admin untouched, LanguageContext.jsx untouched, backend/ untouched.
 
 ---
@@ -175,6 +175,8 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 2. **Sprint 1B split decision** — single 9-item directive or split into 1B1 (data integrity, 5 items) + 1B2 (legacy migration, 4 items)? Recommend split. Decision before next directive write.
 
+3. **GitHub Actions bot commits** — `chore(summary): update day/hour github activity log` runs frequently (54 commits in Sprint 1A.2 window, 6 in current window). Forces git pull --rebase before every push. Decision pending: reduce frequency, squash, or remove. Not blocking but friction. [Tech Debt — Repo Hygiene]
+
 ---
 
 
@@ -187,6 +189,8 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## Recently Completed
 
+- Git hygiene (2026-04-30): .firebase/*.cache moved to .gitignore + git rm --cached. Eliminates CRLF noise + deploy cache churn. Commit 1e039108. [CC]
+- Repo state reset (2026-04-30): 15 CRLF-only modified files reverted via git checkout. Working tree returned to genuine clean state for first time since Sprint 1B2. [CC]
 - SoS → WoW i18n fix (2026-04-30): InventoryTab.jsx ES + FR wow label corrected from "SoS" (typo) to "WoW" (BI standard). Resolves Open Question #1. [CC]
 - Sprint 1B2 SHIPPED (2026-04-29 EOD): squash commit `4e61ff1f` to origin/main. PR #4 merged. 7 sprint items + 4 hotfix commits = 10 commits squashed. Diff: +505 / -78 across 9 files. Items shipped:
   - Item 0a: Family-buyer chip + hint link + family badge in VIP CRM (Option C: filter chip pattern, locked by Oguzhan 2026-04-29)
