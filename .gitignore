@@ -33,3 +33,6 @@ frontend-sample/
 mobile/
 node_modules/
 frontendnode_modules/
+
+# Firebase deploy cache (auto-generated)
+.firebase/*.cache
