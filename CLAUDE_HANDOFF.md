@@ -22,7 +22,7 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-29 by Cursor (session: Sprint 1B2 legacy migration + cleanup in PR on `cursor/sprint-1b2-legacy-migration`)
+Last updated: 2026-04-29 EOD by Claude (session: Sprint 1B2 SHIPPED to origin/main, squash commit `4e61ff1f`. Sprint 1B series complete.)
 
 ---
 
@@ -180,21 +180,31 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 ---
 
 
+
 ## In-Flight Work
 
-- Sprint 1B2 IN PR (2026-04-29): branch `cursor/sprint-1b2-legacy-migration` with 7 item commits complete:
-  - `83cfb9c9` Item 0b dead-code cleanup (`useDashboardData.js` redundant `vipCandidates`)
-  - `95c1d4d9` Item 0c promoted-candidate dedupe `.filter()` callback made element-aware
-  - `f48fc4f9` Item 0a family-buyer surfacing (VIP CRM chip + family badge + hint link + sidebar count sync)
-  - `6d4de9d2` Item 1 Reissue Portal Link (clipboard copy + 4-lang toast)
-  - `1d0653a5` Item 2 How This Works modal (topbar `?`, brand-locked content, ESC/backdrop/X close)
-  - `33b3a736` Item 3 Zero Engagement badge + filter chip in InventoryTab
-  - `31813993` Item 4 NFC ROI + Avg Session KPI tiles in OverviewTab (all sectors)
-  Build PASS: `cd frontend && npm run build` ✅
+(none — Sprint 1B series complete. Sprint 2 directive pending strategic kickoff.)
 
 ---
 
 ## Recently Completed
+
+- Sprint 1B2 SHIPPED (2026-04-29 EOD): squash commit `4e61ff1f` to origin/main. PR #4 merged. 7 sprint items + 4 hotfix commits = 10 commits squashed. Diff: +505 / -78 across 9 files. Items shipped:
+  - Item 0a: Family-buyer chip + hint link + family badge in VIP CRM (Option C: filter chip pattern, locked by Oguzhan 2026-04-29)
+  - Item 0b: Dead `vipCandidates` analytics block removed (closes Bugbot LOW from PR #3)
+  - Item 0c: Promoted candidate filter callback made element-aware (closes Bugbot LOW from PR #3)
+  - Item 1: Reissue Portal Link clipboard action with 4-lang toast in VIP detail panel
+  - Item 2: "How This Works" Help modal — topbar `?` button, brand-locked content (VIP Traffic / Standard Traffic / Key Rule), 4-lang, ESC/backdrop/X close
+  - Item 3: Zero Engagement badge + filter chip in InventoryTab with fallback hot-units list
+  - Item 4: NFC ROI + Avg VIP Session KPI tiles in OverviewTab (all 3 sectors)
+  Hotfix sequence (pre-merge audit + QA discovery):
+  - Hotfix 1: Anonymous events excluded from session metric (PR #3 Bugbot finding)
+  - Hotfix 2: Sidebar count SSOT restored, localStorage hack removed (1B1 SSOT contract preserved)
+  - Hotfix 4a: Mobile sidebar hamburger regression fixed (CSS media query 1024px → 767px revert)
+  - Hotfix 4b: Avg VIP Session bounded by 30-min idle gaps + 4h sanity cap (defensible Google Analytics-style metric)
+  QA: Round 9 (T1-T7) + Round 10 (T8-T9) PASSED. 6/7 + 2/2 cells. [Claude+Cursor, Oguzhan QA Round 9+10]
+- T2 d minor debt logged 2026-04-29: VIP CRM family chip state resets to OFF when navigating between tabs (mounting/unmounting). Refresh consistency works correctly (Hotfix 2 PASS). Decision: ship now, lift state to UnifiedLayoutInner in Sprint 1B3 or alongside Sprint 2 if a relevant component is touched. Not sales-blocking. [Oguzhan QA, 2026-04-29]
+- Mobile topbar overflow noted 2026-04-29: At 375px viewport, topbar elements (logo, page title, Live, Country, Lang, ?, Theme, Readable, Export PDF) compress past readable width. Pre-existing UX issue, not introduced by Sprint 1B2 (Help button is one of nine elements, others were already there). Routed to Sprint 2 as a Mobile UX item — proposed solution: collapse Theme/Readable/Export into a 3-dot overflow menu at mobile breakpoint, keep hamburger + page title + lang + country visible. [Oguzhan QA T8, 2026-04-29]
 
 - Sprint 1B1 SHIPPED (2026-04-29): squash commit `87bbb2a3` to origin/main. PR #3 merged. 5 bugs fixed: persona/region pool consistency (Bug 1), VIP detail panel sector-reset (Bug 2), Walk-in Promote modal RE skip (Bug 3), VIP count badge SSOT (Bug 4), Walk-in candidate anonymized to "Walk-in Prospect" 4-lang label (Bug 5). VIPCrmTab.jsx net -28 lines (code simplicity mandate respected). QA Round 8 PASSED 5/6 (T1-T6). Build PASS, working tree clean. [Claude+Cursor, Oguzhan QA Round 8]
 - Cursor Bugbot flagged 2 LOW-severity issues post-merge: redundant vipCandidates computation in useDashboardData.js (dead code shadow), and `.filter()` callback ignoring element parameter in VIPCrmTab.jsx local-promoted dedup. Both deferred to Sprint 1B2 Item 0 cleanup (same files Cursor will touch). [Bugbot, 2026-04-29]
@@ -243,15 +253,18 @@ Also historical context:
 
 ## Open Strategic Items (priority order)
 
-1. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns.
-2. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
-3. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
-4. Yacht public page + /yacht/demo portals (region-aware day one).
-5. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
-6. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
-7. Apple Developer Account enrollment.
-8. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
-9. Sentry setup.
+1. **Sprint 1B3 — Optional minor cleanup** (~30 min, OPTIONAL, can be folded into Sprint 2): Lift VIP CRM family chip state from VIPCrmTab into UnifiedLayoutInner so chip ON state persists across tab navigation (T2 d debt). Touches `UnifiedLayout.jsx` + `VIPCrmTab.jsx`. Consider folding into Sprint 2 if a touching task already exists.
+
+2. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns. **Add: Mobile topbar overflow menu (T8 noted) — collapse Theme/Readable/Export into 3-dot at <768px breakpoint.**
+
+3. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
+4. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
+5. Yacht public page + /yacht/demo portals (region-aware day one).
+6. Canada deploy — **blocked by FAZ 6** (FR not production-ready on main site).
+7. Mexico deploy — **blocked by FAZ 6** (ES not production-ready on main site).
+8. Apple Developer Account enrollment.
+9. Tenant Mode hardening — cleanupInactiveTenants dry-run → real delete (UAT pending).
+10. Sentry setup.
 
 ---
 
