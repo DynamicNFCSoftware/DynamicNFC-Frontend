@@ -258,6 +258,15 @@ function formatDuration(totalMs) {
   return `${minutes}m ${String(seconds).padStart(2, "0")}s`;
 }
 
+function toTimestampMs(value) {
+  if (typeof value === "number") return Number.isFinite(value) ? value : NaN;
+  if (!value) return NaN;
+  if (value instanceof Date) return value.getTime();
+  if (typeof value?.toMillis === "function") return value.toMillis();
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : NaN;
+}
+
 export default function OverviewTab() {
   const { config, st } = useSector();
   const { region, regionId } = useRegion();
@@ -294,22 +303,59 @@ export default function OverviewTab() {
     return Number.isFinite(ratio) && ratio > 0 ? `${ratio.toFixed(1)}x` : "—";
   }, [cards, deals]);
   const avgSessionDisplay = useMemo(() => {
-    const sessions = {};
+    const SESSION_IDLE_GAP_MS = 30 * 60 * 1000;
+    const MAX_SESSION_MS = 4 * 60 * 60 * 1000;
+    const userEvents = new Map();
+
     events.forEach((event) => {
-      const ts = new Date(event.timestamp).getTime();
-      if (!Number.isFinite(ts)) return;
       if (String(event.portalType || "").toLowerCase() === "anonymous") return;
-      const identity = event.vipName || event.userName || event.leadName || event.sessionId;
+      const identity = event.userId || event.vipId || event.vipName || event.userName || event.leadName;
       if (!identity) return;
-      const sessionKey =
-        `${event.portalType || "named"}:${identity}:${new Date(ts).toDateString()}`;
-      if (!sessions[sessionKey]) sessions[sessionKey] = { min: ts, max: ts };
-      if (ts < sessions[sessionKey].min) sessions[sessionKey].min = ts;
-      if (ts > sessions[sessionKey].max) sessions[sessionKey].max = ts;
+      const ts = toTimestampMs(event.timestamp || event.createdAt || event.ts);
+      if (!Number.isFinite(ts)) return;
+      const key = `${event.portalType || "named"}:${identity}`;
+      const timeline = userEvents.get(key) || [];
+      timeline.push(ts);
+      userEvents.set(key, timeline);
     });
-    const durations = Object.values(sessions)
-      .map((session) => Math.max(0, session.max - session.min))
-      .filter((duration) => duration > 0);
+
+    const durations = [];
+    let droppedOutliers = 0;
+    userEvents.forEach((timeline) => {
+      const sorted = timeline.slice().sort((a, b) => a - b);
+      if (sorted.length < 2) return;
+      let sessionStart = sorted[0];
+      let previous = sorted[0];
+
+      for (let idx = 1; idx < sorted.length; idx += 1) {
+        const current = sorted[idx];
+        if (current - previous > SESSION_IDLE_GAP_MS) {
+          const duration = previous - sessionStart;
+          if (duration > 0) {
+            if (duration <= MAX_SESSION_MS) durations.push(duration);
+            else droppedOutliers += 1;
+          }
+          sessionStart = current;
+        }
+        previous = current;
+      }
+
+      const finalDuration = previous - sessionStart;
+      if (finalDuration > 0) {
+        if (finalDuration <= MAX_SESSION_MS) durations.push(finalDuration);
+        else droppedOutliers += 1;
+      }
+    });
+
+    if (import.meta.env.DEV && droppedOutliers > 0) {
+      console.warn(JSON.stringify({
+        location: "OverviewTab.avgSessionDisplay",
+        message: "Dropped outlier session durations over 4 hours",
+        data: { droppedOutliers, maxSessionMinutes: 240 },
+        timestamp: Date.now(),
+      }));
+    }
+
     if (durations.length === 0) return "—";
     const avgMs = durations.reduce((sum, duration) => sum + duration, 0) / durations.length;
     return formatDuration(avgMs);
