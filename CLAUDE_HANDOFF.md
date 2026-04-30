@@ -171,11 +171,9 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## Open Questions (awaiting decision)
 
-1. **SoS abbreviation** (2 occurrences in `InventoryTab.jsx`) — meaning unclear. Cursor flagged in Patch A2 audit Table D. Possible expansions: Share of Search / Share of Stock / Stock on Shelf / Spike of Sessions. **Decision path:** Oguzhan recalls the intent → Claude writes mini-fix directive for full-word + 4-language translation.
+1. **Campaign description field** (e.g., "early interest campaign for Prestige Motors Vancouver") — tenant-generated content or hardcoded seed data? If seed data, should stay EN as-is (real customers will write in their own language). Leaning: leave as-is, not a bug.
 
-2. **Campaign description field** (e.g., "early interest campaign for Prestige Motors Vancouver") — tenant-generated content or hardcoded seed data? If seed data, should stay EN as-is (real customers will write in their own language). Leaning: leave as-is, not a bug.
-
-3. **Sprint 1B split decision** — single 9-item directive or split into 1B1 (data integrity, 5 items) + 1B2 (legacy migration, 4 items)? Recommend split. Decision before next directive write.
+2. **Sprint 1B split decision** — single 9-item directive or split into 1B1 (data integrity, 5 items) + 1B2 (legacy migration, 4 items)? Recommend split. Decision before next directive write.
 
 ---
 
@@ -189,6 +187,7 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## Recently Completed
 
+- SoS → WoW i18n fix (2026-04-30): InventoryTab.jsx ES + FR wow label corrected from "SoS" (typo) to "WoW" (BI standard). Resolves Open Question #1. [CC]
 - Sprint 1B2 SHIPPED (2026-04-29 EOD): squash commit `4e61ff1f` to origin/main. PR #4 merged. 7 sprint items + 4 hotfix commits = 10 commits squashed. Diff: +505 / -78 across 9 files. Items shipped:
   - Item 0a: Family-buyer chip + hint link + family badge in VIP CRM (Option C: filter chip pattern, locked by Oguzhan 2026-04-29)
   - Item 0b: Dead `vipCandidates` analytics block removed (closes Bugbot LOW from PR #3)
