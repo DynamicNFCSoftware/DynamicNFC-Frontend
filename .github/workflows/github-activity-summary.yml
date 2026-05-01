@@ -2,17 +2,21 @@ name: GitHub Activity Summary
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    # Günde bir, gece 23:00 Toronto kış saati (= 04:00 UTC).
+    # Yaz saatinde efektif olarak 00:00 Toronto'ya kayar — kabul edilebilir.
+    # Firestore region (northamerica-northeast1) + cleanupInactiveTenants
+    # cron'u (03:00 Toronto) ile aynı timezone pattern'i.
+    - cron: "0 4 * * *"
   workflow_dispatch:
     inputs:
       lookback_hours:
         description: "How many past hours to summarize"
         required: false
-        default: "1"
+        default: "24"
       timezone:
         description: "Timezone for day/hour grouping (IANA format)"
         required: false
-        default: "Europe/Istanbul"
+        default: "America/Toronto"
 
 permissions:
   contents: write
@@ -34,12 +38,12 @@ jobs:
 
           LOOKBACK_HOURS="${{ github.event.inputs.lookback_hours }}"
           if [ -z "${LOOKBACK_HOURS}" ]; then
-            LOOKBACK_HOURS="1"
+            LOOKBACK_HOURS="24"
           fi
 
           TZ_NAME="${{ github.event.inputs.timezone }}"
           if [ -z "${TZ_NAME}" ]; then
-            TZ_NAME="Europe/Istanbul"
+            TZ_NAME="America/Toronto"
           fi
 
           NOW_HUMAN="$(TZ="${TZ_NAME}" date '+%Y-%m-%d %H:%M %Z')"
@@ -48,10 +52,24 @@ jobs:
           SINCE_EXPR="${LOOKBACK_HOURS} hour ago"
 
           mkdir -p .tmp
+          # Bot'un kendi commit'lerini hariç tut (self-feed loop koruması)
           git log \
             --since="${SINCE_EXPR}" \
+            --invert-grep \
+            --grep='^chore(summary): update day/hour github activity log$' \
             --pretty=format:'%h|%an|%ad|%s' \
             --date=format:'%Y-%m-%d %H:%M %Z' > .tmp/commits.txt
+
+          # Skip-if-empty: kullanıcı commit'i yoksa dosyaya hiç dokunma
+          if [ ! -s .tmp/commits.txt ]; then
+            echo "No user commits in last ${LOOKBACK_HOURS}h. Skipping summary write."
+            {
+              echo "### Activity Summary (${TODAY} ${HOUR_BUCKET})"
+              echo
+              echo "No user commits found in the selected interval. No summary written."
+            } >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
 
           SUMMARY_DIR="docs/github-summaries"
           SUMMARY_FILE="${SUMMARY_DIR}/${TODAY}.md"
@@ -72,16 +90,12 @@ jobs:
             echo
             echo "_Generated at ${NOW_HUMAN}; lookback: last ${LOOKBACK_HOURS} hour(s)._"
             echo
+            echo "### Commits"
           } >> "${SUMMARY_FILE}"
 
-          if [ -s .tmp/commits.txt ]; then
-            echo "### Commits" >> "${SUMMARY_FILE}"
-            while IFS='|' read -r sha author when subject; do
-              printf -- "- \`%s\` %s - %s (%s)\n" "$sha" "$subject" "$author" "$when" >> "${SUMMARY_FILE}"
-            done < .tmp/commits.txt
-          else
-            echo "- No commits found in this interval." >> "${SUMMARY_FILE}"
-          fi
+          while IFS='|' read -r sha author when subject; do
+            printf -- "- \`%s\` %s - %s (%s)\n" "$sha" "$subject" "$author" "$when" >> "${SUMMARY_FILE}"
+          done < .tmp/commits.txt
 
           echo >> "${SUMMARY_FILE}"
           echo "---" >> "${SUMMARY_FILE}"
@@ -90,11 +104,7 @@ jobs:
           {
             echo "### Activity Summary (${TODAY} ${HOUR_BUCKET})"
             echo
-            if [ -s .tmp/commits.txt ]; then
-              echo "Found commits in the selected interval and appended them to \`${SUMMARY_FILE}\`."
-            else
-              echo "No commits found in the selected interval."
-            fi
+            echo "Appended $(wc -l < .tmp/commits.txt) commit(s) to \`${SUMMARY_FILE}\`."
           } >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Commit and push summary
