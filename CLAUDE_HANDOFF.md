@@ -185,12 +185,13 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## In-Flight Work
 
-(none — Sprint 1B series complete. Sprint 2 directive pending strategic kickoff.)
+- Sprint 2 in progress (2026-04-30): **#8 complete**, remaining items **#1, #2, #3, #4, #5, #6, #7**. [Cursor]
 
 ---
 
 ## Recently Completed
 
+- Sprint 2 #8 (2026-04-30): Mobile topbar 3-dot overflow menu. Region stays visible at ≤768px; Live/Demo, Lang, Help, Theme, Export PDF collapse into menu. RTL-safe. Closes Sprint 1B2 QA carryover. [Cursor]
 - Sprint 1B3 (2026-04-30): VIP CRM family chip state persisted to localStorage. Survives tab switches and browser reload. Workaround for broader `<Suspense key=pathname>` remount pattern. [CC + Claude]
 - Git hygiene (2026-04-30): .firebase/*.cache moved to .gitignore + git rm --cached. Eliminates CRLF noise + deploy cache churn. Commit 1e039108. [CC]
 - Repo state reset (2026-04-30): 15 CRLF-only modified files reverted via git checkout. Working tree returned to genuine clean state for first time since Sprint 1B2. [CC]
@@ -259,7 +260,7 @@ Also historical context:
 
 ## Open Strategic Items (priority order)
 
-1. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns. **Add: Mobile topbar overflow menu (T8 noted) — collapse Theme/Readable/Export into 3-dot at <768px breakpoint.**
+1. **Sprint 2 — Brand surfaces** (MEDIUM complexity, ~6h Cursor work). 5-Minute Proof tutorial section, Sales Trigger panel (visual + brand copy "Strike while interest is hot"), Buyer Sites sidebar with last-activity status, Velocity KPIs row (TTFA / Viewing Velocity / Lead Capture Rate), VIP Alert Summary "Top Alerts" list, Outreach guardrail copy ("Don't say you tracked them..."), Owner workload Due Today + Risk columns. **Status:** item #8 (mobile topbar overflow) completed; remaining #1, #2, #3, #4, #5, #6, #7.
 
 2. **Sprint 3 — Polish** (SIMPLE, ~3h). Score-driven action ladder, Top Saved Configurations table, Quick Actions strip, NBA card, AI Pipeline nav decision (separate route — keep deferred decision: do not add 10th tab).
 3. ~~FAZ 5 Step 2 — legacy hard retire~~ — **CANCELLED.** Legacy dashboards remain accessible. Decision logged 2026-04-24.
