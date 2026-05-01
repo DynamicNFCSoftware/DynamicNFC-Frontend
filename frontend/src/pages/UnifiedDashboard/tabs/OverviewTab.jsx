@@ -23,7 +23,7 @@ const UI = {
   en: {
     section: "Overview",
     execTitle: "Executive Summary",
-    execSub: "VIP conversions are significantly higher than standard visitors",
+    execSub: "Identity-first conversion intelligence",
     conversionActions: "Conversion Actions",
     vipVsStandard: "VIP vs Standard visitors",
     liveActivity: "Live Activity",
@@ -71,7 +71,7 @@ const UI = {
   ar: {
     section: "نظرة عامة",
     execTitle: "ملخص تنفيذي",
-    execSub: "تحويلات VIP أعلى من الزوار العاديين",
+    execSub: "ذكاء التحويل القائم على الهوية",
     conversionActions: "إجراءات التحويل",
     vipVsStandard: "VIP مقابل الزوار العاديين",
     liveActivity: "النشاط المباشر",
@@ -119,7 +119,7 @@ const UI = {
   es: {
     section: "Vista general",
     execTitle: "Resumen ejecutivo",
-    execSub: "Las conversiones VIP son mayores que las de visitantes estandar",
+    execSub: "Inteligencia de conversión basada en identidad",
     conversionActions: "Acciones de conversion",
     vipVsStandard: "VIP vs visitantes estandar",
     liveActivity: "Actividad en vivo",
@@ -167,7 +167,7 @@ const UI = {
   fr: {
     section: "Vue générale",
     execTitle: "Résumé exécutif",
-    execSub: "Les conversions VIP sont plus élevées que les visiteurs standards",
+    execSub: "Intelligence de conversion basée sur l'identité",
     conversionActions: "Actions de conversion",
     vipVsStandard: "VIP vs visiteurs standards",
     liveActivity: "Activité en direct",
@@ -536,20 +536,6 @@ export default function OverviewTab() {
           ? `${value} ${config.id === "automotive" ? "essais routiers" : "visites"} réservées`
           : config.id === "automotive" ? "En attente d'essais routiers" : "En attente de demandes immobilières",
       },
-      conversion_lift: {
-        en: value > 0
-          ? `VIP converts ${value}x faster`
-          : config.id === "automotive" ? "Awaiting test-drive conversion data" : "Awaiting property conversion data",
-        ar: value > 0
-          ? `VIP يتحول أسرع بـ ${value}x`
-          : config.id === "automotive" ? "في انتظار بيانات تحويل تجربة القيادة" : "في انتظار بيانات التحويل العقاري",
-        es: value > 0
-          ? `VIP convierte ${value}x mas rapido`
-          : config.id === "automotive" ? "Esperando datos de conversion de pruebas" : "Esperando datos de conversion inmobiliaria",
-        fr: value > 0
-          ? `VIP convertit ${value}x plus vite`
-          : config.id === "automotive" ? "En attente de données de conversion essais" : "En attente de données de conversion immobilière",
-      },
     };
     const kpiMeta = config.kpis.find((k) => k.id === kpiId);
     return stories[kpiId]?.[lang] || (kpiMeta ? st(kpiMeta.subtitle) : "");
@@ -576,19 +562,6 @@ export default function OverviewTab() {
       <div className="ud-grid-4">
         {config.kpis.map((kpi) => {
           const value = kpis[kpi.id] || 0;
-          if (kpi.id === "conversion_lift" && (!value || Number.isNaN(value))) {
-            return (
-              <KpiCard
-                key={kpi.id}
-                label={st(kpi.label)}
-                value={0}
-                subtitle={getKpiStoryLabel(kpi.id, 0)}
-                color={kpi.color}
-                displayOverride="—"
-                sparkline={<MiniSparkline data={sparklines?.[kpi.id]} color={kpi.color} />}
-              />
-            );
-          }
           return (
             <KpiCard
               key={kpi.id}
@@ -596,7 +569,6 @@ export default function OverviewTab() {
               value={value}
               subtitle={getKpiStoryLabel(kpi.id, value)}
               color={kpi.color}
-              suffix={kpi.id === "conversion_lift" ? "×" : ""}
               sparkline={<MiniSparkline data={sparklines?.[kpi.id]} color={kpi.color} />}
             />
           );
@@ -706,21 +678,7 @@ export default function OverviewTab() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
           <div>
             <div className="ud-card-title">{tx.execTitle}</div>
-            <div className="ud-card-subtitle">
-              {kpis.conversion_lift > 0
-                ? ({
-                    ar: `تحويلات VIP أعلى بـ ${kpis.conversion_lift}× من الزوار العاديين`,
-                    es: `Las conversiones VIP son ${kpis.conversion_lift}× mas altas que las estandar`,
-                    en: `VIP conversions are ${kpis.conversion_lift}× higher than standard visitors`,
-                    fr: `Les conversions VIP sont ${kpis.conversion_lift}× plus élevées que le standard`,
-                  }[lang] || `VIP conversions are ${kpis.conversion_lift}× higher than standard visitors`)
-                : ({
-                    ar: "في انتظار بيانات كافية لحساب معدل التحويل",
-                    es: "Esperando datos suficientes para calcular el lift de conversion",
-                    en: "Awaiting sufficient data to calculate conversion lift",
-                    fr: "En attente de données suffisantes pour calculer le lift de conversion",
-                  }[lang] || "Awaiting sufficient data to calculate conversion lift")}
-            </div>
+            <div className="ud-card-subtitle">{tx.execSub}</div>
           </div>
           <AiBadge text={tx.ai} />
         </div>

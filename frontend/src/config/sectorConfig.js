@@ -210,13 +210,6 @@ const REAL_ESTATE = {
       icon: 'calendar',
       color: '#22c55e',
     },
-    {
-      id: 'conversion_lift',
-      label: { en: 'VIP Conversion Lift', ar: 'زيادة تحويل VIP', es: 'Aumento Conversión VIP', fr: 'Gain de conversion VIP' },
-      subtitle: { en: 'VIP vs standard rate', ar: 'VIP مقابل المعدل العادي', es: 'VIP vs tasa estándar', fr: 'VIP vs taux standard' },
-      icon: 'trending-up',
-      color: '#f97316',
-    },
   ],
 
   // --- VIP Profile Labels ---
@@ -425,13 +418,6 @@ const AUTOMOTIVE = {
       subtitle: { en: 'This month', ar: 'هذا الشهر', es: 'Este mes', fr: 'Ce mois-ci' },
       icon: 'car',
       color: '#22c55e',
-    },
-    {
-      id: 'conversion_lift',
-      label: { en: 'VIP Conversion Lift', ar: 'زيادة تحويل VIP', es: 'Aumento Conversión VIP', fr: 'Gain de conversion VIP' },
-      subtitle: { en: 'VIP vs standard rate', ar: 'VIP مقابل المعدل العادي', es: 'VIP vs tasa estándar', fr: 'VIP vs taux standard' },
-      icon: 'trending-up',
-      color: '#f97316',
     },
   ],
 
