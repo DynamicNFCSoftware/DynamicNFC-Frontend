@@ -186,11 +186,13 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 ## In-Flight Work
 
 - Sprint 2 in progress (2026-04-30): **#8 complete**, remaining items **#1, #2, #3, #4, #5, #6, #7**. [Cursor]
+  - **#4 (Velocity KPIs) note:** KPI grid currently 5 cards after fake-metric removal (2026-04-30) — #4 will restore 4+4 layout with TTFA / Viewing Velocity / Lead Capture Rate metrics.
 
 ---
 
 ## Recently Completed
 
+- Fake metric removed (2026-04-30): VIP Conversion Lift KPI card ("100×" fake metric) removed from Overview KPI grid (RE + Auto sectorConfig). Bonus exec card subtitle replaced with qualitative copy ("Identity-first conversion intelligence", 4 lang). Data layer untouched. Grid temporarily 4+1 layout — Sprint 2 #4 will refill. Commit `a1ff0128`. [CC + Claude]
 - Bot freq fix SHIPPED (2026-04-30): `github-activity-summary.yml` cron reduced hourly → daily 23:00 America/Toronto (04:00 UTC). Skip-if-empty guard + bot-self-filter (`--invert-grep`) added. Default lookback 1h → 24h. Expected: ~13 bot commits/day → max 1/day, 0 on silent days. Commit `6b7495ed`. Closes Repo Hygiene tech debt #1. [CC]
 - Sprint 2 #8 (2026-04-30): Mobile topbar 3-dot overflow menu. Region stays visible at ≤768px; Live/Demo, Lang, Help, Theme, Export PDF collapse into menu. RTL-safe. Closes Sprint 1B2 QA carryover. [Cursor]
 - Sprint 1B3 (2026-04-30): VIP CRM family chip state persisted to localStorage. Survives tab switches and browser reload. Workaround for broader `<Suspense key=pathname>` remount pattern. [CC + Claude]
