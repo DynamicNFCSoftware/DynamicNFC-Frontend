@@ -22,35 +22,39 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-29 EOD by Claude (session: Sprint 1B2 SHIPPED to origin/main, squash commit `4e61ff1f`. Sprint 1B series complete.)
+Last updated: 2026-04-30 EOD by CC (session close: 12 commits — repo hygiene reset, Sprint 1B3, Sprint 2 #8, Actions bot daily-cap, fake metric removal. Working tree clean.)
 
 ---
 
 
-## Tomorrow's Pickup — READ FIRST
+## Resume Tomorrow (2026-05-01)
 
-**Where we stopped:** Sprint 1A.1 + 1A.2 SHIPPED (commit `ef1aeea0` on origin/main, 2026-04-28). NotificationSystem cross-tab realtime, sector-aware mock toasts, Promote modal hierarchy, toast position top-right, and Walk-in Promote (Automotive path) all PASS in QA Round 7. Demo's primary wow-factor (cross-tab realtime + sector-appropriate auto-fire) is now production-ready in /unified.
+**1. Sprint 2 #4 — Velocity KPIs (NEXT)**
 
-**QA Round 7 results (2026-04-28):**
-- T2 Sector toasts (RE/Auto/Yacht): **PASS** — all 3 sectors fire sector-appropriate event codes via `getEventLabel(code, lang, sector)`.
-- T3 Cross-tab realtime: **PASS** — Khalid Al-Mansouri (Auto) + Ahmed Al-Fahad (RE) toasts visible in /unified within 5s of portal CTA click in second tab.
-- T4 Toast position: **PASS** — top-right corner, newest on top.
-- T1 Walk-in Promote (Auto only): **PASS** — modal opens, Promote button is brand red primary, Cancel ghost, candidate hides post-confirm, "+local" badge appears in VIP list.
-- T1 Walk-in Promote (RE): **FAIL** — modal skipped entirely, candidate added directly to VIP list. Sector-conditional code path bug. Deferred to Sprint 1B.
-- T5 Regression: **PARTIAL FAIL** — VIP CRM list shows persona/region pool inconsistency (Gulf personas appearing in USA/Mexico/Canada RE; Khalid Al-Mansouri Auto-Gulf persona appearing in RE across all regions). Right panel state leak when sector switches (e.g., "AMG GT 63 S E Performance" stays as TOP UNIT in Mexico RE context). VIP count badge mismatch (Gulf=4, others=5).
+Sprint 2'nin sonraki büyük maddesi. KPI grid şu an 4+1 layout (5 kart) — #4 bunu 4+4'e tamamlayacak: TTFA (Time-To-First-Action), Viewing Velocity, Lead Capture Rate.
 
-**Critical: T5 bugs are NOT regressions.** Verified pre-existing via `git stash` baseline check before 1A.2 commit — same persona pool inconsistency exists in Sprint 1A baseline (`36a434ab`). Sprint 1A.2 is not responsible. Bugs are real and need fixing, just not as 1A.3 hotfix.
+Claude bu sprint için context'i hazırlıyor:
+- **TTFA formula:** ilk tap'tan ilk meaningful action'a (view_unit / view_floorplan / book_viewing) kadar geçen süre
+- **Viewing Velocity:** tap → booked viewing süresi (per VIP, sektör/region aware)
+- **Lead Capture Rate:** marketplace anonymous → identified VIP conversion %
 
-**Bugs surfaced — deferred to Sprint 1B (data integrity sub-sprint):**
-1. **Persona/region pool inconsistency (HIGH):** RE sector shows Gulf personas regardless of active region. Khalid Al-Mansouri (Auto-Gulf persona per CLAUDE.md §3) appearing in RE listings across all 4 regions. CLAUDE.md persona table needs strict enforcement in `getPersonas(sector, regionId)` selector. **Pre-existing, not 1A.2 introduced.**
-2. **VIP CRM right panel state leak (MEDIUM):** When sector changes RE→Auto→Yacht, the right-side VIP detail panel keeps showing stale data (e.g., AMG GT vehicle name in Mexico RE context). Detail panel needs to subscribe to sector/region change and reset selected VIP.
-3. **Walk-in Promote modal skipped on RE (HIGH):** In Real Estate sector, clicking "Promote" on Walk-in candidate skips the confirmation modal entirely — direct UI mutation. Modal works correctly in Automotive sector. Likely sector-conditional code path in `VIPCrmTab.jsx` promote handler — generic helper needed (per CLAUDE.md code simplicity mandate).
-4. **VIP count badge inconsistency (LOW):** Sidebar VIP CRM count shows "5" in USA/Mexico/Canada RE but "4" in Gulf RE. Count logic appears region-mismatched.
-5. **VIP CANDIDATES region-aware persona may need review:** Different "candidate" personas appear per region (Robert Williams in USA, Diego Fernandez in Mexico, Michael Tremblay in Canada, Ahmed Al-Fahad in Gulf — but Ahmed Al-Fahad is supposed to be a Gulf RE VIP, not a candidate per CLAUDE.md §3). Looks intentional but Bug #1 suggests pool selection has issues.
+Karar gerekecek alanlar (yarın konuşulacak):
+- Hangi tab'a oturacak (Overview KPI grid mi, ayrı Velocity satırı mı)
+- Hangi field'lardan beslenecek (taps + behaviors collection'larındaki event'ler)
+- Per-region veya per-sector farklı eşik değerler mi (Gulf vs Canada gibi)
 
-**First action when starting next session:** Read this Tomorrow's Pickup, then write Sprint 1B directive. Scope decision needed: 1B is now ~9 items (5 data integrity bugs above + 4 original simple items: Reissue Portal Link, Help modal, Zero Engagement badge, NFC ROI + Avg Session KPIs). **Recommend splitting into 1B1 (data integrity) and 1B2 (legacy migration)** — 1B1 first because it touches demo accuracy (sales-blocking risk during persona-driven sector demos).
+**2. Yarın sabah verify — GitHub Actions bot first-run**
 
-**Open Question for next session:** Confirm Sprint 1B split decision before writing directive.
+Bot dün gece (2026-05-01 04:00 UTC = Toronto 23:00) ilk gerçek koşumunu yapacak. Yarın sabah:
+
+```bash
+git log -1 --grep="chore(summary): update day/hour" --pretty="%h %ai %s"
+```
+
+Kontrol edilecekler:
+- Bot commit görünüyor mu?
+- Tek mi (skip-if-empty doğru çalıştı mı)?
+- `docs/github-summaries/2026-04-30.md` doğru içerik mi (24h lookback, kullanıcı commit'leri var, bot'un kendi commit'i yok)?
 
 ---
 
@@ -78,10 +82,10 @@ Verify method: run `firebase functions:list`, paste output here on change.
 - Last deploy: [fill when next deploy happens]
 - Bundle hash: [fill]
 
-### Working tree state (end of 2026-04-30)
-- HEAD: `14a8a0ec` on origin/main, in sync.
-- Working tree: **CLEAN** (genuine — first true clean state since Sprint 1B2 squash).
-- Last sync: 2026-04-30 (rebase absorbed 6 chore-only bot commits, then pushed SoS→WoW i18n fix + .firebase gitignore).
+### Working tree state (end of 2026-04-30 — session close)
+- HEAD: `d62fd598` on origin/main, in sync (off-by-one: this session-close commit will be HEAD+1 after push).
+- Working tree: **CLEAN**.
+- Day total: 12 commits — 5 fixes (i18n SoS→WoW, family chip persist, fake metric removal, mobile topbar, hosting cache gitignore), 1 chore (Actions bot daily-cap), 6 handoff updates.
 - Known clean diff boundaries: legacy dashboards untouched, main site pages untouched, demo portals untouched, /admin untouched, LanguageContext.jsx untouched, backend/ untouched.
 
 ---
@@ -179,6 +183,12 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 4. **Branch protection on `main`** — `github-activity-summary.yml` uses `permissions: contents: write` and pushes directly to `main`. If branch protection is later enabled (required PR review, signed commits, etc.) this workflow will break unless given an exception or scoped to push to a separate branch. Decision deferred until branch protection is actually configured. [Tech Debt — Repo Hygiene]
 
+5. **Handoff HEAD off-by-one** — Every handoff-touching commit makes the recorded HEAD stale by 1. Accepted as "snapshot at last sync" — read accordingly. Not worth fixing with a self-referential pattern. [Tech Debt — Doc Hygiene]
+
+6. **React Router future flag warning** — `v7_relativeSplatPath` console warning on every page load. Non-blocking, cosmetic noise. Resolve at sprint cleanup phase. [Tech Debt — Console Hygiene]
+
+7. **Recharts mobile width(-1) error** — KPI sparkline ResponsiveContainer fails at narrow viewports (mobile). ~5-10 min fix. Surfaced in Sprint 2 mobile QA round. [Tech Debt — Mobile UI]
+
 ---
 
 
@@ -191,6 +201,8 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 ---
 
 ## Recently Completed
+
+**2026-04-30 day total: 12 commits** — repo hygiene reset, Sprint 1B3, Sprint 2 #8, Actions bot daily-cap, fake metric removal. Working tree clean at session close.
 
 - Fake metric removed (2026-04-30): VIP Conversion Lift KPI card ("100×" fake metric) removed from Overview KPI grid (RE + Auto sectorConfig). Bonus exec card subtitle replaced with qualitative copy ("Identity-first conversion intelligence", 4 lang). Data layer untouched. Grid temporarily 4+1 layout — Sprint 2 #4 will refill. Commit `a1ff0128`. [CC + Claude]
 - Bot freq fix SHIPPED (2026-04-30): `github-activity-summary.yml` cron reduced hourly → daily 23:00 America/Toronto (04:00 UTC). Skip-if-empty guard + bot-self-filter (`--invert-grep`) added. Default lookback 1h → 24h. Expected: ~13 bot commits/day → max 1/day, 0 on silent days. Commit `6b7495ed`. Closes Repo Hygiene tech debt #1. [CC]
