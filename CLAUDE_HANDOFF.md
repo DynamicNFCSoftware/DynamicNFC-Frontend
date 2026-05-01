@@ -175,9 +175,9 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 2. **Sprint 1B split decision** — single 9-item directive or split into 1B1 (data integrity, 5 items) + 1B2 (legacy migration, 4 items)? Recommend split. Decision before next directive write.
 
-3. **GitHub Actions bot commits** — `chore(summary): update day/hour github activity log` runs frequently (54 commits in Sprint 1A.2 window, 6 in current window). Forces git pull --rebase before every push. Decision pending: reduce frequency, squash, or remove. Not blocking but friction. [Tech Debt — Repo Hygiene]
+3. **Suspense key=pathname remount pattern** — `App.jsx:169` uses `<AnimatePresence mode="wait"><Suspense key={location.pathname}>` which unmounts/remounts the entire route subtree on every nav. Provider state inside UnifiedLayout (DashboardDataProvider) loses all useState values on tab switch. localStorage persist used as workaround for `showFamilyBuyers` (Sprint 1B3) but pattern likely affects other states. Needs architectural review — options: route-group keying, provider lift above AnimatedRoutes, or stateful route wrapper. [Tech Debt — Architecture]
 
-4. **Suspense key=pathname remount pattern** — `App.jsx:169` uses `<AnimatePresence mode="wait"><Suspense key={location.pathname}>` which unmounts/remounts the entire route subtree on every nav. Provider state inside UnifiedLayout (DashboardDataProvider) loses all useState values on tab switch. localStorage persist used as workaround for `showFamilyBuyers` (Sprint 1B3) but pattern likely affects other states. Needs architectural review — options: route-group keying, provider lift above AnimatedRoutes, or stateful route wrapper. [Tech Debt — Architecture]
+4. **Branch protection on `main`** — `github-activity-summary.yml` uses `permissions: contents: write` and pushes directly to `main`. If branch protection is later enabled (required PR review, signed commits, etc.) this workflow will break unless given an exception or scoped to push to a separate branch. Decision deferred until branch protection is actually configured. [Tech Debt — Repo Hygiene]
 
 ---
 
@@ -191,6 +191,7 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## Recently Completed
 
+- Bot freq fix SHIPPED (2026-04-30): `github-activity-summary.yml` cron reduced hourly → daily 23:00 America/Toronto (04:00 UTC). Skip-if-empty guard + bot-self-filter (`--invert-grep`) added. Default lookback 1h → 24h. Expected: ~13 bot commits/day → max 1/day, 0 on silent days. Commit `6b7495ed`. Closes Repo Hygiene tech debt #1. [CC]
 - Sprint 2 #8 (2026-04-30): Mobile topbar 3-dot overflow menu. Region stays visible at ≤768px; Live/Demo, Lang, Help, Theme, Export PDF collapse into menu. RTL-safe. Closes Sprint 1B2 QA carryover. [Cursor]
 - Sprint 1B3 (2026-04-30): VIP CRM family chip state persisted to localStorage. Survives tab switches and browser reload. Workaround for broader `<Suspense key=pathname>` remount pattern. [CC + Claude]
 - Git hygiene (2026-04-30): .firebase/*.cache moved to .gitignore + git rm --cached. Eliminates CRLF noise + deploy cache churn. Commit 1e039108. [CC]
