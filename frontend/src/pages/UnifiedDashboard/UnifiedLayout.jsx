@@ -28,6 +28,7 @@ const LAYOUT_TEXT = {
     collapseSidebar: "Collapse sidebar",
     openMenu: "Open menu",
     closeMenu: "Close menu",
+    moreActions: "More",
     live: "Live",
     demo: "Demo",
     inviteVip: "Invite VIP",
@@ -87,6 +88,7 @@ const LAYOUT_TEXT = {
     collapseSidebar: "طي الشريط الجانبي",
     openMenu: "فتح القائمة",
     closeMenu: "إغلاق القائمة",
+    moreActions: "المزيد",
     live: "مباشر",
     demo: "تجريبي",
     inviteVip: "دعوة VIP",
@@ -129,7 +131,8 @@ const LAYOUT_TEXT = {
     expandSidebar: "Expandir barra lateral",
     collapseSidebar: "Contraer barra lateral",
     openMenu: "Abrir menu",
-    closeMenu: "Cerrar menu",
+    closeMenu: "Cerrar menú",
+    moreActions: "Más",
     live: "En vivo",
     demo: "Demo",
     inviteVip: "Invitar VIP",
@@ -173,6 +176,7 @@ const LAYOUT_TEXT = {
     collapseSidebar: "Reduire la barre laterale",
     openMenu: "Ouvrir le menu",
     closeMenu: "Fermer le menu",
+    moreActions: "Plus",
     live: "En direct",
     demo: "Démo",
     inviteVip: "Inviter VIP",
@@ -667,6 +671,12 @@ function LayoutContent({
   const navigate = useNavigate();
   const tx = LAYOUT_TEXT[lang] || LAYOUT_TEXT.en;
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showOverflowMenu, setShowOverflowMenu] = useState(false);
+
+  useEffect(() => {
+    setShowOverflowMenu(false);
+  }, [pathname]);
+
   if (seedingInProgress) {
     const sectorLower = (sectorId || "").toLowerCase().replace(/[-_]/g, "");
     const isRealEstate = sectorLower === "realestate";
@@ -724,11 +734,7 @@ function LayoutContent({
             <h1 className="ud-page-title">{title}</h1>
           </div>
           <div className="ud-topbar-actions">
-            <div className="ud-live-indicator">
-              <span className="ud-live-dot" />
-              {dataMode === "tenant" ? tx.live : tx.demo}
-            </div>
-            <div className="ud-region-wrap" style={{ position: "relative" }}>
+            <div className="ud-region-wrap ud-topbar-action--always" style={{ position: "relative" }}>
               <button
                 type="button"
                 className="ud-region-btn"
@@ -769,8 +775,12 @@ function LayoutContent({
                 </>
               )}
             </div>
+            <div className="ud-live-indicator ud-topbar-action--desktop">
+              <span className="ud-live-dot" />
+              {dataMode === "tenant" ? tx.live : tx.demo}
+            </div>
             {(region?.languages || ["en"]).length > 1 && (
-              <div className="ud-lang-toggle" role="group" aria-label={tx.languageLabel}>
+              <div className="ud-lang-toggle ud-topbar-action--desktop" role="group" aria-label={tx.languageLabel}>
                 {(region?.languages || ["en"]).map((l) => (
                   <button
                     key={l}
@@ -786,14 +796,14 @@ function LayoutContent({
             )}
             <button
               type="button"
-              className="ud-btn-icon ud-help-btn"
+              className="ud-btn-icon ud-help-btn ud-topbar-action--desktop"
               onClick={() => setShowHelpModal(true)}
               aria-label={tx.helpButton}
               title={tx.helpButton}
             >
               ?
             </button>
-            <button type="button" className="ud-btn-icon" onClick={toggleTheme} aria-label={tx.toggleTheme}>
+            <button type="button" className="ud-btn-icon ud-topbar-action--desktop" onClick={toggleTheme} aria-label={tx.toggleTheme}>
               {theme === "dark" ? (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
               ) : (
@@ -802,7 +812,82 @@ function LayoutContent({
                 </svg>
               )}
             </button>
-            <ExportPDF />
+            <div className="ud-topbar-action--desktop">
+              <ExportPDF />
+            </div>
+            <div className="ud-overflow-wrap" style={{ position: "relative" }}>
+              <button
+                type="button"
+                className="ud-btn-icon ud-overflow-btn"
+                onClick={() => setShowOverflowMenu((p) => !p)}
+                aria-label={tx.moreActions}
+                aria-expanded={showOverflowMenu}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <circle cx="12" cy="5" r="1.5" />
+                  <circle cx="12" cy="12" r="1.5" />
+                  <circle cx="12" cy="19" r="1.5" />
+                </svg>
+              </button>
+              {showOverflowMenu && (
+                <>
+                  <button
+                    type="button"
+                    className="ud-overflow-backdrop"
+                    onClick={() => setShowOverflowMenu(false)}
+                    aria-label={tx.closeMenu}
+                  />
+                  <div className="ud-overflow-menu" role="menu">
+                    <div className="ud-overflow-item ud-overflow-item--readonly">
+                      <span className="ud-live-dot" />
+                      <span>{dataMode === "tenant" ? tx.live : tx.demo}</span>
+                    </div>
+                    {(region?.languages || ["en"]).length > 1 && (
+                      <div className="ud-overflow-item ud-overflow-item--group" role="group" aria-label={tx.languageLabel}>
+                        <span className="ud-overflow-item-label">{tx.languageLabel}</span>
+                        <div className="ud-overflow-lang-row">
+                          {(region?.languages || ["en"]).map((l) => (
+                            <button
+                              key={l}
+                              type="button"
+                              className={`ud-lang-btn ${l === lang ? "ud-lang-active" : ""}`}
+                              onClick={() => { setLang(l); setShowOverflowMenu(false); }}
+                              aria-pressed={l === lang}
+                            >
+                              {l.toUpperCase()}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="ud-overflow-item ud-overflow-item--btn"
+                      onClick={() => { setShowHelpModal(true); setShowOverflowMenu(false); }}
+                      role="menuitem"
+                    >
+                      <span className="ud-overflow-item-icon">?</span>
+                      <span>{tx.helpButton}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="ud-overflow-item ud-overflow-item--btn"
+                      onClick={() => { toggleTheme(); setShowOverflowMenu(false); }}
+                      role="menuitem"
+                    >
+                      <span className="ud-overflow-item-icon">{theme === "dark" ? "S" : "M"}</span>
+                      <span>{tx.toggleTheme}</span>
+                    </button>
+                    <div
+                      className="ud-overflow-item ud-overflow-item--export"
+                      onClick={() => setShowOverflowMenu(false)}
+                    >
+                      <ExportPDF />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
         <div className="ud-main-content">
