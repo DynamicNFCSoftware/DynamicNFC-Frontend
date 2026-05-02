@@ -22,40 +22,36 @@ Claude ve Cursor arasında session'lar arası paylaşılan canlı durum.
 Her session başında yeni chat'e yapıştır. Her deploy / architecture
 change / yarım kalan iş sonrası güncelle.
 
-Last updated: 2026-04-30 EOD by CC (session close: 12 commits — repo hygiene reset, Sprint 1B3, Sprint 2 #8, Actions bot daily-cap, fake metric removal. Working tree clean.)
+Last updated: 2026-05-02 by Claude (Sprint 2 #4 directive locked: Velocity KPIs + Today's Brief. Stack A2+B3+C1+D2+E2+F1+Functions config. Awaiting Cursor execution.)
 
 ---
 
 
-## Resume Tomorrow (2026-05-01)
 
-**1. Sprint 2 #4 — Velocity KPIs (NEXT)**
+## Resume Tomorrow (2026-05-03)
 
-Sprint 2'nin sonraki büyük maddesi. KPI grid şu an 4+1 layout (5 kart) — #4 bunu 4+4'e tamamlayacak: TTFA (Time-To-First-Action), Viewing Velocity, Lead Capture Rate.
+**1. Cursor output review — Sprint 2 #4**
 
-Claude bu sprint için context'i hazırlıyor:
-- **TTFA formula:** ilk tap'tan ilk meaningful action'a (view_unit / view_floorplan / book_viewing) kadar geçen süre
-- **Viewing Velocity:** tap → booked viewing süresi (per VIP, sektör/region aware)
-- **Lead Capture Rate:** marketplace anonymous → identified VIP conversion %
+Cursor `cursor/sprint-2-4-velocity-kpis` branch'inde directive'i execute etti (veya etmedi). Çıktıyı Claude'a yapıştır → audit. Audit clean ise:
 
-Karar gerekecek alanlar (yarın konuşulacak):
-- Hangi tab'a oturacak (Overview KPI grid mi, ayrı Velocity satırı mı)
-- Hangi field'lardan beslenecek (taps + behaviors collection'larındaki event'ler)
-- Per-region veya per-sector farklı eşik değerler mi (Gulf vs Canada gibi)
+- Anthropic API key set:
+```powershell
+  firebase functions:config:set anthropic.api_key="sk-ant-..."
+```
+- Deploy: `firebase deploy --only functions:aggregateVelocityMetrics,functions:refreshDailyBriefAi`
+- Wait 15min — verify `tenants/{uid}/aggregates/velocity` + `aggregates/dailyBrief` Firestore'da oluştu
+- Frontend deploy + UI QA on /unified/overview
 
-**2. Yarın sabah verify — GitHub Actions bot first-run**
+**2. Bot verify (2026-05-02 ve 2026-05-03 dosyaları)**
 
-Bot dün gece (2026-05-01 04:00 UTC = Toronto 23:00) ilk gerçek koşumunu yapacak. Yarın sabah:
+Botun saatlik koşumlarını tamamen bıraktığını doğrula:
 
-```bash
-git log -1 --grep="chore(summary): update day/hour" --pretty="%h %ai %s"
+```powershell
+ls docs\github-summaries\
+git log --grep="chore(summary)" --since="2026-05-02" --pretty="%h %ai %s"
 ```
 
-Kontrol edilecekler:
-- Bot commit görünüyor mu?
-- Tek mi (skip-if-empty doğru çalıştı mı)?
-- `docs/github-summaries/2026-04-30.md` doğru içerik mi (24h lookback, kullanıcı commit'leri var, bot'un kendi commit'i yok)?
-
+Beklenti: `2026-05-02.md` ve `2026-05-03.md` dosyaları var, her biri tek "06:00 update" entry içeriyor (Toronto timezone).
 ---
 
 ## Infrastructure Snapshot
@@ -195,8 +191,8 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 ## In-Flight Work
 
-- Sprint 2 in progress (2026-04-30): **#8 complete**, remaining items **#1, #2, #3, #4, #5, #6, #7**. [Cursor]
-  - **#4 (Velocity KPIs) note:** KPI grid currently 5 cards after fake-metric removal (2026-04-30) — #4 will restore 4+4 layout with TTFA / Viewing Velocity / Lead Capture Rate metrics.
+- Sprint 2 #4 in progress (2026-05-02): Velocity KPIs + Today's Brief. Stack locked A2+B3+C1+D2+E2+F1+Functions config. 8 metrics ship: TTFA, Viewing Velocity, Re-engagement Rate, Second-Tap Rate, Lead Capture Rate, VIP→Booked, Decision Window, Sales Rep Response Time. AI brief uses Claude Haiku 4.5 with E2 rate limit + F1 silent fallback to template. Layout: Pipeline overview (4) + Today's Brief block (full-width, replaces standalone NFC ROI) + Sales velocity 4+4 grid. Directive: `SPRINT2_4_VELOCITY_KPIS_DIRECTIVE.md`. Deferred (Sprint 3-4): Behavioral Events/Tap, Region Velocity Index, Pipeline Acceleration Score. [Cursor]
+- Sprint 2 remaining: **#1, #2, #3, #5, #6, #7** (after #4 ships). [Cursor]
 
 ---
 
