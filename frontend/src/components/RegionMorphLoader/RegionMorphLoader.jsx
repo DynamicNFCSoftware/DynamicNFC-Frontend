@@ -110,6 +110,22 @@ const BLUEPRINTS = {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+// Inline style for mini-map countries — bypasses CSS Module fragility
+// (same root cause as dynamic SVG elements: presentation attribute / class
+// rule drops to default fill="black" when CSS pipeline drifts).
+const MM_DEFAULT_STYLE = {
+  fill: "rgba(69, 123, 157, 0.15)",
+  stroke: "rgba(69, 123, 157, 0.35)",
+  strokeWidth: 0.4,
+  transition: "fill 0.7s ease, stroke 0.7s ease",
+};
+const MM_ACTIVE_STYLE = {
+  fill: "rgba(184, 134, 11, 0.55)",
+  stroke: "#b8860b",
+  strokeWidth: 0.7,
+  transition: "fill 0.7s ease, stroke 0.7s ease",
+};
+
 function createSvgElement(spec) {
   const el = document.createElementNS(SVG_NS, spec.type);
   if (spec.type === "rect") {
@@ -280,16 +296,16 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
               <line x1="150" y1="0" x2="150" y2="100" />
             </g>
 
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-canada" ? styles.mmActive : ""}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-usa" ? styles.mmActive : ""}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-mexico" ? styles.mmActive : ""}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
-            <path className={styles.mmCountry} d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
-            <path className={styles.mmCountry} d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
-            <path className={styles.mmCountry} d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-gulf" ? styles.mmActive : ""}`} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
-            <path className={styles.mmCountry} d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
-            <path className={styles.mmCountry} d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
-            <path className={styles.mmCountry} d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
+            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-canada" ? styles.mmActive : ""}`} style={d.miniMap.countryId === "mm-canada" ? MM_ACTIVE_STYLE : MM_DEFAULT_STYLE} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
+            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-usa" ? styles.mmActive : ""}`} style={d.miniMap.countryId === "mm-usa" ? MM_ACTIVE_STYLE : MM_DEFAULT_STYLE} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
+            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-mexico" ? styles.mmActive : ""}`} style={d.miniMap.countryId === "mm-mexico" ? MM_ACTIVE_STYLE : MM_DEFAULT_STYLE} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
+            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
+            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
+            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
+            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-gulf" ? styles.mmActive : ""}`} style={d.miniMap.countryId === "mm-gulf" ? MM_ACTIVE_STYLE : MM_DEFAULT_STYLE} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
+            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
+            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
+            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
 
             <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className={styles.mmPinAnim} />
             <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className={styles.mmPinAnim} />
