@@ -189,11 +189,14 @@ Example: `[Pipeline] [AR] [Gulf] — "NEW LEAD" → expected: "عميل محتم
 
 
 
+
 ## In-Flight Work
 
-- Sprint 2 #4 in progress (2026-05-02): Velocity KPIs + Today's Brief. Stack locked A2+B3+C1+D2+E2+F1+Functions config. 8 metrics ship: TTFA, Viewing Velocity, Re-engagement Rate, Second-Tap Rate, Lead Capture Rate, VIP→Booked, Decision Window, Sales Rep Response Time. AI brief uses Claude Haiku 4.5 with E2 rate limit + F1 silent fallback to template. Layout: Pipeline overview (4) + Today's Brief block (full-width, replaces standalone NFC ROI) + Sales velocity 4+4 grid. Directive: `SPRINT2_4_VELOCITY_KPIS_DIRECTIVE.md`. Deferred (Sprint 3-4): Behavioral Events/Tap, Region Velocity Index, Pipeline Acceleration Score. [Cursor]
-- Sprint 2 remaining: **#1, #2, #3, #5, #6, #7** (after #4 ships). [Cursor]
+- Sprint 2 #4 RESET (2026-05-02): Cursor reported completion but `git ls-remote origin "cursor/*"` showed no implementation commits reached the branch — only handoff commits existed. Working directories `frontend/src/components/UnifiedDashboard/` and `functions/lib/` did not exist locally either. Cursor branch deleted from remote. Awaiting fresh execution with consolidated directive (defineSecret pattern integrated from day one, no audit patch needed). Anthropic API key already in Secret Manager (`ANTHROPIC_API_KEY`). Stack unchanged: A2+B3+C1+D2+E2+F1. 8 metrics ship: TTFA, Viewing Velocity, Re-engagement Rate, Second-Tap Rate, Lead Capture Rate, VIP→Booked, Decision Window, Sales Rep Response Time. AI brief uses Claude Haiku 4.5 with E2 rate limit + F1 silent fallback to template. Layout: Pipeline overview (4) + Today's Brief block (full-width, replaces standalone NFC ROI) + Sales velocity 4+4 grid. Deferred (Sprint 3-4): Behavioral Events/Tap, Region Velocity Index, Pipeline Acceleration Score. Directive: `SPRINT2_4_VELOCITY_KPIS_DIRECTIVE.md` (will be replaced with v2 — defineSecret-aware). [Claude — directive rewrite next]
 
+- Sprint 2 #1 directive locked (2026-05-02): 5-Minute Proof tutorial. Stack G3+H1+I2+J2+K1+L2+M1+N2+P1. 5 steps (Identity → Track → Score → Alert → Close), Overview tab inline banner default, expand-on-click, Firestore-persisted dismiss flag. Persona dynamic via `useRegion()`. Awaiting Sprint 2 #4 fresh execution + ship. Directive: `SPRINT2_1_FIVE_MINUTE_PROOF_DIRECTIVE.md` (TBD). [Claude — directive after #4 ships]
+
+- Sprint 2 remaining: **#2, #3, #5, #6, #7** (after #1 + #4 ship). [Cursor]
 ---
 
 ## Recently Completed
