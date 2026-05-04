@@ -337,7 +337,7 @@ export default function useDashboardData() {
       seedingRef.current = false;
       unsubscribers.forEach((u) => u?.());
     };
-  }, [refreshKey, user, regionId]);
+  }, [refreshKey, user]);
 
   useEffect(() => {
     if (!user?.uid) return undefined;

@@ -41,8 +41,9 @@ export async function checkTenantExists(uid, regionId = "gulf") {
   const seedComplete = !!data.seedComplete;
   const seedVersion = data.seedVersion ?? null;
   const seedRegion = data.seedRegion ?? null;
-  const regionMismatch = seedRegion !== regionId;
-  const needsSeed = !seedComplete || seedVersion !== SEED_VERSION || regionMismatch;
+  // Region is a runtime filter (handled client-side via filterBySectorAndRegion),
+  // not a seed identity. Never reseed on region switch.
+  const needsSeed = !seedComplete || seedVersion !== SEED_VERSION;
   const result = { exists: true, seedComplete, seedVersion, seedRegion, needsSeed };
   console.log(
     "[TENANT CHECK] uid:",
@@ -98,23 +99,12 @@ export async function seedTenantData(uid, userInfo = {}, regionId = "gulf") {
     const existingSnap = await getDoc(tenantRef);
     const existingData = existingSnap.exists() ? existingSnap.data() || {} : null;
 
-    const regionMatches = existingData?.seedRegion === regionId;
-    // Version-aware + region-aware skip
-    if (
-      existingData &&
-      existingData.seedComplete === true &&
-      existingData.seedVersion === SEED_VERSION &&
-      regionMatches
-    ) {
+    if (existingData && existingData.seedComplete === true && existingData.seedVersion === SEED_VERSION) {
       return { seeded: false, reason: "already_seeded_current_version" };
     }
 
-    if (existingData && (existingData.seedVersion !== SEED_VERSION || !regionMatches)) {
-      const reason =
-        existingData.seedVersion !== SEED_VERSION
-          ? "version mismatch"
-          : `region mismatch (${existingData.seedRegion || "unknown"} -> ${regionId})`;
-      console.log("[TENANT RESEED] Reseed required:", reason, "- reseeding with merge strategy");
+    if (existingData && existingData.seedVersion !== SEED_VERSION) {
+      console.log("[TENANT SEED] Version mismatch - running merge seed update");
     }
 
     await setDoc(
@@ -125,7 +115,7 @@ export async function seedTenantData(uid, userInfo = {}, regionId = "gulf") {
         createdAt: existingData?.createdAt || serverTimestamp(),
         lastActivity: serverTimestamp(),
         seedVersion: SEED_VERSION,
-        seedRegion: regionId,
+        seedRegion: existingData?.seedRegion ?? regionId,
         seedComplete: false,
         schemaVersion: SCHEMA_VERSION,
         cleanupEligible: true,
@@ -150,7 +140,7 @@ export async function seedTenantData(uid, userInfo = {}, regionId = "gulf") {
       {
         seedComplete: true,
         seedVersion: SEED_VERSION,
-        seedRegion: regionId,
+        seedRegion: existingData?.seedRegion ?? regionId,
         schemaVersion: SCHEMA_VERSION,
         lastActivity: serverTimestamp(),
         pendingDeletionAt: null,
