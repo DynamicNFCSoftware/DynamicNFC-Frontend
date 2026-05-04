@@ -4,9 +4,20 @@ const express = require("express");
 const cors = require("cors");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const { defineSecret } = require("firebase-functions/params");
+const { computeVelocityMetrics } = require("./lib/velocityMetrics");
+const { generateBriefFromTemplate } = require("./lib/briefTemplates");
+const { generateBriefFromLLM } = require("./lib/aiBriefGenerator");
+const {
+  deriveTopVip,
+  derivePipelineDelta,
+  deriveMarketplaceTraffic,
+  deriveAlerts,
+} = require("./lib/dataDerivers");
 
 admin.initializeApp();
 const db = admin.firestore();
+const anthropicApiKey = defineSecret("ANTHROPIC_API_KEY");
 
 // ── Security: Allowed redirect domains ──
 const ALLOWED_REDIRECT_DOMAINS = ["dynamicnfc.ca", "www.dynamicnfc.ca", "localhost"];
@@ -897,4 +908,95 @@ exports.aggregateCampaignTaps = functions
     }
     console.log(`[AggCampaignTaps] Processed ${totalProcessed} campaigns across ${tenantsSnap.size} tenants`);
     return null;
+  });
+
+exports.aggregateVelocityMetrics = functions
+  .region("us-central1")
+  .runWith({
+    timeoutSeconds: 540,
+    memory: "512MB",
+    secrets: [anthropicApiKey],
+  })
+  .pubsub.schedule("every 15 minutes")
+  .timeZone("UTC")
+  .onRun(async () => {
+    const tenantsSnap = await db.collection("tenants").get();
+
+    for (const tenantDoc of tenantsSnap.docs) {
+      const tenantId = tenantDoc.id;
+      const tenantRef = db.collection("tenants").doc(tenantId);
+      const cutoffDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const [taps, behaviors, deals, events] = await Promise.all([
+        tenantRef.collection("taps").where("timestamp", ">=", cutoffDate).get(),
+        tenantRef.collection("behaviors").where("timestamp", ">=", cutoffDate).get(),
+        tenantRef.collection("deals").get(),
+        tenantRef.collection("events").where("timestamp", ">=", cutoffDate).get(),
+      ]);
+
+      const metrics = computeVelocityMetrics({
+        taps: taps.docs.map((doc) => doc.data()),
+        behaviors: behaviors.docs.map((doc) => doc.data()),
+        deals: deals.docs.map((doc) => doc.data()),
+        events: events.docs.map((doc) => doc.data()),
+      });
+
+      await tenantRef.collection("aggregates").doc("velocity").set(metrics, { merge: true });
+
+      const lang = tenantDoc.data()?.preferredLang || "en";
+      const templateBrief = generateBriefFromTemplate({
+        topVip: deriveTopVip(taps, behaviors),
+        pipelineDelta: derivePipelineDelta(deals, events),
+        marketplaceTraffic: deriveMarketplaceTraffic(taps),
+        alerts: deriveAlerts(deals, events),
+        lang,
+      });
+
+      const dailyBriefRef = tenantRef.collection("aggregates").doc("dailyBrief");
+      const existingBrief = await dailyBriefRef.get();
+      const generatedAt = Number(existingBrief.data()?.generatedAt || 0);
+      const llmFresh =
+        existingBrief.exists &&
+        existingBrief.data()?.source === "llm" &&
+        Date.now() - generatedAt < 5 * 60 * 1000;
+      if (!llmFresh) {
+        await dailyBriefRef.set(templateBrief, { merge: true });
+      }
+    }
+    return null;
+  });
+
+exports.refreshDailyBriefAi = functions
+  .region("us-central1")
+  .runWith({ secrets: [anthropicApiKey] })
+  .https.onCall(async (data, context) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError("unauthenticated", "Must be authenticated");
+    }
+
+    const tenantId = context.auth.uid;
+    const lang = data?.lang || "en";
+    const tenantRef = db.collection("tenants").doc(tenantId);
+    const tenantDoc = await tenantRef.get();
+    if (!tenantDoc.exists) {
+      throw new functions.https.HttpsError("not-found", "Tenant not found");
+    }
+
+    const cutoffDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const [taps, behaviors, deals, events] = await Promise.all([
+      tenantRef.collection("taps").where("timestamp", ">=", cutoffDate).get(),
+      tenantRef.collection("behaviors").where("timestamp", ">=", cutoffDate).get(),
+      tenantRef.collection("deals").get(),
+      tenantRef.collection("events").where("timestamp", ">=", cutoffDate).get(),
+    ]);
+
+    return generateBriefFromLLM({
+      tenantId,
+      topVip: deriveTopVip(taps, behaviors),
+      pipelineDelta: derivePipelineDelta(deals, events),
+      marketplaceTraffic: deriveMarketplaceTraffic(taps),
+      alerts: deriveAlerts(deals, events),
+      lang,
+      db,
+      admin,
+    });
   });

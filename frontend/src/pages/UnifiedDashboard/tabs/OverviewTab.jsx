@@ -13,6 +13,9 @@ import DateRangePicker from "../components/DateRangePicker";
 import KpiCard from "../components/KpiCard";
 import MiniSparkline from "../components/MiniSparkline";
 import { SkeletonCard, SkeletonKPIs } from "../components/LoadingSkeleton";
+import TodaysBrief from "../../../components/UnifiedDashboard/TodaysBrief";
+import SalesVelocity from "../../../components/UnifiedDashboard/SalesVelocity";
+import "../../../i18n/portals/dashboard";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 const WEEKLY_RANGE_KEY = "ud_overview_weeklyTrend_dateRange";
@@ -282,7 +285,23 @@ export default function OverviewTab() {
       return resolveWeeklyRange({ preset: "last8w" });
     }
   });
-  const { kpis, events, vips, deals, cards, analytics, loading, sparklines, feedCounts, callQueue, alerts } = useDashboard();
+  const {
+    kpis,
+    events,
+    vips,
+    deals,
+    cards,
+    analytics,
+    loading,
+    sparklines,
+    feedCounts,
+    callQueue,
+    alerts,
+    velocityMetrics,
+    dailyBrief,
+    refreshDailyBriefAi,
+    isRefreshingAi,
+  } = useDashboard();
   const tx = { ...UI.en, ...(UI[lang] || {}) };
   const locale = getEffectiveLocale(regionId, lang);
   const dateTickFormatter = (value) => new Date(value).toLocaleDateString(locale, { month: "short", day: "numeric" });
@@ -302,6 +321,22 @@ export default function OverviewTab() {
     const ratio = totalDealValueClosed / (cardsIssued * nfcCardCost);
     return Number.isFinite(ratio) && ratio > 0 ? `${ratio.toFixed(1)}x` : "—";
   }, [cards, deals]);
+  const resolvedBrief = useMemo(() => {
+    if (dailyBrief) return dailyBrief;
+    return {
+      paragraph1:
+        "VIP activity summary will appear here as named buyer signals are collected from private invitation journeys.",
+      paragraph2:
+        "Pipeline and marketplace movement is updated every cycle so your team can prioritize outreach while intent is still hot.",
+      chips: [],
+      source: "template",
+      generatedAt: Date.now(),
+      lang,
+    };
+  }, [dailyBrief, lang]);
+  const handleRefreshAi = async () => {
+    await refreshDailyBriefAi(lang);
+  };
   const avgSessionDisplay = useMemo(() => {
     const SESSION_IDLE_GAP_MS = 30 * 60 * 1000;
     const MAX_SESSION_MS = 4 * 60 * 60 * 1000;
@@ -573,23 +608,22 @@ export default function OverviewTab() {
             />
           );
         })}
-        <KpiCard
-          key="nfc_roi"
-          label={tx.kpiNfcRoi}
-          value={0}
-          subtitle={tx.kpiNfcRoiSub}
-          color="#8b5cf6"
-          displayOverride={nfcRoiDisplay}
-        />
-        <KpiCard
-          key="avg_session"
-          label={tx.kpiAvgSession}
-          value={0}
-          subtitle={tx.kpiAvgSessionSub}
-          color="#0ea5e9"
-          displayOverride={avgSessionDisplay}
-        />
       </div>
+
+      <TodaysBrief
+        brief={resolvedBrief}
+        nfcRoi={nfcRoiDisplay}
+        onRefreshAi={handleRefreshAi}
+        isRefreshing={isRefreshingAi}
+        lang={lang}
+      />
+
+      <SalesVelocity
+        metrics={velocityMetrics}
+        lang={lang}
+        sector={config.id}
+        region={regionId}
+      />
 
       <div className="ud-card" style={{ marginTop: 16, marginBottom: 16 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
