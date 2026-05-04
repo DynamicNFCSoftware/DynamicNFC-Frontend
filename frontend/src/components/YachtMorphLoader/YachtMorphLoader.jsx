@@ -355,20 +355,21 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
         a.yacht.forEach((p) => {
           const el = createEl(p);
           el.setAttribute('class', styles.yachtEl);
-          el.setAttribute('fill', 'none');
-          el.setAttribute('stroke', d.accent);
-          el.setAttribute('stroke-width', '1.5');
-          el.setAttribute('stroke-linejoin', 'round');
-          el.setAttribute('stroke-linecap', 'round');
+          // Inline style beats CSS rules — robust against any global SVG fill override.
+          el.style.fill = 'none';
+          el.style.stroke = d.accent;
+          el.style.strokeWidth = '1.5';
+          el.style.strokeLinejoin = 'round';
+          el.style.strokeLinecap = 'round';
           if (p.opacity !== undefined) el.style.opacity = p.opacity;
           yacht.appendChild(el);
         });
         a.details.forEach((dt) => {
           const el = createEl(dt);
           el.setAttribute('class', styles.yachtDetail);
-          el.setAttribute('fill', 'none');
-          el.setAttribute('stroke', d.accent);
-          el.setAttribute('stroke-width', '0.9');
+          el.style.fill = 'none';
+          el.style.stroke = d.accent;
+          el.style.strokeWidth = '0.9';
           el.style.opacity = 0.75;
           details.appendChild(el);
         });

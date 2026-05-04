@@ -187,11 +187,13 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
       const el = createSvgElement(p);
       const dash = p.dash || 400;
       el.setAttribute("class", styles.bpEl);
-      el.setAttribute("fill", "none");
-      el.setAttribute("stroke", d.accent);
-      el.setAttribute("stroke-width", "1.2");
-      el.setAttribute("stroke-linejoin", "miter");
-      el.setAttribute("stroke-linecap", "square");
+      // Use inline style (highest CSS specificity) instead of presentation
+      // attribute — SVG attributes lose to CSS rules, but inline style wins.
+      el.style.fill = "none";
+      el.style.stroke = d.accent;
+      el.style.strokeWidth = "1.2";
+      el.style.strokeLinejoin = "miter";
+      el.style.strokeLinecap = "square";
       el.style.strokeDasharray = dash;
       el.style.strokeDashoffset = reducedMotion ? 0 : dash;
       buildings.appendChild(el);
@@ -210,9 +212,9 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
     (bp.details || []).forEach((dt) => {
       const el = createSvgElement(dt);
       el.setAttribute("class", styles.bpDetail);
-      el.setAttribute("fill", "none");
-      el.setAttribute("stroke", d.accent);
-      el.setAttribute("stroke-width", "0.6");
+      el.style.fill = "none";
+      el.style.stroke = d.accent;
+      el.style.strokeWidth = "0.6";
       el.style.opacity = 0;
       el.style.transition = "opacity 0.7s ease";
       details.appendChild(el);
