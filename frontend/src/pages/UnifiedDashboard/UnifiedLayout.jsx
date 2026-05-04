@@ -680,7 +680,9 @@ function LayoutContent({
   // Sprint 2 #4.2 — Region/sector switch morph animation trigger.
   // Animations were previously a side effect of the reseed-on-region-switch loop
   // (removed in Sprint 2 #4.1). They now have their own trigger: pure UI state,
-  // no Firestore writes, ~1100ms display window matching the loader animation.
+  // no Firestore writes. Window = 3200ms — slowest region animation finishes
+  // ~2150ms, then ~1s "savor" pause so the viewer sees the completed blueprint
+  // before the dashboard takes over. Premium pacing, not perceived as slow.
   const [isSwitching, setIsSwitching] = useState(false);
   const switchTimerRef = useRef(null);
   const prevRegionRef = useRef(regionId);
@@ -697,7 +699,7 @@ function LayoutContent({
     switchTimerRef.current = setTimeout(() => {
       setIsSwitching(false);
       switchTimerRef.current = null;
-    }, 1100);
+    }, 3200);
     return () => {
       if (switchTimerRef.current) {
         clearTimeout(switchTimerRef.current);
