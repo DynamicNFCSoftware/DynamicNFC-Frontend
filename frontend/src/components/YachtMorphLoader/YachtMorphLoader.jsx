@@ -355,14 +355,20 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
         a.yacht.forEach((p) => {
           const el = createEl(p);
           el.setAttribute('class', styles.yachtEl);
+          el.setAttribute('fill', 'none');
           el.setAttribute('stroke', d.accent);
+          el.setAttribute('stroke-width', '1.5');
+          el.setAttribute('stroke-linejoin', 'round');
+          el.setAttribute('stroke-linecap', 'round');
           if (p.opacity !== undefined) el.style.opacity = p.opacity;
           yacht.appendChild(el);
         });
         a.details.forEach((dt) => {
           const el = createEl(dt);
           el.setAttribute('class', styles.yachtDetail);
+          el.setAttribute('fill', 'none');
           el.setAttribute('stroke', d.accent);
+          el.setAttribute('stroke-width', '0.9');
           el.style.opacity = 0.75;
           details.appendChild(el);
         });

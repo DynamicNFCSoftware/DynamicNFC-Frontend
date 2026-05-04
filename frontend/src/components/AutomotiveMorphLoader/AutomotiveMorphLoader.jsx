@@ -416,7 +416,11 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
     a.vehicle.forEach((p) => {
       const el = createSvgElement(p);
       el.setAttribute('class', styles.autoEl);
+      el.setAttribute('fill', 'none');
       el.setAttribute('stroke', d.accent);
+      el.setAttribute('stroke-width', '1.5');
+      el.setAttribute('stroke-linejoin', 'round');
+      el.setAttribute('stroke-linecap', 'round');
       vehicle.appendChild(el);
     });
 
@@ -424,7 +428,9 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
     a.details.forEach((dt) => {
       const el = createSvgElement(dt);
       el.setAttribute('class', styles.autoDetail);
+      el.setAttribute('fill', 'none');
       el.setAttribute('stroke', d.accent);
+      el.setAttribute('stroke-width', '0.9');
       el.style.opacity = 0.75;
       details.appendChild(el);
     });
