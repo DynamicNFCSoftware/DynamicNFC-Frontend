@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import styles from "./RegionMorphLoader.module.css";
+import "./RegionMorphLoader.css";
 import { getRealEstateMapRegionData } from "../../config/mapRegionConfig";
 
 const REGION_DATA = getRealEstateMapRegionData();
@@ -110,22 +110,6 @@ const BLUEPRINTS = {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-// Inline style for mini-map countries — bypasses CSS Module fragility
-// (same root cause as dynamic SVG elements: presentation attribute / class
-// rule drops to default fill="black" when CSS pipeline drifts).
-const MM_DEFAULT_STYLE = {
-  fill: "rgba(69, 123, 157, 0.15)",
-  stroke: "rgba(69, 123, 157, 0.35)",
-  strokeWidth: 0.4,
-  transition: "fill 0.7s ease, stroke 0.7s ease",
-};
-const MM_ACTIVE_STYLE = {
-  fill: "rgba(184, 134, 11, 0.55)",
-  stroke: "#b8860b",
-  strokeWidth: 0.7,
-  transition: "fill 0.7s ease, stroke 0.7s ease",
-};
-
 function createSvgElement(spec) {
   const el = document.createElementNS(SVG_NS, spec.type);
   if (spec.type === "rect") {
@@ -202,9 +186,10 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
     bp.parts.forEach((p, i) => {
       const el = createSvgElement(p);
       const dash = p.dash || 400;
-      el.setAttribute("class", styles.bpEl);
-      // Use inline style (highest CSS specificity) instead of presentation
-      // attribute — SVG attributes lose to CSS rules, but inline style wins.
+      el.setAttribute("class", "rml-bpEl");
+      // Inline style stays as defense in depth — CSS rule will also set fill:none
+      // via .rml-bpEl, but inline guarantees correctness even if a future global
+      // CSS rule introduces a conflict.
       el.style.fill = "none";
       el.style.stroke = d.accent;
       el.style.strokeWidth = "1.2";
@@ -227,7 +212,7 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
 
     (bp.details || []).forEach((dt) => {
       const el = createSvgElement(dt);
-      el.setAttribute("class", styles.bpDetail);
+      el.setAttribute("class", "rml-bpDetail");
       el.style.fill = "none";
       el.style.stroke = d.accent;
       el.style.strokeWidth = "0.6";
@@ -238,7 +223,7 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
 
     const detailFadeTimeout = setTimeout(() => {
       if (!detailsRef.current) return;
-      detailsRef.current.querySelectorAll(`.${styles.bpDetail}`).forEach((el) => {
+      detailsRef.current.querySelectorAll(".rml-bpDetail").forEach((el) => {
         el.style.opacity = 0.7;
       });
     }, detailsDelay);
@@ -249,7 +234,7 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
       el.setAttribute("x", lb.x);
       el.setAttribute("y", lb.y);
       el.setAttribute("text-anchor", "middle");
-      el.setAttribute("class", styles.bpLabel);
+      el.setAttribute("class", "rml-bpLabel");
       el.setAttribute("fill", d.gold);
       el.textContent = lb.text;
       labels.appendChild(el);
@@ -257,7 +242,7 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
 
     const labelFadeTimeout = setTimeout(() => {
       if (!labelsRef.current) return;
-      labelsRef.current.querySelectorAll(`.${styles.bpLabel}`).forEach((el) => {
+      labelsRef.current.querySelectorAll(".rml-bpLabel").forEach((el) => {
         el.style.opacity = 1;
       });
     }, detailsDelay + 150);
@@ -271,22 +256,22 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
   const d = REGION_DATA[region] || REGION_DATA.canada;
 
   return (
-    <div className={styles.stage} role="status" aria-live="polite" aria-label={`Loading ${d.reg}`}>
-      <div className={styles.metaBar}>
-        <div className={styles.metaLeft}>
-          <div className={styles.headerLabel}>DynamicNFC · Intelligence</div>
-          <div className={styles.headerTitle}>LAT {d.coords.lat} · LNG {d.coords.lng}</div>
+    <div className="rml-stage" role="status" aria-live="polite" aria-label={`Loading ${d.reg}`}>
+      <div className="rml-metaBar">
+        <div className="rml-metaLeft">
+          <div className="rml-headerLabel">DynamicNFC · Intelligence</div>
+          <div className="rml-headerTitle">LAT {d.coords.lat} · LNG {d.coords.lng}</div>
         </div>
 
-        <div className={styles.miniMap}>
-          <div className={styles.miniMapLabel}>
+        <div className="rml-miniMap">
+          <div className="rml-miniMapLabel">
             <span>REGION</span>
-            <span className={styles.miniMapCoords} style={{ color: d.gold }}>
+            <span className="rml-miniMapCoords" style={{ color: d.gold }}>
               {d.coords.short}
             </span>
           </div>
 
-          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" className={styles.miniMapSvg}>
+          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" className="rml-miniMapSvg">
             <g stroke="rgba(0,0,0,0.04)" strokeWidth="0.3" fill="none">
               <line x1="0" y1="25" x2="200" y2="25" />
               <line x1="0" y1="50" x2="200" y2="50" />
@@ -296,36 +281,36 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
               <line x1="150" y1="0" x2="150" y2="100" />
             </g>
 
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-canada" ? styles.mmActive : ""}`} style={d.miniMap.countryId === "mm-canada" ? MM_ACTIVE_STYLE : MM_DEFAULT_STYLE} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-usa" ? styles.mmActive : ""}`} style={d.miniMap.countryId === "mm-usa" ? MM_ACTIVE_STYLE : MM_DEFAULT_STYLE} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-mexico" ? styles.mmActive : ""}`} style={d.miniMap.countryId === "mm-mexico" ? MM_ACTIVE_STYLE : MM_DEFAULT_STYLE} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
-            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
-            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
-            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === "mm-gulf" ? styles.mmActive : ""}`} style={d.miniMap.countryId === "mm-gulf" ? MM_ACTIVE_STYLE : MM_DEFAULT_STYLE} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
-            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
-            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
-            <path className={styles.mmCountry} style={MM_DEFAULT_STYLE} d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
+            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-canada" ? "rml-mmActive" : ""}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
+            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-usa" ? "rml-mmActive" : ""}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
+            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-mexico" ? "rml-mmActive" : ""}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
+            <path className="rml-mmCountry" d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
+            <path className="rml-mmCountry" d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
+            <path className="rml-mmCountry" d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
+            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-gulf" ? "rml-mmActive" : ""}`} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
+            <path className="rml-mmCountry" d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
+            <path className="rml-mmCountry" d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
+            <path className="rml-mmCountry" d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
 
-            <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className={styles.mmPinAnim} />
-            <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className={styles.mmPinAnim} />
+            <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className="rml-mmPinAnim" />
+            <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className="rml-mmPinAnim" />
 
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="2.8" fill={d.gold} className={styles.mmPinAnim} />
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="1.2" fill="#ffffff" className={styles.mmPinAnim} />
+            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="2.8" fill={d.gold} className="rml-mmPinAnim" />
+            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="1.2" fill="#ffffff" className="rml-mmPinAnim" />
           </svg>
 
-          <div className={styles.miniMapInfo}>
-            <span className={styles.miniCity}>{d.city}</span>
-            <span className={styles.miniCode} style={{ color: d.gold }}>
+          <div className="rml-miniMapInfo">
+            <span className="rml-miniCity">{d.city}</span>
+            <span className="rml-miniCode" style={{ color: d.gold }}>
               {d.code}
             </span>
           </div>
         </div>
       </div>
 
-      <div className={styles.blueprintArea}>
-        <svg viewBox="0 0 600 260" preserveAspectRatio="xMidYMid meet" className={styles.bpSvg}>
-          <line x1="30" y1="230" x2="570" y2="230" stroke={d.accent} className={`${styles.bpEl} ${styles.bpGround}`} />
+      <div className="rml-blueprintArea">
+        <svg viewBox="0 0 600 260" preserveAspectRatio="xMidYMid meet" className="rml-bpSvg">
+          <line x1="30" y1="230" x2="570" y2="230" stroke={d.accent} className="rml-bpEl rml-bpGround" />
           <g>
             <line x1="30" y1="248" x2="130" y2="248" stroke="#1a1a1f" strokeWidth="0.5" opacity="0.45" />
             <line x1="30" y1="245" x2="30" y2="251" stroke="#1a1a1f" strokeWidth="0.5" opacity="0.45" />
@@ -340,13 +325,13 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
         </svg>
       </div>
 
-      <div className={styles.projectInfo}>
-        <div className={styles.proj}>{d.proj}</div>
-        <div className={styles.reg} style={{ color: d.accent }}>
+      <div className="rml-projectInfo">
+        <div className="rml-proj">{d.proj}</div>
+        <div className="rml-reg" style={{ color: d.accent }}>
           {d.reg}
         </div>
-        <div className={styles.status}>
-          <span className={styles.statusDot} style={{ background: d.accent }} />
+        <div className="rml-status">
+          <span className="rml-statusDot" style={{ background: d.accent }} />
           <span>{statusText}</span>
         </div>
       </div>

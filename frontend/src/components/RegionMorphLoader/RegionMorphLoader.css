@@ -1,4 +1,10 @@
-.stage {
+/* RegionMorphLoader — converted from CSS Module to regular CSS (rml- prefix).
+   Reason: CSS Module hash mismatch in Vite production build was causing layout
+   rules (.miniMap width, etc.) and SVG fill rules (.bpEl, .mmCountry) to drop
+   silently. Regular CSS with namespaced prefix is the project convention
+   (CLAUDE.md "no CSS Modules"). */
+
+.rml-stage {
   position: relative;
   min-height: 440px;
   background: #f8f5ec;
@@ -11,7 +17,7 @@
   transition: background-color 1s ease;
 }
 
-.metaBar {
+.rml-metaBar {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -19,7 +25,7 @@
   gap: 1rem;
 }
 
-.metaLeft .headerLabel {
+.rml-metaLeft .rml-headerLabel {
   font-size: 10px;
   color: rgba(26, 26, 31, 0.58);
   letter-spacing: 0.2em;
@@ -27,13 +33,13 @@
   margin-bottom: 2px;
 }
 
-.metaLeft .headerTitle {
+.rml-metaLeft .rml-headerTitle {
   font-family: "Courier New", monospace;
   font-size: 11px;
   color: rgba(26, 26, 31, 0.58);
 }
 
-.miniMap {
+.rml-miniMap {
   width: 200px;
   background: #ffffff;
   border: 0.5px solid rgba(26, 26, 31, 0.12);
@@ -42,7 +48,7 @@
   flex-shrink: 0;
 }
 
-.miniMapLabel {
+.rml-miniMapLabel {
   font-size: 9px;
   color: rgba(26, 26, 31, 0.58);
   letter-spacing: 0.15em;
@@ -52,32 +58,32 @@
   justify-content: space-between;
 }
 
-.miniMapCoords {
+.rml-miniMapCoords {
   font-family: "Courier New", monospace;
   font-size: 9px;
   transition: color 0.6s;
 }
 
-.miniMapSvg {
+.rml-miniMapSvg {
   width: 100%;
   height: 100px;
   display: block;
 }
 
-.mmCountry {
+.rml-mmCountry {
   fill: rgba(69, 123, 157, 0.15);
   stroke: rgba(69, 123, 157, 0.35);
   stroke-width: 0.4;
   transition: fill 0.7s ease, stroke 0.7s ease;
 }
 
-.mmActive {
+.rml-mmActive {
   fill: rgba(184, 134, 11, 0.55);
   stroke: #b8860b;
   stroke-width: 0.7;
 }
 
-.mmPinAnim {
+.rml-mmPinAnim {
   transition:
     cx 0.9s cubic-bezier(0.65, 0, 0.35, 1),
     cy 0.9s cubic-bezier(0.65, 0, 0.35, 1),
@@ -85,7 +91,7 @@
     stroke 0.6s;
 }
 
-.miniMapInfo {
+.rml-miniMapInfo {
   display: flex;
   justify-content: space-between;
   font-size: 9px;
@@ -94,7 +100,7 @@
   border-top: 0.5px solid rgba(26, 26, 31, 0.08);
 }
 
-.miniCity {
+.rml-miniCity {
   font-family: "Playfair Display", Georgia, serif;
   font-size: 11px;
   font-weight: 500;
@@ -102,54 +108,54 @@
   transition: opacity 0.4s;
 }
 
-.miniCode {
+.rml-miniCode {
   font-family: "Courier New", monospace;
   transition: color 0.6s;
 }
 
-.blueprintArea {
+.rml-blueprintArea {
   padding: 0.5rem 2rem 1rem;
 }
 
-.bpSvg {
+.rml-bpSvg {
   width: 100%;
   height: 260px;
   display: block;
 }
 
-.bpEl {
+.rml-bpEl {
   fill: none;
   stroke-width: 1.2;
   stroke-linejoin: miter;
   stroke-linecap: square;
 }
 
-.bpGround {
+.rml-bpGround {
   stroke-width: 0.8;
 }
 
-.bpDetail {
+.rml-bpDetail {
   fill: none;
   stroke-width: 0.6;
   opacity: 0;
   transition: opacity 0.7s ease;
 }
 
-.bpLabel {
+.rml-bpLabel {
   font-family: "Courier New", monospace;
   font-size: 10px;
   opacity: 0;
   transition: opacity 0.6s ease;
 }
 
-.projectInfo {
+.rml-projectInfo {
   text-align: center;
   padding: 1rem 2rem 1.5rem;
   border-top: 0.5px solid rgba(26, 26, 31, 0.06);
   background: rgba(255, 255, 255, 0.6);
 }
 
-.proj {
+.rml-proj {
   font-family: "Playfair Display", Georgia, serif;
   font-size: 26px;
   font-weight: 500;
@@ -157,7 +163,7 @@
   transition: opacity 0.5s;
 }
 
-.reg {
+.rml-reg {
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -165,7 +171,7 @@
   transition: color 0.8s, opacity 0.5s;
 }
 
-.status {
+.rml-status {
   display: inline-block;
   margin-top: 10px;
   font-family: "Courier New", monospace;
@@ -177,18 +183,18 @@
   border: 0.5px solid rgba(26, 26, 31, 0.08);
 }
 
-.statusDot {
+.rml-statusDot {
   display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   margin-right: 6px;
   vertical-align: middle;
-  animation: pulseDot 2s infinite;
+  animation: rml-pulseDot 2s infinite;
   transition: background 0.8s;
 }
 
-@keyframes pulseDot {
+@keyframes rml-pulseDot {
   0%,
   100% {
     opacity: 1;
@@ -199,54 +205,54 @@
 }
 
 @media (max-width: 640px) {
-  .miniMap {
+  .rml-miniMap {
     display: none;
   }
 
-  .metaBar {
+  .rml-metaBar {
     padding: 0.75rem 1rem;
   }
 
-  .blueprintArea {
+  .rml-blueprintArea {
     padding: 0.5rem 1rem 1rem;
   }
 
-  .proj {
+  .rml-proj {
     font-size: 20px;
   }
 
-  .stage {
+  .rml-stage {
     min-height: 340px;
   }
 
-  .bpSvg {
+  .rml-bpSvg {
     height: 180px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mmPinAnim,
-  .mmCountry,
-  .miniMapCoords,
-  .miniCity,
-  .miniCode,
-  .proj,
-  .reg,
-  .statusDot {
+  .rml-mmPinAnim,
+  .rml-mmCountry,
+  .rml-miniMapCoords,
+  .rml-miniCity,
+  .rml-miniCode,
+  .rml-proj,
+  .rml-reg,
+  .rml-statusDot {
     transition: none !important;
     animation: none !important;
   }
 
-  .bpEl {
+  .rml-bpEl {
     stroke-dashoffset: 0 !important;
     transition: none !important;
   }
 
-  .bpDetail {
+  .rml-bpDetail {
     opacity: 0.7 !important;
   }
 
-  .bpLabel {
+  .rml-bpLabel {
     opacity: 1 !important;
   }
 }
