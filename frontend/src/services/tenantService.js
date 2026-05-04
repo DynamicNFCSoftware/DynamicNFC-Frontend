@@ -17,8 +17,9 @@ import { buildRealEstateSeed } from "./seeds/realEstateSeed";
 import { buildAutomotiveSeed } from "./seeds/automotiveSeed";
 import { buildYachtSeed } from "./seeds/yachtSeed";
 
-export const SEED_VERSION = "2.1-region-enriched";
+export const SEED_VERSION = "2.2-all-regions";
 const SCHEMA_VERSION = 1;
+const REGIONS = ["gulf", "usa", "canada", "mexico"];
 const LAST_ACTIVITY_THROTTLE_MS = 60 * 60 * 1000;
 const lastActivityWriteByUid = new Map();
 
@@ -125,9 +126,13 @@ export async function seedTenantData(uid, userInfo = {}, regionId = "gulf") {
     );
 
     const baseTimeMs = Date.now();
-    await seedSector(uid, buildRealEstateSeed(baseTimeMs, regionId));
-    await seedSector(uid, buildAutomotiveSeed(baseTimeMs, regionId));
-    await seedSector(uid, buildYachtSeed(baseTimeMs, regionId));
+    // Seed all 4 regions × 3 sectors so region switch finds data everywhere.
+    // IDs are region-prefixed (handled inside each builder), so writes don't collide.
+    for (const r of REGIONS) {
+      await seedSector(uid, buildRealEstateSeed(baseTimeMs, r));
+      await seedSector(uid, buildAutomotiveSeed(baseTimeMs, r));
+      await seedSector(uid, buildYachtSeed(baseTimeMs, r));
+    }
 
     await setDoc(
       doc(db, "tenants", uid, "settings", "preferences"),
