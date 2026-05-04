@@ -677,7 +677,36 @@ function LayoutContent({
     setShowOverflowMenu(false);
   }, [pathname]);
 
-  if (seedingInProgress) {
+  // Sprint 2 #4.2 — Region/sector switch morph animation trigger.
+  // Animations were previously a side effect of the reseed-on-region-switch loop
+  // (removed in Sprint 2 #4.1). They now have their own trigger: pure UI state,
+  // no Firestore writes, ~1100ms display window matching the loader animation.
+  const [isSwitching, setIsSwitching] = useState(false);
+  const switchTimerRef = useRef(null);
+  const prevRegionRef = useRef(regionId);
+  const prevSectorRef = useRef(sectorId);
+  useEffect(() => {
+    // Skip first mount — only trigger on actual change.
+    if (prevRegionRef.current === regionId && prevSectorRef.current === sectorId) {
+      return;
+    }
+    prevRegionRef.current = regionId;
+    prevSectorRef.current = sectorId;
+    setIsSwitching(true);
+    if (switchTimerRef.current) clearTimeout(switchTimerRef.current);
+    switchTimerRef.current = setTimeout(() => {
+      setIsSwitching(false);
+      switchTimerRef.current = null;
+    }, 1100);
+    return () => {
+      if (switchTimerRef.current) {
+        clearTimeout(switchTimerRef.current);
+        switchTimerRef.current = null;
+      }
+    };
+  }, [regionId, sectorId]);
+
+  if (seedingInProgress || isSwitching) {
     const sectorLower = (sectorId || "").toLowerCase().replace(/[-_]/g, "");
     const isRealEstate = sectorLower === "realestate";
     const isAutomotive = sectorLower === "automotive";
