@@ -1,4 +1,6 @@
-const CACHE_NAME = 'dynamicnfc-v2';
+// Bumped v2 -> v3 (2026-05-04) to invalidate stale precache that was
+// serving old index.html and pinning users to old JS bundle hashes.
+const CACHE_NAME = 'dynamicnfc-v3';
 const CARD_CACHE = 'dynamicnfc-cards-v1';
 const OFFLINE_URL = '/offline.html';
 
@@ -92,6 +94,15 @@ self.addEventListener('message', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
+  // BYPASS SW for navigations (HTML) and Vite hashed assets — always fresh
+  // from network. Prevents the stale-bundle problem where SW served cached
+  // index.html pointing at old hashed JS files. Browser handles natively.
+  if (event.request.mode === 'navigate' || url.pathname.startsWith('/assets/')) {
+    return;
+  }
+
   if (event.request.url.includes('chrome-extension') ||
       event.request.url.includes('googletagmanager') ||
       event.request.url.includes('google-analytics') ||
@@ -99,6 +110,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // For everything else (icons, manifest, fonts), network-first with cache
+  // fallback for offline scenarios.
   event.respondWith(
     fetch(event.request)
       .then((response) => {
