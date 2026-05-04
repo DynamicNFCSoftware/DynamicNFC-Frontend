@@ -6,7 +6,46 @@
 
 ---
 
-## RESUME HERE — 2026-05-04 ~04:30
+## ✅ CLOSED — 2026-05-04 ~10:00 (after morning re-test)
+
+All three Sprint 2 #4 cleanup items are now closed and verified on production. User confirmed visually with screenshots: blueprint outlines draw correctly, mini-map countries show in default blue + active region in gold, no black blobs anywhere. Demo to luxury developer was done from `localhost` earlier in the morning before prod was fully fixed (data was correct on prod, only animation visual was broken — local was clean) and went well.
+
+**Final commit chain on `origin/main`:**
+```
+[latest]  fix(animations): inline style on mini-map country paths      (Sprint 2 #4.3 v3)
+a2a6df82  fix(animations): inline style for SVG fill/stroke            (Sprint 2 #4.3 v2)
+6bc0a602  fix(sw): bump CACHE_NAME v2->v3, bypass navigations + assets (Sprint 2 #4.6)
+a02f20ba  fix(tenant): seed all 4 regions x 3 sectors                  (Sprint 2 #4.5)
+fb4bc950  fix(layout): widen morph animation gate 1100->3200ms         (Sprint 2 #4.3 timing)
+fa0f543d  fix(animations): fill=none as attribute (superseded by v2)   (Sprint 2 #4.3 v1)
+1f94c81c  feat(layout): restore region+sector switch morph animations  (#7)
+```
+
+### What turned out to be the actual root cause
+
+Three independent layers, all hitting the same symptom (black-blob animation):
+
+1. **CSS Module rule fragility on SVG fill.** SVG presentation attributes (`fill="none"`) have lower priority than CSS rules. The morph loaders relied on `.bpEl { fill: none }` etc. via CSS Module hashed class names. Some CSS pipeline drift (suspected Vite postcss minor-version interaction, not yet pinpointed) caused the rule to drop to fallback default `fill="black"`. Inline `el.style.fill = "none"` (dynamic) and React `style={{ fill: ... }}` prop (static JSX) bypass this entirely — inline style beats every CSS rule. Now mini-map country paths and dynamic blueprint paths both render correctly regardless of CSS pipeline state.
+
+2. **Single-region seed orchestration.** `seedTenantData` only ran the three sector seeds for the active `regionId`. Sprint 2 #4.1 closed the region-switch reseed loop (correct fix), which unmasked this gap — 9 of 12 region/sector combinations had zero data. Now loops all four regions; all 96 cards / 48 deals / 36 campaigns shipped per tenant on first load.
+
+3. **Service worker stale-cache feedback loop.** `sw.js` had a static `CACHE_NAME = 'dynamicnfc-v2'` that never changed between deploys. Browser only updates SW when the file's bytes change. Old SW kept serving cached `index.html` pointing at old hashed JS bundle filenames. Vite's 1-year immutable cache header on `/assets/*` made it sticky. Bumped CACHE_NAME to v3 and made the fetch handler bypass navigations + `/assets/*` entirely — those are now always fresh from network. This bug was making it impossible to verify our other fixes worked in production. Future deploys will not have this problem.
+
+### Lesson for future sessions / memory
+
+When a bug looks like "deploy didn't reach users," check **three** things in order: (a) is the bundle on disk actually fresh (grep dist/), (b) is Firebase Hosting serving fresh index.html (network tab → response), (c) is a service worker intercepting the fetch (Application tab → SW status). The third one is the easiest to miss because dev tools' "hard refresh" doesn't always bypass SW.
+
+When working with SVG fill/stroke that must always render: **never rely solely on a CSS class rule**. Use inline `style.X` (JS) or React `style` prop (JSX). CSS class can stay for transitions or secondary effects, but the visual rendering source of truth must be inline. Half a day of debugging would have been saved by knowing this upfront.
+
+### Still open
+
+- **Sprint 2 #4.4** (`refreshDailyBriefAi` CORS) — Today's Brief renders fine via template fallback; AI button blocked. Next session.
+- **Sprint 2 #4.7 (NEW)** — Apply the same `RegionMorphLoader.module.css → regular CSS with rml- prefix` refactor to `AutomotiveMorphLoader.module.css` (use `auto-` prefix) and `YachtMorphLoader.module.css` (use `yc-` prefix). Currently both still use CSS Modules. They render correctly today because their classes happen to be applied during current build, but they have the same fragility that hit Region. ~20 min work, mechanical refactor — pattern is now well-established. Inline JS style on dynamic elements should also be kept as defense in depth.
+- **Recharts width/height(-1) warning** — appears in console during transitions. Cosmetic. Recharts container momentarily measures 0 during morph animation. Not a blocker.
+
+---
+
+## (Original RESUME HERE — kept as historical context) — 2026-05-04 ~04:30
 
 User going to sleep, will re-test in ~3 hours (around 07:30 Vancouver). Two real bugs were diagnosed and fixed last night, plus one cosmetic timing tweak. Three commits pushed to `origin/main`:
 
