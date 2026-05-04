@@ -6211,6 +6211,21 @@ a:focus-visible {
   font-size: 14px;
 }
 
+.ud-todays-brief__paragraph .vip-name {
+  font-weight: 500;
+  color: var(--ud-text);
+}
+
+.ud-todays-brief__paragraph .score-change {
+  color: #185fa5;
+  font-weight: 500;
+}
+
+.ud-todays-brief__paragraph strong {
+  font-weight: 500;
+  color: var(--ud-text);
+}
+
 .ud-todays-brief__vip-name {
   font-weight: 500;
 }

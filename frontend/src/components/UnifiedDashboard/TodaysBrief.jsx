@@ -1,7 +1,12 @@
 import { useMemo } from "react";
+import DOMPurify from "isomorphic-dompurify";
 import { useTranslation } from "../../i18n";
 
 const SOURCE_PRIORITY = ["llm", "cached", "template"];
+const SANITIZE_CONFIG = {
+  ALLOWED_TAGS: ["span", "strong", "em"],
+  ALLOWED_ATTR: ["class"],
+};
 
 const LANG_LOCALE = {
   en: "en-CA",
@@ -69,7 +74,7 @@ function wrapVipName(paragraph, vipName) {
   const text = asText(paragraph);
   if (!text || !vipName) return text;
   const pattern = new RegExp(escapeRegExp(vipName), "i");
-  return text.replace(pattern, `<span class="ud-todays-brief__vip-name">${vipName}</span>`);
+  return text.replace(pattern, `<span class="vip-name">${vipName}</span>`);
 }
 
 function wrapScoreChange(paragraph) {
@@ -77,10 +82,10 @@ function wrapScoreChange(paragraph) {
   if (!text) return text;
   const explicit = /(score\s*(?:now)?[^.]*\.)/i;
   if (explicit.test(text)) {
-    return text.replace(explicit, `<span class="ud-todays-brief__score-change">$1</span>`);
+    return text.replace(explicit, `<span class="score-change">$1</span>`);
   }
   const fallback = /(score[^,;)]*)/i;
-  return text.replace(fallback, `<span class="ud-todays-brief__score-change">$1</span>`);
+  return text.replace(fallback, `<span class="score-change">$1</span>`);
 }
 
 function highlightParagraph1(paragraph, vipName) {
@@ -165,6 +170,14 @@ export default function TodaysBrief({ brief, nfcRoi, onRefreshAi, isRefreshing, 
   );
 
   const paragraph2 = useMemo(() => asText(normalized.paragraph2), [normalized.paragraph2]);
+  const sanitizedParagraph1 = useMemo(
+    () => DOMPurify.sanitize(paragraph1 || "", SANITIZE_CONFIG),
+    [paragraph1]
+  );
+  const sanitizedParagraph2 = useMemo(
+    () => DOMPurify.sanitize(paragraph2 || "", SANITIZE_CONFIG),
+    [paragraph2]
+  );
 
   const handleRefresh = async () => {
     if (!onRefreshAi || disabled) return;
@@ -194,8 +207,8 @@ export default function TodaysBrief({ brief, nfcRoi, onRefreshAi, isRefreshing, 
       </div>
 
       <div className="ud-todays-brief__body">
-        <p className="ud-todays-brief__paragraph" dangerouslySetInnerHTML={{ __html: paragraph1 }} />
-        <p className="ud-todays-brief__paragraph" dangerouslySetInnerHTML={{ __html: paragraph2 }} />
+        <p className="ud-todays-brief__paragraph" dangerouslySetInnerHTML={{ __html: sanitizedParagraph1 }} />
+        <p className="ud-todays-brief__paragraph" dangerouslySetInnerHTML={{ __html: sanitizedParagraph2 }} />
       </div>
 
       <ChipsRow chips={normalized.chips} />
