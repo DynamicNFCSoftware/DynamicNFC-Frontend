@@ -1,5 +1,11 @@
 "use strict";
 
+// Source of truth field names (from dataDerivers.js):
+// topVip:             { name, tapCount, hoursAgo, firstAction, score, prevScore, mode }
+// pipelineDelta:      { pipelineDelta, newVipCount }
+// marketplaceTraffic: { trafficDelta, anonVisitors, topUnit }
+// alerts:             { atRisk, hotLeadsNew, followUpsOverdue }
+
 const VIP_SIGNAL_TEMPLATES = {
   en: {
     rising:
@@ -68,23 +74,23 @@ const PIPELINE_DELTA_TEMPLATES = {
 const CHIP_LABELS = {
   en: {
     atRisk: "{count} alerts at risk",
-    hotLeads: "{count} hot leads new",
-    overdue: "{count} follow-up overdue",
+    hotLeadsNew: "{count} hot leads new",
+    followUpsOverdue: "{count} follow-up overdue",
   },
   ar: {
     atRisk: "{count} تنبيهات معرضة للخطر",
-    hotLeads: "{count} عملاء ساخنون جدد",
-    overdue: "{count} متابعة متأخرة",
+    hotLeadsNew: "{count} عملاء ساخنون جدد",
+    followUpsOverdue: "{count} متابعة متأخرة",
   },
   es: {
     atRisk: "{count} alertas en riesgo",
-    hotLeads: "{count} leads calientes nuevos",
-    overdue: "{count} seguimientos atrasados",
+    hotLeadsNew: "{count} leads calientes nuevos",
+    followUpsOverdue: "{count} seguimientos atrasados",
   },
   fr: {
     atRisk: "{count} alertes à risque",
-    hotLeads: "{count} leads chauds nouveaux",
-    overdue: "{count} suivis en retard",
+    hotLeadsNew: "{count} leads chauds nouveaux",
+    followUpsOverdue: "{count} suivis en retard",
   },
 };
 
@@ -104,8 +110,8 @@ function computeChips({ alerts = {}, lang = "en" }) {
   const hotLeadsNew = Number(alerts.hotLeadsNew || 0);
   const followUpsOverdue = Number(alerts.followUpsOverdue || 0);
   if (atRisk > 0) chips.push({ label: fill(dict.atRisk, { count: atRisk }), tone: "red" });
-  if (hotLeadsNew > 0) chips.push({ label: fill(dict.hotLeads, { count: hotLeadsNew }), tone: "green" });
-  if (followUpsOverdue > 0) chips.push({ label: fill(dict.overdue, { count: followUpsOverdue }), tone: "amber" });
+  if (hotLeadsNew > 0) chips.push({ label: fill(dict.hotLeadsNew, { count: hotLeadsNew }), tone: "green" });
+  if (followUpsOverdue > 0) chips.push({ label: fill(dict.followUpsOverdue, { count: followUpsOverdue }), tone: "amber" });
   return chips;
 }
 

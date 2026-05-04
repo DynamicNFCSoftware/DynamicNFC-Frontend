@@ -1,5 +1,11 @@
 "use strict";
 
+// Source of truth field names (from dataDerivers.js):
+// topVip:             { name, tapCount, hoursAgo, firstAction, score, prevScore, mode }
+// pipelineDelta:      { pipelineDelta, newVipCount }
+// marketplaceTraffic: { trafficDelta, anonVisitors, topUnit }
+// alerts:             { atRisk, hotLeadsNew, followUpsOverdue }
+
 const Anthropic = require("@anthropic-ai/sdk");
 const { computeChips, generateBriefFromTemplate } = require("./briefTemplates");
 
@@ -87,4 +93,4 @@ async function generateBriefFromLLM({ tenantId, topVip, pipelineDelta, marketpla
   }
 }
 
-module.exports = { generateBriefFromLLM, buildBriefPrompt, parseBriefResponse, COOLDOWN_MS };
+module.exports = { generateBriefFromLLM };

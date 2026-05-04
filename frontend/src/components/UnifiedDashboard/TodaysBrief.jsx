@@ -70,11 +70,21 @@ function escapeRegExp(value) {
   return asText(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function wrapVipName(paragraph, vipName) {
   const text = asText(paragraph);
-  if (!text || !vipName) return text;
-  const pattern = new RegExp(escapeRegExp(vipName), "i");
-  return text.replace(pattern, `<span class="vip-name">${vipName}</span>`);
+  if (!text || !vipName) return text || "";
+  const safeName = escapeHtml(vipName);
+  const pattern = new RegExp(escapeRegExp(vipName), "g");
+  return text.replace(pattern, `<span class="ud-todays-brief__vip-name">${safeName}</span>`);
 }
 
 function wrapScoreChange(paragraph) {
