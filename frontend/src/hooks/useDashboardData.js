@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { collection, doc, getDocs, limit, onSnapshot, orderBy, query, startAfter } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { db } from "../firebase";
 import { useSector } from "./useSector";
 import { useAuth } from "../contexts/AuthContext";
@@ -12,6 +13,7 @@ import { normalizeSectorId } from "../utils/sectorId";
 const HEARTBEAT_MS = 12 * 60 * 60 * 1000;
 const CAMPAIGNS_PAGE_SIZE = 20;
 const DATA_MODE_KEY = "ud_data_mode";
+const REGION_FUNCTIONS = "us-central1";
 const EVENT_ALIAS = {
   comparison_view: "compare_units",
   explore_payment_plan: "payment_plan_viewed",
@@ -120,6 +122,9 @@ export default function useDashboardData() {
   const [rawCards, setRawCards] = useState([]);
   const [rawCampaigns, setRawCampaigns] = useState([]);
   const [rawSettings, setRawSettings] = useState(null);
+  const [velocityMetrics, setVelocityMetrics] = useState(null);
+  const [dailyBrief, setDailyBrief] = useState(null);
+  const [isRefreshingAi, setIsRefreshingAi] = useState(false);
   const seedingRef = useRef(false);
   const campaignsCursorRef = useRef(null);
   const campaignPagesLoadedRef = useRef(false);
@@ -279,6 +284,36 @@ export default function useDashboardData() {
             },
             (err) => {
               setError(err.message || "Failed loading settings");
+              markReady();
+            }
+          )
+        );
+
+        started += 1;
+        unsubscribers.push(
+          onSnapshot(
+            doc(db, "tenants", user.uid, "aggregates", "velocity"),
+            (snap) => {
+              setVelocityMetrics(snap.exists() ? snap.data() : null);
+              markReady();
+            },
+            (err) => {
+              setError(err.message || "Failed loading velocity metrics");
+              markReady();
+            }
+          )
+        );
+
+        started += 1;
+        unsubscribers.push(
+          onSnapshot(
+            doc(db, "tenants", user.uid, "aggregates", "dailyBrief"),
+            (snap) => {
+              setDailyBrief(snap.exists() ? snap.data() : null);
+              markReady();
+            },
+            (err) => {
+              setError(err.message || "Failed loading daily brief");
               markReady();
             }
           )
@@ -1172,6 +1207,24 @@ export default function useDashboardData() {
     if (user?.uid) updateLastActivity(user.uid, { force: true }).catch(() => {});
   }, [user]);
 
+  const refreshDailyBriefAi = useCallback(
+    async (lang = "en") => {
+      if (!user?.uid) return null;
+      const functionsClient = getFunctions(undefined, REGION_FUNCTIONS);
+      const callable = httpsCallable(functionsClient, "refreshDailyBriefAi");
+      setIsRefreshingAi(true);
+      try {
+        const result = await callable({ lang });
+        const brief = result?.data || null;
+        if (brief) setDailyBrief(brief);
+        return brief;
+      } finally {
+        setIsRefreshingAi(false);
+      }
+    },
+    [user?.uid]
+  );
+
   // Inventory metrics: category-level KPIs, trends, deal counts, VIP interest, top units
   const inventoryMetrics = useMemo(() => {
     const config = getSectorConfig(sectorId);
@@ -1313,5 +1366,9 @@ export default function useDashboardData() {
     campaignsHasMore,
     campaignsLoadingMore,
     loadMoreCampaigns,
+    velocityMetrics,
+    dailyBrief,
+    refreshDailyBriefAi,
+    isRefreshingAi,
   };
 }

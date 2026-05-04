@@ -58,3 +58,5 @@ export function translate(page, lang, key) {
   if (common.en && common.en[key] !== undefined) return common.en[key];
   return key;
 }
+
+export const getRegistry = () => pageModules;
