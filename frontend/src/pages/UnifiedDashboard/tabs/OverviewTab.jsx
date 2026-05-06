@@ -15,6 +15,7 @@ import MiniSparkline from "../components/MiniSparkline";
 import { SkeletonCard, SkeletonKPIs } from "../components/LoadingSkeleton";
 import TodaysBrief from "../../../components/UnifiedDashboard/TodaysBrief";
 import SalesVelocity from "../../../components/UnifiedDashboard/SalesVelocity";
+import FiveMinuteProof from "../../../components/UnifiedDashboard/FiveMinuteProof";
 import "../../../i18n/portals/dashboard";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -301,6 +302,10 @@ export default function OverviewTab() {
     dailyBrief,
     refreshDailyBriefAi,
     isRefreshingAi,
+    tutorialState,
+    tutorialLoaded,
+    dismissTutorial,
+    completeTutorial,
   } = useDashboard();
   const tx = { ...UI.en, ...(UI[lang] || {}) };
   const locale = getEffectiveLocale(regionId, lang);
@@ -609,6 +614,15 @@ export default function OverviewTab() {
           );
         })}
       </div>
+
+      <FiveMinuteProof
+        tutorialState={tutorialState}
+        tutorialLoaded={tutorialLoaded}
+        onDismiss={dismissTutorial}
+        onComplete={completeTutorial}
+        regionId={regionId}
+        lang={lang}
+      />
 
       <TodaysBrief
         brief={resolvedBrief}

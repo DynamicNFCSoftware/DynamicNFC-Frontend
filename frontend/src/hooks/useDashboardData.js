@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { collection, doc, getDocs, limit, onSnapshot, orderBy, query, startAfter } from "firebase/firestore";
+import { collection, doc, getDocs, increment, limit, onSnapshot, orderBy, query, serverTimestamp, setDoc, startAfter } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { db } from "../firebase";
 import { useSector } from "./useSector";
@@ -122,6 +122,8 @@ export default function useDashboardData() {
   const [rawCards, setRawCards] = useState([]);
   const [rawCampaigns, setRawCampaigns] = useState([]);
   const [rawSettings, setRawSettings] = useState(null);
+  const [tutorialState, setTutorialState] = useState(null);
+  const [tutorialLoaded, setTutorialLoaded] = useState(false);
   const [velocityMetrics, setVelocityMetrics] = useState(null);
   const [dailyBrief, setDailyBrief] = useState(null);
   const [isRefreshingAi, setIsRefreshingAi] = useState(false);
@@ -144,6 +146,8 @@ export default function useDashboardData() {
 
   useEffect(() => {
     if (!user?.uid) {
+      setTutorialState(null);
+      setTutorialLoaded(false);
       setLoading(false);
       return undefined;
     }
@@ -284,6 +288,23 @@ export default function useDashboardData() {
             },
             (err) => {
               setError(err.message || "Failed loading settings");
+              markReady();
+            }
+          )
+        );
+
+        started += 1;
+        unsubscribers.push(
+          onSnapshot(
+            doc(db, "tenants", user.uid, "settings", "tutorial"),
+            (snap) => {
+              setTutorialState(snap.exists() ? snap.data() : null);
+              setTutorialLoaded(true);
+              markReady();
+            },
+            (err) => {
+              console.warn("[useDashboardData] tutorial listener error", err);
+              setTutorialLoaded(true);
               markReady();
             }
           )
@@ -1225,6 +1246,44 @@ export default function useDashboardData() {
     [user?.uid]
   );
 
+  const dismissTutorial = useCallback(async () => {
+    if (!user?.uid) return;
+    await setDoc(
+      doc(db, "tenants", user.uid, "settings", "tutorial"),
+      {
+        dismissed: true,
+        dismissedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  }, [user?.uid]);
+
+  const completeTutorial = useCallback(async () => {
+    if (!user?.uid) return;
+    await setDoc(
+      doc(db, "tenants", user.uid, "settings", "tutorial"),
+      {
+        dismissed: true,
+        dismissedAt: serverTimestamp(),
+        completedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  }, [user?.uid]);
+
+  const replayTutorial = useCallback(async () => {
+    if (!user?.uid) return;
+    await setDoc(
+      doc(db, "tenants", user.uid, "settings", "tutorial"),
+      {
+        dismissed: false,
+        dismissedAt: null,
+        replayCount: increment(1),
+      },
+      { merge: true }
+    );
+  }, [user?.uid]);
+
   // Inventory metrics: category-level KPIs, trends, deal counts, VIP interest, top units
   const inventoryMetrics = useMemo(() => {
     const config = getSectorConfig(sectorId);
@@ -1370,5 +1429,10 @@ export default function useDashboardData() {
     dailyBrief,
     refreshDailyBriefAi,
     isRefreshingAi,
+    tutorialState,
+    tutorialLoaded,
+    dismissTutorial,
+    completeTutorial,
+    replayTutorial,
   };
 }
