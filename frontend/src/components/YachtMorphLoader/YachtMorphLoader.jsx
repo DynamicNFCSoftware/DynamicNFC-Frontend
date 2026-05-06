@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import styles from './YachtMorphLoader.module.css';
+import './YachtMorphLoader.css';
 
 const REGION_DATA = {
   canada: {
@@ -271,6 +271,7 @@ function buildLayer(layerEl, data, accent, strokeClass, fillClass) {
     el.setAttribute('fill', accent);
     el.setAttribute('stroke', 'none');
     el.setAttribute('class', fillClass);
+    el.style.stroke = 'none';
     el.setAttribute('opacity', s.opacity || 0.15);
     layerEl.appendChild(el);
   });
@@ -280,6 +281,7 @@ function buildLayer(layerEl, data, accent, strokeClass, fillClass) {
     el.setAttribute('fill', 'none');
     el.setAttribute('stroke', accent);
     el.setAttribute('class', strokeClass);
+    el.style.fill = 'none';
     el.setAttribute('opacity', s.opacity || 0.5);
     layerEl.appendChild(el);
   });
@@ -349,12 +351,12 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
         yacht.innerHTML = ''; details.innerHTML = ''; labels.innerHTML = '';
         layerFar.innerHTML = ''; layerMid.innerHTML = ''; layerNear.innerHTML = '';
         if (stage) stage.style.background = `linear-gradient(180deg, #f4f1e8 0%, ${d.seaDepth} 55%, ${d.seaDepth} 100%)`;
-        buildLayer(layerFar, a.far, d.accent, styles.parallaxStroke, styles.parallaxFill);
-        buildLayer(layerMid, a.mid, d.accent, styles.parallaxStroke, styles.parallaxFill);
-        buildLayer(layerNear, a.near, d.accent, styles.parallaxStroke, styles.parallaxFill);
+        buildLayer(layerFar, a.far, d.accent, 'yc-parallaxStroke', 'yc-parallaxFill');
+        buildLayer(layerMid, a.mid, d.accent, 'yc-parallaxStroke', 'yc-parallaxFill');
+        buildLayer(layerNear, a.near, d.accent, 'yc-parallaxStroke', 'yc-parallaxFill');
         a.yacht.forEach((p) => {
           const el = createEl(p);
-          el.setAttribute('class', styles.yachtEl);
+          el.setAttribute('class', 'yc-yachtEl');
           // Inline style beats CSS rules — robust against any global SVG fill override.
           el.style.fill = 'none';
           el.style.stroke = d.accent;
@@ -366,7 +368,7 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
         });
         a.details.forEach((dt) => {
           const el = createEl(dt);
-          el.setAttribute('class', styles.yachtDetail);
+          el.setAttribute('class', 'yc-yachtDetail');
           el.style.fill = 'none';
           el.style.stroke = d.accent;
           el.style.strokeWidth = '0.9';
@@ -389,7 +391,7 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
           el.setAttribute('x', lb.x);
           el.setAttribute('y', lb.y);
           el.setAttribute('text-anchor', 'middle');
-          el.setAttribute('class', styles.yachtLabel);
+          el.setAttribute('class', 'yc-yachtLabel');
           el.setAttribute('fill', d.gold);
           el.textContent = lb.text;
           el.style.opacity = 1;
@@ -399,17 +401,17 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
         depthLabelEl.setAttribute('x', 300);
         depthLabelEl.setAttribute('y', 335);
         depthLabelEl.setAttribute('text-anchor', 'middle');
-        depthLabelEl.setAttribute('class', styles.yachtLabel);
+        depthLabelEl.setAttribute('class', 'yc-yachtLabel');
         depthLabelEl.setAttribute('fill', d.gold);
         depthLabelEl.textContent = d.depthLabel;
         depthLabelEl.style.opacity = 1;
         labels.appendChild(depthLabelEl);
         if (sceneRegion) sceneRegion.textContent = d.city;
         if (sceneTagline) sceneTagline.textContent = d.tagline;
-        if (sceneTitle) sceneTitle.classList.add(styles.visible);
+        if (sceneTitle) sceneTitle.classList.add('yc-visible');
         if (phaseBadgeRef.current) phaseBadgeRef.current.style.opacity = 0;
-        if (filmTop) filmTop.classList.remove(styles.active);
-        if (filmBottom) filmBottom.classList.remove(styles.active);
+        if (filmTop) filmTop.classList.remove('yc-active');
+        if (filmBottom) filmBottom.classList.remove('yc-active');
         animatingRef.current = false;
         if (onAnimationEnd) onAnimationEnd();
         return;
@@ -417,10 +419,10 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
 
       // PHASE 1: exit
       setPhaseBadge('DEPARTING', d.accent);
-      if (filmTop) filmTop.classList.add(styles.active);
-      if (filmBottom) filmBottom.classList.add(styles.active);
-      if (sceneTitle) sceneTitle.classList.remove(styles.visible);
-      yachtGroup.classList.remove(styles.yachtBob);
+      if (filmTop) filmTop.classList.add('yc-active');
+      if (filmBottom) filmBottom.classList.add('yc-active');
+      if (sceneTitle) sceneTitle.classList.remove('yc-visible');
+      yachtGroup.classList.remove('yc-yachtBob');
       yachtGroup.style.transition = 'opacity 0.7s ease, transform 0.9s ease';
       yachtGroup.style.opacity = 0;
       yachtGroup.style.transform = 'translateX(80%)';
@@ -457,21 +459,27 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
         }, 220);
       }
 
-      buildLayer(layerFar, a.far, d.accent, styles.parallaxStroke, styles.parallaxFill);
-      buildLayer(layerMid, a.mid, d.accent, styles.parallaxStroke, styles.parallaxFill);
-      buildLayer(layerNear, a.near, d.accent, styles.parallaxStroke, styles.parallaxFill);
+      buildLayer(layerFar, a.far, d.accent, 'yc-parallaxStroke', 'yc-parallaxFill');
+      buildLayer(layerMid, a.mid, d.accent, 'yc-parallaxStroke', 'yc-parallaxFill');
+      buildLayer(layerNear, a.near, d.accent, 'yc-parallaxStroke', 'yc-parallaxFill');
 
       a.yacht.forEach((p) => {
         const el = createEl(p);
-        el.setAttribute('class', styles.yachtEl);
-        el.setAttribute('stroke', d.accent);
+        el.setAttribute('class', 'yc-yachtEl');
+        el.style.fill = 'none';
+        el.style.stroke = d.accent;
+        el.style.strokeWidth = '1.5';
+        el.style.strokeLinejoin = 'round';
+        el.style.strokeLinecap = 'round';
         if (p.opacity !== undefined) el.style.opacity = p.opacity;
         yacht.appendChild(el);
       });
       a.details.forEach((dt) => {
         const el = createEl(dt);
-        el.setAttribute('class', styles.yachtDetail);
-        el.setAttribute('stroke', d.accent);
+        el.setAttribute('class', 'yc-yachtDetail');
+        el.style.fill = 'none';
+        el.style.stroke = d.accent;
+        el.style.strokeWidth = '0.9';
         details.appendChild(el);
       });
 
@@ -508,14 +516,14 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
         if (!mountedRef.current) return;
         if (sceneRegion) sceneRegion.textContent = d.city;
         if (sceneTagline) sceneTagline.textContent = d.tagline;
-        if (sceneTitle) sceneTitle.classList.add(styles.visible);
+        if (sceneTitle) sceneTitle.classList.add('yc-visible');
       }, 900);
       await wait(2100);
       if (!mountedRef.current) return;
 
       // PHASE 4: bob
       setPhaseBadge('ARRIVED · PREPARING', d.accent);
-      yachtGroup.classList.add(styles.yachtBob);
+      yachtGroup.classList.add('yc-yachtBob');
       details.querySelectorAll('*').forEach((el) => (el.style.opacity = 0.75));
       await wait(700);
       if (!mountedRef.current) return;
@@ -607,7 +615,7 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
         el.setAttribute('x', lb.x);
         el.setAttribute('y', lb.y);
         el.setAttribute('text-anchor', 'middle');
-        el.setAttribute('class', styles.yachtLabel);
+        el.setAttribute('class', 'yc-yachtLabel');
         el.setAttribute('fill', d.gold);
         el.textContent = lb.text;
         labels.appendChild(el);
@@ -616,19 +624,19 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
       depthLabelEl.setAttribute('x', 300);
       depthLabelEl.setAttribute('y', 335);
       depthLabelEl.setAttribute('text-anchor', 'middle');
-      depthLabelEl.setAttribute('class', styles.yachtLabel);
+      depthLabelEl.setAttribute('class', 'yc-yachtLabel');
       depthLabelEl.setAttribute('fill', d.gold);
       depthLabelEl.textContent = d.depthLabel;
       labels.appendChild(depthLabelEl);
       setTimeout(() => {
         if (!mountedRef.current) return;
-        labels.querySelectorAll(`.${styles.yachtLabel}`).forEach((el) => (el.style.opacity = 1));
+        labels.querySelectorAll('.yc-yachtLabel').forEach((el) => (el.style.opacity = 1));
       }, 100);
 
       await wait(1000);
       if (phaseBadgeRef.current) phaseBadgeRef.current.style.opacity = 0;
-      if (filmTop) filmTop.classList.remove(styles.active);
-      if (filmBottom) filmBottom.classList.remove(styles.active);
+      if (filmTop) filmTop.classList.remove('yc-active');
+      if (filmBottom) filmBottom.classList.remove('yc-active');
       animatingRef.current = false;
       if (onAnimationEnd && mountedRef.current) onAnimationEnd();
     }
@@ -643,22 +651,22 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
   const d = REGION_DATA[region] || REGION_DATA.canada;
 
   return (
-    <div className={styles.stage} ref={stageRef}>
-      <div className={styles.metaBar}>
-        <div className={styles.metaLeft}>
-          <div className={styles.headerLabel}>DynamicNFC · Yachts</div>
-          <div className={styles.headerTitle}>LAT {d.coords.lat} · LNG {d.coords.lng}</div>
+    <div className="yc-stage" ref={stageRef}>
+      <div className="yc-metaBar">
+        <div className="yc-metaLeft">
+          <div className="yc-headerLabel">DynamicNFC · Yachts</div>
+          <div className="yc-headerTitle">LAT {d.coords.lat} · LNG {d.coords.lng}</div>
         </div>
 
-        <div className={styles.miniMap}>
-          <div className={styles.miniMapLabel}>
+        <div className="yc-miniMap">
+          <div className="yc-miniMapLabel">
             <span>REGION</span>
-            <span className={styles.miniMapCoords} style={{ color: d.gold }}>
+            <span className="yc-miniMapCoords" style={{ color: d.gold }}>
               {d.coords.short}
             </span>
           </div>
 
-          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" className={styles.miniMapSvg}>
+          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" className="yc-miniMapSvg">
             <g stroke="rgba(0,0,0,0.04)" strokeWidth="0.3" fill="none">
               <line x1="0" y1="25" x2="200" y2="25" />
               <line x1="0" y1="50" x2="200" y2="50" />
@@ -668,53 +676,53 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
               <line x1="150" y1="0" x2="150" y2="100" />
             </g>
 
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === 'mm-canada' ? styles.mmActive : ''}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === 'mm-usa' ? styles.mmActive : ''}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === 'mm-mexico' ? styles.mmActive : ''}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
-            <path className={styles.mmCountry} d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
-            <path className={styles.mmCountry} d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
-            <path className={styles.mmCountry} d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === 'mm-gulf' ? styles.mmActive : ''}`} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
-            <path className={styles.mmCountry} d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
-            <path className={styles.mmCountry} d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
-            <path className={styles.mmCountry} d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
+            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-canada' ? 'yc-mmActive' : ''}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
+            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-usa' ? 'yc-mmActive' : ''}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
+            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-mexico' ? 'yc-mmActive' : ''}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
+            <path className="yc-mmCountry" d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
+            <path className="yc-mmCountry" d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
+            <path className="yc-mmCountry" d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
+            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-gulf' ? 'yc-mmActive' : ''}`} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
+            <path className="yc-mmCountry" d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
+            <path className="yc-mmCountry" d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
+            <path className="yc-mmCountry" d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
 
-            <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className={styles.mmPinAnim} />
-            <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className={styles.mmPinAnim} />
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="2.8" fill={d.gold} className={styles.mmPinAnim} />
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="1.2" fill="#ffffff" className={styles.mmPinAnim} />
+            <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className="yc-mmPinAnim" />
+            <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className="yc-mmPinAnim" />
+            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="2.8" fill={d.gold} className="yc-mmPinAnim" />
+            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="1.2" fill="#ffffff" className="yc-mmPinAnim" />
           </svg>
 
-          <div className={styles.miniMapInfo}>
-            <span className={styles.miniCity}>{d.city}</span>
-            <span className={styles.miniCode} style={{ color: d.gold }}>
+          <div className="yc-miniMapInfo">
+            <span className="yc-miniCity">{d.city}</span>
+            <span className="yc-miniCode" style={{ color: d.gold }}>
               {d.code}
             </span>
           </div>
         </div>
       </div>
 
-      <div className={styles.yachtArea}>
-        <div ref={filmTopRef} className={styles.filmBarTop} />
-        <div ref={filmBottomRef} className={styles.filmBarBottom} />
-        <div ref={sceneTitleRef} className={styles.sceneTitle}>
-          <div ref={sceneRegionRef} className={styles.regionName}>{d.city}</div>
-          <span ref={sceneTaglineRef} className={styles.tagline}>{d.tagline}</span>
+      <div className="yc-yachtArea">
+        <div ref={filmTopRef} className="yc-filmBarTop" />
+        <div ref={filmBottomRef} className="yc-filmBarBottom" />
+        <div ref={sceneTitleRef} className="yc-sceneTitle">
+          <div ref={sceneRegionRef} className="yc-regionName">{d.city}</div>
+          <span ref={sceneTaglineRef} className="yc-tagline">{d.tagline}</span>
         </div>
-        <div ref={phaseBadgeRef} className={styles.phaseBadge}>APPROACHING</div>
+        <div ref={phaseBadgeRef} className="yc-phaseBadge">APPROACHING</div>
         <svg
           ref={svgRef}
-          className={styles.yachtSvg}
+          className="yc-yachtSvg"
           viewBox="0 0 600 340"
           preserveAspectRatio="xMidYMid slice"
         >
           <g data-layer="far"></g>
           <g data-layer="mid"></g>
           <g data-el="waterLayer">
-            <path data-water-ripple className={styles.waterRipple} d="M 0,265 Q 60,262 120,265 T 240,268 T 360,265 T 480,268 T 600,265" stroke={d.accent} opacity="0.45" />
-            <path data-water-ripple className={styles.waterRipple} d="M 0,280 Q 60,277 120,280 T 240,283 T 360,280 T 480,283 T 600,280" stroke={d.accent} opacity="0.38" />
-            <path data-water-ripple className={styles.waterRipple} d="M 0,295 Q 60,292 120,295 T 240,298 T 360,295 T 480,298 T 600,295" stroke={d.accent} opacity="0.32" />
-            <path data-water-ripple className={styles.waterRipple} d="M 0,310 Q 60,307 120,310 T 240,313 T 360,310 T 480,313 T 600,310" stroke={d.accent} opacity="0.25" />
+            <path data-water-ripple className="yc-waterRipple" d="M 0,265 Q 60,262 120,265 T 240,268 T 360,265 T 480,268 T 600,265" stroke={d.accent} opacity="0.45" />
+            <path data-water-ripple className="yc-waterRipple" d="M 0,280 Q 60,277 120,280 T 240,283 T 360,280 T 480,283 T 600,280" stroke={d.accent} opacity="0.38" />
+            <path data-water-ripple className="yc-waterRipple" d="M 0,295 Q 60,292 120,295 T 240,298 T 360,295 T 480,298 T 600,295" stroke={d.accent} opacity="0.32" />
+            <path data-water-ripple className="yc-waterRipple" d="M 0,310 Q 60,307 120,310 T 240,313 T 360,310 T 480,313 T 600,310" stroke={d.accent} opacity="0.25" />
           </g>
           <g data-layer="near"></g>
           <g data-el="yachtGroup">
@@ -743,12 +751,12 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
           <g data-el="labels"></g>
         </svg>
       </div>
-      <div className={styles.projectInfo}>
-        <div className={styles.proj}>{d.proj}</div>
-        <div className={styles.model}>{d.model}</div>
-        <div className={styles.reg} style={{ color: d.accent }}>{d.reg}</div>
-        <div className={styles.status}>
-          <span className={styles.statusDot} style={{ background: d.accent }} />
+      <div className="yc-projectInfo">
+        <div className="yc-proj">{d.proj}</div>
+        <div className="yc-model">{d.model}</div>
+        <div className="yc-reg" style={{ color: d.accent }}>{d.reg}</div>
+        <div className="yc-status">
+          <span className="yc-statusDot" style={{ background: d.accent }} />
           <span>{statusText}</span>
         </div>
       </div>
