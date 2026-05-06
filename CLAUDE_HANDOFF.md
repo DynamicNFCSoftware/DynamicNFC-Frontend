@@ -1,8 +1,116 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-04 ~04:30 (America/Vancouver)
-**Session:** Sprint 2 #4 cleanup — animation regression + multi-region seed bug
-**Author of this update:** Claude (Cowork) — user going to sleep, demo in ~3h
+**Last updated:** 2026-05-06 ~17:00 (America/Vancouver)
+**Session:** Sprint 2 #4 final cleanup + Sprint 2 #1 (Five-Minute Proof tutorial) ship
+**Author of this update:** Claude (Cowork) — Sprint 2 #4 fully closed, Sprint 2 #1 functionally shipped, #1.1 illustration polish in flight
+
+---
+
+## ✅ CLOSED — 2026-05-06 (Sprint 2 #4.4 + #4.7 + #4.8 — Sprint 2 #4 done)
+
+User-confirmed production verification matrix all PASS:
+- `/unified/overview` direct URL renders the dashboard (was 404)
+- Region/sector switch animations clean — Region, Automotive, Yacht all draw outlined shapes (no black blobs)
+- "Generate AI summary" returns live LLM content, source pill flips Template → AI
+- 5-minute Firestore-persisted cooldown behavior intact
+
+**Production commit chain on `origin/main` after this session:**
+```
+[deploy of HEAD]    firebase deploy --only hosting
+[App.jsx commit]    fix(routing): add explicit /unified/overview route (Sprint 2 #4.8)
+8caf3f45            feat(animations): convert Auto/Yacht morph loaders to regular CSS (Sprint 2 #4.7)
+56731144            docs: github-summaries/2026-05-05.md
+fd8a6d66            (previous prod state)
+```
+
+### Sprint 2 #4.4 closed — `refreshDailyBriefAi` CORS preflight blocked
+
+**Root cause.** Function had only `allAuthenticatedUsers/cloudfunctions.invoker` granted. CORS preflight (OPTIONS) is anonymous by spec — it carries no auth header — so `allAuthenticatedUsers` does not apply to preflight requests. Google Frontend rejected at IAM layer with HTTP 403 before the Firebase callable runtime could respond. Function never logged a single invocation despite being deployed, healthy, and frontend code calling it correctly.
+
+**Fix.** Single IAM binding addition (~30s, no code change):
+```powershell
+gcloud functions add-iam-policy-binding refreshDailyBriefAi `
+  --region us-central1 `
+  --member="allUsers" `
+  --role="roles/cloudfunctions.invoker"
+```
+
+**Why this is safe.** The function body checks `if (!context.auth) throw httpsError("unauthenticated", ...)`. The auth gate is in code; the IAM gate is the HTTP-level access permission. Granting `allUsers` invoker on a callable function is the documented Firebase pattern for callables invoked from a web app.
+
+**Verification.** OPTIONS preflight returns `204 No Content` with `access-control-allow-origin: https://dynamicnfc.ca`, `function-execution-id` populated. Production POST 200, real Anthropic Haiku 4.5 paragraphs rendering on `/unified/overview` Today's Brief block.
+
+**Pattern audit completed.** Scanned all 9 deployed functions:
+- `refreshDailyBriefAi` — fixed.
+- `seedDemoData` — callable, but NOT called from frontend. Only `Dashboard.jsx` references the name and that is a local function, not the Cloud Function. No frontend gap.
+- `api`, `contactForm` — `onRequest` with Express + their own CORS middleware. Out of scope of this class of bug.
+- 5 internal triggers (Firestore/Scheduled/Storage) — never reached from browser, IAM irrelevant.
+
+### Sprint 2 #4.7 closed — Auto/Yacht morph loader CSS Module fragility (preventive)
+
+**Root cause (preventive).** `AutomotiveMorphLoader.module.css` and `YachtMorphLoader.module.css` carried the same CSS Module hashed-class fragility that hit `RegionMorphLoader` on 2026-05-04. Both rendered correctly today only by accident of Vite's current build determinism. Any future build pipeline drift could re-introduce the black-blob regression on those two surfaces.
+
+**Fix.** Mechanical refactor mirroring the RegionMorphLoader Sprint 2 #4.3 pattern. Cursor executed on branch `cursor/sprint-2-4-7-morph-css-modules`, squash-merged as `8caf3f45`:
+- `AutomotiveMorphLoader.module.css` → `AutomotiveMorphLoader.css` (`auto-` prefix, 28 classes + `auto-pulseDot` keyframe)
+- `YachtMorphLoader.module.css` → `YachtMorphLoader.css` (`yc-` prefix, 37 classes + `yc-bob` + `yc-pulseDot` keyframes)
+- All `styles.X` JSX references replaced with literal `"auto-X"` / `"yc-X"` strings
+- All `classList.add/remove(styles.X)` and template-literal `querySelectorAll` sites converted
+- Inline `el.style.fill = "none"` + `stroke` + `strokeWidth` set on every dynamically-created SVG element across both components (defense-in-depth — CSS class stays for transitions; inline style is the visual source of truth)
+
+**Verification.** `npm run build` PASS in 37.46s. `Select-String "styles\."` returns empty in both jsx files. No `.module.css` files remain in either component directory. Production sector-switch matrix (Real Estate / Automotive / Yacht) all render outlined shapes — no black-blob regression.
+
+### Sprint 2 #4.8 closed (new) — `/unified/overview` 404
+
+**Root cause.** `App.jsx` had `<Route index element={<OverviewTab />} />` inside the `/unified` parent route. React Router's index route only matches the parent path exactly, so a direct URL `/unified/overview` fell through to the `*` catch-all and rendered the 404 page. CLAUDE.md §6 routing table listed `/unified/overview` as a valid route — code/doc mismatch. Sidebar nav clicks happened to work because they use relative `to=""` going to the parent, but bookmarks, shared links, and any future direct URL access broke.
+
+**Fix.** Added explicit `<Route path="overview" element={<OverviewTab />} />` alongside the index route. Both `/unified` and `/unified/overview` now render OverviewTab. 3-line edit, no other surfaces touched.
+
+### Sprint 2 #1 closed — Five-Minute Proof tutorial (functional ship)
+
+**Scope.** Region-aware, collapsible 5-step tutorial on `/unified/overview`, banner-by-default + Settings replay button. Per-tenant Firestore flag at `tenants/{uid}/settings/tutorial`.
+
+**Implementation path.**
+1. Directive authored by Claude after audit of codebase (CSS variables, `getPersonas` shape, SettingsTab class system, i18n location all verified before committing the directive).
+2. Saved as `frontend/directives/SPRINT2_1_FIVE_MINUTE_PROOF_DIRECTIVE.md`.
+3. Cursor executed on branch `cursor/sprint-2-1-five-minute-proof`, commit `c49906bc`. Build PASS in 15.44s, no invented class names, no invented CSS variables, persona injection via correct `getPersonas('real_estate', regionId)` snake_case + array `.find(p => p.type === 'vip')` shape, i18n in own `fiveMinuteProof.js` module, Lucide replaced with inline SVG icons (acceptable substitution).
+4. Squash-merged to main, deployed.
+5. **Post-deploy bug:** "Replay tutorial" button on Settings tab had no visible effect because user remained on Settings while the tutorial only renders on Overview, and `disabled={!tutorialState || !tutorialState.dismissed}` made the button look identical in disabled vs enabled states. Fixed in-session: removed disabled prop entirely (button always clickable), added `useNavigate("/unified/overview")` after `replayTutorial()` so the user is auto-routed to the surface where the tutorial actually appears. Removed unused `tutorialState` from destructure to prevent lint warning.
+
+**Files added (new).** `frontend/src/components/UnifiedDashboard/FiveMinuteProof/{FiveMinuteProof.jsx,TutorialStep.jsx,TutorialNav.jsx,FiveMinuteProof.css,index.js,illustrations/Step1Identity.jsx..Step5Close.jsx}` + `frontend/src/i18n/portals/fiveMinuteProof.js`.
+
+**Files modified.** `useDashboardData.js` (+178 lines: snapshot listener, `tutorialLoaded` flag, three callbacks, atomic `increment(1)` for replayCount), `OverviewTab.jsx` (component mount above `<TodaysBrief>`), `SettingsTab.jsx` (replay row mirroring existing theme-row JSX pattern + post-fix navigate).
+
+**Firestore schema added.** `tenants/{uid}/settings/tutorial { dismissed, dismissedAt, completedAt, replayCount }`. All writes are merge-only. `replayCount` uses Firestore `increment(1)` — race-condition-safe.
+
+**Verification on production.** Five user-confirmed screenshots showing all 5 steps rendering with correct persona name (Marc Patel for Canada region), correct progress dots, Back/Next/Finish navigation, dismiss + replay flow working, auto-navigate from Settings → Overview functioning.
+
+### Sprint 2 #1.1 in flight — illustration polish
+
+**Why opened.** Functional tutorial ships clean, but Cursor's first-pass SVG illustrations came in too minimalist (12-15 lines each). Spec brand-consistency requirements partially missed: no DynamicNFC card identity (red NFC + blue waves), region accent unused (gray dominates regardless of region), no persona name in illustrations (Marc Patel mentioned in body copy but not visible in any visual), no "Booked" badge on step 5, bell glyph half-circle instead of full silhouette, dashboard grid empty, score "82" lacks Hot/Warm/Cold comparison context.
+
+**Scope.** Brand-DNA-rich redesign of all 5 SVG illustrations, region-aware accent applied at every step, persona name visible as label chip, animations leveraging existing `fmp-svg__pulse` class, comparative content (Hot/Warm/Cold ladder, real notification text, "Booked · Tomorrow 14:00" badge).
+
+**Owner.** Cursor — directive being authored next.
+
+**Status.** Tutorial functional layer is shippable as-is; #1.1 is polish, not a blocker. Demo can run on current state if needed.
+
+### Lessons worth keeping in memory
+
+- **Firebase callable functions need TWO IAM grants for browser invocation:** `allAuthenticatedUsers/cloudfunctions.invoker` (the authenticated POST with auth header) AND `allUsers/cloudfunctions.invoker` (the anonymous OPTIONS preflight). Granting only the first results in silent 403 — function is never reached, no logs to debug from. Add this to deploy choreography for any new callable.
+- **When refactoring fragile CSS Module patterns out of a component, audit the entire component family.** Sprint 2 #4.3 fixed Region. Today's #4.7 caught Auto and Yacht before they regressed in production. The next CSS-pipeline-drift could have been triggered by anything (Vite update, dependency change). Eliminate fragility classwide, not per-incident.
+- **`<Route index>` is not an alias for an explicit child path.** If a route table documents `/parent/child` as a target, the route definition needs an explicit `<Route path="child">`. Index routes match the parent path only — bookmarks and share links break silently.
+- **A button with side-effect on a different surface needs to take the user there.** The Replay tutorial button wrote to Firestore correctly but the user stayed on Settings — felt broken. Lesson: any control that triggers state visible only on another surface should auto-navigate, OR the surface where the state lives should provide an inline confirmation. Anonymous Firestore writes are not user feedback.
+- **Audit Cursor SVG output by line count.** A 12-line SVG cannot deliver a 6-element brand-rich illustration. Set a minimum complexity bar in the directive (e.g., "each illustration must contain at least N visible primitives") so initial output meets the visual-clarity bar without a follow-up polish pass.
+
+### Still open from Sprint 2 (queue after #1 / #4 closures)
+
+- **Sprint 2 #1.1** — Five-Minute Proof illustration polish (in flight via Cursor)
+- **Sprint 2 #2** — Sales Trigger panel
+- **Sprint 2 #3** — Buyer Sites sidebar
+- **Sprint 2 #5** — VIP Alert Summary
+- **Sprint 2 #6** — Outreach guardrail copy
+- **Sprint 2 #7** — Owner workload columns
+
+Region focus order unchanged: **Canada > USA > Mexico > Gulf (paused)**.
 
 ---
 
