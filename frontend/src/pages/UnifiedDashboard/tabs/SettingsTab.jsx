@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { registerTranslations, useLanguage, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
@@ -100,7 +101,8 @@ export default function SettingsTab() {
   const t = useTranslation("settingsTab");
   const tFiveMinuteProof = useTranslation("fiveMinuteProof");
   const { user } = useAuth();
-  const { vips, events, dataMode, setDataMode, refresh, thresholds, updateThresholds, tutorialState, replayTutorial } = useDashboard();
+  const navigate = useNavigate();
+  const { vips, events, dataMode, setDataMode, refresh, thresholds, updateThresholds, replayTutorial } = useDashboard();
 
   const [hotThreshold, setHotThreshold] = useState(config.scoring.thresholds.hot);
   const [warmThreshold, setWarmThreshold] = useState(config.scoring.thresholds.warm);
@@ -359,8 +361,10 @@ export default function SettingsTab() {
             <button
               type="button"
               className="ud-btn-theme"
-              onClick={() => replayTutorial?.()}
-              disabled={!tutorialState || !tutorialState.dismissed}
+              onClick={async () => {
+                await replayTutorial?.();
+                navigate("/unified/overview");
+              }}
             >
               {tFiveMinuteProof("settings.replayCta")}
             </button>
