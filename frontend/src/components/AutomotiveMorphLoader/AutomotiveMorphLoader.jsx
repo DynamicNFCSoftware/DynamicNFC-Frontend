@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './AutomotiveMorphLoader.module.css';
+import './AutomotiveMorphLoader.css';
 import { getAutomotiveMapRegionData } from '../../config/mapRegionConfig';
 
 // ============ REGION DATA ============
@@ -257,17 +257,17 @@ function wait(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-function buildBackdropSequentially(backdropEl, styles, { startDelay = 0, stagger = 90 } = {}) {
+function buildBackdropSequentially(backdropEl, { startDelay = 0, stagger = 90 } = {}) {
   if (!backdropEl) return 0;
   const nodes = Array.from(backdropEl.querySelectorAll('*'));
   let lastStart = startDelay;
 
   nodes.forEach((el, i) => {
-    const target = parseFloat(el.dataset.targetOpacity || (el.classList.contains(styles.backdropFill) ? '0.12' : '0.75'));
+    const target = parseFloat(el.dataset.targetOpacity || (el.classList.contains('auto-backdropFill') ? '0.12' : '0.75'));
     const delay = startDelay + i * stagger;
     lastStart = delay;
 
-    if (el.classList.contains(styles.backdropLine) && typeof el.getTotalLength === 'function') {
+    if (el.classList.contains('auto-backdropLine') && typeof el.getTotalLength === 'function') {
       let length = 240;
       try {
         const measured = el.getTotalLength();
@@ -402,10 +402,16 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
       if (p.fill) {
         el.setAttribute('fill', d.accent);
         el.setAttribute('stroke', 'none');
-        el.setAttribute('class', styles.backdropFill);
+        el.setAttribute('class', 'auto-backdropFill');
+        el.style.fill = d.accent;
+        el.style.stroke = 'none';
       } else {
-        el.setAttribute('class', styles.backdropLine);
+        el.setAttribute('class', 'auto-backdropLine');
         el.setAttribute('stroke', d.accent);
+        el.style.fill = 'none';
+        el.style.stroke = d.accent;
+        el.style.strokeWidth = '1.1';
+        el.style.strokeLinecap = 'round';
       }
       el.dataset.targetOpacity = String(targetOpacity);
       el.style.opacity = hideBackdrop ? 0 : targetOpacity;
@@ -415,7 +421,7 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
     // Vehicle
     a.vehicle.forEach((p) => {
       const el = createSvgElement(p);
-      el.setAttribute('class', styles.autoEl);
+      el.setAttribute('class', 'auto-autoEl');
       // Inline style beats CSS rules — robust against any global SVG fill override.
       el.style.fill = 'none';
       el.style.stroke = d.accent;
@@ -428,7 +434,7 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
     // Details
     a.details.forEach((dt) => {
       const el = createSvgElement(dt);
-      el.setAttribute('class', styles.autoDetail);
+      el.setAttribute('class', 'auto-autoDetail');
       el.style.fill = 'none';
       el.style.stroke = d.accent;
       el.style.strokeWidth = '0.9';
@@ -442,7 +448,7 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
       el.setAttribute('x', lb.x);
       el.setAttribute('y', lb.y);
       el.setAttribute('text-anchor', 'middle');
-      el.setAttribute('class', styles.autoLabel);
+      el.setAttribute('class', 'auto-autoLabel');
       el.setAttribute('fill', d.gold);
       el.textContent = lb.text;
       el.style.opacity = hideLabels ? 0 : 1;
@@ -507,12 +513,17 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
       if (p.fill) {
         el.setAttribute('fill', d.accent);
         el.setAttribute('stroke', 'none');
-        el.setAttribute('class', styles.backdropFill);
+        el.setAttribute('class', 'auto-backdropFill');
+        el.style.fill = d.accent;
+        el.style.stroke = 'none';
         el.style.opacity = 0;
         el.dataset.targetOpacity = p.opacity ?? 0.12;
       } else {
-        el.setAttribute('class', styles.backdropLine);
-        el.setAttribute('stroke', d.accent);
+        el.setAttribute('class', 'auto-backdropLine');
+        el.style.fill = 'none';
+        el.style.stroke = d.accent;
+        el.style.strokeWidth = '1.1';
+        el.style.strokeLinecap = 'round';
         el.style.opacity = 0;
         el.dataset.targetOpacity = p.opacity ?? 0.75;
       }
@@ -521,14 +532,20 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
 
     a.vehicle.forEach((p) => {
       const el = createSvgElement(p);
-      el.setAttribute('class', styles.autoEl);
-      el.setAttribute('stroke', d.accent);
+      el.setAttribute('class', 'auto-autoEl');
+      el.style.fill = 'none';
+      el.style.stroke = d.accent;
+      el.style.strokeWidth = '1.5';
+      el.style.strokeLinejoin = 'round';
+      el.style.strokeLinecap = 'round';
       vehicle.appendChild(el);
     });
     a.details.forEach((dt) => {
       const el = createSvgElement(dt);
-      el.setAttribute('class', styles.autoDetail);
-      el.setAttribute('stroke', d.accent);
+      el.setAttribute('class', 'auto-autoDetail');
+      el.style.fill = 'none';
+      el.style.stroke = d.accent;
+      el.style.strokeWidth = '0.9';
       el.style.opacity = 0.75;
       details.appendChild(el);
     });
@@ -541,7 +558,7 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
     vehicleGroup.getBoundingClientRect();
 
     // PHASE 3: backdrop builds sequentially (line-draw + layered fade)
-    const buildDuration = buildBackdropSequentially(backdrop, styles, { startDelay: 0, stagger: 90 });
+    const buildDuration = buildBackdropSequentially(backdrop, { startDelay: 0, stagger: 90 });
     await wait(Math.min(buildDuration, 950));
 
     // PHASE 4: new vehicle drives in — FIXED: smoother easing + longer wait
@@ -557,13 +574,13 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
       el.setAttribute('x', lb.x);
       el.setAttribute('y', lb.y);
       el.setAttribute('text-anchor', 'middle');
-      el.setAttribute('class', styles.autoLabel);
+      el.setAttribute('class', 'auto-autoLabel');
       el.setAttribute('fill', d.gold);
       el.textContent = lb.text;
       labels.appendChild(el);
     });
     setTimeout(() => {
-      labels.querySelectorAll('.' + styles.autoLabel).forEach((el) => {
+      labels.querySelectorAll('.auto-autoLabel').forEach((el) => {
         el.style.opacity = 1;
       });
     }, 100);
@@ -609,7 +626,7 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
     }
 
     // Fade/draw backdrop first in sequence.
-    const buildDuration = buildBackdropSequentially(backdrop, styles, { startDelay: 0, stagger: 90 });
+    const buildDuration = buildBackdropSequentially(backdrop, { startDelay: 0, stagger: 90 });
     await wait(Math.min(buildDuration, 950));
 
     // Drive in using the same corrected easing.
@@ -623,7 +640,7 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
 
     // Keep labels delayed until motion fully settles.
     await wait(1400);
-    labels.querySelectorAll('.' + styles.autoLabel).forEach((el) => {
+    labels.querySelectorAll('.auto-autoLabel').forEach((el) => {
       el.setAttribute('fill', d.gold);
       el.style.opacity = 1;
     });
@@ -632,21 +649,21 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
   const d = REGION_DATA[region] || REGION_DATA.canada;
 
   return (
-    <div className={styles.stage} role="status" aria-live="polite" aria-label={`Loading ${d.reg}`}>
+    <div className="auto-stage" role="status" aria-live="polite" aria-label={`Loading ${d.reg}`}>
       {/* ===== TOP META BAR ===== */}
-      <div className={styles.metaBar}>
-        <div className={styles.metaLeft}>
-          <div className={styles.headerLabel}>DynamicNFC · Automotive</div>
-          <div className={styles.headerTitle}>LAT {d.coords.lat} · LNG {d.coords.lng}</div>
+      <div className="auto-metaBar">
+        <div className="auto-metaLeft">
+          <div className="auto-headerLabel">DynamicNFC · Automotive</div>
+          <div className="auto-headerTitle">LAT {d.coords.lat} · LNG {d.coords.lng}</div>
         </div>
 
-        <div className={styles.miniMap}>
-          <div className={styles.miniMapLabel}>
+        <div className="auto-miniMap">
+          <div className="auto-miniMapLabel">
             <span>REGION</span>
-            <span className={styles.miniMapCoords} style={{ color: d.gold }}>{d.coords.short}</span>
+            <span className="auto-miniMapCoords" style={{ color: d.gold }}>{d.coords.short}</span>
           </div>
 
-          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" className={styles.miniMapSvg}>
+          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" className="auto-miniMapSvg">
             <g stroke="rgba(0,0,0,0.04)" strokeWidth="0.3" fill="none">
               <line x1="0" y1="25" x2="200" y2="25" />
               <line x1="0" y1="50" x2="200" y2="50" />
@@ -656,34 +673,34 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
               <line x1="150" y1="0" x2="150" y2="100" />
             </g>
 
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === 'mm-canada' ? styles.mmActive : ''}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === 'mm-usa' ? styles.mmActive : ''}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === 'mm-mexico' ? styles.mmActive : ''}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
-            <path className={styles.mmCountry} d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
-            <path className={styles.mmCountry} d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
-            <path className={styles.mmCountry} d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
-            <path className={`${styles.mmCountry} ${d.miniMap.countryId === 'mm-gulf' ? styles.mmActive : ''}`} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
-            <path className={styles.mmCountry} d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
-            <path className={styles.mmCountry} d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
-            <path className={styles.mmCountry} d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
+            <path className={`auto-mmCountry ${d.miniMap.countryId === 'mm-canada' ? 'auto-mmActive' : ''}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
+            <path className={`auto-mmCountry ${d.miniMap.countryId === 'mm-usa' ? 'auto-mmActive' : ''}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
+            <path className={`auto-mmCountry ${d.miniMap.countryId === 'mm-mexico' ? 'auto-mmActive' : ''}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
+            <path className="auto-mmCountry" d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
+            <path className="auto-mmCountry" d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
+            <path className="auto-mmCountry" d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
+            <path className={`auto-mmCountry ${d.miniMap.countryId === 'mm-gulf' ? 'auto-mmActive' : ''}`} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
+            <path className="auto-mmCountry" d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
+            <path className="auto-mmCountry" d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
+            <path className="auto-mmCountry" d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
 
-            <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className={styles.mmPinAnim} />
-            <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className={styles.mmPinAnim} />
+            <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className="auto-mmPinAnim" />
+            <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className="auto-mmPinAnim" />
 
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="2.8" fill={d.gold} className={styles.mmPinAnim} />
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="1.2" fill="#fff" className={styles.mmPinAnim} />
+            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="2.8" fill={d.gold} className="auto-mmPinAnim" />
+            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="1.2" fill="#fff" className="auto-mmPinAnim" />
           </svg>
 
-          <div className={styles.miniMapInfo}>
-            <span className={styles.miniCity}>{d.city}</span>
-            <span className={styles.miniCode} style={{ color: d.gold }}>{d.code}</span>
+          <div className="auto-miniMapInfo">
+            <span className="auto-miniCity">{d.city}</span>
+            <span className="auto-miniCode" style={{ color: d.gold }}>{d.code}</span>
           </div>
         </div>
       </div>
 
       {/* ===== MAIN AUTO STAGE ===== */}
-      <div className={styles.autoArea}>
-        <svg viewBox="0 0 600 280" preserveAspectRatio="xMidYMid meet" className={styles.autoSvg}>
+      <div className="auto-autoArea">
+        <svg viewBox="0 0 600 280" preserveAspectRatio="xMidYMid meet" className="auto-autoSvg">
           <line x1="30" y1="225" x2="570" y2="225" stroke={d.accent} strokeWidth="0.8" strokeLinecap="round" />
           <g>
             <line x1="30" y1="258" x2="130" y2="258" stroke="#8e8776" strokeWidth="0.5" />
@@ -701,12 +718,12 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
       </div>
 
       {/* ===== PROJECT INFO ===== */}
-      <div className={styles.projectInfo}>
-        <div className={styles.proj}>{d.proj}</div>
-        <div className={styles.model}>{d.model}</div>
-        <div className={styles.reg} style={{ color: d.accent }}>{d.reg}</div>
-        <div className={styles.status}>
-          <span className={styles.statusDot} style={{ background: d.accent }} />
+      <div className="auto-projectInfo">
+        <div className="auto-proj">{d.proj}</div>
+        <div className="auto-model">{d.model}</div>
+        <div className="auto-reg" style={{ color: d.accent }}>{d.reg}</div>
+        <div className="auto-status">
+          <span className="auto-statusDot" style={{ background: d.accent }} />
           <span>{statusText}</span>
         </div>
       </div>

@@ -1,4 +1,9 @@
-.stage {
+/* AutomotiveMorphLoader — converted from CSS Module to regular CSS (auto- prefix).
+   Reason: same as RegionMorphLoader Sprint 2 #4.3 fix — CSS Module hash mismatch
+   in Vite production build was causing layout/SVG fill rules to drop silently.
+   Regular CSS with namespaced prefix is the project convention (CLAUDE.md §10). */
+
+.auto-stage {
   position: relative;
   min-height: 460px;
   background: #f8f5ec;
@@ -11,7 +16,7 @@
   transition: background-color 1s ease;
 }
 
-.metaBar {
+.auto-metaBar {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -19,7 +24,7 @@
   gap: 1rem;
 }
 
-.metaLeft .headerLabel {
+.auto-metaLeft .auto-headerLabel {
   font-size: 10px;
   color: #8e8776;
   letter-spacing: 0.2em;
@@ -27,13 +32,13 @@
   margin-bottom: 2px;
 }
 
-.metaLeft .headerTitle {
+.auto-metaLeft .auto-headerTitle {
   font-family: 'Courier New', monospace;
   font-size: 11px;
   color: #8e8776;
 }
 
-.miniMap {
+.auto-miniMap {
   width: clamp(220px, 24vw, 290px);
   background: #fff;
   border: 0.5px solid rgba(0,0,0,0.18);
@@ -43,7 +48,7 @@
   flex-shrink: 0;
 }
 
-.miniMapLabel {
+.auto-miniMapLabel {
   font-size: 10px;
   color: #8e8776;
   letter-spacing: 0.15em;
@@ -53,38 +58,38 @@
   justify-content: space-between;
 }
 
-.miniMapCoords {
+.auto-miniMapCoords {
   font-family: 'Courier New', monospace;
   font-size: 10px;
   transition: color 0.6s;
 }
 
-.miniMapSvg {
+.auto-miniMapSvg {
   width: 100%;
   height: 124px;
   display: block;
 }
 
-.mmCountry {
+.auto-mmCountry {
   fill: rgba(69, 123, 157, 0.15);
   stroke: rgba(69, 123, 157, 0.35);
   stroke-width: 0.4;
   transition: fill 0.7s ease, stroke 0.7s ease;
 }
 
-.mmActive {
+.auto-mmActive {
   fill: rgba(184, 134, 11, 0.55);
   stroke: #b8860b;
   stroke-width: 0.7;
 }
 
-.mmPinAnim {
+.auto-mmPinAnim {
   transition: cx 0.9s cubic-bezier(0.65, 0, 0.35, 1),
               cy 0.9s cubic-bezier(0.65, 0, 0.35, 1),
               fill 0.6s, stroke 0.6s;
 }
 
-.miniMapInfo {
+.auto-miniMapInfo {
   display: flex;
   justify-content: space-between;
   font-size: 10px;
@@ -93,7 +98,7 @@
   border-top: 0.5px solid rgba(0,0,0,0.08);
 }
 
-.miniCity {
+.auto-miniCity {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 12px;
   font-weight: 500;
@@ -101,24 +106,24 @@
   transition: opacity 0.4s;
 }
 
-.miniCode {
+.auto-miniCode {
   font-family: 'Courier New', monospace;
   transition: color 0.6s;
 }
 
-.autoArea {
+.auto-autoArea {
   padding: 0.5rem 2rem 1rem;
   position: relative;
 }
 
-.autoSvg {
+.auto-autoSvg {
   width: 100%;
   height: 280px;
   display: block;
   overflow: hidden;
 }
 
-.backdropLine {
+.auto-backdropLine {
   fill: none;
   stroke-width: 1.1;
   stroke-linecap: round;
@@ -126,39 +131,39 @@
   transition: opacity 1s ease;
 }
 
-.backdropFill {
+.auto-backdropFill {
   stroke-width: 0;
   opacity: 0;
   transition: opacity 1s ease;
 }
 
-.autoEl {
+.auto-autoEl {
   fill: none;
   stroke-width: 1.5;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
 
-.autoDetail {
+.auto-autoDetail {
   fill: none;
   stroke-width: 0.9;
 }
 
-.autoLabel {
+.auto-autoLabel {
   font-family: 'Courier New', monospace;
   font-size: 10px;
   opacity: 0;
   transition: opacity 0.7s ease;
 }
 
-.projectInfo {
+.auto-projectInfo {
   text-align: center;
   padding: 1rem 2rem 1.5rem;
   border-top: 0.5px solid rgba(0,0,0,0.06);
   background: rgba(255,255,255,0.6);
 }
 
-.proj {
+.auto-proj {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 26px;
   font-weight: 500;
@@ -166,7 +171,7 @@
   transition: opacity 0.5s;
 }
 
-.model {
+.auto-model {
   font-size: 11px;
   color: #8e8776;
   letter-spacing: 0.1em;
@@ -175,7 +180,7 @@
   transition: opacity 0.5s;
 }
 
-.reg {
+.auto-reg {
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -183,7 +188,7 @@
   transition: color 0.8s, opacity 0.5s;
 }
 
-.status {
+.auto-status {
   display: inline-block;
   margin-top: 10px;
   font-family: 'Courier New', monospace;
@@ -195,54 +200,54 @@
   border: 0.5px solid rgba(0,0,0,0.08);
 }
 
-.statusDot {
+.auto-statusDot {
   display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   margin-right: 6px;
   vertical-align: middle;
-  animation: pulseDot 2s infinite;
+  animation: auto-pulseDot 2s infinite;
   transition: background 0.8s;
 }
 
-@keyframes pulseDot {
+@keyframes auto-pulseDot {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
 
 /* Mobile */
 @media (max-width: 640px) {
-  .miniMap { display: none; }
-  .metaBar { padding: 0.75rem 1rem; }
-  .autoArea { padding: 0.5rem 1rem 1rem; }
-  .proj { font-size: 20px; }
-  .stage { min-height: 360px; }
-  .autoSvg { height: 200px; }
+  .auto-miniMap { display: none; }
+  .auto-metaBar { padding: 0.75rem 1rem; }
+  .auto-autoArea { padding: 0.5rem 1rem 1rem; }
+  .auto-proj { font-size: 20px; }
+  .auto-stage { min-height: 360px; }
+  .auto-autoSvg { height: 200px; }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .mmPinAnim,
-  .mmCountry,
-  .miniMapCoords,
-  .miniCity,
-  .miniCode,
-  .proj,
-  .model,
-  .reg,
-  .statusDot,
-  .backdropLine,
-  .backdropFill,
-  .autoLabel {
+  .auto-mmPinAnim,
+  .auto-mmCountry,
+  .auto-miniMapCoords,
+  .auto-miniCity,
+  .auto-miniCode,
+  .auto-proj,
+  .auto-model,
+  .auto-reg,
+  .auto-statusDot,
+  .auto-backdropLine,
+  .auto-backdropFill,
+  .auto-autoLabel {
     transition: none !important;
     animation: none !important;
   }
-  .autoLabel {
+  .auto-autoLabel {
     opacity: 1 !important;
   }
-  .backdropLine,
-  .backdropFill {
+  .auto-backdropLine,
+  .auto-backdropFill {
     opacity: 0.75 !important;
   }
 }

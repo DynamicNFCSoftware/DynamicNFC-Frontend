@@ -1,4 +1,7 @@
-.stage {
+/* YachtMorphLoader — converted from CSS Module to regular CSS (yc- prefix).
+   Reason: same as RegionMorphLoader Sprint 2 #4.3 fix. */
+
+.yc-stage {
   position: relative;
   min-height: 440px;
   background: #f8f5ec;
@@ -11,7 +14,7 @@
   transition: background-color 1s ease;
 }
 
-.metaBar {
+.yc-metaBar {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -19,7 +22,7 @@
   gap: 1rem;
 }
 
-.metaLeft .headerLabel {
+.yc-metaLeft .yc-headerLabel {
   font-size: 10px;
   color: rgba(26, 26, 31, 0.58);
   letter-spacing: 0.2em;
@@ -27,13 +30,13 @@
   margin-bottom: 2px;
 }
 
-.metaLeft .headerTitle {
+.yc-metaLeft .yc-headerTitle {
   font-family: "Courier New", monospace;
   font-size: 11px;
   color: rgba(26, 26, 31, 0.58);
 }
 
-.miniMap {
+.yc-miniMap {
   width: 200px;
   background: #ffffff;
   border: 0.5px solid rgba(26, 26, 31, 0.12);
@@ -42,7 +45,7 @@
   flex-shrink: 0;
 }
 
-.miniMapLabel {
+.yc-miniMapLabel {
   font-size: 9px;
   color: rgba(26, 26, 31, 0.58);
   letter-spacing: 0.15em;
@@ -52,32 +55,32 @@
   justify-content: space-between;
 }
 
-.miniMapCoords {
+.yc-miniMapCoords {
   font-family: "Courier New", monospace;
   font-size: 9px;
   transition: color 0.6s;
 }
 
-.miniMapSvg {
+.yc-miniMapSvg {
   width: 100%;
   height: 100px;
   display: block;
 }
 
-.mmCountry {
+.yc-mmCountry {
   fill: rgba(69, 123, 157, 0.15);
   stroke: rgba(69, 123, 157, 0.35);
   stroke-width: 0.4;
   transition: fill 0.7s ease, stroke 0.7s ease;
 }
 
-.mmActive {
+.yc-mmActive {
   fill: rgba(184, 134, 11, 0.55);
   stroke: #b8860b;
   stroke-width: 0.7;
 }
 
-.mmPinAnim {
+.yc-mmPinAnim {
   transition:
     cx 0.9s cubic-bezier(0.65, 0, 0.35, 1),
     cy 0.9s cubic-bezier(0.65, 0, 0.35, 1),
@@ -85,7 +88,7 @@
     stroke 0.6s;
 }
 
-.miniMapInfo {
+.yc-miniMapInfo {
   display: flex;
   justify-content: space-between;
   font-size: 9px;
@@ -94,7 +97,7 @@
   border-top: 0.5px solid rgba(26, 26, 31, 0.08);
 }
 
-.miniCity {
+.yc-miniCity {
   font-family: "Playfair Display", Georgia, serif;
   font-size: 11px;
   font-weight: 500;
@@ -102,18 +105,18 @@
   transition: opacity 0.4s;
 }
 
-.miniCode {
+.yc-miniCode {
   font-family: "Courier New", monospace;
   transition: color 0.6s;
 }
 
-.yachtArea {
+.yc-yachtArea {
   padding: 0.5rem 2rem 1rem;
   position: relative;
 }
 
-.filmBarTop,
-.filmBarBottom {
+.yc-filmBarTop,
+.yc-filmBarBottom {
   position: absolute;
   inset-inline-start: 0;
   inset-inline-end: 0;
@@ -124,19 +127,19 @@
   pointer-events: none;
 }
 
-.filmBarTop {
+.yc-filmBarTop {
   inset-block-start: 0;
 }
 
-.filmBarBottom {
+.yc-filmBarBottom {
   inset-block-end: 0;
 }
 
-.active {
+.yc-active {
   height: 22px;
 }
 
-.sceneTitle {
+.yc-sceneTitle {
   position: absolute;
   inset-block-end: 52px;
   inset-inline-start: 2rem;
@@ -146,18 +149,18 @@
   pointer-events: none;
 }
 
-.visible {
+.yc-visible {
   opacity: 1;
 }
 
-.regionName {
+.yc-regionName {
   font-family: "Playfair Display", Georgia, serif;
   font-size: 26px;
   font-weight: 500;
   color: #1a1a1f;
 }
 
-.tagline {
+.yc-tagline {
   display: block;
   font-family: "Courier New", monospace;
   font-size: 10px;
@@ -167,7 +170,7 @@
   margin-top: 3px;
 }
 
-.phaseBadge {
+.yc-phaseBadge {
   position: absolute;
   inset-block-start: 130px;
   inset-inline-end: 2rem;
@@ -186,56 +189,56 @@
   pointer-events: none;
 }
 
-.yachtSvg {
+.yc-yachtSvg {
   width: 100%;
   height: 340px;
   display: block;
   overflow: hidden;
 }
 
-.yachtEl {
+.yc-yachtEl {
   fill: none;
   stroke-width: 1.5;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
 
-.yachtDetail {
+.yc-yachtDetail {
   fill: none;
   stroke-width: 0.9;
   opacity: 0;
   transition: opacity 0.8s ease;
 }
 
-.parallaxStroke {
+.yc-parallaxStroke {
   fill: none;
   stroke-width: 1;
 }
 
-.parallaxFill {
+.yc-parallaxFill {
   stroke-width: 0;
 }
 
-.waterRipple {
+.yc-waterRipple {
   fill: none;
   stroke-width: 0.8;
 }
 
-.yachtLabel {
+.yc-yachtLabel {
   font-family: 'Courier New', monospace;
   font-size: 10px;
   opacity: 0;
   transition: opacity 0.8s ease;
 }
 
-.projectInfo {
+.yc-projectInfo {
   text-align: center;
   padding: 1rem 2rem 1.5rem;
   border-top: 0.5px solid rgba(26, 26, 31, 0.06);
   background: rgba(255, 255, 255, 0.6);
 }
 
-.proj {
+.yc-proj {
   font-family: "Playfair Display", Georgia, serif;
   font-size: 26px;
   font-weight: 500;
@@ -243,7 +246,7 @@
   transition: opacity 0.5s;
 }
 
-.model {
+.yc-model {
   font-family: "Courier New", monospace;
   font-size: 10px;
   letter-spacing: 0.12em;
@@ -252,7 +255,7 @@
   margin-top: 6px;
 }
 
-.reg {
+.yc-reg {
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -260,7 +263,7 @@
   transition: color 0.8s, opacity 0.5s;
 }
 
-.status {
+.yc-status {
   display: inline-block;
   margin-top: 10px;
   font-family: "Courier New", monospace;
@@ -272,28 +275,28 @@
   border: 0.5px solid rgba(26, 26, 31, 0.08);
 }
 
-.statusDot {
+.yc-statusDot {
   display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   margin-inline-end: 6px;
   vertical-align: middle;
-  animation: pulseDot 2s infinite;
+  animation: yc-pulseDot 2s infinite;
   transition: background 0.8s;
 }
 
-.yachtBob {
-  animation: bob 4s ease-in-out infinite;
+.yc-yachtBob {
+  animation: yc-bob 4s ease-in-out infinite;
   transform-origin: 300px 220px;
 }
 
-@keyframes bob {
+@keyframes yc-bob {
   0%, 100% { transform: translateY(0) rotate(-0.3deg); }
   50% { transform: translateY(-2px) rotate(0.3deg); }
 }
 
-@keyframes pulseDot {
+@keyframes yc-pulseDot {
   0%,
   100% {
     opacity: 1;
@@ -304,47 +307,47 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .yachtBob { animation: none; }
-  .mmPinAnim,
-  .mmCountry,
-  .miniMapCoords,
-  .miniCity,
-  .miniCode,
-  .proj,
-  .reg,
-  .statusDot {
+  .yc-yachtBob { animation: none; }
+  .yc-mmPinAnim,
+  .yc-mmCountry,
+  .yc-miniMapCoords,
+  .yc-miniCity,
+  .yc-miniCode,
+  .yc-proj,
+  .yc-reg,
+  .yc-statusDot {
     transition: none !important;
     animation: none !important;
   }
-  .filmBarTop,
-  .filmBarBottom,
-  .sceneTitle,
-  .phaseBadge {
+  .yc-filmBarTop,
+  .yc-filmBarBottom,
+  .yc-sceneTitle,
+  .yc-phaseBadge {
     transition: none !important;
   }
 }
 
 @media (max-width: 640px) {
-  .miniMap {
+  .yc-miniMap {
     display: none;
   }
 
-  .metaBar {
+  .yc-metaBar {
     padding: 0.75rem 1rem;
   }
 
-  .sceneTitle {
+  .yc-sceneTitle {
     inset-inline-start: 1rem;
     inset-block-end: 40px;
   }
 
-  .phaseBadge {
+  .yc-phaseBadge {
     inset-inline-end: 1rem;
     inset-block-start: 100px;
   }
 
-  .yachtSvg { height: 280px; }
-  .stage { min-height: 380px; }
-  .proj { font-size: 20px; }
-  .yachtArea { padding: 0.5rem 1rem 1rem; }
+  .yc-yachtSvg { height: 280px; }
+  .yc-stage { min-height: 380px; }
+  .yc-proj { font-size: 20px; }
+  .yc-yachtArea { padding: 0.5rem 1rem 1rem; }
 }
