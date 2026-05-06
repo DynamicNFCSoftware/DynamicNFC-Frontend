@@ -5,6 +5,7 @@ import { useSector } from "../../../hooks/useSector";
 import { useDashboard } from "../useDashboard";
 import SectorSwitcher from "../components/SectorSwitcher";
 import { getTenantSettings, resetToDemo, updateLastActivity, updateTenantSettings } from "../../../services/tenantService";
+import "../../../i18n/portals/fiveMinuteProof";
 
 registerTranslations("settingsTab", {
   en: {
@@ -97,8 +98,9 @@ export default function SettingsTab() {
   const { config, st, sectorId } = useSector();
   const { lang, setLang } = useLanguage();
   const t = useTranslation("settingsTab");
+  const tFiveMinuteProof = useTranslation("fiveMinuteProof");
   const { user } = useAuth();
-  const { vips, events, dataMode, setDataMode, refresh, thresholds, updateThresholds } = useDashboard();
+  const { vips, events, dataMode, setDataMode, refresh, thresholds, updateThresholds, tutorialState, replayTutorial } = useDashboard();
 
   const [hotThreshold, setHotThreshold] = useState(config.scoring.thresholds.hot);
   const [warmThreshold, setWarmThreshold] = useState(config.scoring.thresholds.warm);
@@ -347,6 +349,20 @@ export default function SettingsTab() {
               {notifications
                 ? t("enabled")
                 : t("disabled")}
+            </button>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+            <div style={{ display: "grid", gap: 2 }}>
+              <span style={{ fontSize: 13, color: "var(--ud-text-secondary)" }}>{tFiveMinuteProof("settings.replayTitle")}</span>
+              <span style={{ fontSize: 12, color: "var(--ud-text-muted)" }}>{tFiveMinuteProof("settings.replayHelp")}</span>
+            </div>
+            <button
+              type="button"
+              className="ud-btn-theme"
+              onClick={() => replayTutorial?.()}
+              disabled={!tutorialState || !tutorialState.dismissed}
+            >
+              {tFiveMinuteProof("settings.replayCta")}
             </button>
           </div>
         </div>
