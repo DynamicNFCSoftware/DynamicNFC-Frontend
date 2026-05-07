@@ -271,6 +271,12 @@
   .fmp-svg__pulse {
     animation: fmp-pulse 1.8s ease-in-out infinite;
   }
+
+  /* Sprint 2 #1.1: dashed flow for stream visualizations */
+  .fmp-svg__pulse-flow {
+    stroke-dasharray: 6 4;
+    animation: fmp-dash-flow 2s linear infinite;
+  }
 }
 
 @keyframes fmp-step-fade {
@@ -285,6 +291,10 @@
 @keyframes fmp-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
+}
+
+@keyframes fmp-dash-flow {
+  to { stroke-dashoffset: -10; }
 }
 
 @media (max-width: 768px) {
