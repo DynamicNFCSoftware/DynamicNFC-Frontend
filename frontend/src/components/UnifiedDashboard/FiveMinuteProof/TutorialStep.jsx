@@ -38,7 +38,7 @@ export default function TutorialStep({ stepNumber, totalSteps, regionId }) {
   return (
     <div className="fmp-step fmp-step-enter">
       <div className="fmp-illustration">
-        <Illustration />
+        <Illustration personaName={personaName} />
       </div>
       <div className="fmp-step__label">{progressText} - {stepLabel}</div>
       <p className="fmp-step__body">{stepBody}</p>
