@@ -1,8 +1,67 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-06 ~17:00 (America/Vancouver)
-**Session:** Sprint 2 #4 final cleanup + Sprint 2 #1 (Five-Minute Proof tutorial) ship
-**Author of this update:** Claude (Cowork) — Sprint 2 #4 fully closed, Sprint 2 #1 functionally shipped, #1.1 illustration polish in flight
+**Last updated:** 2026-05-06 ~21:30 (America/Vancouver)
+**Session:** Sprint 2 #4 cleanup + Sprint 2 #1 ship + Sprint 2 #1.1 illustration polish (Cursor delivered, ready to merge)
+**Author of this update:** Claude (Cowork) — user shutting down for the day, will resume on this state tomorrow
+
+---
+
+## ▶︎ RESUME HERE — 2026-05-07 morning
+
+Oguzhan stopped at end of day with #1.1 illustration polish work delivered by Cursor on `cursor/sprint-2-1-1-illustration-polish` (commit `f30f55ee`). Audit PASSED — Claude reviewed line counts, accent usage matrix, brand-mark presence, persona-name labeling, animation guards. Audit blob is in §"Sprint 2 #1.1 closed" section below.
+
+User's last statement: *"Simdilik calisiyor, ama sorunlar var, uzerinde gidecegiz."* — current state functions but visual issues exist that were not captured in detail before the session ended.
+
+### Working state when user closed
+
+- **`main` HEAD** still does NOT include #1.1 (no merge yet).
+- Branch `cursor/sprint-2-1-1-illustration-polish` pushed, audit-approved, awaiting merge.
+- **Possibly uncommitted in local working tree:** the SettingsTab replay button fix (auto-navigate after `replayTutorial()`, removed `disabled` prop, dropped unused `tutorialState` from destructure). Recommended to bundle with #1.1 merge if not yet committed. Verify with `git status` first thing in the morning.
+
+### First moves tomorrow (in this order)
+
+1. **`git status`** — confirm what is and isn't committed locally. The SettingsTab replay fix may need a commit if user did not bundle it into the morning's `git push`.
+2. **Capture the polish-pass issues.** User said "sorunlar var" but did not enumerate. Ask Oguzhan to walk through Steps 1–5 on `npm run dev` (or the deployed state if he merged + deployed) and list specific visual problems. Examples worth probing for:
+   - Persona name chip readability at default region accent (gold/navy contrast on white background — possible WCAG fail)
+   - Step 4 notification card spacing — RTL flip behavior
+   - Step 5 BOOKED badge size / collision with confetti shapes
+   - DynamicNFC card iconlet legibility at 20×12 px (may be too small to read "Dynamic NFC" wordmark)
+   - Region accent visibility on Canada (navy is dim against neutral grays — may need stronger fill)
+   - Step 3 thermometer proportions / Sarah Chen / Tom Lee row alignment with the chip on the right
+   - Animation timing — pulse rate too aggressive vs ambient
+3. **Decide #1.1 disposition:**
+   - If issues are minor polish → merge `cursor/sprint-2-1-1-illustration-polish`, deploy, then address polish in a #1.2 follow-up
+   - If issues are blocking → write a focused fix directive on top of `f30f55ee`, send back to Cursor before merge
+4. **Update handoff** once disposition is clear.
+
+### Reference branches & commits
+
+```
+main HEAD (yesterday end):
+  [latest]  fix(routing): add explicit /unified/overview route (Sprint 2 #4.8)
+  8caf3f45  feat(animations): convert Auto/Yacht morph loaders to regular CSS (Sprint 2 #4.7)
+  56731144  docs: github-summaries/2026-05-05.md
+  ... (Sprint 2 #4 chain)
+
+Pending merge:
+  origin/cursor/sprint-2-1-five-minute-proof    c49906bc  Sprint 2 #1 (already merged earlier today)
+  origin/cursor/sprint-2-1-1-illustration-polish f30f55ee  Sprint 2 #1.1 — AWAITING USER DECISION
+```
+
+### Active queue after #1.1 merges
+
+- **Sprint 2 #1.2** (potential, conditional on tomorrow's review) — illustration polish round 2
+- **Sprint 2 #2** — Sales Trigger panel
+- **Sprint 2 #3** — Buyer Sites sidebar
+- **Sprint 2 #5** — VIP Alert Summary
+- **Sprint 2 #6** — Outreach guardrail copy
+- **Sprint 2 #7** — Owner workload columns
+
+Region focus order unchanged: **Canada > USA > Mexico > Gulf (paused)**.
+
+### Tone for resume
+
+User went home with the tutorial functioning but not visually finished. They are not frustrated — the product works, the demo would survive — but they have an eye on polish quality. Open the next session with: "Sprint 2 #1.1 is on the branch and approved. Walk me through what you saw — what specifically isn't sitting right?" Capture the list, then decide between merge+iterate or fix-before-merge.
 
 ---
 
@@ -83,15 +142,27 @@ gcloud functions add-iam-policy-binding refreshDailyBriefAi `
 
 **Verification on production.** Five user-confirmed screenshots showing all 5 steps rendering with correct persona name (Marc Patel for Canada region), correct progress dots, Back/Next/Finish navigation, dismiss + replay flow working, auto-navigate from Settings → Overview functioning.
 
-### Sprint 2 #1.1 in flight — illustration polish
+### Sprint 2 #1.1 — illustration polish (Cursor delivered, awaiting user decision on merge)
 
 **Why opened.** Functional tutorial ships clean, but Cursor's first-pass SVG illustrations came in too minimalist (12-15 lines each). Spec brand-consistency requirements partially missed: no DynamicNFC card identity (red NFC + blue waves), region accent unused (gray dominates regardless of region), no persona name in illustrations (Marc Patel mentioned in body copy but not visible in any visual), no "Booked" badge on step 5, bell glyph half-circle instead of full silhouette, dashboard grid empty, score "82" lacks Hot/Warm/Cold comparison context.
 
-**Scope.** Brand-DNA-rich redesign of all 5 SVG illustrations, region-aware accent applied at every step, persona name visible as label chip, animations leveraging existing `fmp-svg__pulse` class, comparative content (Hot/Warm/Cold ladder, real notification text, "Booked · Tomorrow 14:00" badge).
+**Directive.** `frontend/directives/SPRINT2_1_1_ILLUSTRATION_POLISH_DIRECTIVE.md` — locked scope to the 5 SVG files + `personaName` prop pass-through in `TutorialStep.jsx`, hard-required brand-mark and accent usage with verification commands.
 
-**Owner.** Cursor — directive being authored next.
+**Cursor delivery.** Branch `cursor/sprint-2-1-1-illustration-polish`, commit `f30f55ee`. Build PASS in 16.30s. Pushed to remote, NOT merged.
 
-**Status.** Tutorial functional layer is shippable as-is; #1.1 is polish, not a blocker. Demo can run on current state if needed.
+**Audit verdict (Claude).** APPROVED for merge. Numbers:
+- Line counts: 61/46/41/40/52 (all above the 30-line under-spec floor; Steps 3 and 4 are tight at the floor but content review confirmed all spec elements present)
+- `--fmp-accent` usage: 9/8/6/8/5 (all comfortably above the ≥3 minimum)
+- Brand red/blue: red≥3 in every step, blue≥1 in every step (Step 4 has blue=1 because the DynamicNFC iconlet `<symbol>` is defined once and used via `<use>` — symbol body contains brand-blue, render-time appearance is correct)
+- `personaName` threaded through `TutorialStep.jsx` to each illustration component
+- DynamicNFC card brand mark renders in Steps 1, 2, 4, 5 (confirmed in spot-read)
+- Persona name label chip renders in Steps 1, 3, 4, 5 (Step 3 uses prop with "Marc Patel" fallback, Step 4 uses prop with "Khalid Al-Rashid" fallback)
+- Step 5 BOOKED badge present
+- New `fmp-svg__pulse-flow` utility class added to CSS, scoped inside `@media (prefers-reduced-motion: no-preference)` block. New `fmp-dash-flow` keyframe added at top level (correct pattern — keyframes global, usage classes guarded)
+- No global classes outside `fmp-` namespace
+- Working tree from previous session preserved (CLAUDE_HANDOFF.md and App.jsx untouched by Cursor)
+
+**Status.** Branch ready, awaiting user's "merge yes/no" decision after polish-issue review tomorrow morning.
 
 ### Lessons worth keeping in memory
 
