@@ -14,6 +14,7 @@ import KpiCard from "../components/KpiCard";
 import MiniSparkline from "../components/MiniSparkline";
 import { SkeletonCard, SkeletonKPIs } from "../components/LoadingSkeleton";
 import TodaysBrief from "../../../components/UnifiedDashboard/TodaysBrief";
+import SalesTriggerPanel from "../../../components/UnifiedDashboard/SalesTriggerPanel";
 import SalesVelocity from "../../../components/UnifiedDashboard/SalesVelocity";
 import FiveMinuteProof from "../../../components/UnifiedDashboard/FiveMinuteProof";
 import "../../../i18n/portals/dashboard";
@@ -631,6 +632,8 @@ export default function OverviewTab() {
         isRefreshing={isRefreshingAi}
         lang={lang}
       />
+
+      <SalesTriggerPanel />
 
       <SalesVelocity
         metrics={velocityMetrics}

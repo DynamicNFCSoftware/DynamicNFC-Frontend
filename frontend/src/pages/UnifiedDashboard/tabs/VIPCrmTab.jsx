@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguage, useTranslation } from "../../../i18n";
 import { getEventLabel } from "../../../i18n/eventDisplayMap";
@@ -253,6 +253,7 @@ export default function VIPCrmTab() {
   const [showPromoteConfirm, setShowPromoteConfirm] = useState(false);
   const [pendingCandidate, setPendingCandidate] = useState(null);
   const [promoteToast, setPromoteToast] = useState("");
+  const listRef = useRef(null);
   const {
     vips,
     vipCandidates,
@@ -298,6 +299,32 @@ export default function VIPCrmTab() {
     setShowCreateVip(true);
     navigate(location.pathname, { replace: true, state: {} });
   }, [location.pathname, location.state, navigate]);
+
+  useEffect(() => {
+    const targetVipId = location.state?.vipId;
+    if (!targetVipId || !listRef.current) return;
+
+    const escapedVipId = typeof CSS !== "undefined" && typeof CSS.escape === "function"
+      ? CSS.escape(targetVipId)
+      : String(targetVipId).replace(/["\\]/g, "\\$&");
+    const node = listRef.current.querySelector(`[data-vip-id="${escapedVipId}"]`);
+    if (!node) return;
+
+    node.scrollIntoView({ behavior: "smooth", block: "center" });
+    node.classList.add("vipcrm-highlight");
+    node.style.transition = "box-shadow 2s ease-out, background-color 2s ease-out";
+    node.style.boxShadow = "0 0 0 12px rgba(230, 57, 70, 0.35)";
+    node.style.backgroundColor = "rgba(230, 57, 70, 0.08)";
+
+    const timer = setTimeout(() => {
+      node.classList.remove("vipcrm-highlight");
+      node.style.boxShadow = "";
+      node.style.backgroundColor = "";
+      navigate(location.pathname, { replace: true, state: {} });
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [location.state, navigate, location.pathname]);
 
   useEffect(() => {
     setSelectedVipId?.(null);
@@ -432,11 +459,12 @@ export default function VIPCrmTab() {
 
         <div className={`ud-vip-split ${listCollapsed ? "ud-vip-split--collapsed" : ""}`}>
           {!listCollapsed ? (
-            <div className="ud-vip-list">
+            <div className="ud-vip-list" ref={listRef}>
               {filteredVips.map((vip) => (
                 <button
                   key={vip.id}
                   className={`ud-vip-list-item ${selectedVipId === vip.id ? "ud-vip-selected" : ""}`}
+                  data-vip-id={vip.id}
                   onClick={() => setSelectedVipId?.(vip.id)}
                   type="button"
                 >

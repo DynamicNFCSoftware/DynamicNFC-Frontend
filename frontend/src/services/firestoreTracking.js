@@ -43,6 +43,7 @@ export const EVENT_SCHEMA = {
   // ACTION category
   book_viewing:    { category: 'action',  label: 'Booked viewing',          funnelWeight: 25 },
   contact_advisor: { category: 'action',  label: 'Contacted advisor',       funnelWeight: 20 },
+  trigger_acted_on:{ category: 'action',  label: 'Acted on sales trigger',  funnelWeight: 12 },
   whatsapp_click:  { category: 'action',  label: 'Clicked WhatsApp',        funnelWeight: 15 },
   callback_request:{ category: 'action',  label: 'Requested callback',      funnelWeight: 20 },
 };
