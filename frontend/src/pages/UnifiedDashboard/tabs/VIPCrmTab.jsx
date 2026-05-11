@@ -301,6 +301,7 @@ export default function VIPCrmTab() {
   }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
+    console.log("[DL-DEBUG reset]", { configId: config?.id, regionId, hasSetter: typeof setSelectedVipId });
     setSelectedVipId?.(null);
     setDismissedCandidates([]);
     setPromotedCandidates([]);
@@ -313,10 +314,14 @@ export default function VIPCrmTab() {
   // overwritten by setSelectedVipId(null) on mount.
   useEffect(() => {
     const targetVipId = location.state?.vipId;
-    if (!targetVipId || !listRef.current) return;
+    if (!targetVipId) return;
 
-    // Auto-select the deep-linked VIP so the detail pane opens without a second click.
+    // 1. Select the VIP FIRST — does not need DOM, fires the detail pane open.
     setSelectedVipId?.(targetVipId);
+
+    // 2. Scroll + highlight require the list DOM to exist. Bail out gracefully
+    //    if not yet mounted; effect will re-fire once vips render (length dep).
+    if (!listRef.current) return;
 
     const escapedVipId = typeof CSS !== "undefined" && typeof CSS.escape === "function"
       ? CSS.escape(targetVipId)
@@ -338,7 +343,7 @@ export default function VIPCrmTab() {
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [location.state, navigate, location.pathname, setSelectedVipId]);
+  }, [location.state, navigate, location.pathname, setSelectedVipId, effectiveVips?.length]);
 
   const handlePromote = (candidate) => {
     const candidateId = candidate?.id || candidate?.name;
