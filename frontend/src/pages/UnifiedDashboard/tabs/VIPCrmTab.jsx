@@ -301,6 +301,17 @@ export default function VIPCrmTab() {
   }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
+    setSelectedVipId?.(null);
+    setDismissedCandidates([]);
+    setPromotedCandidates([]);
+    setShowPromoteConfirm(false);
+    setPendingCandidate(null);
+    setPromoteToast("");
+  }, [config.id, regionId, setSelectedVipId]);
+
+  // Must run AFTER the reset effect above so the auto-select isn't immediately
+  // overwritten by setSelectedVipId(null) on mount.
+  useEffect(() => {
     const targetVipId = location.state?.vipId;
     if (!targetVipId || !listRef.current) return;
 
@@ -328,15 +339,6 @@ export default function VIPCrmTab() {
 
     return () => clearTimeout(timer);
   }, [location.state, navigate, location.pathname, setSelectedVipId]);
-
-  useEffect(() => {
-    setSelectedVipId?.(null);
-    setDismissedCandidates([]);
-    setPromotedCandidates([]);
-    setShowPromoteConfirm(false);
-    setPendingCandidate(null);
-    setPromoteToast("");
-  }, [config.id, regionId, setSelectedVipId]);
 
   const handlePromote = (candidate) => {
     const candidateId = candidate?.id || candidate?.name;
