@@ -16,7 +16,7 @@ const BROCHURE_KEYS = new Set(["brochure_download", "download_brochure"]);
 const BOOKING_KEYS = new Set(["book_viewing", "test_drive_request", "boarding_request"]);
 const CONTACT_KEYS = new Set(["contact_advisor", "contact_agent", "whatsapp_click", "callback_request"]);
 const UNIT_VIEW_KEYS = new Set(["unit_view", "view_unit", "vehicle_view", "unit_detail_opened", "yacht_view"]);
-const ROI_KEYS = new Set(["roi_calculator", "roi_completed", "roi_calculator_used"]);
+const ROI_KEYS = new Set(["roi_calculator", "roi_completed", "roi_calculator_used", "roi_calculator_click"]);
 
 function normalizeSectorId(value) {
   const raw = String(value || "").toLowerCase().trim();
@@ -41,14 +41,30 @@ function tsOf(e) {
 
 function enrich(events, vips) {
   const vipById = new Map((vips || []).map((v) => [v.id, v]));
+  const vipByName = new Map(
+    (vips || [])
+      .filter((v) => v?.name)
+      .map((v) => [String(v.name).toLowerCase().trim(), v])
+  );
   return (events || [])
-    .filter((e) => e.vipId && vipById.has(e.vipId))
-    .map((e) => ({
-      ...e,
-      _ts: tsOf(e),
-      _type: eventTypeOf(e),
-      _vip: vipById.get(e.vipId),
-    }));
+    .map((e) => {
+      // Match by vipId first; fall back to vipName (seed events carry only vipName).
+      const vipFromId = e.vipId ? vipById.get(e.vipId) : null;
+      const vipFromName =
+        !vipFromId && e.vipName
+          ? vipByName.get(String(e.vipName).toLowerCase().trim())
+          : null;
+      const vip = vipFromId || vipFromName;
+      if (!vip) return null;
+      return {
+        ...e,
+        vipId: e.vipId || vip.id, // Ensure downstream rules can group by vip.id consistently
+        _ts: tsOf(e),
+        _type: eventTypeOf(e),
+        _vip: vip,
+      };
+    })
+    .filter(Boolean);
 }
 
 function groupByVip(enrichedEvents) {
