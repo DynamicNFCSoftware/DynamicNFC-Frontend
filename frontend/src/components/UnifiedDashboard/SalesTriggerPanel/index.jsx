@@ -4,7 +4,7 @@ import { useTranslation } from "../../../i18n";
 import { useRegion } from "../../../hooks/useRegion";
 import { useSector } from "../../../hooks/useSector";
 import { useDashboard } from "../../../pages/UnifiedDashboard/useDashboard";
-import { track } from "../../../services/firestoreTracking";
+import { trackDashboardEvent } from "../../../services/firestoreTracking";
 import { detectTriggers } from "./triggerRules";
 import "./SalesTriggerPanel.css";
 function toPanelSectorId(rawSectorId) {
@@ -129,17 +129,14 @@ export default function SalesTriggerPanel() {
     return resolveSectorString(translated, sectorId);
   };
   const handleOpen = (trigger) => {
-    try {
-      track("trigger_acted_on", {
-        vipId: trigger.vipId,
-        ruleType: trigger.ruleType,
-        urgency: trigger.urgency,
-        triggerAgeMs: Date.now() - trigger.lastEventAt,
-        signalKey: trigger.signalKey,
-      });
-    } catch {
-      // Ignore tracking failures and continue navigation.
-    }
+    // Fire-and-forget — helper swallows its own errors, does not block navigation.
+    trackDashboardEvent("trigger_acted_on", {
+      vipId: trigger.vipId,
+      ruleType: trigger.ruleType,
+      urgency: trigger.urgency,
+      triggerAgeMs: Date.now() - trigger.lastEventAt,
+      signalKey: trigger.signalKey,
+    });
     navigate("/unified/vip-crm", { state: { vipId: trigger.vipId } });
   };
   const renderRow = (trigger) => (
