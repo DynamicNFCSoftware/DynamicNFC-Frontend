@@ -304,6 +304,9 @@ export default function VIPCrmTab() {
     const targetVipId = location.state?.vipId;
     if (!targetVipId || !listRef.current) return;
 
+    // Auto-select the deep-linked VIP so the detail pane opens without a second click.
+    setSelectedVipId?.(targetVipId);
+
     const escapedVipId = typeof CSS !== "undefined" && typeof CSS.escape === "function"
       ? CSS.escape(targetVipId)
       : String(targetVipId).replace(/["\\]/g, "\\$&");
@@ -324,7 +327,7 @@ export default function VIPCrmTab() {
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [location.state, navigate, location.pathname]);
+  }, [location.state, navigate, location.pathname, setSelectedVipId]);
 
   useEffect(() => {
     setSelectedVipId?.(null);

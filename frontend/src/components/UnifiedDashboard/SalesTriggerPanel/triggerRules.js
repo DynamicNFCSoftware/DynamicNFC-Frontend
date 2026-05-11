@@ -299,10 +299,22 @@ export function detectTriggers(events, vips, deals, options = {}) {
     ...detectCompeting(enriched, now),
   ];
 
+  // Dedupe to ONE row per VIP — pick strongest signal (HOT beats WARM, then most recent).
+  const tierRank = (u) => (u === "hot" ? 0 : 1);
   const seen = new Map();
   all.forEach((t) => {
-    const k = `${t.ruleType}:${t.vipId}:${t.signalArgs?.item || "_"}`;
-    if (!seen.has(k) || seen.get(k).lastEventAt < t.lastEventAt) seen.set(k, t);
+    const existing = seen.get(t.vipId);
+    if (!existing) {
+      seen.set(t.vipId, t);
+      return;
+    }
+    const newRank = tierRank(t.urgency);
+    const oldRank = tierRank(existing.urgency);
+    if (newRank < oldRank) {
+      seen.set(t.vipId, t);
+    } else if (newRank === oldRank && t.lastEventAt > existing.lastEventAt) {
+      seen.set(t.vipId, t);
+    }
   });
 
   const buckets = { hot: [], warm: [] };
