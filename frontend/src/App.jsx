@@ -235,6 +235,7 @@ function AnimatedRoutes() {
           {/* ── Unified Dashboard (Phase 2) ── */}
           <Route path="/unified" element={<ProtectedRoute><UnifiedLayout /></ProtectedRoute>}>
             <Route index element={<OverviewTab />} />
+            <Route path="overview" element={<OverviewTab />} />
             <Route path="vip-crm" element={<VIPCrmTab />} />
             <Route path="priority" element={<PriorityTab />} />
             <Route path="analytics" element={<AnalyticsTab />} />
