@@ -301,7 +301,6 @@ export default function VIPCrmTab() {
   }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
-    console.log("[DL-DEBUG reset]", { configId: config?.id, regionId, hasSetter: typeof setSelectedVipId });
     setSelectedVipId?.(null);
     setDismissedCandidates([]);
     setPromotedCandidates([]);
