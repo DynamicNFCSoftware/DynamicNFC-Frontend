@@ -1,12 +1,115 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-06 ~21:30 (America/Vancouver)
-**Session:** Sprint 2 #4 cleanup + Sprint 2 #1 ship + Sprint 2 #1.1 illustration polish (Cursor delivered, ready to merge)
-**Author of this update:** Claude (Cowork) — user shutting down for the day, will resume on this state tomorrow
+**Last updated:** 2026-05-07 ~end of day (America/Vancouver)
+**Session:** Sprint 2 #1.2 — Step 1 Identity full SVG redesign (editorial scene, no watermark)
+**Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — 2026-05-07 morning
+## ▶︎ RESUME HERE — 2026-05-08 morning
+
+Sprint 2 #1.2 closed. **Step 1 of the Five-Minute Proof tutorial is fully redesigned** and integrated: editorial premium-box reveal scene with brushed black-metal NFC card (credit-card aspect, no chip, Comfortaa wordmark, QR with center mark, FIRST EDITION serial, crimson edge accent, hologram strip), midnight-navy presentation box (3-tone gold rim, silk lining peek, foil-stamp ribbon, DynamicNFC + PREMIUM INVITATION mark), concentric NFC pulse rings (replaces previous "mountain" wave-arcs), tap dot + 2 ripple rings, dashed connection line, editorial nameplate (persona + role + location + ACTIVE pip + TAP REGISTERED timestamp), 01·IDENTITY eyebrow top-left.
+
+All 4 regions covered via existing `--fmp-accent` CSS variable on `.fmp-card[data-region]` + region-specific `personaName` / `projectLabel` / `locationLabel` props passed from TutorialStep.jsx via `regionConfig` (persona, project) + `mapRegionConfig` (city). Long persona names (KHALID AL-RASHID, CARLOS RODRIGUEZ) auto-shrink: font-size 13.5 → 11, letter-spacing 1.3 → 0.6 when `name.length > 14`. Nameplate widened from 100 to 120 units and shifted left to `translate(348, 92)` for breathing room.
+
+**No region symbol watermark in this round.** User explicitly deferred ("c simdilik kalsin"). Three watermark approaches were prototyped during the iteration (broken maple leaf path, Vancouver mountain ridge outline, RegionMorphLoader blueprint port) — each had compositional issues at the 100-wide nameplate scale. Decision: ship Step 1 clean, revisit watermark idea as a separate polish pass (would likely need a larger backdrop zone, not a watermark behind the name).
+
+### Working state when user closed
+
+- **Files touched today:**
+  - `frontend/src/components/UnifiedDashboard/FiveMinuteProof/illustrations/Step1Identity.jsx` — full rewrite (was 61L wireframe, now ~260L editorial scene)
+  - `frontend/src/components/UnifiedDashboard/FiveMinuteProof/TutorialStep.jsx` — added `PROJECT_SHORT_LABEL` + `COUNTRY_SHORT_LABEL` maps, computed `projectLabel` + `locationLabel` via `getRealEstateMapRegionData`, passed to Illustration
+  - `frontend/src/components/UnifiedDashboard/FiveMinuteProof/FiveMinuteProof.css` — appended Step 1 animation block (~170 lines): `fmp-s1-*` classes + 9 keyframes (rise, fade, fade-up, card-rise, pulse-out, tap-pulse, tap-ring, draw, draw-long, pip) wrapped in `prefers-reduced-motion: no-preference` guard
+  - `design-previews/step1-identity-*.html` — 7 iteration HTML files (concepts A/B/C, v3, v4, A-refined, A-v3, A-v4, 4-regions v5, 4-regions v6-blueprints) — design artifacts, not deployed, gitignore candidate
+- **Build verified** via sandbox `vite build --outDir /tmp/dnfc-dist`: **1917 modules transformed in 37.85s, zero errors**. Cross-mount EPERM on real `dist/` prevented in-place build but that's a sandbox issue, not a code issue.
+- **Visual verified on `npm run dev`** at end of session — Step 1 renders, animation cycle plays, user confirmed "tamamdir calisiyor". Initial white-screen scare turned out to be an ad-blocker / `CookieConsent.jsx` dev-mode quirk (see Lessons), unrelated to Step 1 changes.
+- **`main` HEAD** ahead by these uncommitted edits. Tree status pending — run `git status` first thing.
+
+### First moves tomorrow (in this order)
+
+1. **`git status`** — confirm uncommitted state. Three files (Step1Identity.jsx, TutorialStep.jsx, FiveMinuteProof.css) should appear modified.
+2. **Visual walkthrough on `npm run dev`** — open `/unified/overview`, replay the tutorial (Settings → Replay tutorial), switch region across all 4 (Canada → Gulf → USA → Mexico). Confirm:
+   - Card metal sheen + brush texture renders cleanly
+   - Persona names don't clip on any region (Gulf + Mexico are the long-name risks)
+   - Concentric pulse rings + red tap dot + 2 ripple rings fire during cycle
+   - Dashed connection line draws from card → nameplate top
+   - Region accent flows correctly to role + connection + ACTIVE pip + bottom-line gradient
+   - `prefers-reduced-motion` users see final static state, no animation
+3. **Decide Step 2 disposition** — current `Step2Track.jsx` is still the original Cursor first-pass wireframe. Same redesign treatment needed for parity. If demo time pressure → ship Step 1 standalone now, batch Steps 2-5 next week.
+4. **Commit + deploy** when visual passes:
+   ```
+   git add frontend/src/components/UnifiedDashboard/FiveMinuteProof/
+   git commit -m "feat(overview): Step 1 Identity full SVG redesign (Sprint 2 #1.2)"
+   cd frontend && npm run build && cd .. && firebase deploy --only hosting
+   ```
+
+### Open items / deferred
+
+- **Region symbol watermark behind nameplate** — deferred. Could come back as: (a) larger full-canvas backdrop with low opacity using RegionMorphLoader blueprints (the user's original suggestion, but compressed compositionally), (b) single iconic element per region (one building, not a scene), or (c) skipped entirely if Steps 2-5 don't need it either.
+- **Steps 2-5 redesign** — `Step2Track.jsx`, `Step3Score.jsx`, `Step4Alert.jsx`, `Step5Close.jsx` are all original first-pass Cursor SVGs. Step 1 sets the visual bar; the others need to match.
+- **Sprint 2 #2-7** (Sales Trigger panel, Buyer Sites sidebar, VIP Alert Summary, Outreach guardrail copy, Owner workload columns) — queue unchanged from yesterday.
+
+### Reference branches & commits
+
+```
+main HEAD (before today's session):
+  a08dcc81  docs(handoff) + fix(settings): EOD 2026-05-06
+  71346720  feat(overview): polish Five-Minute Proof illustrations (Sprint 2 #1.1)
+  a80c72a7  docs: Sprint 2 #1 closed, Sprint 2 #1.1 illustration polish directive
+
+main HEAD after today's commit (when user commits):
+  [new]     feat(overview): Step 1 Identity full SVG redesign (Sprint 2 #1.2)
+  a08dcc81  (previous)
+```
+
+### Lessons worth keeping
+
+- **SVG region-symbol watermarks (flag iconography, skyline silhouettes, terrain) don't compress well behind a 100-wide nameplate.** Either need a much larger watermark zone (full-canvas backdrop) or a fundamentally different decoration approach (single iconic element). Multiple iterations confirmed this.
+- **Long persona names overflow fixed-width nameplates.** Conditional `font-size` + `letter-spacing` based on `name.length > 14` is the clean pattern. Future tutorial steps and any other rendered persona text should adopt it.
+- **Cross-platform mount build failures from the sandbox** — npm install on the sandbox doesn't pick up Linux-specific optional dependencies that the Windows host skipped. Fix: `npm install @rollup/rollup-linux-x64-gnu --no-save` then `vite build --outDir /tmp/...` to avoid the cross-mount `dist/` EPERM.
+- **Comfortaa is the closest Google Font match to the actual DynamicNFC wordmark** (rounded geometric sans). For any in-illustration brand-mark rendering, use `font-family: 'Comfortaa', 'Quicksand', sans-serif`.
+- **Ad blockers (uBlock / AdBlock) silently block `localhost:3000/src/components/CookieConsent/CookieConsent.jsx` in Vite dev mode** — the path-string match on "CookieConsent" trips their cookie-banner filter. App.jsx import fails → React mount fails → white screen with no terminal-side error. Production build is unaffected (file becomes part of a hashed bundle, no string match). When debugging "blank /unified/overview" or "blank Home" in dev, check F12 → Console for `net::ERR_BLOCKED_BY_CLIENT` before assuming code regression. Fix: whitelist localhost in the ad blocker, or use Incognito with extensions off.
+- **The previous Step 1 wireframe was the "before" baseline.** v4 sets the new bar: brushed metal card + presentation box + editorial nameplate. The visual leap was significant — Steps 2-5 will feel like a different product if not brought up to the same level.
+
+### Tone for resume
+
+User went home with Step 1 in a state they'd consider shippable. They asked for honest senior-designer iteration across multiple rounds (A/B/C concepts, then v3/v4 polish, then watermark experiments, then "c simdilik kalsin" decisive cut). Open the next session with a focused: "Step 1 build PASS. Want to walk through it visually first, or queue Step 2 design directly?" Don't re-litigate the watermark deferral.
+
+---
+
+## ✅ CLOSED — 2026-05-07 (Sprint 2 #1.2 — Step 1 Identity full SVG redesign)
+
+User flagged Step 1 visually as "cok amator gorunuyor" early in the session. Multi-round senior-designer iteration produced the new editorial scene; integrated into JSX with build verified.
+
+**Iteration trail:**
+
+1. **3 concepts presented (A/B/C)** in `design-previews/step1-identity-concepts.html`:
+   - A — "The Reveal" (premium box opens, NFC card emerges)
+   - B — "Editorial Triptych" (anonymous → tap → known, 3-column narrative)
+   - C — "Identity Stamped" (diplomatic dossier + VIP stamp)
+2. User asked to see **A and C animated** with replay buttons → `step1-identity-A-and-C-animated.html`.
+3. User picked **A** but with refinements ("kart ve kutuyu adam etmek lazim" + uploaded real DynamicNFC card photos).
+4. **v3** refined the card depth (vignette + brush texture + bottom highlight), QR clarity (3 markers + center NFC mark), NFC waves (3→4 arcs + aura), tap ripple (single → solid dot + 2 staggered rings), card→nameplate dashed connection, editorial polish (01·IDENTITY eyebrow + timestamp + ACTIVE pip).
+5. User: "hala biraz daha ilgiye ihtiyaci var" → v4 introduced gerçek brushed metal (no fake credit-card baseline), Comfortaa wordmark, QR replacing chip, real-card layout fidelity, premium box with silk lining + ribbon + foil-stamp wave mark.
+6. User: "her bolgenin bir simgesi olmasi gerekir, arka tarafta ismin arkasinda" → v4 added region symbol watermark (maple leaf path). Path was broken (rendered as 18-point ninja star).
+7. User: "kanada bayragi yapragi ile ugrasma yapamiyorsun, Vancouver ozlesmis dag" → replaced with mountain ridge outline (The Lions + Grouse + Seymour + snow cap). User approved Canada.
+8. User: "ok devam et hepsi icin yap" → built v5 4-region rollout with mountain ridge / Riyadh skyline / Manhattan skyline / Mexico volcanoes silhouettes.
+9. User: "yok bu sekilde olmadi, bolge ve sektor gecislerinde kullandigimiz animasyonlari arkasinda gosterelim" → v6 ported `RegionMorphLoader` BLUEPRINTS data as watermark behind nameplate.
+10. User: "olmamis, tekrer teker incele" → Claude critiqued each region honestly. Issue diagnosed: blueprints are wide horizontal scenes that compress poorly into the 100-wide nameplate zone, plus long-name clipping (KHALID/CARLOS).
+11. User: "c simdilik kalsin" — chose Option C (drop watermark, fix long names, ship clean).
+12. **Integration:** Step1Identity.jsx rewritten with v4 SVG (no watermark) + long-name conditional font-size. TutorialStep.jsx now computes `projectLabel` + `locationLabel` from `regionConfig` + `mapRegionConfig` and passes to Illustration. FiveMinuteProof.css gained 170 lines of `fmp-s1-*` animation block.
+
+**Build verification.** `npx vite build --outDir /tmp/dnfc-dist` on sandbox: 1917 modules transformed in 37.85s, zero errors. Cross-mount EPERM on actual `dist/` is a sandbox limitation, not a code issue — user's `npm run build` on Windows will write to `frontend/dist` normally.
+
+**What did not ship:**
+- Region symbol watermark behind nameplate (3 iterations attempted, all visually broke at small scale)
+- Steps 2-5 redesign (Step 1 only this round)
+- Any change to existing `getPersonas` / `getRegion` / `getProjectName` APIs (untouched)
+- Any change to `RegionMorphLoader` / sector morph loaders (untouched)
+
+---
+
+## (Original RESUME HERE from yesterday — historical context)
 
 Oguzhan stopped at end of day with #1.1 illustration polish work delivered by Cursor on `cursor/sprint-2-1-1-illustration-polish` (commit `f30f55ee`). Audit PASSED — Claude reviewed line counts, accent usage matrix, brand-mark presence, persona-name labeling, animation guards. Audit blob is in §"Sprint 2 #1.1 closed" section below.
 
