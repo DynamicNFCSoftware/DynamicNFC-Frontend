@@ -1,12 +1,110 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-07 ~end of day (America/Vancouver)
-**Session:** Sprint 2 #1.2 — Step 1 Identity full SVG redesign (editorial scene, no watermark)
+**Last updated:** 2026-05-07 ~21:30 (America/Vancouver) — user fatigued, fresh-chat resume tomorrow
+**Session:** Step 1 shipped to production · Sprint 2 #4.8 finally landed · Sprint 2 #2 scope drafted
 **Author of this update:** Claude (Cowork)
 
 ---
 
 ## ▶︎ RESUME HERE — 2026-05-08 morning
+
+**Status:** Step 1 is LIVE in production at https://dynamicnfc.ca/unified/overview — user visually verified during today's session ("tamamdir calisiyor"). Sprint 2 #4.8 (`/unified/overview` 404 fix) finally committed after sitting uncommitted since 2026-05-06. Next functional priority: **Sprint 2 #2 — Sales Trigger Panel**, scope drafted but Cursor directive not yet written.
+
+### ⚠️ Two things to clean up FIRST thing tomorrow morning
+
+**1. Git push was rejected — origin/main is 4 commits behind local.** Production has the new code (deployed local build directly), but the git remote does not. Fix:
+
+```powershell
+cd C:\Users\oguzh\DynamicNFC
+git status                      # Should show "ahead of 'origin/main' by 4 commits"
+git pull --rebase origin main   # Bring any origin work below ours
+git push                        # Sync
+```
+
+The 4 local-only commits (oldest → newest):
+```
+9acc9ccf  fix(routing): explicit /unified/overview route (Sprint 2 #4.8)
+d0a3ae98  feat(overview): Step 1 Identity full SVG redesign (Sprint 2 #1.2)
+335de91c  docs(handoff): Sprint 2 #1.2 closed + gitignore design previews
+0903c458  chore: gitignore design preview artifacts
+```
+
+If rebase has conflicts (unlikely), capture diff and paste to Claude.
+
+**2. Visual sanity-check Step 1 in production.** ~2 minutes. Open https://dynamicnfc.ca/unified/overview (login `info@dynamicnfc.help`), Settings → Replay tutorial, switch region across all 4 (Canada → Gulf → USA → Mexico). Already verified locally, but production CDN cache / SW interactions can surprise.
+
+### Then start Sprint 2 #2 — Sales Trigger Panel
+
+User reframed direction during today's session: *"yazılım tam adam olsun, sonra makyaj yaparız"* — Steps 2-5 visual redesign is **deferred**, functional Sprint 2 items take priority. Sales Trigger is first up.
+
+**Scope already drafted and shared with user (awaiting `OK` to proceed with directive):**
+
+> Real-time VIP behavior signal panel on Overview. Sits between `SalesVelocity` and `Weekly Trend` cards, full-width. Detects 4 trigger types from existing `events + vips + cards + deals` data (no new Firestore listener — `useDashboard` already streams). Each trigger row: urgency dot + VIP name + score + signal description + age + "Open profile" action button (routes to `/unified/vip-crm/{vipId}`). Max 5 shown, sorted urgency × age. Empty state copy.
+>
+> **Trigger rules (MVP, 4 types):**
+> - `REPEAT_VIEW` — Same VIP + same item, 15min window, 3+ events → hot
+> - `HIGH_INTENT` — `request_pricing` / `download_brochure` / `book_viewing` event → hot
+> - `RE_ENGAGE` — VIP 24h+ idle, new event arrived → warm
+> - `CONTACT_AGENT` — `contact_agent` event triggered → hot
+>
+> **File plan (~600 lines, 4-5 files, Cursor scope per role split):**
+> - `frontend/src/components/UnifiedDashboard/SalesTriggerPanel/index.jsx` (~150L · UI)
+> - `frontend/src/components/UnifiedDashboard/SalesTriggerPanel/SalesTriggerPanel.css` (~100L · region-aware via `--fmp-accent` pattern)
+> - `frontend/src/components/UnifiedDashboard/SalesTriggerPanel/triggerRules.js` (~120L · pure detect functions)
+> - `frontend/src/i18n/portals/dashboard.js` (+12 strings × 4 lang = ~48 entries)
+> - `frontend/src/pages/UnifiedDashboard/tabs/OverviewTab.jsx` (+5L integration)
+>
+> **Deferred to v2:** admin-editable thresholds, custom action templates per trigger, outreach draft writing (Sprint 2 #6's job), push notifications, dismiss/snooze.
+
+**Resume sequence for tomorrow:**
+
+1. Show user the scope summary. Ask for `OK` or adjustments (trigger rules, position, scope additions/removals).
+2. Once aligned, **write the Cursor directive** to `frontend/directives/SPRINT2_2_SALES_TRIGGER_DIRECTIVE.md` with: file-by-file plan, exact prop signatures, trigger detection logic (pseudocode → JS), trigger row anatomy (JSX structure + CSS class names), i18n key list with English source strings, verify steps (npm run build PASS, manual test scenarios for each trigger type with seeded events).
+3. User pastes directive into Cursor Cloud Agent.
+4. Cursor executes → audit → merge.
+
+### Tone for resume
+
+User ended the day with momentum but fatigued. Step 1 ship felt good. They explicitly want a **fresh-chat tomorrow** ("yeni baslangic yapalim") — paste this whole file at the top, start clean. Open with: *"Step 1 production'da, gözle doğrulanmış. İki temizlik var: git push senkronu + production gözle kontrol. Sonra Sprint 2 #2 scope'una `OK` ver, directive yazıyorum."* Don't recap iteration history — user lived it. Get to the OK/adjust gate fast.
+
+### Open items deferred (unchanged from today's plan)
+
+- **Region symbol watermark behind Step 1 nameplate** — multiple iterations confirmed it doesn't fit at small scale. Revisit only if Steps 2-5 establish a consistent watermark zone (likely full-canvas backdrop, not behind-nameplate).
+- **Steps 2-5 visual redesign** — user said *"makyaj sonra"*. Functional Sprint 2 items first, visual polish later.
+- **Sprint 2 #3-7** (Buyer Sites sidebar, VIP Alert Summary, Outreach guardrail copy, Owner workload columns) — queue unchanged.
+- **Error Boundaries** — flagged today as critical (CookieConsent white-screen scare confirmed: one bad component kills whole route). Tactical fix for a future sprint, not blocking #2.
+
+### Lessons added today
+
+- **Sprint 2 #4.8 was claimed "closed" yesterday but never actually committed.** The App.jsx route addition was sitting uncommitted in the working tree all day. Found today during the Step 1 commit pass and finally committed as `9acc9ccf`. Lesson: when a fix is described as "closed + production verified," double-check the commit actually went in. The handoff line `[App.jsx commit]  fix(routing): add explicit /unified/overview route` had no SHA — that should have been the red flag.
+- **`echo "x" >> .gitignore` in PowerShell can silently no-op** (no error, no append). Use `Add-Content -Path .gitignore -Value "`nx"` instead. Found today when `design-previews/` kept showing as untracked even after the chore commit.
+- **Ad blockers (uBlock / AdBlock) silently block `localhost:3000/src/components/CookieConsent/CookieConsent.jsx` in Vite dev mode** — the path-string match on "CookieConsent" trips their cookie-banner filter. App.jsx import fails → React mount fails → white screen with no terminal-side error. Production build is unaffected (hashed bundle filenames don't pattern-match). When debugging "blank dev mode" symptoms, check F12 → Console for `net::ERR_BLOCKED_BY_CLIENT` before assuming code regression.
+
+---
+
+## ✅ CLOSED — 2026-05-07 evening (Sprint 2 #4.8 + Sprint 2 #1.2 shipped to production)
+
+**Sprint 2 #4.8 finally landed** — `9acc9ccf fix(routing): explicit /unified/overview route`. Yesterday's handoff claimed this was done, but the App.jsx edit was sitting uncommitted. Recovered during today's commit pass.
+
+**Sprint 2 #1.2 shipped** — Step 1 Identity SVG redesign + supporting CSS + props pipeline:
+- `d0a3ae98 feat(overview): Step 1 Identity full SVG redesign (Sprint 2 #1.2)` — 3 files touched (Step1Identity.jsx full rewrite ~260L, TutorialStep.jsx +30L label pass-through, FiveMinuteProof.css +170L animation block)
+- `335de91c docs(handoff): Sprint 2 #1.2 closed + gitignore design previews` — handoff update + .gitignore
+- `0903c458 chore: gitignore design preview artifacts` — small followup
+
+**Build + deploy verified:**
+- `vite build` 18.81s, 1915 modules transformed, zero errors
+- `firebase deploy --only hosting` — 227 files uploaded, "Deploy complete!"
+- Production URL: https://dynamicnfc-prod-68b4e.web.app (primary domain: dynamicnfc.ca)
+
+**Visual verified locally** by user on `npm run dev`. Initial white-screen scare turned out to be ad-blocker / CookieConsent dev-mode quirk (now documented in Lessons).
+
+**Sprint 2 #2 scope brief drafted and shared with user** at end of session. User said "simdilik duralim, yoruldum, yarin buradan baslariz" — directive write deferred to tomorrow's session.
+
+**⚠️ State drift to fix tomorrow:** `git push` was rejected (origin/main had work we didn't have locally). User went straight to build+deploy without doing `git pull --rebase + git push`. Production is live with new code, but the git remote is 4 commits behind. First-thing-morning fix documented in RESUME HERE above.
+
+---
+
+(Original RESUME HERE for 2026-05-08 morning — now superseded by the new RESUME above)
 
 Sprint 2 #1.2 closed. **Step 1 of the Five-Minute Proof tutorial is fully redesigned** and integrated: editorial premium-box reveal scene with brushed black-metal NFC card (credit-card aspect, no chip, Comfortaa wordmark, QR with center mark, FIRST EDITION serial, crimson edge accent, hologram strip), midnight-navy presentation box (3-tone gold rim, silk lining peek, foil-stamp ribbon, DynamicNFC + PREMIUM INVITATION mark), concentric NFC pulse rings (replaces previous "mountain" wave-arcs), tap dot + 2 ripple rings, dashed connection line, editorial nameplate (persona + role + location + ACTIVE pip + TAP REGISTERED timestamp), 01·IDENTITY eyebrow top-left.
 
