@@ -18,15 +18,6 @@ const CONTACT_KEYS = new Set(["contact_advisor", "contact_agent", "whatsapp_clic
 const UNIT_VIEW_KEYS = new Set(["unit_view", "view_unit", "vehicle_view", "unit_detail_opened", "yacht_view"]);
 const ROI_KEYS = new Set(["roi_calculator", "roi_completed", "roi_calculator_used", "roi_calculator_click"]);
 
-function normalizeSectorId(value) {
-  const raw = String(value || "").toLowerCase().trim();
-  if (!raw) return "";
-  if (raw === "realestate" || raw === "real_estate" || raw === "real-estate") return "realEstate";
-  if (raw === "automotive") return "automotive";
-  if (raw === "yacht") return "yacht";
-  return value;
-}
-
 function eventTypeOf(e) {
   return String(e.type || e.event || e.rawEvent || "").toLowerCase();
 }
@@ -284,19 +275,19 @@ function detectCompeting(events, now) {
 }
 
 export function detectTriggers(events, vips, deals, options = {}) {
-  const { region, sector, now = Date.now() } = options;
-  const normalizedSector = normalizeSectorId(sector);
+  const { now = Date.now() } = options;
+  // useDashboard already filters events/vips/deals by active region+sector via
+  // filterBySectorAndRegion in useDashboardData. We trust internal code per
+  // CLAUDE.md §11 and do NOT re-filter here — those defensive filters falsely
+  // rejected all rows because the returned objects don't carry region/sector fields.
 
-  const matchRegion = (x) => !region || x?.region === region;
-  const matchSector = (x) => !normalizedSector || normalizeSectorId(x?.sector) === normalizedSector;
+  const eventsArr = events || [];
+  const vipsArr = vips || [];
+  const dealsArr = deals || [];
 
-  const scopedEvents = (events || []).filter((e) => matchRegion(e) && matchSector(e));
-  const scopedVips = (vips || []).filter((v) => matchRegion(v) && matchSector(v));
-  const scopedDeals = (deals || []).filter((d) => matchRegion(d) && matchSector(d));
-
-  const enriched = enrich(scopedEvents, scopedVips);
+  const enriched = enrich(eventsArr, vipsArr);
   const eventsByVip = groupByVip(enriched);
-  const vipById = new Map(scopedVips.map((v) => [v.id, v]));
+  const vipById = new Map(vipsArr.map((v) => [v.id, v]));
 
   const all = [
     ...detectRepeatView(enriched),
@@ -304,7 +295,7 @@ export function detectTriggers(events, vips, deals, options = {}) {
     ...detectReEngage(enriched, now),
     ...detectContactAgent(enriched),
     ...detectRoiCompleted(enriched),
-    ...detectIdleDeals(scopedDeals, eventsByVip, vipById, now),
+    ...detectIdleDeals(dealsArr, eventsByVip, vipById, now),
     ...detectCompeting(enriched, now),
   ];
 
