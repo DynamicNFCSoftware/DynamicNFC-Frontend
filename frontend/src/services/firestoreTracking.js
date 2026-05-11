@@ -1,5 +1,5 @@
 import { collection, addDoc, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 
 // ═══════════════════════════════════════════════════
 // DynamicNFC — Behavioral Tracking Service v2
@@ -43,6 +43,7 @@ export const EVENT_SCHEMA = {
   // ACTION category
   book_viewing:    { category: 'action',  label: 'Booked viewing',          funnelWeight: 25 },
   contact_advisor: { category: 'action',  label: 'Contacted advisor',       funnelWeight: 20 },
+  trigger_acted_on:{ category: 'action',  label: 'Acted on sales trigger',  funnelWeight: 12 },
   whatsapp_click:  { category: 'action',  label: 'Clicked WhatsApp',        funnelWeight: 15 },
   callback_request:{ category: 'action',  label: 'Requested callback',      funnelWeight: 20 },
 };
@@ -454,4 +455,42 @@ export function getCategoryColor(category) {
     action: '#dc2626',
   };
   return colors[category] || '#9ca3af';
+}
+
+/**
+ * Admin-side tracking — writes to tenants/{uid}/events/.
+ *
+ * Use this from Unified Dashboard surfaces (panels, modals, action buttons).
+ * Differs from track() in two ways:
+ *   1. No session requirement (admin is logged in via Firebase Auth, not a portal session).
+ *   2. Writes to tenant-isolated `tenants/{uid}/events/`, not top-level `behaviors`.
+ *
+ * @param {string} event — must exist in EVENT_SCHEMA
+ * @param {object} payload — flat key/value details (vipId, ruleType, etc.)
+ * @returns {Promise<void>} fire-and-forget; rejects silently on auth missing or write failure
+ */
+export async function trackDashboardEvent(event, payload = {}) {
+  const user = auth?.currentUser;
+  if (!user?.uid) {
+    console.warn('DynamicNFC dashboard tracking: no authenticated user.');
+    return;
+  }
+  const schema = EVENT_SCHEMA[event];
+  if (!schema) {
+    console.warn(`DynamicNFC dashboard tracking: unknown event "${event}".`);
+    return;
+  }
+  try {
+    await addDoc(collection(db, 'tenants', user.uid, 'events'), {
+      event,
+      category: schema.category,
+      label: schema.label,
+      funnelWeight: schema.funnelWeight,
+      source: 'dashboard',
+      timestamp: serverTimestamp(),
+      ...payload,
+    });
+  } catch (err) {
+    console.warn('Dashboard tracking write failed:', err?.message || err);
+  }
 }
