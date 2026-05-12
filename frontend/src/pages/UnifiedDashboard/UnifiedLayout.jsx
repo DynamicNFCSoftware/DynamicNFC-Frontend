@@ -18,6 +18,7 @@ import SectorSwitcher from "./components/SectorSwitcher";
 import RegionMorphLoader from "../../components/RegionMorphLoader/RegionMorphLoader";
 import AutomotiveMorphLoader from "../../components/AutomotiveMorphLoader/AutomotiveMorphLoader";
 import YachtMorphLoader from "../../components/YachtMorphLoader/YachtMorphLoader";
+import { derivePortalSignals, formatPortalAge } from "./lib/portalSignals";
 import "./UnifiedLayout.css";
 
 const LAYOUT_TEXT = {
@@ -64,6 +65,12 @@ const LAYOUT_TEXT = {
     helpStandardBody: "Enters via Ads, SEO, Direct. Identity unknown via anon_id. Use segments and content to optimize marketing.",
     helpRuleHeading: "Key Rule:",
     helpRuleBody: "The actions are shared and non-linear. The only difference between VIP and Standard is identity and how you activate follow-up.",
+    portalSignalIdle: "idle",
+    portalSignalWeek: "this wk",
+    portalSignalNow: "now",
+    portalSignalMinShort: "m",
+    portalSignalHourShort: "h",
+    portalSignalDayShort: "d",
   },
   ar: {
     aiBadge: "مدعوم بذكاء DynamicNFC",
@@ -108,6 +115,12 @@ const LAYOUT_TEXT = {
     helpStandardBody: "يدخل عبر الإعلانات وتحسين محركات البحث والوصول المباشر. الهوية غير معروفة عبر anon_id. استخدم الشرائح والمحتوى لتحسين التسويق.",
     helpRuleHeading: "القاعدة الأساسية:",
     helpRuleBody: "الإجراءات مشتركة وغير خطية. الفرق الوحيد بين VIP والعادي هو الهوية وكيفية تفعيل المتابعة.",
+    portalSignalIdle: "خامل",
+    portalSignalWeek: "هذا الأسبوع",
+    portalSignalNow: "الآن",
+    portalSignalMinShort: "د",
+    portalSignalHourShort: "س",
+    portalSignalDayShort: "ي",
   },
   es: {
     aiBadge: "Impulsado por DynamicNFC Intelligence",
@@ -152,6 +165,12 @@ const LAYOUT_TEXT = {
     helpStandardBody: "Entra por Ads, SEO y tráfico Direct. La identidad no se conoce mediante anon_id. Usa segmentos y contenido para optimizar marketing.",
     helpRuleHeading: "Regla clave:",
     helpRuleBody: "Las acciones son compartidas y no lineales. La única diferencia entre VIP y Standard es la identidad y cómo activas el seguimiento.",
+    portalSignalIdle: "inactivo",
+    portalSignalWeek: "esta sem.",
+    portalSignalNow: "ahora",
+    portalSignalMinShort: "m",
+    portalSignalHourShort: "h",
+    portalSignalDayShort: "d",
   },
   fr: {
     aiBadge: "Propulse par DynamicNFC Intelligence",
@@ -196,6 +215,12 @@ const LAYOUT_TEXT = {
     helpStandardBody: "Entre via Ads, SEO et Direct. Identité inconnue via anon_id. Utilisez segments et contenus pour optimiser le marketing.",
     helpRuleHeading: "Règle clé :",
     helpRuleBody: "Les actions sont partagées et non linéaires. La seule différence entre VIP et Standard est l'identité et la façon d'activer le suivi.",
+    portalSignalIdle: "inactif",
+    portalSignalWeek: "cette sem.",
+    portalSignalNow: "maintenant",
+    portalSignalMinShort: "m",
+    portalSignalHourShort: "h",
+    portalSignalDayShort: "j",
   },
 };
 const NAVBAR_LOGO_PATH = "/assets/images/logo.png";
@@ -390,7 +415,7 @@ function UnifiedLayoutInner() {
   const { lang, setLang } = useLanguage();
   const { user } = useAuth();
   const location = useLocation();
-  const { vips } = useDashboard();
+  const { vips, events } = useDashboard();
   const vipCrmCount = Array.isArray(vips) ? vips.length : 0;
   const tx = LAYOUT_TEXT[lang] || LAYOUT_TEXT.en;
   const projectName = getProjectName(config.id, regionId, lang);
@@ -398,6 +423,17 @@ function UnifiedLayoutInner() {
   const getPortalKindCode = useCallback(
     (kind) => (kind === tx.portalVip ? "VIP" : kind === tx.portalRegistered ? "REG" : "ANON"),
     [tx.portalVip, tx.portalRegistered]
+  );
+  // Live portal signals — recomputed when events array changes.
+  const portalSignals = useMemo(() => derivePortalSignals(events || []), [events]);
+  const ageLabels = useMemo(
+    () => ({
+      now: tx.portalSignalNow,
+      minShort: tx.portalSignalMinShort,
+      hourShort: tx.portalSignalHourShort,
+      dayShort: tx.portalSignalDayShort,
+    }),
+    [tx.portalSignalNow, tx.portalSignalMinShort, tx.portalSignalHourShort, tx.portalSignalDayShort]
   );
   const activeGroupId = useMemo(() => {
     const path = location.pathname || "";
@@ -605,22 +641,45 @@ function UnifiedLayoutInner() {
             />
             <div className="ud-portal-flyout" style={{ top: flyoutPos.top, left: flyoutPos.left }}>
               <div className="ud-portal-flyout-title">{tx.portalLinks}</div>
-              {portalLinks.map((portal) => (
-                <a
-                  key={portal.id}
-                  href={portal.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ud-demo-link"
-                  title={portal.label}
-                  onClick={() => setShowPortalFlyout(false)}
-                >
-                  <span className="ud-demo-link-label">{portal.label}</span>
-                  <span className={`ud-demo-link-kind ud-kind-${portal.kind === tx.portalVip ? "vip" : portal.kind === tx.portalRegistered ? "reg" : "anon"}`}>
-                    {getPortalKindCode(portal.kind)}
-                  </span>
-                </a>
-              ))}
+              {portalLinks.map((portal) => {
+                const kindCode = getPortalKindCode(portal.kind);
+                const sigKey = kindCode === "VIP" ? "vip" : kindCode === "REG" ? "registered" : "anonymous";
+                const signal = portalSignals[sigKey];
+                return (
+                  <a
+                    key={portal.id}
+                    href={portal.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ud-demo-link"
+                    title={portal.label}
+                    onClick={() => setShowPortalFlyout(false)}
+                  >
+                    <div className="ud-demo-link-main">
+                      <span className="ud-demo-link-label">{portal.label}</span>
+                      {signal && (signal.idle ? (
+                        <span className="ud-demo-link-signal ud-demo-link-signal--idle">
+                          {tx.portalSignalIdle}
+                        </span>
+                      ) : (
+                        <span className="ud-demo-link-signal">
+                          {signal.active && <span className="ud-demo-link-signal-dot" aria-hidden="true" />}
+                          {signal.recentCount > 0 ? (
+                            <>
+                              <span>{signal.recentCount} {tx.portalSignalWeek}</span>
+                              <span className="ud-demo-link-signal-sep">·</span>
+                            </>
+                          ) : null}
+                          <span>{formatPortalAge(Date.now() - signal.lastEventAt, ageLabels)}</span>
+                        </span>
+                      ))}
+                    </div>
+                    <span className={`ud-demo-link-kind ud-kind-${portal.kind === tx.portalVip ? "vip" : portal.kind === tx.portalRegistered ? "reg" : "anon"}`}>
+                      {kindCode}
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           </>,
           document.body

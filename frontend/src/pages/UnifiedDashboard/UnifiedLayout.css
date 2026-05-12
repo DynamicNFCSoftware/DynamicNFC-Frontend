@@ -1299,6 +1299,58 @@
   align-self: center;
 }
 
+/* Sprint 2 #3 — Live portal signals (sidebar flyout) */
+.ud-demo-link-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ud-demo-link-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ud-demo-link-signal--idle {
+  color: rgba(255, 255, 255, 0.3);
+  font-style: italic;
+}
+.ud-demo-link-signal-sep {
+  opacity: 0.45;
+}
+.ud-demo-link-signal-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  flex-shrink: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ud-demo-link-signal-dot {
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+    animation: ud-portal-signal-pulse 1.6s ease-in-out infinite;
+  }
+}
+@keyframes ud-portal-signal-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25); }
+  50%      { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.08); }
+}
+[data-theme="light"] .ud-demo-link-signal {
+  color: rgba(26, 26, 31, 0.5);
+}
+[data-theme="light"] .ud-demo-link-signal--idle {
+  color: rgba(26, 26, 31, 0.35);
+}
+[data-theme="light"] .ud-demo-link-signal-sep {
+  opacity: 0.4;
+}
+
 .ud-portal-toggle-btn {
   all: unset;
   cursor: pointer;
