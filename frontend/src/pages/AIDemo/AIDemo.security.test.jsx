@@ -5,6 +5,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import AIDemo from "./AIDemo";
 
 // Mock googleLiveApi to avoid loading real GIS script
@@ -19,10 +20,15 @@ vi.mock("./googleLiveApi", () => ({
 }));
 
 function renderDemo() {
+  // HelmetProvider wraps the tree so <SEO>'s <Helmet> can register itself
+  // in the helmet context — required for any test that renders a page
+  // component that uses react-helmet-async.
   return render(
-    <MemoryRouter>
-      <AIDemo />
-    </MemoryRouter>
+    <HelmetProvider>
+      <MemoryRouter>
+        <AIDemo />
+      </MemoryRouter>
+    </HelmetProvider>
   );
 }
 
@@ -35,7 +41,8 @@ describe("AIDemo — Security", () => {
 
   it("should render without crashing", () => {
     renderDemo();
-    expect(screen.getByText(/AI-Orchestrated/i)).toBeTruthy();
+    // Page heading text (was "AI-Orchestrated", updated to the One-tap hero copy).
+    expect(screen.getByText(/One tap/i)).toBeTruthy();
   });
 
   it("should show Connect button when not authenticated", () => {
