@@ -11,11 +11,16 @@ const { computeChips, generateBriefFromTemplate } = require("./briefTemplates");
 
 const COOLDOWN_MS = 5 * 60 * 1000;
 
-function buildBriefPrompt({ topVip, pipelineDelta, marketplaceTraffic, alerts, lang }) {
-  const langName = { en: "English", ar: "Arabic", es: "Spanish", fr: "French" }[lang] || "English";
-  return `You are a sales intelligence assistant for DynamicNFC, a luxury real estate sales velocity platform.
+const LANG_INSTRUCTIONS = {
+  en: "Write all output in English.",
+  ar: "Write all output in Modern Standard Arabic (فصحى), professional tone. Translate inline span content too (e.g., 'Top VIP' → 'كبار العملاء'). Preserve HTML tags exactly.",
+  es: "Write all output in neutral Latin American Spanish, professional business tone. Translate inline span content too. Preserve HTML tags exactly.",
+  fr: "Write all output in formal Canadian French, professional business tone. Translate inline span content too. Preserve HTML tags exactly.",
+};
 
-Generate exactly 2 short paragraphs in ${langName} for an executive dashboard daily brief. Tone: confident, concise, brand-aligned (mantra: "Identity precedes Action").
+const EXISTING_SYSTEM_PROMPT = `You are a sales intelligence assistant for DynamicNFC, a luxury real estate sales velocity platform.
+
+Generate exactly 2 short paragraphs for an executive dashboard daily brief. Tone: confident, concise, brand-aligned (mantra: "Identity precedes Action").
 
 Brand language rules:
 - Never use fake metrics or made-up percentages
@@ -29,12 +34,15 @@ HTML formatting rules (mandatory):
 - Use <strong> sparingly for monetary values like pipeline deltas
 - No other HTML tags. No links. No images. No inline styles. No data attributes.
 
-Data:
-${JSON.stringify({ topVip, pipelineDelta, marketplaceTraffic, alerts }, null, 2)}
-
 Output exactly this format (no preamble):
 PARAGRAPH1: <first paragraph about top VIP>
 PARAGRAPH2: <second paragraph about pipeline + marketplace>`;
+
+function buildBriefUserContent({ topVip, pipelineDelta, marketplaceTraffic, alerts }) {
+  return `Apply the system instructions to the dataset below.
+
+Data:
+${JSON.stringify({ topVip, pipelineDelta, marketplaceTraffic, alerts }, null, 2)}`;
 }
 
 function parseBriefResponse(text = "") {
@@ -69,11 +77,13 @@ async function generateBriefFromLLM({ tenantId, topVip, pipelineDelta, marketpla
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) throw new Error("ANTHROPIC_API_KEY not present in environment");
     const client = new Anthropic({ apiKey });
-    const prompt = buildBriefPrompt({ topVip, pipelineDelta, marketplaceTraffic, alerts, lang });
+    const userContent = buildBriefUserContent({ topVip, pipelineDelta, marketplaceTraffic, alerts });
+    const system = `${EXISTING_SYSTEM_PROMPT}\n\n${LANG_INSTRUCTIONS[lang] || LANG_INSTRUCTIONS.en}`;
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 400,
-      messages: [{ role: "user", content: prompt }],
+      system,
+      messages: [{ role: "user", content: userContent }],
     });
 
     const parsed = parseBriefResponse(response?.content?.[0]?.text || "");
