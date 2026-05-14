@@ -34,7 +34,6 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'https://3.128.244.219', // canlı backend
-        //target: 'http://localhost:8080', // yerel backend
         changeOrigin: true,
         secure: false,
       }

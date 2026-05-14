@@ -20,7 +20,7 @@ const db = admin.firestore();
 const anthropicApiKey = defineSecret("ANTHROPIC_API_KEY");
 
 // ── Security: Allowed redirect domains ──
-const ALLOWED_REDIRECT_DOMAINS = ["dynamicnfc.ca", "www.dynamicnfc.ca", "localhost"];
+const ALLOWED_REDIRECT_DOMAINS = ["dynamicnfc.ca", "www.dynamicnfc.ca"];
 
 function isValidRedirectUrl(url) {
   try {

@@ -28,3 +28,20 @@ createRoot(document.getElementById('root')).render(
 requestAnimationFrame(() => {
   document.getElementById('root')?.classList.add('loaded');
 });
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    if (import.meta.env.DEV) {
+      try {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((reg) => reg.unregister()));
+      } catch (err) {
+        console.warn("SW unregister failed:", err);
+      }
+      return;
+    }
+    navigator.serviceWorker.register("/sw.js").catch((err) =>
+      console.warn("SW registration failed:", err),
+    );
+  });
+}
