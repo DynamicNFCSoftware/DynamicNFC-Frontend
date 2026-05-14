@@ -82,16 +82,18 @@ function computeStatusText(source, t, cooldownMinutes) {
   return t("generateButton");
 }
 
-function normalizeBrief(brief) {
+function normalizeBrief(brief, lang) {
   if (!brief) return DEFAULT_BRIEF;
+  // Prefer per-lang slot from byLang dict; fall back to legacy top-level fields for migration safety.
+  const slice = brief?.byLang?.[lang] || brief?.byLang?.en || brief;
   return {
-    paragraph1: asText(brief.paragraph1, DEFAULT_BRIEF.paragraph1),
-    paragraph2: asText(brief.paragraph2, DEFAULT_BRIEF.paragraph2),
-    chips: normalizeChips(brief.chips),
-    source: parseSource(brief),
-    generatedAt: safeNumber(brief.generatedAt, Date.now()),
-    cooldownRemaining: safeNumber(brief.cooldownRemaining, 0),
-    topVipName: asText(brief.topVipName || brief.vipName, ""),
+    paragraph1: asText(slice.paragraph1, DEFAULT_BRIEF.paragraph1),
+    paragraph2: asText(slice.paragraph2, DEFAULT_BRIEF.paragraph2),
+    chips: normalizeChips(slice.chips),
+    source: parseSource(slice),
+    generatedAt: safeNumber(slice.generatedAt, Date.now()),
+    cooldownRemaining: safeNumber(brief.cooldownRemaining ?? slice.cooldownRemaining, 0),
+    topVipName: asText(slice.topVipName || slice.vipName, ""),
   };
 }
 
@@ -129,7 +131,7 @@ function SourceBadge({ source }) {
 
 export default function TodaysBrief({ brief, nfcRoi, onRefreshAi, isRefreshing, lang }) {
   const t = useTranslation("todaysBrief");
-  const normalized = useMemo(() => normalizeBrief(brief), [brief]);
+  const normalized = useMemo(() => normalizeBrief(brief, lang), [brief, lang]);
   const source = normalized.source;
   const cooldownMinutes = Math.max(1, Math.ceil(normalized.cooldownRemaining / (60 * 1000)));
   const disabled = isRefreshing || source === "cached";
