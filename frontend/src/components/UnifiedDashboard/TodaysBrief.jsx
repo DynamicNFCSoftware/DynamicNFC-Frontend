@@ -66,43 +66,6 @@ function formatUpdatedLabel(timestamp, lang) {
   }
 }
 
-function escapeRegExp(value) {
-  return asText(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function wrapVipName(paragraph, vipName) {
-  const text = asText(paragraph);
-  if (!text || !vipName) return text || "";
-  const safeName = escapeHtml(vipName);
-  const pattern = new RegExp(escapeRegExp(vipName), "g");
-  return text.replace(pattern, `<span class="ud-todays-brief__vip-name">${safeName}</span>`);
-}
-
-function wrapScoreChange(paragraph) {
-  const text = asText(paragraph);
-  if (!text) return text;
-  const explicit = /(score\s*(?:now)?[^.]*\.)/i;
-  if (explicit.test(text)) {
-    return text.replace(explicit, `<span class="score-change">$1</span>`);
-  }
-  const fallback = /(score[^,;)]*)/i;
-  return text.replace(fallback, `<span class="score-change">$1</span>`);
-}
-
-function highlightParagraph1(paragraph, vipName) {
-  const withVip = wrapVipName(paragraph, vipName);
-  return wrapScoreChange(withVip);
-}
-
 function normalizeChips(chips) {
   if (!Array.isArray(chips)) return [];
   return chips
@@ -175,8 +138,8 @@ export default function TodaysBrief({ brief, nfcRoi, onRefreshAi, isRefreshing, 
   const actionLabel = computeStatusText(source, t, cooldownMinutes);
 
   const paragraph1 = useMemo(
-    () => highlightParagraph1(normalized.paragraph1, normalized.topVipName),
-    [normalized.paragraph1, normalized.topVipName]
+    () => asText(normalized.paragraph1),
+    [normalized.paragraph1]
   );
 
   const paragraph2 = useMemo(() => asText(normalized.paragraph2), [normalized.paragraph2]);

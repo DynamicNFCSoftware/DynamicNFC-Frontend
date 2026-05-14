@@ -81,7 +81,7 @@ export default function ActivityFeed({ events = [], maxItems = 15, labels, lang 
     const action = getEventLabel(key, lang, config?.id) || fromEventDisplay(key);
     const actor = localizeActor(event);
     const item = event?.item || event?.unitName || "";
-    return item ? `${actor} — ${action} -> ${item}` : `${actor} — ${action}`;
+    return item ? `${actor} — ${action} → ${item}` : `${actor} — ${action}`;
   };
 
   return (

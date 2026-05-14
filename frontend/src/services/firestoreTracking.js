@@ -361,13 +361,13 @@ export function calculateEngagementScore(events, config = null, scoreLabels = nu
 
   let stage, label, color;
   if (score >= hotT || hasAction) {
-    stage = "action"; label = L.hot || "HOT LEAD"; color = "#dc2626";
+    stage = "action"; label = L.hot || "Hot lead"; color = "#dc2626";
   } else if (score >= warmT || hasIntent) {
-    stage = "intent"; label = L.warm || "WARM"; color = "#f59e0b";
+    stage = "intent"; label = L.warm || "Warm"; color = "#f59e0b";
   } else if (score >= intT || hasEngage) {
-    stage = "engage"; label = L.interested || "INTERESTED"; color = "#0176d3";
+    stage = "engage"; label = L.interested || "Interested"; color = "#0176d3";
   } else {
-    stage = "browse"; label = L.new || "NEW"; color = "#9ca3af";
+    stage = "browse"; label = L.new || "New"; color = "#9ca3af";
   }
 
   return { score, label, color, stage };

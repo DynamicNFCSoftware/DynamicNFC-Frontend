@@ -148,7 +148,7 @@ export default function NotificationSystem({
     const actor = payload.vipName || payload.userName || payload.leadName || tx.visitor;
     const item = payload.unitName || payload.item || payload.vehicleName || payload.unitId || payload.vehicleId;
     const eventLabel = getEventLabel(eventCode, lang, sectorKey);
-    const body = item ? `${actor} - ${eventLabel} -> ${item}` : `${actor} - ${eventLabel}`;
+    const body = item ? `${actor} - ${eventLabel} → ${item}` : `${actor} - ${eventLabel}`;
 
     const realtimeNotif = {
       id: ++idCounter.current,
@@ -174,7 +174,7 @@ export default function NotificationSystem({
       ? (randomCat.name?.[lang] || randomCat.name?.en || randomCat.id)
       : null;
     const eventLabel = getEventLabel(eventCode, lang, sectorKey);
-    const bodyText = unitExample ? `${name} - ${eventLabel} -> ${unitExample}` : `${name} - ${eventLabel}`;
+    const bodyText = unitExample ? `${name} - ${eventLabel} → ${unitExample}` : `${name} - ${eventLabel}`;
 
     const notif = {
       id: ++idCounter.current,
