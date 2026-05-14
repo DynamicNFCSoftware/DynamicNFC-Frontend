@@ -21,6 +21,22 @@ import YachtMorphLoader from "../../components/YachtMorphLoader/YachtMorphLoader
 import { derivePortalSignals, formatPortalAge } from "./lib/portalSignals";
 import "./UnifiedLayout.css";
 
+// Region-scoped language toggle: each region has its own 2-lang family
+//   Gulf:   EN ↔ AR
+//   USA:    EN ↔ ES
+//   Canada: EN ↔ FR
+//   Mexico: ES ↔ EN
+// The single topbar button cycles within the active region's pair (not across all 4 langs).
+function nextLang(current, regionLanguages = ["en"]) {
+  const langs = regionLanguages.length > 0 ? regionLanguages : ["en"];
+  const idx = langs.indexOf(current);
+  if (idx === -1) return langs[0]; // current lang not in region pair → snap to first
+  return langs[(idx + 1) % langs.length];
+}
+
+// 2-letter region codes for the topbar chip (replaces emoji flags — no-emoji house rule + Windows render parity)
+const REGION_CODES = { gulf: "SA", usa: "US", mexico: "MX", canada: "CA" };
+
 const LAYOUT_TEXT = {
   en: {
     aiBadge: "Powered by DynamicNFC Intelligence",
@@ -830,7 +846,7 @@ function LayoutContent({
                 className="ud-region-btn"
                 onClick={() => setShowRegionMenu((p) => !p)}
               >
-                <span>{region?.flag}</span>
+                <span className="ud-region-code" aria-hidden="true">{REGION_CODES[regionId] || regionId.slice(0, 2).toUpperCase()}</span>
                 <span>{region?.label?.[lang] || regionId}</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <polyline points="6 9 12 15 18 9" />
@@ -858,7 +874,7 @@ function LayoutContent({
                           setShowRegionMenu(false);
                         }}
                       >
-                        <span>{r.flag}</span> <span>{r.label?.[lang] || r.id}</span>
+                        <span className="ud-region-code" aria-hidden="true">{REGION_CODES[r.id] || r.id.slice(0, 2).toUpperCase()}</span> <span>{r.label?.[lang] || r.id}</span>
                       </button>
                     ))}
                   </div>
@@ -871,17 +887,15 @@ function LayoutContent({
             </div>
             {(region?.languages || ["en"]).length > 1 && (
               <div className="ud-lang-toggle ud-topbar-action--desktop" role="group" aria-label={tx.languageLabel}>
-                {(region?.languages || ["en"]).map((l) => (
-                  <button
-                    key={l}
-                    type="button"
-                    className={`ud-lang-btn ${l === lang ? "ud-lang-active" : ""}`}
-                    onClick={() => setLang(l)}
-                    aria-pressed={l === lang}
-                  >
-                    {l.toUpperCase()}
-                  </button>
-                ))}
+                <button
+                  type="button"
+                  className="ud-lang-btn ud-lang-cycle"
+                  onClick={() => setLang(nextLang(lang, region?.languages))}
+                  aria-label={`${tx.languageLabel} — ${lang.toUpperCase()} → ${nextLang(lang, region?.languages).toUpperCase()}`}
+                  title={(region?.languages || ["en"]).map((l) => (l === lang ? `[${l.toUpperCase()}]` : l.toUpperCase())).join(" ↔ ")}
+                >
+                  {lang.toUpperCase()}
+                </button>
               </div>
             )}
             <button
@@ -936,17 +950,15 @@ function LayoutContent({
                       <div className="ud-overflow-item ud-overflow-item--group" role="group" aria-label={tx.languageLabel}>
                         <span className="ud-overflow-item-label">{tx.languageLabel}</span>
                         <div className="ud-overflow-lang-row">
-                          {(region?.languages || ["en"]).map((l) => (
-                            <button
-                              key={l}
-                              type="button"
-                              className={`ud-lang-btn ${l === lang ? "ud-lang-active" : ""}`}
-                              onClick={() => { setLang(l); setShowOverflowMenu(false); }}
-                              aria-pressed={l === lang}
-                            >
-                              {l.toUpperCase()}
-                            </button>
-                          ))}
+                          <button
+                            type="button"
+                            className="ud-lang-btn ud-lang-cycle"
+                            onClick={() => { setLang(nextLang(lang, region?.languages)); setShowOverflowMenu(false); }}
+                            aria-label={`${tx.languageLabel} — ${lang.toUpperCase()} → ${nextLang(lang, region?.languages).toUpperCase()}`}
+                            title={(region?.languages || ["en"]).map((l) => (l === lang ? `[${l.toUpperCase()}]` : l.toUpperCase())).join(" ↔ ")}
+                          >
+                            {lang.toUpperCase()}
+                          </button>
                         </div>
                       </div>
                     )}

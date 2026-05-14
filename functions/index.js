@@ -942,25 +942,36 @@ exports.aggregateVelocityMetrics = functions
 
       await tenantRef.collection("aggregates").doc("velocity").set(metrics, { merge: true });
 
-      const lang = tenantDoc.data()?.preferredLang || "en";
-      const templateBrief = generateBriefFromTemplate({
-        topVip: deriveTopVip(taps, behaviors),
-        pipelineDelta: derivePipelineDelta(deals, events),
-        marketplaceTraffic: deriveMarketplaceTraffic(taps),
-        alerts: deriveAlerts(deals, events),
-        lang,
-      });
+      const topVip = deriveTopVip(taps, behaviors);
+      const pipelineDelta = derivePipelineDelta(deals, events);
+      const marketplaceTraffic = deriveMarketplaceTraffic(taps);
+      const alerts = deriveAlerts(deals, events);
 
+      // Generate brief for all 4 languages so UI lang toggle is instant (no LLM cost — templates only)
+      const SUPPORTED_LANGS = ["en", "ar", "es", "fr"];
       const dailyBriefRef = tenantRef.collection("aggregates").doc("dailyBrief");
       const existingBrief = await dailyBriefRef.get();
-      const generatedAt = Number(existingBrief.data()?.generatedAt || 0);
-      const llmFresh =
-        existingBrief.exists &&
-        existingBrief.data()?.source === "llm" &&
-        Date.now() - generatedAt < 5 * 60 * 1000;
-      if (!llmFresh) {
-        await dailyBriefRef.set(templateBrief, { merge: true });
+      const existing = existingBrief.exists ? existingBrief.data() : null;
+
+      const newByLang = {};
+      for (const l of SUPPORTED_LANGS) {
+        const existingLangBrief = existing?.byLang?.[l];
+        const isLlmFresh =
+          existingLangBrief?.source === "llm" &&
+          Date.now() - Number(existingLangBrief.generatedAt || 0) < 5 * 60 * 1000;
+        newByLang[l] = isLlmFresh
+          ? existingLangBrief
+          : generateBriefFromTemplate({ topVip, pipelineDelta, marketplaceTraffic, alerts, lang: l });
       }
+
+      const preferredLang = tenantDoc.data()?.preferredLang || "en";
+      await dailyBriefRef.set(
+        {
+          ...newByLang[preferredLang], // legacy top-level fields kept for migration safety
+          byLang: newByLang,
+        },
+        { merge: true },
+      );
     }
     return null;
   });

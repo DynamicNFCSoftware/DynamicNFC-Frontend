@@ -56,28 +56,28 @@ const LANG = {
     dir: "ltr",
     nav: { brand: "Vista Residences", lang: "العربية", register: "Register / Login", account: "My Account" },
     hero: {
-      badge: "Now Selling — Phase 2",
+      badge: "Now selling — Phase 2",
       title: "Vista\nResidences",
       subtitle: "Premium waterfront living in the heart of the city. Explore our collection of exclusive residences from 2 to 4+ bedrooms.",
-      cta: "View Collection",
-      ctaSecondary: "Book a Visit",
+      cta: "View collection",
+      ctaSecondary: "Book a visit",
     },
-    stats: { units: "Premium Units", floors: "Floors", beds: "Bedrooms", completion: "Completion" },
+    stats: { units: "Premium units", floors: "Floors", beds: "Bedrooms", completion: "Completion" },
     roiBanner: {
-      title: "Calculate Your Investment Returns",
+      title: "Calculate your investment returns",
       desc: "Use our interactive ROI calculator to project your returns based on property value, rental income, appreciation rates, and financing options.",
-      cta: "Open ROI Calculator →",
+      cta: "Open ROI calculator →",
     },
     sections: {
-      residences: "Available Residences", residencesSub: "Find Your Perfect Residence",
-      amenities: "The Lifestyle", amenitiesSub: "World-Class Amenities",
-      investment: "Investment Snapshot", investmentSub: "Why Vista Residences",
-      cta: "Ready to Take the Next Step?",
+      residences: "Available residences", residencesSub: "Find your perfect residence",
+      amenities: "The lifestyle", amenitiesSub: "World-class amenities",
+      investment: "Investment snapshot", investmentSub: "Why Vista Residences",
+      cta: "Ready to take the next step?",
       ctaSub: "Register for exclusive pricing, floor plans, brochures, and priority viewing appointments.",
     },
-    filters: { all: "All", penthouse: "Penthouse", bed3: "3 Bedrooms", bed2: "2 Bedrooms" },
-    card: { registerPrice: "Register for exact pricing", details: "View Details", getPricing: "Get Pricing" },
-    unitActions: { floorPlan: "Floor Plan", brochure: "Brochure", pricing: "Get Exact Pricing", book: "Book Viewing", compare: "Compare" },
+    filters: { all: "All", penthouse: "Penthouse", bed3: "3 bedrooms", bed2: "2 bedrooms" },
+    card: { registerPrice: "Register for exact pricing", details: "View details", getPricing: "Get pricing" },
+    unitActions: { floorPlan: "Floor plan", brochure: "Brochure", pricing: "Get exact pricing", book: "Book a visit", compare: "Compare" },
     floorPlanModal: {
       title: "Floor Plan", bathrooms: "Bathrooms", balcony: "Balcony / Terrace",
       totalArea: "Total Area", download: "Download Floor Plan PDF",
@@ -109,10 +109,10 @@ const LANG = {
       title: "Compare Residences", feature: "Feature", remove: "Remove",
       price: "Price Range", floor: "Floor", bedrooms: "Bedrooms",
       size: "Size", view: "View", category: "Category",
-      empty: "Add residences to compare using the ⚖️ button on unit cards.",
+      empty: "Add residences to compare using Compare on each unit card.",
     },
     leadForm: {
-      title: "Get Full Access",
+      title: "Get full access",
       subtitle: "Register to unlock exact pricing, floor plans, brochures, and priority viewing appointments.",
       name: "Full Name", email: "Email", phone: "Phone",
       submit: "Register & Continue",
@@ -126,7 +126,7 @@ const LANG = {
       leadCaptured: "Thank you! Processing your request...",
     },
     footer: "Public listing. Prices shown are starting ranges. Register for detailed pricing and availability.",
-    poweredBy: "Powered by", registerNow: "Register Now", registerDone: "Registered",
+    poweredBy: "Powered by", registerNow: "Register now", registerDone: "Registered",
   },
   ar: {
     dir: "rtl",
@@ -180,7 +180,7 @@ const LANG = {
       title: "مقارنة المساكن", feature: "الميزة", remove: "إزالة",
       price: "نطاق السعر", floor: "الطابق", bedrooms: "غرف النوم",
       size: "المساحة", view: "الإطلالة", category: "الفئة",
-      empty: "أضف مساكن للمقارنة بالنقر على ⚖️ في بطاقات الوحدات.",
+      empty: "أضف مساكن للمقارنة باستخدام زر المقارنة في بطاقات الوحدات.",
     },
     leadForm: {
       title: "احصل على وصول كامل",
@@ -354,7 +354,7 @@ const UNITS = [
     size: { en: "4,100 sq ft", ar: "٤,١٠٠ قدم²" }, sizeNum: 4100,
     priceRange: { en: "From AED 7.5M", ar: "من ٧.٥ مليون درهم" }, priceNum: 7800000,
     feature: { en: "Marina & Sea View", ar: "إطلالة على المارينا والبحر" },
-    type: { en: "3BR Residence", ar: "مسكن ٣ غرف" }, filterKey: "3bed",
+    type: { en: "3BR residence", ar: "مسكن ٣ غرف" }, filterKey: "3bed",
     status: { en: "Available", ar: "متاح" }, statusColor: "#2A9D5C",
     category: { en: "Grand Residence", ar: "إقامة كبرى" },
     view: { en: "Marina & Sea", ar: "مارينا وبحر" },
@@ -396,7 +396,7 @@ const UNITS = [
     size: { en: "2,800 sq ft", ar: "٢,٨٠٠ قدم²" }, sizeNum: 2800,
     priceRange: { en: "From AED 4M", ar: "من ٤ مليون درهم" }, priceNum: 4200000,
     feature: { en: "City Skyline View", ar: "إطلالة على أفق المدينة" },
-    type: { en: "2BR Suite", ar: "جناح غرفتين" }, filterKey: "2bed",
+    type: { en: "2BR suite", ar: "جناح غرفتين" }, filterKey: "2bed",
     status: { en: "Last 3 Units", ar: "آخر ٣ وحدات" }, statusColor: "#C1121F",
     category: { en: "Executive Suite", ar: "جناح تنفيذي" },
     view: { en: "City Skyline", ar: "أفق المدينة" },
@@ -430,21 +430,21 @@ const UNITS = [
 ];
 
 const AMENITIES = [
-  { icon: "🏊", en: "Infinity Pool", ar: "مسبح إنفينيتي" },
-  { icon: "🧖", en: "Spa & Wellness", ar: "سبا وعافية" },
-  { icon: "🍽️", en: "Fine Dining", ar: "مطاعم فاخرة" },
-  { icon: "🏋️", en: "Fitness Center", ar: "مركز لياقة" },
-  { icon: "🛥️", en: "Marina Access", ar: "مرسى خاص" },
-  { icon: "🌿", en: "Sky Gardens", ar: "حدائق سماوية" },
-  { icon: "🏥", en: "Medical Center", ar: "مركز طبي" },
-  { icon: "🛒", en: "Retail & Cafés", ar: "تسوق ومقاهي" },
+  { tabler: "ti-pool", en: "Infinity pool", ar: "مسبح إنفينيتي" },
+  { tabler: "ti-bath", en: "Spa & wellness", ar: "سبا وعافية" },
+  { tabler: "ti-tools-kitchen-2", en: "Fine dining", ar: "مطاعم فاخرة" },
+  { tabler: "ti-barbell", en: "Fitness center", ar: "مركز لياقة" },
+  { tabler: "ti-sailboat", en: "Marina access", ar: "مرسى خاص" },
+  { tabler: "ti-plant-2", en: "Sky gardens", ar: "حدائق سماوية" },
+  { tabler: "ti-stethoscope", en: "Medical center", ar: "مركز طبي" },
+  { tabler: "ti-shopping-cart", en: "Retail & cafés", ar: "تسوق ومقاهي" },
 ];
 
 const INVEST = {
   en: [
-    { label: "Rental Yield", value: "8.2%", note: "Above market average" },
-    { label: "Capital Growth", value: "23%", note: "3-year projection" },
-    { label: "Payment Plan", value: "60/40", note: "Flexible terms" },
+    { label: "Rental yield", value: "8.2%", note: "Above market average" },
+    { label: "Capital growth", value: "23%", note: "3-year projection" },
+    { label: "Payment plan", value: "60/40", note: "Flexible terms" },
     { label: "Handover", value: "Q4 2027", note: "On schedule" },
   ],
   ar: [
@@ -487,8 +487,16 @@ export default function MarketplacePortal() {
   useEffect(() => { const fn = () => setScrolled(window.scrollY > 60); window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn); }, []);
   useEffect(() => { const obs = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("vis"); }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }); document.querySelectorAll(".mp-rv").forEach((el) => obs.observe(el)); return () => obs.disconnect(); }, [lang, modal, selectedUnit, showLeadForm]);
   useEffect(() => { trackEvent("marketplace_visit"); }, []);
+  useEffect(() => {
+    document.documentElement.lang = lang === "ar" ? "ar" : "en";
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  }, [lang]);
+  useEffect(() => () => {
+    document.documentElement.lang = "en";
+    document.documentElement.dir = "ltr";
+  }, []);
 
-  const toggleLang = () => setLang(lang === "en" ? "ar" : "en");
+  const toggleLang = () => setLang((prev) => (prev === "en" ? "ar" : "en"));
   const showToast = useCallback((msg) => { setToastHiding(false); setToast(msg); setTimeout(() => { setToastHiding(true); setTimeout(() => setToast(null), 300); }, 3000); }, []);
   const fmtAED = (n) => lang === "en" ? `AED ${n.toLocaleString()}` : `${n.toLocaleString()} درهم`;
 
@@ -570,7 +578,7 @@ export default function MarketplacePortal() {
         <span className="active">Marketplace</span>
         <Link to="/enterprise/crmdemo/dashboard">Dashboard</Link>
         <Link to="/enterprise/crmdemo/ai-demo">AI Pipeline</Link>
-        <span className="crossnav-persona">🌐 {lang === "ar" ? "زائر عام" : "Public Visitor"}</span>
+        <span className="crossnav-persona"><i className="ti ti-world" aria-hidden="true" /> {lang === "ar" ? "زائر عام" : "Public visitor"}</span>
       </div>
       <header className={`mp-hd ${scrolled ? "sc" : ""}`}>
         <div className="mp-logo">Vista <b>Residences</b></div>
@@ -578,7 +586,7 @@ export default function MarketplacePortal() {
           {lead && <span className="mp-lead-badge">{lead.name}</span>}
           {compareList.length > 0 && <button className="mp-navbtn" onClick={openCompare}>{t.unitActions.compare}<span className="mp-cmp-count">{compareList.length}</span></button>}
           <button className="mp-navbtn" onClick={toggleLang}>{t.nav.lang}</button>
-          <button className="mp-navbtn-dark" onClick={() => { if (!lead) setShowLeadForm(true); else showToast(t.toast.registered); }}>
+          <button type="button" className="mp-navbtn-dark mp-nav-register" onClick={() => { if (!lead) setShowLeadForm(true); else showToast(t.toast.registered); }}>
             {lead ? t.nav.account : t.nav.register}
           </button>
         </div>
@@ -593,8 +601,8 @@ export default function MarketplacePortal() {
           <h1 className="mp-htitle">{lang === "en" ? (<>Vista<br />Residences</>) : (<>فيستا<br />ريزيدنسز</>)}</h1>
           <p className="mp-hdesc">{t.hero.subtitle}</p>
           <div className="mp-hacts">
-            <button className="mp-btn-d" onClick={() => { trackEvent("cta_browse"); resRef.current?.scrollIntoView({ behavior: "smooth" }); }}>{t.hero.cta} →</button>
-            <button className="mp-btn-l" onClick={() => handleBooking()}>{t.hero.ctaSecondary}</button>
+            <button type="button" className="mp-btn-d" onClick={() => { trackEvent("cta_browse"); resRef.current?.scrollIntoView({ behavior: "smooth" }); }}>{t.hero.cta} →</button>
+            <button type="button" className="mp-btn-l" onClick={() => handleBooking()}>{t.hero.ctaSecondary}</button>
           </div>
         </div>
       </section>
@@ -613,7 +621,7 @@ export default function MarketplacePortal() {
           <h2 className="mp-st">{t.sections.residencesSub}</h2>
           <div className="mp-filters">
             {[{ key: "all", l: t.filters.all }, { key: "penthouse", l: t.filters.penthouse }, { key: "3bed", l: t.filters.bed3 }, { key: "2bed", l: t.filters.bed2 }].map(f => (
-              <button key={f.key} className={`mp-ftab ${filter === f.key ? "on" : "off"}`} onClick={() => { setFilter(f.key); trackEvent("filter_units", { filter: f.key }); }}>{f.l}</button>
+              <button type="button" key={f.key} className={`mp-ftab ${filter === f.key ? "on" : "off"}`} onClick={() => { setFilter(f.key); trackEvent("filter_units", { filter: f.key }); }}>{f.l}</button>
             ))}
           </div>
         </div>
@@ -628,16 +636,19 @@ export default function MarketplacePortal() {
               <div className="mp-card-body">
                 <h3 className="mp-card-name">{unit.name[lang]}</h3>
                 <p className="mp-card-floor">{unit.floor[lang]}</p>
-                <div className="mp-card-meta"><span>🛏 {unit.beds[lang]}</span><span>📐 {unit.size[lang]}</span></div>
+                <div className="mp-card-meta">
+                  <span className="mp-card-meta-item"><i className="ti ti-bed" aria-hidden="true" /> {unit.beds[lang]}</span>
+                  <span className="mp-card-meta-item"><i className="ti ti-ruler-measure" aria-hidden="true" /> {unit.size[lang]}</span>
+                </div>
                 <div className="mp-card-price">{unit.priceRange[lang]}</div>
-                <div className="mp-card-hint">{t.card.registerPrice}</div>
+                <div className="mp-card-hint mp-card-pricing-sub"><i className="ti ti-lock" aria-hidden="true" /><span>{t.card.registerPrice}</span></div>
               </div>
               <div className="mp-card-acts" onClick={(e) => e.stopPropagation()}>
-                <button className="mp-btn-l mp-btn-sm" onClick={() => openFloor(unit)}>📐 {t.unitActions.floorPlan}</button>
-                <button className="mp-btn-l mp-btn-sm" onClick={() => openBrochure(unit)}>📄 {t.unitActions.brochure}</button>
-                <button className="mp-btn-d mp-btn-sm" onClick={() => reqPricing(unit)}>💰 {t.card.getPricing}</button>
-                <button className="mp-btn-l mp-btn-sm" onClick={() => toggleCompare(unit.id)} style={compareList.includes(unit.id) ? { borderColor: "var(--mp-ch)", fontWeight: 600 } : {}}>
-                  {compareList.includes(unit.id) ? `✓ ${t.unitActions.compare}` : `⚖️ ${t.unitActions.compare}`}
+                <button type="button" className="mp-btn-l mp-btn-sm" onClick={() => openFloor(unit)}><i className="ti ti-ruler-measure" aria-hidden="true" /> {t.unitActions.floorPlan}</button>
+                <button type="button" className="mp-btn-l mp-btn-sm" onClick={() => openBrochure(unit)}><i className="ti ti-file-text" aria-hidden="true" /> {t.unitActions.brochure}</button>
+                <button type="button" className="mp-btn-d mp-btn-sm" onClick={() => reqPricing(unit)}><i className="ti ti-currency-dollar" aria-hidden="true" /> {t.card.getPricing}</button>
+                <button type="button" className="mp-btn-l mp-btn-sm" onClick={() => toggleCompare(unit.id)} style={compareList.includes(unit.id) ? { borderColor: "var(--mp-ch)", fontWeight: 600 } : {}}>
+                  {compareList.includes(unit.id) ? (<><i className="ti ti-check" aria-hidden="true" /> {t.unitActions.compare}</>) : (<><i className="ti ti-scale" aria-hidden="true" /> {t.unitActions.compare}</>)}
                 </button>
               </div>
             </div>
@@ -650,7 +661,7 @@ export default function MarketplacePortal() {
       {/* AMENITIES */}
       <section className="mp-sec">
         <div className="mp-sh mp-rv"><span className="mp-sl">{t.sections.amenities}</span><h2 className="mp-st">{t.sections.amenitiesSub}</h2></div>
-        <div className="mp-am-grid">{AMENITIES.map((a, i) => (<div className="mp-am mp-rv" key={i}><div className="mp-am-icon">{a.icon}</div><div className="mp-am-name">{a[lang]}</div></div>))}</div>
+        <div className="mp-am-grid">{AMENITIES.map((a, i) => (<div className="mp-am mp-rv" key={i}><div className="mp-am-icon"><i className={`ti ${a.tabler}`} aria-hidden="true" /></div><div className="mp-am-name">{a[lang]}</div></div>))}</div>
       </section>
 
       <div className="mp-div"><div className="mp-div-l" /><div className="mp-div-d">◆</div><div className="mp-div-l" /></div>
@@ -664,7 +675,7 @@ export default function MarketplacePortal() {
 
       {/* ── ROI CALCULATOR BANNER ── */}
       <Link to="/enterprise/crmdemo/roi-calculator" className="mp-roi-banner" onClick={() => { trackEvent("roi_calculator_click"); }}>
-        <div className="mp-roi-icon">📊</div>
+        <div className="mp-roi-icon" aria-hidden="true"><i className="ti ti-calculator" /></div>
         <div className="mp-roi-content">
           <h3 className="mp-roi-title">{t.roiBanner.title}</h3>
           <p className="mp-roi-desc">{t.roiBanner.desc}</p>
@@ -674,13 +685,13 @@ export default function MarketplacePortal() {
 
       {/* CTA BANNER */}
       <section className="mp-cta-banner mp-rv">
-        <h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "clamp(1.8rem,3.5vw,2.8rem)", fontWeight: 400, color: "#FAFAF8", marginBottom: ".8rem" }}>{t.sections.cta}</h2>
-        <p style={{ color: "rgba(250,250,248,.6)", fontSize: ".95rem", fontWeight: 400, maxWidth: "500px", margin: "0 auto 2rem" }}>{t.sections.ctaSub}</p>
-        <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
-          <button style={{ padding: ".9rem 2.5rem", background: "#FAFAF8", color: "var(--mp-ch)", fontSize: ".82rem", fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", border: "none", borderRadius: "4px", cursor: "pointer" }} onClick={() => { if (!lead) setShowLeadForm(true); else showToast(t.toast.registered); }}>
-            {lead ? `✅ ${t.registerDone}` : `${t.registerNow} →`}
+        <h2 className="mp-cta-title">{t.sections.cta}</h2>
+        <p className="mp-cta-sub">{t.sections.ctaSub}</p>
+        <div className="mp-cta-actions">
+          <button type="button" className="mp-cta-btn mp-cta-btn-primary" onClick={() => { if (!lead) setShowLeadForm(true); else showToast(t.toast.registered); }}>
+            {lead ? (<><i className="ti ti-check" aria-hidden="true" /> {t.registerDone}</>) : (<>{t.registerNow} →</>)}
           </button>
-          <button style={{ padding: ".9rem 2.5rem", background: "transparent", color: "#FAFAF8", fontSize: ".82rem", letterSpacing: ".1em", textTransform: "uppercase", border: "1px solid rgba(250,250,248,.25)", borderRadius: "4px", cursor: "pointer" }} onClick={() => handleBooking()}>
+          <button type="button" className="mp-cta-btn mp-cta-btn-secondary" onClick={() => handleBooking()}>
             {t.hero.ctaSecondary}
           </button>
         </div>
@@ -702,7 +713,13 @@ export default function MarketplacePortal() {
           <div className="mp-modal-body">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "2rem", marginBottom: "2rem", flexWrap: "wrap" }}>
               <div><h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "2.2rem", fontWeight: 500, color: "var(--mp-t1)" }}>{selectedUnit.name[lang]}</h2><p style={{ color: "var(--mp-t3)", fontSize: ".82rem", letterSpacing: ".1em", textTransform: "uppercase" }}>{selectedUnit.floor[lang]}</p></div>
-              <div style={{ textAlign: lang === "ar" ? "start" : "end" }}><div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--mp-t1)" }}>{selectedUnit.priceRange[lang]}</div><div style={{ fontSize: ".78rem", color: "var(--mp-t3)" }}>{t.card.registerPrice}</div></div>
+              <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
+                <div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--mp-t1)" }}>{selectedUnit.priceRange[lang]}</div>
+                <div className="mp-card-pricing-sub" style={{ justifyContent: lang === "ar" ? "flex-end" : "flex-start", marginTop: ".35rem" }}>
+                  <i className="ti ti-lock" aria-hidden="true" />
+                  <span>{t.card.registerPrice}</span>
+                </div>
+              </div>
             </div>
             <p style={{ color: "var(--mp-t2)", fontSize: "1.05rem", lineHeight: 1.8, fontWeight: 400, marginBottom: "2rem", maxWidth: "700px" }}>{selectedUnit.desc[lang]}</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.5rem", marginBottom: "2rem" }}>
@@ -718,11 +735,11 @@ export default function MarketplacePortal() {
               {selectedUnit.features[lang].map((f, i) => (<span key={i} style={{ padding: ".4rem .9rem", background: "rgba(26,26,31,.04)", border: "1px solid var(--mp-bdr)", borderRadius: "4px", fontSize: ".78rem", color: "var(--mp-t2)" }}>{f}</span>))}
             </div>
             <div style={{ display: "flex", gap: ".6rem", flexWrap: "wrap", paddingTop: "1.5rem", borderTop: "1px solid var(--mp-bdr)" }}>
-              <button className="mp-btn-d mp-btn-sm" onClick={() => { closeAll(); reqPricing(selectedUnit); }}>💰 {t.unitActions.pricing}</button>
-              <button className="mp-btn-l mp-btn-sm" onClick={() => { closeAll(); openFloor(selectedUnit); }}>📐 {t.unitActions.floorPlan}</button>
-              <button className="mp-btn-l mp-btn-sm" onClick={() => { closeAll(); openBrochure(selectedUnit); }}>📄 {t.unitActions.brochure}</button>
-              <button className="mp-btn-l mp-btn-sm" onClick={() => { closeAll(); openPayment(selectedUnit); }}>📊 Payment Plan</button>
-              <button className="mp-btn-l mp-btn-sm" onClick={() => { closeAll(); handleBooking(selectedUnit); }}>📅 {t.unitActions.book}</button>
+              <button type="button" className="mp-btn-d mp-btn-sm" onClick={() => { closeAll(); reqPricing(selectedUnit); }}><i className="ti ti-currency-dollar" aria-hidden="true" /> {t.unitActions.pricing}</button>
+              <button type="button" className="mp-btn-l mp-btn-sm" onClick={() => { closeAll(); openFloor(selectedUnit); }}><i className="ti ti-ruler-measure" aria-hidden="true" /> {t.unitActions.floorPlan}</button>
+              <button type="button" className="mp-btn-l mp-btn-sm" onClick={() => { closeAll(); openBrochure(selectedUnit); }}><i className="ti ti-file-text" aria-hidden="true" /> {t.unitActions.brochure}</button>
+              <button type="button" className="mp-btn-l mp-btn-sm" onClick={() => { closeAll(); openPayment(selectedUnit); }}><i className="ti ti-calculator" aria-hidden="true" /> {t.paymentModal.title}</button>
+              <button type="button" className="mp-btn-l mp-btn-sm" onClick={() => { closeAll(); handleBooking(selectedUnit); }}><i className="ti ti-calendar-event" aria-hidden="true" /> {t.unitActions.book}</button>
             </div>
           </div>
         </div></div>
@@ -754,7 +771,7 @@ export default function MarketplacePortal() {
         <div className="mp-modal-ov" onClick={closeAll}><div className="mp-modal" style={{ maxWidth: "550px" }} onClick={(e) => e.stopPropagation()}>
           <button className="mp-modal-x" onClick={closeAll}>✕</button>
           <div className="mp-modal-body" style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📄</div>
+            <div style={{ fontSize: "3rem", marginBottom: "1rem", lineHeight: 1 }} aria-hidden="true"><i className="ti ti-file-text" style={{ fontSize: "3rem" }} /></div>
             <div className="mp-br-prog"><div className="mp-br-fill" /></div>
             <h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", marginBottom: ".5rem" }}>{t.brochureModal.ready}</h2>
             <p style={{ color: "var(--mp-t2)", fontSize: ".95rem", marginBottom: "1.5rem" }}>{t.brochureModal.desc}</p>

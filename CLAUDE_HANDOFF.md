@@ -1,12 +1,337 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-07 ~21:30 (America/Vancouver) — user fatigued, fresh-chat resume tomorrow
-**Session:** Step 1 shipped to production · Sprint 2 #4.8 finally landed · Sprint 2 #2 scope drafted
+**Last updated:** 2026-05-13 late EOD (America/Vancouver) — **PR 1 demo-killer sweep + PR 1.5 brief 4-lang + PR 2 topbar/flag** all implemented locally on top of the portal polish trilogy; first deploy went out (hosting + `aggregateCampaignTaps`); `refreshDailyBriefAi` deferred to force redeploy
+**Session:** Cowork — unified dashboard polish trilogy (HTML leak + IDLE_LEAD + zero-state + sentence case + Unicode arrows) · brief generator multi-language storage · topbar single-button lang toggle (region-scoped 2-lang pair) + 2-letter region chip · on top of: Cursor's local Khalid + Ahmed + Marketplace polish (uncommitted)
 **Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — 2026-05-08 morning
+## ▶︎ RESUME HERE — 2026-05-13 late EOD (Cowork session)
+
+**Status:** Three new PR slices implemented and frontend deployed; one function redeploy + manual QA + commit split outstanding. Portal polish trilogy from earlier today (Cursor local work) is **still uncommitted alongside** these changes on the same branch.
+
+### What shipped to production tonight
+
+| Surface | Item | State |
+|---|---|---|
+| Hosting (`https://dynamicnfc.ca`) | New bundle with PR 1 + PR 1.5 (frontend half) + PR 2 + portal trilogy frontend | ✅ Deployed (227 files) |
+| `aggregateCampaignTaps` scheduled fn | Writes `byLang.{en,ar,es,fr}` dict to `tenants/{uid}/aggregates/dailyBrief` every 15 min + legacy top-level fields | ✅ Deployed |
+| `refreshDailyBriefAi` callable | LLM call now writes to `byLang.{lang}` slot + legacy top-level on click | ⚠️ Source change was in `lib/aiBriefGenerator.js`; Firebase intelligent diff missed transitive dep on first deploy. User attempted `firebase deploy --only functions:refreshDailyBriefAi --force` — verify with `firebase functions:log --only refreshDailyBriefAi -n 30` or Cloud Console; redo with `--force` if still stale |
+
+### What is locally implemented but NOT YET committed
+
+All on branch `polish/pr1-demo-killers-sweep` (only `f1970a1b docs(handoff)` is committed; everything else is dirty working tree). Suggested logical split into separate commits before merge:
+
+**Commit A — PR 1 demo-killer sweep + sentence case + Unicode arrows (Cowork)**
+- `frontend/src/components/UnifiedDashboard/TodaysBrief.jsx` (−37L) — `wrapVipName` + `wrapScoreChange` + helpers removed (function-side templates already deliver styled HTML; double-wrap caused `score-change">` text bleed)
+- `frontend/src/pages/UnifiedDashboard/components/KanbanBoard.jsx` (+15L) — `idle_lead` + `repeat_visitor` added to `TRIGGER_LABELS` + `humanizeTriggerType()` fallback so future enum types render as sentence case
+- `frontend/src/pages/UnifiedDashboard/UnifiedLayout.css` (−30L) — `text-transform: uppercase` swept from 39 `.ud-*` selectors (sentence case house rule)
+- `frontend/src/i18n/portals/dashboard.js` — `"AT RISK"` → `"At risk"`, `"ZERO ENGAGEMENT"` → `"Zero engagement"` + 31 string ASCII `' -> '` → Unicode `' → '`
+- `frontend/src/services/firestoreTracking.js` — `"HOT LEAD" / "WARM" / "INTERESTED" / "NEW"` fallback labels → sentence case
+- `frontend/src/hooks/useDashboardData.js`, `frontend/src/i18n/pages/admin.js`, `frontend/src/services/mockDashboardData.js`, `frontend/src/pages/UnifiedDashboard/components/ActivityFeed.jsx`, `frontend/src/pages/UnifiedDashboard/components/NotificationSystem.jsx` — ASCII `' -> '` → Unicode `' → '` (7 arrows total across these)
+- `functions/lib/briefTemplates.js` (+75L) — `pluralize()` + `HOURS_LABEL / DAYS_LABEL / TAPS_LABEL` per language; `ZERO_STATE_TEMPLATES` per language; `isZeroState()` helper; `generateBriefFromTemplate` short-circuits on zero-state; `1 hour` vs `5 hours` plural fixed; em-dash sweep in `PIPELINE_DELTA_TEMPLATES` for all 4 langs
+
+**Commit B — PR 1.5 brief 4-language storage (Cowork)**
+- `functions/index.js` — `aggregateCampaignTaps` scheduled fn now loops `SUPPORTED_LANGS = ["en", "ar", "es", "fr"]` and writes `byLang.{lang}` dict, preserving any LLM-fresh per-lang slot (5-min window). Legacy top-level fields (`paragraph1`, `paragraph2`, ...) preserved for migration safety.
+- `functions/lib/aiBriefGenerator.js` — LLM-mode write goes into `byLang.{lang}` slot + legacy top-level. Cached return reads `cached.byLang?.[lang] || cached` (per-lang slice with legacy fallback).
+- `frontend/src/components/UnifiedDashboard/TodaysBrief.jsx` — `normalizeBrief(brief, lang)` selects `byLang[lang] || byLang.en || brief` (legacy fallback). `useMemo` dep list now includes `lang`.
+
+**Commit C — PR 2 topbar single-button lang + 2-letter region chip (Cowork)**
+- `frontend/src/pages/UnifiedDashboard/UnifiedLayout.jsx` — `LANG_CYCLE` constant removed in favor of `nextLang(current, regionLanguages)` helper that toggles within the **active region's 2-lang pair** (Gulf EN↔AR, USA EN↔ES, Canada EN↔FR, Mexico ES↔EN). Single button replaces the prior multi-button cluster. Same logic in desktop topbar + overflow menu. **Important:** First pass cycled all 4 langs globally; user rejected ("her region in 2 dil ailesi var") and current implementation correctly scopes to per-region pair.
+- `REGION_CODES = { gulf: "SA", usa: "US", mexico: "MX", canada: "CA" }` constant; flag emoji `{region?.flag}` (🇸🇦/🇺🇸/🇲🇽/🇨🇦) replaced with 2-letter chip in both region button and region menu. No-emoji house rule + Windows render parity (regional emoji flags don't render natively on Windows).
+- `frontend/src/pages/UnifiedDashboard/UnifiedLayout.css` — new `.ud-region-code` chip rule (monospace, brand-accent fill + color, small letter-spacing).
+
+**Commit D — Portal polish trilogy (Cursor local, untouched today)**
+- Khalid + Ahmed + Marketplace polish per `docs/MARKETPLACE_PORTAL_AUDIT_AND_DIRECTIVE_2026_05_13.md` and companion audits. Implementation details in the existing "earlier today" block below.
+
+**Commit E — Docs**
+- `frontend/directives/UI_POLISH_SWEEP_DIRECTIVE.md` (Cowork — the original directive for PR 1 before role-split changed)
+- `docs/UNIFIED_DASHBOARD_CRITIQUE_2026_05_13.md` (Cowork — the design critique that drove PR 1+2)
+- `docs/MARKETPLACE_PORTAL_AUDIT_AND_DIRECTIVE_2026_05_13.md` + companion VIP / Ahmed portal audits (already untracked, per Cursor's handoff)
+- This `CLAUDE_HANDOFF.md` update
+
+### Manual QA outstanding (must run BEFORE merging the dashboard slices)
+
+1. **Topbar lang toggle (PR 2)** — open `/unified/overview` in each region, confirm single button cycles the right pair:
+   - Canada: EN ↔ FR
+   - Gulf: EN ↔ AR (default AR)
+   - USA: EN ↔ ES
+   - Mexico: ES ↔ EN (default ES)
+2. **Region chip (PR 2)** — region selector shows `CA / SA / US / MX` chip, NOT emoji flag, in both the topbar button and dropdown.
+3. **Sentence case sweep (PR 1)** — no all-caps in `.ud-*` surfaces. `Idle lead` chip on Pipeline (not `IDLE_LEAD`). `At risk` not `AT RISK`. All eyebrows in sentence case.
+4. **Today's Brief HTML leak (PR 1)** — no `score-change">` text fragment visible. VIP name + score-change phrase styled but rendered as React DOM, not bleed-through text.
+5. **Today's Brief Arabic body (PR 1.5)** — switch to AR in any region with EN ↔ AR pair (Gulf). Body text + chip labels should be Arabic, not English. **Currently still English** in the screenshot user shared at the last test — most likely because:
+   - Scheduled `aggregateCampaignTaps` hasn't fired post-deploy yet (every 15 min), so `dailyBrief.byLang` is not yet populated and frontend falls back to legacy top-level (English from pre-deploy template).
+   - **Resolution paths (any one works):** wait 15 min for next scheduled run; manually trigger via `gcloud scheduler jobs run firebase-schedule-aggregateCampaignTaps --location=us-central1`; or click "Generate AI summary" while in AR (after confirming `refreshDailyBriefAi` was actually `--force` redeployed).
+6. **Zero-state (PR 1)** — `Settings → Reset demo` (boots fresh tenant with no data). Brief should show "warming up" copy, not `$0 / 0 new VIPs / 0 times in the last 1 hours`. Plural `1 hour` (not `1 hours`).
+7. **Marketplace funnel (Cursor local, see audit doc)** — anonymous incognito session, walk the 13-event chain, confirm each event reaches Firestore. **Do not merge Marketplace commit without this pass.**
+8. **Existing functionality regression** — Sales Trigger Panel still navigates VIP CRM deeplink (Sprint 2 #2); Five-Minute Proof tutorial replay works (Sprint 2 #1); sidebar portal live signals (Sprint 2 #3 Part A) still render dot + count + age.
+
+### Known sandbox quirk (not user-blocking)
+
+The Cowork sandbox bash mount lagged behind the Windows file system during this session — `wc -l` saw multiple files as truncated mid-JSX while the Read tool (Windows live FS) saw them complete. `npx vite build` in the sandbox reported a parse error in `VIPPortal_Definitive.jsx` for this reason. **User-side `npm run build` on Windows ran clean** — this is purely a sandbox stale-mount issue, no real code corruption.
+
+### Open production issue (still — Sprint 2 #3 Part B)
+
+Sprint 2 #3 Part B (portal `useRegion()` content audit) is **not addressed by tonight's work**. Polish trilogy fixed the visual layer; Part B is the data-binding layer — buyer portals must consume `useRegion()` so persona/project/imagery follow the active region. Sidebar labels already swap correctly; portal route handlers may still be Gulf-hardcoded internally. Audit + directive next session.
+
+### Resume sequence for tomorrow
+
+1. `git status` from `polish/pr1-demo-killers-sweep` — confirm everything from this handoff is present in dirty tree.
+2. Decide commit split (recommend A → B → C → D → E logical sequence above).
+3. Run manual QA list (8 items above) — split into pre-deploy and post-deploy slices.
+4. Force redeploy `refreshDailyBriefAi` if not already verified (`firebase deploy --only functions:refreshDailyBriefAi --force` + check log for invocation).
+5. Marketplace funnel QA — incognito + 13-event Firestore confirmation.
+6. Then merge to `main` (squash or staged depending on commit split chosen).
+7. Sprint 2 #3 Part B audit (separate session — directive first, then Cursor implements).
+
+### Tone for resume
+
+A LOT shipped tonight across two role-split tracks (Cursor portal polish + Cowork dashboard polish). Both are local; production has the first deploy slice (hosting + scheduled fn). The frustrating "Arabic body still English" symptom is **architectural by design** — fix is in flight, just needs the scheduler to fire or a manual LLM call. Don't re-deploy out of impatience; verify with the log first.
+
+---
+
+## ▶︎ Earlier 2026-05-13 EOD — Portal polish trilogy (Cursor local)
+
+**Status — portal makyaj (in progress, not merged):**
+- **Khalid** (`VIPPortal_Definitive.jsx` + `VIPPortal.css`): global fonts/Tabler in `index.html` + `index.css`, amenities ROI RTL, WhatsApp FAB, 13 `trackEvent` preserved.
+- **Ahmed** (`AhmedPortal.jsx` + `AhmedPortal.css`, `ahmedPortal.js`): teal accent, `portal_opened` includes `{ portal: "ahmed", language }`, same 13 events.
+- **Marketplace** (`MarketplacePortal.jsx` + `MarketplacePortal.css`, `marketplacePortal.js`): cream/charcoal polish — Tabler amenities (dark icons), charcoal ROI CTA + `ti-calculator`, RTL on `documentElement`, sentence case, ~400ms reveals + `prefers-reduced-motion`, card pricing sub + `ti-lock`, register pill, bottom CTA classes. **All 13 events unchanged** (`npm run build` PASS last run).
+
+**Suggested integration branch (user naming):** `polish/marketplace-portal-conversion-2026-05-13` or fold into existing **`polish/pr1-demo-killers-sweep`** (current dirty branch — see below).
+
+**Before merge:** Manual **anonymous funnel QA** on `/enterprise/crmdemo/marketplace` (full chain to Firestore per audit doc). Lead form deep pass still deferred.
+
+**Still next — production logic:** **Sprint 2 #3 Part B — portal `useRegion()` consumption** (routes stay shared; content must follow active region). Polish does not replace Part B.
+
+### Git state — workspace (2026-05-13)
+
+**Active branch:** `polish/pr1-demo-killers-sweep` (ahead of recent work; **uncommitted / unstaged** mix)
+
+**Last known `main` anchor from prior handoff:**
+
+```
+454bb1a5  Merge Faz 1 Wave 2: 41 new tests (79 → 120 passing)
+```
+
+**Dirty paths (non-exhaustive — run `git status`):** `MarketplacePortal/*`, `VIPPortal/*`, `AhmedPortal/*`, `marketplacePortal.js`, `ahmedPortal.js`, `index.html`, `index.css`, plus Unified Dashboard / functions / docs (demo-killers sweep). **Untracked docs:** `docs/*2026_05_13*.md`, `frontend/directives/*`.
+
+**Verify before ship:** `cd frontend && npm run build` · `npm test` (120) · grep `trackEvent("` count = 13 per portal file.
+
+### Earlier shipped milestones (unchanged facts)
+
+**Sprint 2 #3 Part A — Portal sidebar live signals**
+- Three files: `lib/portalSignals.js` (new helper, ~60L), `UnifiedLayout.jsx` (+50L for sidebar render), `UnifiedLayout.css` (+50L for new classes)
+- Logic: derive per-portal-type signals from `useDashboard().events` (already region+sector filtered)
+- Display: 🟢 active dot (5 min window) + "N this wk" count (7d window) + "Xm/h/d ago" timestamp
+- Idle state: only when literally zero events ever for that portal type (NOT a time cutoff)
+- i18n: 6 new keys × 4 languages in `UnifiedLayout.jsx` LAYOUT_TEXT constant
+
+**Faz 1 test infrastructure (88 new tests in one day):**
+
+Wave 1 (Claude direct):
+- `portalSignals.test.js` (11 tests) — pure function coverage
+- `triggerRules.test.js` (14 tests) — Sprint 2 #2 detector coverage, FIX 2/4 lessons codified
+- `regionConfig.test.js` (11 tests) — getPersonas 4×3 matrix + case/trim
+- `eventDisplayMap.test.js` (11 tests) — normalization + sector overrides
+- AIDemo HelmetProvider fix + stale assertion update
+
+Wave 2 (Cursor):
+- `testUtils/renderWith.jsx` (shared 19L utility — HelmetProvider + MemoryRouter)
+- `firestoreTracking.test.js` (17 tests) — `trackDashboardEvent` no-auth/no-schema/success + collection path
+- `useDashboard.test.jsx` (6 tests) — context exports, throws-outside, referential stability
+- `KpiCard.test.jsx` (~5 tests)
+- `MiniSparkline.test.jsx` (~4 tests)
+- `SalesTriggerPanel/__tests__/index.test.jsx` (6 tests) — full render path including click → trackDashboardEvent + navigate
+
+**Test suite delta:** 26 → 120 passing (+361%), 8 broken → 0 broken, 2.74s full run.
+
+### Next session — merge + Part B
+
+**Sprint 2 #3 Part B — portal region-awareness (still the production bug)**
+
+User-reported symptom: "Portal linklerini incele hangi region da olursan olsun, ayni gulf region sitelerine gidiyor."
+
+Partial diagnosis (still valid):
+- Sidebar labels correctly swap per region via `personaLabel(personas.find(p => p.id === "vip1"))` in `UnifiedLayout.getPortalLinks()`
+- Sidebar hrefs are static (`/enterprise/crmdemo/khalid`, `/enterprise/crmdemo/ahmed`, etc.) — same route for all regions
+- Portal components (VIPPortal_Definitive, AhmedPortal, MarketplacePortal + auto equivalents) must be audited for **`useRegion()` / `getPersonas`** so content (project name, currency, personas) follows active region — **visual polish did not complete this.**
+
+**Directive plan (unchanged intent):**
+
+1. **Audit each demo portal:** `useRegion` + `useSector` + `getPersonas(sector, regionId)` + no Gulf-only hardcoding in data arrays.
+2. **Write directive** at `frontend/directives/SPRINT2_3_PART_B_PORTAL_REGION_DIRECTIVE.md` (or equivalent).
+3. **Cursor implements** → QA 4×3 region×sector → merge.
+
+**Portal makyaj — 2026-05-13:** Khalid + Ahmed + Marketplace polish **implemented locally** (see RESUME HERE). Remaining before treat-as-done: **commit/PR**, **Marketplace funnel Firestore QA**, optional **lead form** audit.
+
+**Faz 2 test groundwork (parallel track, low priority):**
+- Firebase emulator setup for L2 hook testing (~30 min)
+- Tests that need real Firestore semantics: `useDashboardData.js` tenant subcollection reads, seed protocol edge cases, retention/cleanup lifecycle
+- Defer until Sprint 2 #3 Part B ships — keep test coverage growing organically
+
+### Resume sequence
+
+1. `git status` on `polish/pr1-demo-killers-sweep` (or user’s integration branch) — split PRs if needed (portals vs dashboard vs functions)
+2. `cd frontend && npm run build` · `npm test` (120)
+3. **Marketplace:** full anonymous funnel manual pass (13 events → Firestore)
+4. **Part B:** region audit + directive → implementation
+5. Deploy hosting only after bundle hash confirmation vs prod
+
+### Tone for resume
+
+Portal polish trilogy is **local/ready for review** — user can prioritize **merge + funnel QA** vs **Part B** based on revenue pressure; both tracks are documented.
+
+### Open items unchanged
+
+- Sprint 2 #5 — VIP Alert Summary
+- Sprint 2 #6 — Outreach guardrail copy
+- Sprint 2 #7 — Owner workload columns
+- Steps 2-5 of Five-Minute Proof (first-pass Cursor SVGs; "makyaj sonra")
+- Apple Developer Account enrollment
+- Sentry production error monitoring
+- Pitch deck update reflecting Unified Dashboard, Yacht sector, AI Demo, Google Wallet, 4-region parity
+
+### Lessons added today
+
+- **CRM demo portals — tracking contract:** Khalid, Ahmed, and Marketplace each expose **exactly 13** `trackEvent("` call sites for dashboard funnel math. Treat as merge gate: verify count + manual funnel QA (especially Marketplace lead gate chain) before shipping.
+- **Light marketplace vs dark VIP:** On cream backgrounds, amenity/CTA icons use **charcoal** (`--mp-t1` / `#1a1a1f`), not gold/teal — avoids washed-out contrast.
+- **`vi.hoisted()` is the right pattern for shared mock state** in Vitest component tests. Cursor used it in `SalesTriggerPanel/__tests__/index.test.jsx` — cleaner than `vi.mock` + module-level `let`. Adopt as standard for component tests with mutable mock state.
+- **`testUtils/renderWith.jsx` (19L)** is the canonical pattern for component tests needing `HelmetProvider` + `MemoryRouter`. Reuse, don't duplicate the wrapper.
+- **When seed data is older than your "today" cutoff, signal logic shows idle for everything.** Live portal signals originally used a 24h "today" window; with seed events spanning 2-9 days old, every portal showed "idle". Fix: separate **count window** (7d) from **idle definition** (no events ever, not "no events in 24h"). Lesson: when designing time-window UX, distinguish between "what shows in the count" and "what determines empty state" — these are different decisions.
+- **Cursor's quality jumps after one fix-cycle round.** Wave 1 needed 7 audit fixes (Sprint 2 #2). Wave 2 needed zero — Cursor internalized the patterns from the previous review. The role split (Claude writes directives + audit, Cursor implements) compounds with repetition.
+- **AIDemo `<SEO>` requires `HelmetProvider` in tests.** Any component using `react-helmet-async` will crash with `Cannot read 'add' of undefined` if the test render wrapper is missing `HelmetProvider`. This is the same root as a likely future bug in any other page test that hits a `<SEO>` boundary — preemptively use `renderWith()` helper.
+
+---
+
+## ✅ CLOSED — 2026-05-11 EOD (Sprint 2 #2 Sales Trigger Panel SHIPPED + 7 audit fixes)
+
+### Today's git state on `main`
+
+```
+3a89f4ea  Merge Sprint 2 #2: Sales Trigger Panel               (no-ff merge of cursor/sprint-2-2-sales-trigger-panel)
+00a9e205  chore(stp): remove debug logs (FIX 7)
+8fdc5b08  fix(stp): select VIP before DOM check + re-fire on vips load (FIX 6 — includes 4 + 5 squashed)
+6fc7c690  fix(stp): trust useDashboard filtering, remove defensive region/sector filter + debug logs (FIX 3)
+ba1fdcf3  fix(stp): vipName-based enrich fallback + roi_calculator_click alias (FIX 2)
+45201f7f  fix(stp): dashboard tracking via trackDashboardEvent (FIX 1)
+45d9cef9  feat(overview): add sales trigger panel with VIP deeplink tracking  (Cursor PR #8 initial)
+a8c98c83  docs(directive): Sprint 2 #2 FIX 1 — dashboard tracking helper
+61256af4  docs(directive): Sprint 2 #2 revised — 7 triggers, deeplink, tracking, sector-aware i18n
+7f66fa78  docs: handoff sync + Sprint 2 #2 Sales Trigger directive
+```
+
+Production deploy: `firebase deploy --only hosting` — 227 files uploaded successfully. New hashed bundles (e.g., `VIPCrmTab-CRwy67bV.js`, `OverviewTab-Dy47aRP-.js`) confirmed live.
+
+### Tomorrow's first move — Sprint 2 #3 directive
+
+User has confirmed continue with Sprint 2 #3 ("Sprint 2 #3 ile devam ederiz") and added a critical scope expansion. The directive should cover **both items in one PR**:
+
+**A. Buyer Sites sidebar — Option A (canlı sinyaller)** *(from earlier scope brief)*
+- Each existing "Portal Links" sidebar row gets a real-time signal:
+  - 🟢 active dot = visitor in last 5 min
+  - "X today" count badge
+  - "last tap: 3m ago" timestamp
+- Data source: existing `useDashboard().events` — no new Firestore listener
+- Region+sector scoped via active context — when user switches Canada→Gulf, signal counts swap
+- Estimated ~150 lines new code in `UnifiedLayout.jsx` + small CSS additions
+
+**B. Portal region-awareness bug fix** *(discovered EOD 2026-05-11)*
+- **Symptom (user-reported):** "hangi region da olursan ol, ayni gulf region sitelerine gidiyor"
+- **Root cause partial diagnosis (Claude, ~30s grep):**
+  - Sidebar **labels** ARE region-aware (line ~336-347 of `UnifiedLayout.jsx`): `personaLabel(personas.find(p => p.id === "vip1"))` swaps Marc Patel ↔ Khalid ↔ etc. correctly per region.
+  - Sidebar **hrefs are static** (e.g., `/enterprise/crmdemo/khalid`, `/enterprise/crmdemo/ahmed`, `/automotive/demo/khalid`, etc.) — same route regardless of active region.
+  - The portal route handlers themselves (`VIPPortal_Definitive`, `AhmedPortal`, `MarketplacePortal` and automotive equivalents) must internally read `useRegion()` and swap persona/project/imagery accordingly. **This may be incomplete or hardcoded to Gulf defaults** — needs verification before writing the fix.
+- **Step 1 of directive:** Read each demo portal component end-to-end and audit:
+  1. Does it import `useRegion` and `useSector`?
+  2. Does it call `getPersonas(sector, regionId)` to pick the right persona block?
+  3. Does it use region-aware project labels (Al Noor Residences vs Vista Residences vs Hacienda etc.)?
+  4. Are any data arrays hardcoded for Gulf (e.g., a hardcoded `towers` array, hardcoded SAR currency, hardcoded Arabic-specific copy outside i18n)?
+- **Step 2:** Write a single directive covering both A and B — Cursor implements, you audit, merge.
+
+**Scope decision pending from user before writing directive:**
+- Combine A + B in one PR (recommended — both touch the sidebar + buyer-facing portal layer, naturally cohesive), OR
+- Two separate PRs (B first as a production bug fix, A second as a feature)
+
+### Resume sequence for tomorrow
+
+1. Confirm with user: "A + B tek PR mı, yoksa B önce production bug fix sonra A?"
+2. Read demo portal components (VIPPortal_Definitive, AhmedPortal, MarketplacePortal + automotive/yacht equivalents) to ground the B-section of the directive.
+3. Write directive at `frontend/directives/SPRINT2_3_BUYER_SITES_PORTAL_REGION_DIRECTIVE.md`.
+4. Hand off to Cursor Cloud Agent.
+5. Audit returned PR with same 7-fix-cycle discipline applied today.
+
+### Tone for resume
+
+User ended the day with momentum — both Sprint 2 #2 ship and Step 1 re-verification clean. EOD energy was "yavaş yavaş sona geliyoruz" — winding down but satisfied. Open the next session with the A vs B-first question, then proceed.
+
+---
+
+## ✅ CLOSED — 2026-05-11 EOD (Sprint 2 #2 Sales Trigger Panel SHIPPED + 7 audit fixes)
+
+### What shipped
+
+**Sales Trigger Panel** — new surface on `/unified/overview` between `TodaysBrief` and `SalesVelocity`. Detects 7 named-VIP behavior signals from `useDashboard()` data with zero new Firestore listeners. Tier-balanced render: max 5 HOT + 3 WARM. Sector-aware i18n across all 4 languages. Region-aware accent via `--stp-accent` CSS variable. Deeplink: "Open profile" navigates to VIP CRM, auto-selects target VIP, scrolls + highlights, opens the detail pane. `trigger_acted_on` Firestore event written on every click for Decision Speed measurement.
+
+**7 trigger detection rules:**
+- HOT (4): `HIGH_INTENT` (pricing/brochure/booking from VIP), `CONTACT_AGENT`, `REPEAT_VIEW` (same item 3+ in 15 min), `ROI_COMPLETED`
+- WARM (3): `RE_ENGAGE` (24h idle + recent return), `HIGH_VALUE_DEAL_IDLE` (5M+ deal, 48h+ idle), `MULTIPLE_VIPS_SAME_ITEM` (competition signal)
+
+**Files:**
+- New: `frontend/src/components/UnifiedDashboard/SalesTriggerPanel/{index.jsx, SalesTriggerPanel.css, triggerRules.js}` (~640L total)
+- Modified: `OverviewTab.jsx` (+3L integration), `VIPCrmTab.jsx` (+38L deeplink consumption + reset-order fix), `dashboard.js` i18n (+264L sector-aware), `firestoreTracking.js` (+38L `trackDashboardEvent` helper + EVENT_SCHEMA entry)
+
+### Why 7 audit fixes were needed — Lessons
+
+The Cursor first-pass PR (commit `45d9cef9`) shipped with directive-faithful code that compiled cleanly, but several subtle architectural mismatches surfaced during smoke testing. Each fix is a transferable lesson:
+
+1. **FIX 1 — `track()` is buyer-portal only.** `firestoreTracking.js`'s `track()` early-returns when `_session` is null, and writes to top-level `behaviors` collection. The Unified Dashboard has no session and reads from tenant-scoped `tenants/{uid}/events/`. Directive said "use `track`" without auditing the gating logic. Fix: new export `trackDashboardEvent(event, payload)` that takes uid from Firebase Auth and writes to `tenants/{uid}/events/`. **Lesson: when crossing buyer-side ↔ admin-side, verify auth context + collection path explicitly. `track`'s name suggested it was generic; it wasn't.**
+
+2. **FIX 2 — Seed events have `vipName` but no `vipId`.** `enrich()` filtered events on `e.vipId && vipById.has(e.vipId)` — and all seed events have only `vipName`. Net: every event rejected, panel empty. Fix: enrich falls back to `vipName` matching when `vipId` is missing, and stamps the resolved `vip.id` onto the enriched event so downstream rules group consistently. Also added `roi_calculator_click` to `ROI_KEYS` (seed uses this variant, directive only listed normalized form). **Lesson: when writing detect logic against seeded data, dump a sample event shape FIRST. The seed schema is the source of truth, not the directive's mental model.**
+
+3. **FIX 3 — Defensive region/sector filter was the actual bug.** The panel layer re-filtered events/vips/deals by `region` and `sector` fields. But `useDashboard` already filters via `filterBySectorAndRegion` AND drops those fields from returned objects. Net: `e.region === "gulf"` → `undefined === "gulf"` → false → every row rejected. **Lesson: CLAUDE.md §11 "no defensive fallbacks for impossible internal states (trust internal code)" is real engineering advice, not aspirational. The belt-and-suspenders instinct here cost an entire diagnostic round-trip.**
+
+4. **FIX 4 — Dedupe per `ruleType:vipId:item` was too granular.** User saw "Khalid Al-Rashid" twice (once for ROI, once for booking) and "Fatima Al-Mansouri" twice. Sales rep mental model wants ONE row per VIP showing the strongest signal. Fix: dedupe key changed to `vipId` only, prefer HOT over WARM, then most recent. **Lesson: dedupe granularity is a product/UX decision, not a code-elegance decision. "Which row tells the rep what to do next?" → at most one per buyer.**
+
+5. **FIX 5 — useEffect declaration order matters when multiple effects setState on the same value.** VIPCrmTab had a "reset on config/region change" effect that calls `setSelectedVipId(null)`. The deeplink effect (added in this sprint) also calls `setSelectedVipId(targetVipId)`. Both ran on mount; whichever declared LAST wins because React's last state setter in a render cycle takes precedence. Swapping declaration order put deeplink last — almost fixed it. **Lesson: when two effects touch the same state, declaration order is load-bearing. Document it inline.**
+
+6. **FIX 6 — `listRef.current` is null on first mount; guards must let state-setting happen before DOM logic.** The deeplink effect did `if (!targetVipId || !listRef.current) return;` BEFORE calling `setSelectedVipId`. On first mount, the VIP list hadn't rendered yet → `listRef.current` was null → effect bailed out → selection never happened. Fix: move `setSelectedVipId(targetVipId)` BEFORE the listRef guard, and add `effectiveVips?.length` to deps so the effect re-fires when the list mounts. **Lesson: separate "state operations (no DOM needed)" from "DOM operations" with their own early returns. Conflating them creates this mount-race trap.**
+
+7. **FIX 7 — Debug logs must come out in the same PR that proves the fix.** Per CLAUDE.md "Cleanup rule — non-negotiable", any structured diagnostic logs added during a fix session are removed in the commit that ships the fix. Done.
+
+### Diagnostic approach that worked
+
+Step that broke the empty-panel mystery: a single structured `console.log("[STP-DEBUG]", { eventsIn, vipsIn, scopedEvents, scopedVips, enriched, sampleEvent, sampleVip, uniqueVipNames, vipNames })` log dump. First run showed `eventsIn: 28, scopedEvents: 0` — that one line eliminated 5 wrong hypotheses and pointed straight at the defensive filter. **Lesson: when stuck on "why is X empty?", log everything the function received, scoped, transformed — in one object — and let the data narrow the search.**
+
+### Step 1 production re-verification (also done today)
+
+User confirmed Step 1 (Five-Minute Proof Identity SVG) renders cleanly on all 4 regions in production same session ("ok, temiz"). No watermark drift, no persona overflow, no animation glitch across Canada → Gulf → USA → Mexico cycle. The 2026-05-08 morning "to-do" item is now closed.
+
+### Portal region-awareness bug discovered (NEW, deferred to Sprint 2 #3)
+
+EOD user-reported: "Portal linklerini incele hangi region da olursan olsun, ayni gulf region sitelerine gidiyor." Initial 30-second grep audit revealed sidebar labels swap personas correctly per region, but hrefs are static routes. The route handlers (demo portal components) may be missing `useRegion()` injection or have hardcoded Gulf defaults. Full audit of each portal component is the first step of tomorrow's Sprint 2 #3 directive.
+
+### Open items unchanged
+
+- Sprint 2 #5 — VIP Alert Summary
+- Sprint 2 #6 — Outreach guardrail copy
+- Sprint 2 #7 — Owner workload columns
+- Steps 2-5 of Five-Minute Proof (still using first-pass Cursor SVGs; "makyaj sonra" — visual redesign deferred)
+- Apple Developer Account enrollment
+- Sentry production error monitoring
+- Pitch deck update reflecting Unified Dashboard, Yacht sector, AI Demo, Google Wallet, 4-region parity
+
+---
+
+## ✅ CLOSED — 2026-05-08 → 2026-05-10 (Step 1 commit chain + git remote sync)
+
+**Status:** Step 1 originally shipped 2026-05-07 evening with local-only commits + direct local-build deploy. Resume on 2026-05-08 cleaned up the git push state. Step 1 has been live and stable since 2026-05-08 morning.
+
+(Full detail in the now-superseded RESUME blocks below.)
+
+---
+
+## ▶︎ (Superseded) RESUME HERE — 2026-05-08 morning
 
 **Status:** Step 1 is LIVE in production at https://dynamicnfc.ca/unified/overview — user visually verified during today's session ("tamamdir calisiyor"). Sprint 2 #4.8 (`/unified/overview` 404 fix) finally committed after sitting uncommitted since 2026-05-06. Next functional priority: **Sprint 2 #2 — Sales Trigger Panel**, scope drafted but Cursor directive not yet written.
 

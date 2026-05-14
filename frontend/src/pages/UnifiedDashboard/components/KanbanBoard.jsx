@@ -26,8 +26,18 @@ const VelocityIcon = ({ velocity, lang }) => {
 };
 
 /* ── Trigger chip (why now?) ── */
+function humanizeTriggerType(type) {
+  return String(type || "")
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^./, (c) => c.toUpperCase());
+}
+
 const TriggerChip = ({ trigger, lang }) => {
   const LABELS = {
+    idle_lead: { en: "Idle lead", ar: "عميل خامل", es: "Lead inactivo", fr: "Prospect inactif" },
+    repeat_visitor: { en: "Repeat visitor", ar: "زائر متكرر", es: "Visitante recurrente", fr: "Visiteur récurrent" },
     pricing_3x: { en: "Pricing \u00d73", ar: "\u062a\u0633\u0639\u064a\u0631 \u00d73", es: "Precio \u00d73", fr: "Prix \u00d73" },
     booking_request: { en: "Viewing req", ar: "\u0637\u0644\u0628 \u0645\u0639\u0627\u064a\u0646\u0629", es: "Solicitud visita", fr: "Demande visite" },
     quote_requested: { en: "Quote req", ar: "\u0637\u0644\u0628 \u0639\u0631\u0636", es: "Cotizaci\u00f3n", fr: "Devis demand\u00e9" },
@@ -35,7 +45,10 @@ const TriggerChip = ({ trigger, lang }) => {
     idle_warning: { en: "Going cold", ar: "\u064a\u0628\u0631\u062f", es: "Enfri\u00e1ndose", fr: "Refroidissement" },
     high_velocity: { en: "Fast mover", ar: "\u0633\u0631\u064a\u0639", es: "R\u00e1pido", fr: "Rapide" },
   };
-  const label = LABELS[trigger.type]?.[lang] || LABELS[trigger.type]?.en || trigger.type;
+  const label =
+    LABELS[trigger.type]?.[lang] ||
+    LABELS[trigger.type]?.en ||
+    humanizeTriggerType(trigger.type);
   const severity = trigger.severity || "low";
   return (
     <span className={`ud-kb-trigger ud-kb-trigger--${severity}`}>{label}</span>

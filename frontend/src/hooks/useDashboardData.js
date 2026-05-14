@@ -414,7 +414,7 @@ export default function useDashboardData() {
           personName: actor,
           item,
           isVip: row.portalType === "vip",
-          description: item ? `${actor} - ${mappedType.replace(/_/g, " ")} -> ${item}` : `${actor} - ${mappedType.replace(/_/g, " ")}`,
+          description: item ? `${actor} - ${mappedType.replace(/_/g, " ")} → ${item}` : `${actor} - ${mappedType.replace(/_/g, " ")}`,
         };
       })
       .filter((e) => allowed.has(e.type) || e.portalType === "lead" || e.portalType === "registered" || e.portalType === "anonymous")

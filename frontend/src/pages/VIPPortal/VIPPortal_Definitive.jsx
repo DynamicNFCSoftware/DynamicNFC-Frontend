@@ -47,85 +47,85 @@ const trackEvent = (event, data = {}) => {
 const LANG = {
   en: {
     dir: "ltr",
-    nav: { vip: "VIP Access", lang: "العربية", compare: "Compare" },
+    nav: { vip: "VIP access", lang: "العربية", compare: "Compare" },
     hero: {
-      badge: "Private Invitation",
+      badge: "Private invitation",
       greeting: "Welcome,",
-      tagline: "Your Exclusive Residence Awaits",
+      tagline: "Your exclusive residence awaits",
       subtitle: "A curated selection of premium residences, handpicked for discerning investors who demand nothing less than extraordinary.",
-      cta: "Explore Residences",
-      ctaSecondary: "Schedule Private Viewing",
+      cta: "Explore residences",
+      ctaSecondary: "Schedule private viewing",
     },
-    stats: { units: "Premium Units", floors: "Floors of Luxury", roi: "Projected ROI", completion: "Completion" },
+    stats: { units: "Premium units", floors: "Floors of luxury", roi: "Projected ROI", completion: "Completion" },
     roiBanner: {
-      title: "Calculate Your Investment Returns",
+      title: "Calculate your investment returns",
       desc: "Use our interactive ROI calculator to project your returns based on property value, rental income, appreciation rates, and financing options.",
-      cta: "Open ROI Calculator →",
+      cta: "Open ROI calculator →",
     },
     sections: {
-      residences: "The Residences",
-      residencesSub: "Where Vision Meets the Skyline",
+      residences: "The residences",
+      residencesSub: "Where vision meets the skyline",
       residencesHint: "Select any residence to explore full details",
-      amenities: "The Lifestyle",
-      amenitiesSub: "Curated Experiences Beyond the Ordinary",
-      investment: "The Opportunity",
-      investmentSub: "Strategic Value in Every Detail",
-      contact: "Private Consultation",
-      contactSub: "Schedule Your Private Viewing",
+      amenities: "The lifestyle",
+      amenitiesSub: "Curated experiences beyond the ordinary",
+      investment: "The opportunity",
+      investmentSub: "Strategic value in every detail",
+      contact: "Private consultation",
+      contactSub: "Schedule your private viewing",
       contactHint: "Your dedicated advisor will arrange an exclusive tour",
     },
     unitActions: {
-      viewDetails: "View Details",
-      floorPlan: "Floor Plan",
+      viewDetails: "View details",
+      floorPlan: "Floor plan",
       brochure: "Brochure",
-      pricing: "Request Pricing",
-      book: "Book Viewing",
+      pricing: "Request pricing",
+      book: "Book viewing",
       compare: "Compare",
-      payment: "Payment Plan",
-      callAdvisor: "Call Advisor",
+      payment: "Payment plan",
+      callAdvisor: "Call advisor",
     },
     floorPlanModal: {
-      title: "Floor Plan",
+      title: "Floor plan",
       bedrooms: "Bedrooms",
-      living: "Living Area",
-      balcony: "Balcony / Terrace",
+      living: "Living area",
+      balcony: "Balcony / terrace",
       kitchen: "Kitchen",
-      master: "Master Suite",
+      master: "Master suite",
       bathrooms: "Bathrooms",
-      totalArea: "Total Area",
-      download: "Download Floor Plan PDF",
+      totalArea: "Total area",
+      download: "Download floor plan PDF",
       disclaimer: "Floor plans are indicative and may vary. Actual dimensions confirmed upon handover.",
     },
     brochureModal: {
-      title: "Digital Brochure",
+      title: "Digital brochure",
       downloading: "Preparing your brochure...",
-      ready: "Brochure Ready",
+      ready: "Brochure ready",
       desc: "Your personalized digital brochure has been prepared with exclusive details.",
-      download: "Download Brochure PDF",
-      email: "Send to Email",
+      download: "Download brochure PDF",
+      email: "Send to email",
       includes: "Brochure includes:",
       items: ["Detailed floor plans & specifications", "Premium finishes catalog", "Amenity & lifestyle overview", "Investment analysis & payment plans", "Location & connectivity map"],
     },
     paymentModal: {
-      title: "Payment Plan",
+      title: "Payment plan",
       subtitle: "Flexible payment structure designed for investors",
-      totalPrice: "Total Price",
-      plan6040: "60/40 Plan",
+      totalPrice: "Total price",
+      plan6040: "60/40 plan",
       plan6040Desc: "60% during construction · 40% on handover",
-      plan7030: "70/30 Plan",
+      plan7030: "70/30 plan",
       plan7030Desc: "70% during construction · 30% post-handover (12 months)",
-      milestones: "Payment Milestones",
-      m1: "Booking Deposit", m1d: "Upon reservation",
-      m2: "First Installment", m2d: "Within 30 days",
+      milestones: "Payment milestones",
+      m1: "Booking deposit", m1d: "Upon reservation",
+      m2: "First installment", m2d: "Within 30 days",
       m3: "Construction 30%", m3d: "Upon 30% completion",
       m4: "Construction 60%", m4d: "Upon 60% completion",
       m5: "Handover", m5d: "Upon key handover",
-      m6: "Post-Handover", m6d: "12 months after handover",
-      requestCall: "Request Payment Consultation",
+      m6: "Post-handover", m6d: "12 months after handover",
+      requestCall: "Request payment consultation",
       disclaimer: "Payment plans subject to approval. Terms may vary based on unit selection.",
     },
     compareModal: {
-      title: "Compare Residences",
+      title: "Compare residences",
       feature: "Feature",
       remove: "Remove",
       price: "Price", floor: "Floor", bedrooms: "Bedrooms",
@@ -133,12 +133,12 @@ const LANG = {
       empty: "Add residences to compare by clicking the ⚖️ icon on unit cards.",
     },
     booking: {
-      name: "Full Name", email: "Email Address", phone: "Phone Number",
-      preferred: "Preferred Residence", date: "Preferred Date", time: "Preferred Time",
-      notes: "Additional Notes", submit: "Request Private Viewing",
+      name: "Full name", email: "Email address", phone: "Phone number",
+      preferred: "Preferred residence", date: "Preferred date", time: "Preferred time",
+      notes: "Additional notes", submit: "Request private viewing",
       note: "Your information is protected. We will contact you within 24 hours.",
       morning: "Morning (9AM-12PM)", afternoon: "Afternoon (12PM-4PM)", evening: "Evening (4PM-7PM)",
-      success: "Viewing Request Submitted",
+      success: "Viewing request submitted",
       successDesc: "Thank you! Your dedicated advisor will contact you within 24 hours to confirm your private viewing.",
       successRef: "Reference",
     },
@@ -162,14 +162,14 @@ const LANG = {
       badge: "دعوة خاصة",
       greeting: "مرحبًا،",
       tagline: "وحدتك الحصرية في انتظارك",
-      subtitle: "هيكل دفع مرن مصمم للمستثمرين",
+      subtitle: "مجموعة مختارة من الوحدات الفاخرة، بعنايةٍ لمن يبحثون عن ما يفوق العادي.",
       cta: "استكشاف الوحدات",
       ctaSecondary: "جدولة زيارة خاصة",
     },
     stats: { units: "الوحدات المميزة", floors: "طوابق من الفخامة", roi: "العائد المتوقع على الاستثمار", completion: "الانتهاء" },
     roiBanner: {
-      title: "خطة الدفع",
-      desc: "تم إعداد كتيبك الرقمي المخصص مع تفاصيل حصرية.",
+      title: "احسب عائد استثمارك",
+      desc: "استخدم حاسبة العائد التفاعلية لتقدير عائدك بناءً على قيمة العقار ودخل الإيجار ونمو رأس المال وخيارات التمويل.",
       cta: "← افتح حاسبة العائد",
     },
     sections: {
@@ -271,7 +271,7 @@ const UNITS = [
     priceDisplay: { en: "AED 12,500,000", ar: "١٢,٥٠٠,٠٠٠ درهم" },
     priceShort: { en: "AED 12.5M", ar: "١٢.٥ مليون درهم" },
     perSqft: { en: "AED 2,016/sq ft", ar: "٢,٠١٦ درهم/قدم²" },
-    feature: { en: "360° Panoramic Views", ar: "إطلالة بانورامية ٣٦٠°" },
+    feature: { en: "360° panoramic views", ar: "إطلالة بانورامية ٣٦٠°" },
     status: { en: "Available", ar: "متاح" }, statusColor: "#2D8F6F",
     category: { en: "Penthouse", ar: "بنتهاوس" },
     view: { en: "Sea + City Panoramic", ar: "بانورامية بحر + مدينة" },
@@ -311,7 +311,7 @@ const UNITS = [
     priceDisplay: { en: "AED 7,800,000", ar: "٧,٨٠٠,٠٠٠ درهم" },
     priceShort: { en: "AED 7.8M", ar: "٧.٨ مليون درهم" },
     perSqft: { en: "AED 1,902/sq ft", ar: "١,٩٠٢ درهم/قدم²" },
-    feature: { en: "Marina & Sea View", ar: "إطلالة على المارينا والبحر" },
+    feature: { en: "Marina & sea view", ar: "إطلالة على المارينا والبحر" },
     status: { en: "Available", ar: "متاح" }, statusColor: "#2D8F6F",
     category: { en: "Grand Residence", ar: "إقامة كبرى" },
     view: { en: "Marina & Sea", ar: "مارينا وبحر" },
@@ -349,7 +349,7 @@ const UNITS = [
     priceDisplay: { en: "AED 4,200,000", ar: "٤,٢٠٠,٠٠٠ درهم" },
     priceShort: { en: "AED 4.2M", ar: "٤.٢ مليون درهم" },
     perSqft: { en: "AED 1,500/sq ft", ar: "١,٥٠٠ درهم/قدم²" },
-    feature: { en: "City Skyline View", ar: "إطلالة على أفق المدينة" },
+    feature: { en: "City skyline view", ar: "إطلالة على أفق المدينة" },
     status: { en: "Last 3 Units", ar: "آخر ٣ وحدات" }, statusColor: "#C1121F",
     category: { en: "Executive Suite", ar: "جناح تنفيذي" },
     view: { en: "City Skyline", ar: "أفق المدينة" },
@@ -379,32 +379,32 @@ const UNITS = [
 
 const AMENITIES = {
   en: [
-    { icon: "🏊", name: "Infinity Edge Pool", desc: "60m rooftop pool with panoramic Gulf views" },
-    { icon: "🧖", name: "Spa & Wellness", desc: "Full-service spa with hammam & cryo chamber" },
-    { icon: "🍽️", name: "Private Dining", desc: "Michelin-standard resident-only restaurant" },
-    { icon: "🏋️", name: "Fitness Atelier", desc: "Technogym-equipped with personal trainers" },
-    { icon: "🛥️", name: "Marina Access", desc: "Private berths for yachts up to 60ft" },
-    { icon: "🌿", name: "Sky Gardens", desc: "Landscaped terraces on every 10th floor" },
-    { icon: "👶", name: "Kids Club", desc: "Supervised play areas & learning center" },
-    { icon: "🚗", name: "Valet & EV", desc: "24/7 valet with EV charging stations" },
+    { icon: "ti-pool", name: "Infinity Edge Pool", desc: "60m rooftop pool with panoramic Gulf views" },
+    { icon: "ti-flower", name: "Spa & Wellness", desc: "Full-service spa with hammam & cryo chamber" },
+    { icon: "ti-tools-kitchen-2", name: "Private Dining", desc: "Michelin-standard resident-only restaurant" },
+    { icon: "ti-barbell", name: "Fitness Atelier", desc: "Technogym-equipped with personal trainers" },
+    { icon: "ti-sailboat", name: "Marina Access", desc: "Private berths for yachts up to 60ft" },
+    { icon: "ti-plant-2", name: "Sky Gardens", desc: "Landscaped terraces on every 10th floor" },
+    { icon: "ti-mood-kid", name: "Kids Club", desc: "Supervised play areas & learning center" },
+    { icon: "ti-charging-pile", name: "Valet & EV", desc: "24/7 valet with EV charging stations" },
   ],
   ar: [
-    { icon: "🏊", name: "مسبح إنفينيتي", desc: "مسبح على السطح بطول ٦٠ متر مع إطلالات بانورامية" },
-    { icon: "🧖", name: "سبا وعافية", desc: "سبا متكامل مع حمام تركي وغرفة تبريد" },
-    { icon: "🍽️", name: "مطعم خاص", desc: "مطعم حصري للسكان بمعايير ميشلان" },
-    { icon: "🏋️", name: "صالة لياقة", desc: "مجهزة بأحدث أجهزة تكنوجيم مع مدربين شخصيين" },
-    { icon: "🛥️", name: "مرسى خاص", desc: "أرصفة خاصة لليخوت حتى ٦٠ قدم" },
-    { icon: "🌿", name: "حدائق سماوية", desc: "شرفات منسقة كل ١٠ طوابق" },
-    { icon: "👶", name: "نادي الأطفال", desc: "مناطق لعب مراقبة ومركز تعليمي" },
-    { icon: "🚗", name: "خدمة صف السيارات", desc: "خدمة صف ٢٤/٧ مع محطات شحن كهربائية" },
+    { icon: "ti-pool", name: "مسبح إنفينيتي", desc: "مسبح على السطح بطول ٦٠ متر مع إطلالات بانورامية" },
+    { icon: "ti-flower", name: "سبا وعافية", desc: "سبا متكامل مع حمام تركي وغرفة تبريد" },
+    { icon: "ti-tools-kitchen-2", name: "مطعم خاص", desc: "مطعم حصري للسكان بمعايير ميشلان" },
+    { icon: "ti-barbell", name: "صالة لياقة", desc: "مجهزة بأحدث أجهزة تكنوجيم مع مدربين شخصيين" },
+    { icon: "ti-sailboat", name: "مرسى خاص", desc: "أرصفة خاصة لليخوت حتى ٦٠ قدم" },
+    { icon: "ti-plant-2", name: "حدائق سماوية", desc: "شرفات منسقة كل ١٠ طوابق" },
+    { icon: "ti-mood-kid", name: "نادي الأطفال", desc: "مناطق لعب مراقبة ومركز تعليمي" },
+    { icon: "ti-charging-pile", name: "خدمة صف السيارات", desc: "خدمة صف ٢٤/٧ مع محطات شحن كهربائية" },
   ],
 };
 
 const INVEST = {
   en: [
-    { label: "Rental Yield", value: "8.2%", note: "Above market average" },
-    { label: "Capital Growth", value: "23%", note: "Projected 3-year appreciation" },
-    { label: "Payment Plan", value: "60/40", note: "Flexible construction-linked" },
+    { label: "Rental yield", value: "8.2%", note: "Above market average" },
+    { label: "Capital growth", value: "23%", note: "Projected 3-year appreciation" },
+    { label: "Payment plan", value: "60/40", note: "Flexible construction-linked" },
     { label: "Handover", value: "Q4 2027", note: "On schedule" },
   ],
   ar: [
@@ -465,11 +465,25 @@ export default function VIPPortal() {
     return () => obs.disconnect();
   }, [lang, modal, selectedUnit]);
 
-  // Track page load
-  useEffect(() => { trackEvent("portal_opened", { language: lang }); }, []);
+  // Track page load + sync document root for global CSS / Tabler
+  useEffect(() => {
+    document.documentElement.lang = "en";
+    document.documentElement.dir = "ltr";
+    trackEvent("portal_opened", { language: "en" });
+    return () => {
+      document.documentElement.lang = "en";
+      document.documentElement.dir = "ltr";
+    };
+  }, []);
 
   const vipName = lang === "en" ? "Khalid Al-Rashid" : "خالد الراشد";
-  const toggleLang = () => { const n = lang === "en" ? "ar" : "en"; setLang(n); trackEvent("language_switch", { to: n }); };
+  const toggleLang = () => {
+    const n = lang === "en" ? "ar" : "en";
+    setLang(n);
+    document.documentElement.lang = n;
+    document.documentElement.dir = n === "ar" ? "rtl" : "ltr";
+    trackEvent("language_switch", { to: n });
+  };
 
   // Toast
   const showToast = useCallback((msg, icon = "✓") => {
@@ -632,8 +646,8 @@ export default function VIPPortal() {
           </h1>
           <p className="vp-hdesc">{t.hero.subtitle}</p>
           <div className="vp-hacts">
-            <button className="vp-btn-g" onClick={() => { trackEvent("cta_explore"); resRef.current?.scrollIntoView({ behavior: "smooth" }); }}>{t.hero.cta} →</button>
-            <button className="vp-btn-o" onClick={() => { trackEvent("cta_booking"); bookRef.current?.scrollIntoView({ behavior: "smooth" }); }}>{t.hero.ctaSecondary}</button>
+            <button type="button" className="vp-btn-g vp-hero-cta-arrow" onClick={() => { trackEvent("cta_explore"); resRef.current?.scrollIntoView({ behavior: "smooth" }); }}>{t.hero.cta}</button>
+            <button type="button" className="vp-btn-o" onClick={() => { trackEvent("cta_booking"); bookRef.current?.scrollIntoView({ behavior: "smooth" }); }}>{t.hero.ctaSecondary}</button>
           </div>
         </div>
       </section>
@@ -712,7 +726,9 @@ export default function VIPPortal() {
         <div className="vp-am-grid">
           {AMENITIES[lang].map((a, i) => (
             <div className="vp-am vp-rv" key={i}>
-              <div className="vp-am-icon">{a.icon}</div>
+              <div className="vp-am-icon">
+                <i className={`ti ${a.icon}`} aria-hidden="true" />
+              </div>
               <div className="vp-am-name">{a.name}</div>
               <div className="vp-am-desc">{a.desc}</div>
             </div>
@@ -743,7 +759,9 @@ export default function VIPPortal() {
 
       {/* ── ROI CALCULATOR BANNER ── */}
       <Link to="/enterprise/crmdemo/roi-calculator" className="vp-roi-banner" onClick={() => { trackEvent("roi_calculator_click"); }}>
-        <div className="vp-roi-icon">📊</div>
+        <div className="vp-roi-icon">
+          <i className="ti ti-calculator" aria-hidden="true" />
+        </div>
         <div className="vp-roi-content">
           <h3 className="vp-roi-title">{t.roiBanner.title}</h3>
           <p className="vp-roi-desc">{t.roiBanner.desc}</p>
@@ -814,8 +832,8 @@ export default function VIPPortal() {
               <label className="vp-flabel">{t.booking.notes}</label>
               <input className="vp-finput" type="text" onChange={(e) => setForm({ ...form, notes: e.target.value })} />
             </div>
-            <button className="vp-btn-g" style={{ width: "100%", justifyContent: "center", marginTop: ".5rem" }} onClick={submitBooking}>
-              {t.booking.submit} →
+            <button type="button" className="vp-btn-g vp-booking-submit-arrow" style={{ width: "100%", justifyContent: "center", marginTop: ".5rem" }} onClick={submitBooking}>
+              {t.booking.submit}
             </button>
             <p className="vp-fnote">{t.booking.note}</p>
           </div>
@@ -857,7 +875,7 @@ export default function VIPPortal() {
               <div className="vp-md-grid">
                 <div className="vp-md-gi"><div className="vp-md-gi-l">{lang === "en" ? "Bedrooms" : "غرف النوم"}</div><div className="vp-md-gi-v">{selectedUnit.beds[lang]}</div></div>
                 <div className="vp-md-gi"><div className="vp-md-gi-l">{lang === "en" ? "Bathrooms" : "الحمامات"}</div><div className="vp-md-gi-v">{selectedUnit.baths[lang]}</div></div>
-                <div className="vp-md-gi"><div className="vp-md-gi-l">{lang === "en" ? "Living Area" : "المساحة"}</div><div className="vp-md-gi-v">{selectedUnit.size[lang]}</div></div>
+                <div className="vp-md-gi"><div className="vp-md-gi-l">{lang === "en" ? "Living area" : "المساحة"}</div><div className="vp-md-gi-v">{selectedUnit.size[lang]}</div></div>
                 <div className="vp-md-gi">
                   <div className="vp-md-gi-l">{lang === "en" ? "Status" : "الحالة"}</div>
                   <div className="vp-md-gi-v" style={{ background: selectedUnit.statusColor, color: "#fff", display: "inline-block", padding: ".2rem .6rem", borderRadius: "4px", fontSize: ".9rem" }}>
@@ -871,16 +889,16 @@ export default function VIPPortal() {
 
               {/* Inline Payment Preview */}
               <div style={{ padding: "1.5rem", border: "1px solid var(--vp-glb)", borderRadius: "8px", background: "var(--vp-gl)" }}>
-                <h4 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.2rem", marginBottom: "1rem" }}>{lang === "en" ? "Payment Plan" : "خطة الدفع"}</h4>
+                <h4 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.2rem", marginBottom: "1rem" }}>{lang === "en" ? "Payment plan" : "خطة الدفع"}</h4>
                 <div className="vp-pay-bar">
                   <div className="vp-pay-seg" style={{ flex: 10, background: "var(--vp-gold)" }} />
                   <div className="vp-pay-seg" style={{ flex: 50, background: "var(--vp-gold-lt)" }} />
                   <div className="vp-pay-seg" style={{ flex: 40, background: "rgba(197,164,103,.35)" }} />
                 </div>
                 <div className="vp-pay-legend">
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "Down Payment" : "الدفعة الأولى"} (10%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.1)}</div></div></div>
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold-lt)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "During Construction" : "خلال البناء"} (50%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.5)}</div></div></div>
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "rgba(197,164,103,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "On Handover" : "عند التسليم"} (40%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.4)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "Down payment" : "الدفعة الأولى"} (10%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.1)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold-lt)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "During construction" : "خلال البناء"} (50%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.5)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "rgba(197,164,103,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "On handover" : "عند التسليم"} (40%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.4)}</div></div></div>
                 </div>
               </div>
 
@@ -1055,6 +1073,12 @@ export default function VIPPortal() {
           </div>
         </div>
       )}
+
+      <button type="button" className="vp-whatsapp" onClick={callAdvisor} aria-label={t.unitActions.callAdvisor}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+      </button>
 
       {/* ── TOAST ── */}
       {toast && (

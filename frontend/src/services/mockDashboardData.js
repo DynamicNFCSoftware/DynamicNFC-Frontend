@@ -181,7 +181,7 @@ export function getMockEvents(sectorId, regionId = "gulf") {
         item: evt.item,
         timestamp: ts,
         isVip: !!vip.cardId,
-        description: evt.item ? `${vip.name} - ${evt.type.replace(/_/g, " ")} -> ${evt.item}` : `${vip.name} - ${evt.type.replace(/_/g, " ")}`,
+        description: evt.item ? `${vip.name} - ${evt.type.replace(/_/g, " ")} → ${evt.item}` : `${vip.name} - ${evt.type.replace(/_/g, " ")}`,
       });
     });
   });

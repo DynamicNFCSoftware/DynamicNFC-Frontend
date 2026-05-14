@@ -66,43 +66,6 @@ function formatUpdatedLabel(timestamp, lang) {
   }
 }
 
-function escapeRegExp(value) {
-  return asText(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function wrapVipName(paragraph, vipName) {
-  const text = asText(paragraph);
-  if (!text || !vipName) return text || "";
-  const safeName = escapeHtml(vipName);
-  const pattern = new RegExp(escapeRegExp(vipName), "g");
-  return text.replace(pattern, `<span class="ud-todays-brief__vip-name">${safeName}</span>`);
-}
-
-function wrapScoreChange(paragraph) {
-  const text = asText(paragraph);
-  if (!text) return text;
-  const explicit = /(score\s*(?:now)?[^.]*\.)/i;
-  if (explicit.test(text)) {
-    return text.replace(explicit, `<span class="score-change">$1</span>`);
-  }
-  const fallback = /(score[^,;)]*)/i;
-  return text.replace(fallback, `<span class="score-change">$1</span>`);
-}
-
-function highlightParagraph1(paragraph, vipName) {
-  const withVip = wrapVipName(paragraph, vipName);
-  return wrapScoreChange(withVip);
-}
-
 function normalizeChips(chips) {
   if (!Array.isArray(chips)) return [];
   return chips
@@ -119,16 +82,18 @@ function computeStatusText(source, t, cooldownMinutes) {
   return t("generateButton");
 }
 
-function normalizeBrief(brief) {
+function normalizeBrief(brief, lang) {
   if (!brief) return DEFAULT_BRIEF;
+  // Prefer per-lang slot from byLang dict; fall back to legacy top-level fields for migration safety.
+  const slice = brief?.byLang?.[lang] || brief?.byLang?.en || brief;
   return {
-    paragraph1: asText(brief.paragraph1, DEFAULT_BRIEF.paragraph1),
-    paragraph2: asText(brief.paragraph2, DEFAULT_BRIEF.paragraph2),
-    chips: normalizeChips(brief.chips),
-    source: parseSource(brief),
-    generatedAt: safeNumber(brief.generatedAt, Date.now()),
-    cooldownRemaining: safeNumber(brief.cooldownRemaining, 0),
-    topVipName: asText(brief.topVipName || brief.vipName, ""),
+    paragraph1: asText(slice.paragraph1, DEFAULT_BRIEF.paragraph1),
+    paragraph2: asText(slice.paragraph2, DEFAULT_BRIEF.paragraph2),
+    chips: normalizeChips(slice.chips),
+    source: parseSource(slice),
+    generatedAt: safeNumber(slice.generatedAt, Date.now()),
+    cooldownRemaining: safeNumber(brief.cooldownRemaining ?? slice.cooldownRemaining, 0),
+    topVipName: asText(slice.topVipName || slice.vipName, ""),
   };
 }
 
@@ -166,7 +131,7 @@ function SourceBadge({ source }) {
 
 export default function TodaysBrief({ brief, nfcRoi, onRefreshAi, isRefreshing, lang }) {
   const t = useTranslation("todaysBrief");
-  const normalized = useMemo(() => normalizeBrief(brief), [brief]);
+  const normalized = useMemo(() => normalizeBrief(brief, lang), [brief, lang]);
   const source = normalized.source;
   const cooldownMinutes = Math.max(1, Math.ceil(normalized.cooldownRemaining / (60 * 1000)));
   const disabled = isRefreshing || source === "cached";
@@ -175,8 +140,8 @@ export default function TodaysBrief({ brief, nfcRoi, onRefreshAi, isRefreshing, 
   const actionLabel = computeStatusText(source, t, cooldownMinutes);
 
   const paragraph1 = useMemo(
-    () => highlightParagraph1(normalized.paragraph1, normalized.topVipName),
-    [normalized.paragraph1, normalized.topVipName]
+    () => asText(normalized.paragraph1),
+    [normalized.paragraph1]
   );
 
   const paragraph2 = useMemo(() => asText(normalized.paragraph2), [normalized.paragraph2]);

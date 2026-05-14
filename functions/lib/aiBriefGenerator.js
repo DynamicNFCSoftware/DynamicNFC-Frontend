@@ -56,8 +56,10 @@ async function generateBriefFromLLM({ tenantId, topVip, pipelineDelta, marketpla
   if (elapsed < COOLDOWN_MS) {
     const cachedBriefDoc = await briefRef.get();
     const cached = cachedBriefDoc.exists ? cachedBriefDoc.data() : {};
+    // Prefer per-lang slot from byLang dict; fall back to legacy top-level fields
+    const cachedForLang = cached?.byLang?.[lang] || cached;
     return {
-      ...cached,
+      ...cachedForLang,
       source: "cached",
       cooldownRemaining: Math.max(0, COOLDOWN_MS - elapsed),
     };
@@ -84,7 +86,14 @@ async function generateBriefFromLLM({ tenantId, topVip, pipelineDelta, marketpla
       lang,
     };
 
-    await briefRef.set(briefDoc, { merge: true });
+    // Write to byLang.{lang} slot AND legacy top-level fields for migration safety
+    await briefRef.set(
+      {
+        ...briefDoc,
+        byLang: { [lang]: briefDoc },
+      },
+      { merge: true },
+    );
     await rateLimitRef.set({ lastCallMs: Date.now() }, { merge: true });
     return briefDoc;
   } catch (err) {
