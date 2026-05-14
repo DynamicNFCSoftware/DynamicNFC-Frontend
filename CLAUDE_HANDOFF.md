@@ -1,12 +1,97 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-13 EOD (America/Vancouver) — CRM demo portal **visual polish trilogy** (Khalid + Ahmed + Marketplace) implemented locally; handoff refresh
-**Session:** Portal polish (Tabler, RTL root, sentence case, ROI/CTA styling, 13-event contracts preserved on all three surfaces) · prior: Sprint 2 #3 Part A + Faz 1 tests (120 passing)
-**Author of this update:** Cursor (handoff curate from live workspace)
+**Last updated:** 2026-05-13 late EOD (America/Vancouver) — **PR 1 demo-killer sweep + PR 1.5 brief 4-lang + PR 2 topbar/flag** all implemented locally on top of the portal polish trilogy; first deploy went out (hosting + `aggregateCampaignTaps`); `refreshDailyBriefAi` deferred to force redeploy
+**Session:** Cowork — unified dashboard polish trilogy (HTML leak + IDLE_LEAD + zero-state + sentence case + Unicode arrows) · brief generator multi-language storage · topbar single-button lang toggle (region-scoped 2-lang pair) + 2-letter region chip · on top of: Cursor's local Khalid + Ahmed + Marketplace polish (uncommitted)
+**Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — 2026-05-13 EOD
+## ▶︎ RESUME HERE — 2026-05-13 late EOD (Cowork session)
+
+**Status:** Three new PR slices implemented and frontend deployed; one function redeploy + manual QA + commit split outstanding. Portal polish trilogy from earlier today (Cursor local work) is **still uncommitted alongside** these changes on the same branch.
+
+### What shipped to production tonight
+
+| Surface | Item | State |
+|---|---|---|
+| Hosting (`https://dynamicnfc.ca`) | New bundle with PR 1 + PR 1.5 (frontend half) + PR 2 + portal trilogy frontend | ✅ Deployed (227 files) |
+| `aggregateCampaignTaps` scheduled fn | Writes `byLang.{en,ar,es,fr}` dict to `tenants/{uid}/aggregates/dailyBrief` every 15 min + legacy top-level fields | ✅ Deployed |
+| `refreshDailyBriefAi` callable | LLM call now writes to `byLang.{lang}` slot + legacy top-level on click | ⚠️ Source change was in `lib/aiBriefGenerator.js`; Firebase intelligent diff missed transitive dep on first deploy. User attempted `firebase deploy --only functions:refreshDailyBriefAi --force` — verify with `firebase functions:log --only refreshDailyBriefAi -n 30` or Cloud Console; redo with `--force` if still stale |
+
+### What is locally implemented but NOT YET committed
+
+All on branch `polish/pr1-demo-killers-sweep` (only `f1970a1b docs(handoff)` is committed; everything else is dirty working tree). Suggested logical split into separate commits before merge:
+
+**Commit A — PR 1 demo-killer sweep + sentence case + Unicode arrows (Cowork)**
+- `frontend/src/components/UnifiedDashboard/TodaysBrief.jsx` (−37L) — `wrapVipName` + `wrapScoreChange` + helpers removed (function-side templates already deliver styled HTML; double-wrap caused `score-change">` text bleed)
+- `frontend/src/pages/UnifiedDashboard/components/KanbanBoard.jsx` (+15L) — `idle_lead` + `repeat_visitor` added to `TRIGGER_LABELS` + `humanizeTriggerType()` fallback so future enum types render as sentence case
+- `frontend/src/pages/UnifiedDashboard/UnifiedLayout.css` (−30L) — `text-transform: uppercase` swept from 39 `.ud-*` selectors (sentence case house rule)
+- `frontend/src/i18n/portals/dashboard.js` — `"AT RISK"` → `"At risk"`, `"ZERO ENGAGEMENT"` → `"Zero engagement"` + 31 string ASCII `' -> '` → Unicode `' → '`
+- `frontend/src/services/firestoreTracking.js` — `"HOT LEAD" / "WARM" / "INTERESTED" / "NEW"` fallback labels → sentence case
+- `frontend/src/hooks/useDashboardData.js`, `frontend/src/i18n/pages/admin.js`, `frontend/src/services/mockDashboardData.js`, `frontend/src/pages/UnifiedDashboard/components/ActivityFeed.jsx`, `frontend/src/pages/UnifiedDashboard/components/NotificationSystem.jsx` — ASCII `' -> '` → Unicode `' → '` (7 arrows total across these)
+- `functions/lib/briefTemplates.js` (+75L) — `pluralize()` + `HOURS_LABEL / DAYS_LABEL / TAPS_LABEL` per language; `ZERO_STATE_TEMPLATES` per language; `isZeroState()` helper; `generateBriefFromTemplate` short-circuits on zero-state; `1 hour` vs `5 hours` plural fixed; em-dash sweep in `PIPELINE_DELTA_TEMPLATES` for all 4 langs
+
+**Commit B — PR 1.5 brief 4-language storage (Cowork)**
+- `functions/index.js` — `aggregateCampaignTaps` scheduled fn now loops `SUPPORTED_LANGS = ["en", "ar", "es", "fr"]` and writes `byLang.{lang}` dict, preserving any LLM-fresh per-lang slot (5-min window). Legacy top-level fields (`paragraph1`, `paragraph2`, ...) preserved for migration safety.
+- `functions/lib/aiBriefGenerator.js` — LLM-mode write goes into `byLang.{lang}` slot + legacy top-level. Cached return reads `cached.byLang?.[lang] || cached` (per-lang slice with legacy fallback).
+- `frontend/src/components/UnifiedDashboard/TodaysBrief.jsx` — `normalizeBrief(brief, lang)` selects `byLang[lang] || byLang.en || brief` (legacy fallback). `useMemo` dep list now includes `lang`.
+
+**Commit C — PR 2 topbar single-button lang + 2-letter region chip (Cowork)**
+- `frontend/src/pages/UnifiedDashboard/UnifiedLayout.jsx` — `LANG_CYCLE` constant removed in favor of `nextLang(current, regionLanguages)` helper that toggles within the **active region's 2-lang pair** (Gulf EN↔AR, USA EN↔ES, Canada EN↔FR, Mexico ES↔EN). Single button replaces the prior multi-button cluster. Same logic in desktop topbar + overflow menu. **Important:** First pass cycled all 4 langs globally; user rejected ("her region in 2 dil ailesi var") and current implementation correctly scopes to per-region pair.
+- `REGION_CODES = { gulf: "SA", usa: "US", mexico: "MX", canada: "CA" }` constant; flag emoji `{region?.flag}` (🇸🇦/🇺🇸/🇲🇽/🇨🇦) replaced with 2-letter chip in both region button and region menu. No-emoji house rule + Windows render parity (regional emoji flags don't render natively on Windows).
+- `frontend/src/pages/UnifiedDashboard/UnifiedLayout.css` — new `.ud-region-code` chip rule (monospace, brand-accent fill + color, small letter-spacing).
+
+**Commit D — Portal polish trilogy (Cursor local, untouched today)**
+- Khalid + Ahmed + Marketplace polish per `docs/MARKETPLACE_PORTAL_AUDIT_AND_DIRECTIVE_2026_05_13.md` and companion audits. Implementation details in the existing "earlier today" block below.
+
+**Commit E — Docs**
+- `frontend/directives/UI_POLISH_SWEEP_DIRECTIVE.md` (Cowork — the original directive for PR 1 before role-split changed)
+- `docs/UNIFIED_DASHBOARD_CRITIQUE_2026_05_13.md` (Cowork — the design critique that drove PR 1+2)
+- `docs/MARKETPLACE_PORTAL_AUDIT_AND_DIRECTIVE_2026_05_13.md` + companion VIP / Ahmed portal audits (already untracked, per Cursor's handoff)
+- This `CLAUDE_HANDOFF.md` update
+
+### Manual QA outstanding (must run BEFORE merging the dashboard slices)
+
+1. **Topbar lang toggle (PR 2)** — open `/unified/overview` in each region, confirm single button cycles the right pair:
+   - Canada: EN ↔ FR
+   - Gulf: EN ↔ AR (default AR)
+   - USA: EN ↔ ES
+   - Mexico: ES ↔ EN (default ES)
+2. **Region chip (PR 2)** — region selector shows `CA / SA / US / MX` chip, NOT emoji flag, in both the topbar button and dropdown.
+3. **Sentence case sweep (PR 1)** — no all-caps in `.ud-*` surfaces. `Idle lead` chip on Pipeline (not `IDLE_LEAD`). `At risk` not `AT RISK`. All eyebrows in sentence case.
+4. **Today's Brief HTML leak (PR 1)** — no `score-change">` text fragment visible. VIP name + score-change phrase styled but rendered as React DOM, not bleed-through text.
+5. **Today's Brief Arabic body (PR 1.5)** — switch to AR in any region with EN ↔ AR pair (Gulf). Body text + chip labels should be Arabic, not English. **Currently still English** in the screenshot user shared at the last test — most likely because:
+   - Scheduled `aggregateCampaignTaps` hasn't fired post-deploy yet (every 15 min), so `dailyBrief.byLang` is not yet populated and frontend falls back to legacy top-level (English from pre-deploy template).
+   - **Resolution paths (any one works):** wait 15 min for next scheduled run; manually trigger via `gcloud scheduler jobs run firebase-schedule-aggregateCampaignTaps --location=us-central1`; or click "Generate AI summary" while in AR (after confirming `refreshDailyBriefAi` was actually `--force` redeployed).
+6. **Zero-state (PR 1)** — `Settings → Reset demo` (boots fresh tenant with no data). Brief should show "warming up" copy, not `$0 / 0 new VIPs / 0 times in the last 1 hours`. Plural `1 hour` (not `1 hours`).
+7. **Marketplace funnel (Cursor local, see audit doc)** — anonymous incognito session, walk the 13-event chain, confirm each event reaches Firestore. **Do not merge Marketplace commit without this pass.**
+8. **Existing functionality regression** — Sales Trigger Panel still navigates VIP CRM deeplink (Sprint 2 #2); Five-Minute Proof tutorial replay works (Sprint 2 #1); sidebar portal live signals (Sprint 2 #3 Part A) still render dot + count + age.
+
+### Known sandbox quirk (not user-blocking)
+
+The Cowork sandbox bash mount lagged behind the Windows file system during this session — `wc -l` saw multiple files as truncated mid-JSX while the Read tool (Windows live FS) saw them complete. `npx vite build` in the sandbox reported a parse error in `VIPPortal_Definitive.jsx` for this reason. **User-side `npm run build` on Windows ran clean** — this is purely a sandbox stale-mount issue, no real code corruption.
+
+### Open production issue (still — Sprint 2 #3 Part B)
+
+Sprint 2 #3 Part B (portal `useRegion()` content audit) is **not addressed by tonight's work**. Polish trilogy fixed the visual layer; Part B is the data-binding layer — buyer portals must consume `useRegion()` so persona/project/imagery follow the active region. Sidebar labels already swap correctly; portal route handlers may still be Gulf-hardcoded internally. Audit + directive next session.
+
+### Resume sequence for tomorrow
+
+1. `git status` from `polish/pr1-demo-killers-sweep` — confirm everything from this handoff is present in dirty tree.
+2. Decide commit split (recommend A → B → C → D → E logical sequence above).
+3. Run manual QA list (8 items above) — split into pre-deploy and post-deploy slices.
+4. Force redeploy `refreshDailyBriefAi` if not already verified (`firebase deploy --only functions:refreshDailyBriefAi --force` + check log for invocation).
+5. Marketplace funnel QA — incognito + 13-event Firestore confirmation.
+6. Then merge to `main` (squash or staged depending on commit split chosen).
+7. Sprint 2 #3 Part B audit (separate session — directive first, then Cursor implements).
+
+### Tone for resume
+
+A LOT shipped tonight across two role-split tracks (Cursor portal polish + Cowork dashboard polish). Both are local; production has the first deploy slice (hosting + scheduled fn). The frustrating "Arabic body still English" symptom is **architectural by design** — fix is in flight, just needs the scheduler to fire or a manual LLM call. Don't re-deploy out of impatience; verify with the log first.
+
+---
+
+## ▶︎ Earlier 2026-05-13 EOD — Portal polish trilogy (Cursor local)
 
 **Status — portal makyaj (in progress, not merged):**
 - **Khalid** (`VIPPortal_Definitive.jsx` + `VIPPortal.css`): global fonts/Tabler in `index.html` + `index.css`, amenities ROI RTL, WhatsApp FAB, 13 `trackEvent` preserved.
