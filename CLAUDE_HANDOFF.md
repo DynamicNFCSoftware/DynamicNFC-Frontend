@@ -1,12 +1,112 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-13 late EOD (America/Vancouver) — **PR 1 demo-killer sweep + PR 1.5 brief 4-lang + PR 2 topbar/flag** all implemented locally on top of the portal polish trilogy; first deploy went out (hosting + `aggregateCampaignTaps`); `refreshDailyBriefAi` deferred to force redeploy
-**Session:** Cowork — unified dashboard polish trilogy (HTML leak + IDLE_LEAD + zero-state + sentence case + Unicode arrows) · brief generator multi-language storage · topbar single-button lang toggle (region-scoped 2-lang pair) + 2-letter region chip · on top of: Cursor's local Khalid + Ahmed + Marketplace polish (uncommitted)
+**Last updated:** 2026-05-14 EOD (America/Vancouver) — Polish branch merged to main last night; today shipped **LANG_INSTRUCTIONS fix** (Arabic brief body now renders) + **post-merge security & SW cleanup**. New production bug surfaced during QA: **Marketplace tracking writes silent** (Firestore analytics dead, BroadcastChannel still flows).
+**Session:** Cowork — Arabic body verify + diagnose write path (Firestore field-tree audit confirmed `byLang.ar.paragraph1` was English because LLM prompt missed `lang`) → Cursor 1-file fix → deploy verify → post-merge cleanup commits → Marketplace tracking QA → tracking gap documented for separate sprint
 **Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — 2026-05-13 late EOD (Cowork session)
+## ▶︎ RESUME HERE — 2026-05-14 EOD (Cowork session)
+
+**Status:** Polish trilogy (PR 1 + 1.5 + 2 + portal D) fully landed on `main` last night. Today closed the **Arabic LLM body bug** and the **post-merge cleanup**. Two open production threads carry into tomorrow: Marketplace Firestore tracking (silent) and Sprint 2 #3 Part B (portal `useRegion()` data binding).
+
+### What shipped to production today
+
+| Commit (main) | Item | Verify state |
+|---|---|---|
+| `a3d234e2` | SW reg moved from `index.html` → `main.jsx` (Vite `import.meta.env.DEV` flag) + `"localhost"` removed from `ALLOWED_REDIRECT_DOMAINS` in `functions/index.js` (security tighten) | Pushed to origin/main ✅ |
+| `4951e99d` | `aiBriefGenerator.js` — `LANG_INSTRUCTIONS` map injected into Anthropic `system` prompt; `EXISTING_SYSTEM_PROMPT` extracted; new `buildBriefUserContent()` helper; `messages.create` now passes `system` + user-only `messages` | Functions deployed via `firebase deploy --only functions:refreshDailyBriefAi --force` ✅ |
+| `[deploy only]` | `refreshDailyBriefAi` Cloud Function source updated (hash `5aa5512c...`) | Production confirmed via two real invocations (4052 ms + 820 ms) + Firestore `byLang.ar.paragraph1` now Arabic ✅ |
+
+**Live verification on `localhost:3000/unified` (AR, Gulf region):**
+- Today's Brief body renders fully Arabic — paragraph1 + paragraph2 + inline `<span class="score-change">ارتفعت من 64 إلى 72</span>` ✅
+- Chip `24 تنبيهات معرضة للخطر` (template path) ✅
+- `byLang.en.paragraph1` still English (regression-clean for default behavior) ✅
+- Span/strong tags preserved (no LLM-broken HTML) ✅
+
+### Earlier today — pre-Cowork landings (already merged last night)
+
+Polish branch `polish/pr1-demo-killers-sweep` squashed into main via merge `74276b3f` (5 logical commits + docs):
+
+```
+863e66a6  polish(dashboard): kill demo-killers + sentence case + unicode arrows  ← Commit A
+e2630cf4  feat(brief): per-language storage in dailyBrief.byLang dict           ← Commit B
+356812ef  polish(topbar): region-scoped 2-lang toggle + 2-letter region chip   ← Commit C
+14fa105b  polish(portals): Khalid + Ahmed + Marketplace trilogy                 ← Commit D
+fe636d70  docs: 2026-05-13 EOD — design critique, portal audits, handoff       ← Commit E
+74276b3f  Merge PR 1 polish sweep
+7be2b777  Merge branch 'main' (origin sync)
+```
+
+QA passes (PR 1+1.5+2+D) during today's session:
+- Topbar single-button lang toggle in Gulf (EN↔AR) ✅ — other 3 regions un-tested but logic identical
+- 2-letter region chip (`SA` shown, no emoji) ✅
+- Sentence case sweep (`Idle lead` chip, `At risk` chip) ✅
+- HTML leak fix (`score-change">` text fragment gone) ✅
+- Cache badge + `5د sonra refresh` indicator ✅
+- TENANT CHECK on region switch — `needsSeed: false`, merge-only rule honored ✅
+- Other 3 regions skipped — covered by Gulf evidence + identical code paths
+
+### Open production issues for tomorrow
+
+#### 1. Marketplace Firestore tracking writes silent — NEW FINDING
+
+**Tied memory:** `memory/project_marketplace_tracking_silent.md` (in Cowork user memory)
+
+Symptom evidence (2026-05-14 QA):
+- `behaviors` (top-level legacy) last write **2026-03-26** — 49 days stale. Schema is session-end aggregation (`event: "portal_exit"`, `details.categories.{action,browse,engage,intent}` counts), not per-action detail.
+- `tenants/lUBC4ciS9HSSGsmTd6xZkkOkr472/events` — last doc 2026-05-13, **all `_tail_` seed docs** (e.g., `ev_usa_yacht_tail_10`). No real user-fired events from today's QA session reached this collection.
+- F12 Console with `track` filter on Marketplace — **zero log lines** when triggering Brochure modal (which should fire `download_brochure`). Either `trackEvent` not called or `firestoreTracking.js` silent without debug log.
+
+Why this is bad: dashboard demo still flows visually (BroadcastChannel + localStorage paths intact) so investor demos still "work". But Firestore analytics — the metric path that powers per-region dashboards, conversion funnels, and pilot measurement — is dead.
+
+Why it's not a P0 today: PR 1+1.5+2+D landed and ship unaffected. Visual layer is independent of tracking pipeline.
+
+**Tomorrow:** write directive for tracking unification sprint (CLAUDE.md tech debt #1). Likely consolidates 3 systems (`shared/tracking.js` + `hooks/useTracking.js` + `services/firestoreTracking.js`) into single Firestore-as-primary path with BroadcastChannel as demo-only fallback. Cursor-scope, ~1 day execution.
+
+#### 2. Sprint 2 #3 Part B — Portal `useRegion()` data binding — STILL OPEN
+
+Re-confirmed during today's QA: Marketplace page rendered `Vista Residences` title (Canada project) alongside `AED` currency (Gulf / UAE notation) — classic region-data-mismatch symptom. Polish trilogy from last night fixed the **visual** layer (Tabler icons, cream/charcoal contrast, RTL, sentence case) but did NOT fix the **data-binding** layer.
+
+**Tomorrow:** read each demo portal end-to-end (VIPPortal_Definitive, AhmedPortal, MarketplacePortal + auto equivalents), audit for:
+1. `useRegion` + `useSector` imports present?
+2. `getPersonas(sector, regionId)` called for persona block?
+3. Region-aware project labels (Al Noor vs Vista vs Hacienda) flowing?
+4. Hardcoded data arrays (towers, currency, language-locked copy) — to be replaced?
+
+Then write `frontend/directives/SPRINT2_3_PART_B_PORTAL_REGION_DIRECTIVE.md` → Cursor implements → 4×3 region×sector QA → merge.
+
+### Working-tree state — clean
+
+```
+On branch main
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean
+```
+
+(`.claude/settings.local.json` should be added to `.gitignore` whenever convenient — Claude Code local settings, not project-relevant.)
+
+### Resume sequence for tomorrow
+
+1. `git pull` (in case Cursor or other surface lands overnight)
+2. Decide order: **Marketplace tracking directive first** (the production bug is older + revenue-relevant for pilot demos) or **Part B audit first** (visible inconsistency in screenshots, easier QA gate)
+3. Recommended sequence: **Tracking unification directive** in the morning (writing) + Cursor execute through the afternoon; **Part B audit** as parallel read while Cursor executes
+4. Both can merge in the same evening if scoped tight
+
+### Lessons added today
+
+- **Firestore Console doesn't show collection doc count by default.** Sort UI requires field name input that's hidden in nested dialog. For real-time QA, F12 Network → filter `firestore` shows commits, but Firestore JS SDK uses WebChannel multiplexing — all writes hide inside `channel?` requests, not visible as discrete POSTs. Cleanest realtime debug path: `console.log` inside the tracking function itself, plus periodic Firestore Console refresh. Don't trust Firestore Console sort/filter for fast iteration.
+- **LLM prompt language injection requires explicit instruction, not just a `lang` field in the data.** Earlier `aiBriefGenerator.js` had `lang` in the data payload but the system prompt was language-agnostic. LLM defaults to English when no explicit "Write in X" instruction is present. Fix pattern: separate `LANG_INSTRUCTIONS` map keyed by lang code, appended to system prompt. **Translate inline span content too** must be explicit (e.g., `'Top VIP' → 'كبار العملاء'`) otherwise the model preserves the original phrase inside translated paragraphs.
+- **Polish branch was merged mid-day without explicit handoff signal.** Today's session started assuming dirty tree on `polish/pr1-demo-killers-sweep` per yesterday's handoff. Reality: branch had been merged + main pulled, only 5 small post-merge files were dirty. `git log --oneline -15` first thing in next session is the right move when handoff and `git status` disagree.
+- **"Vista Residences + AED" is the Part B canary.** Whenever you see Vista (Canada project) with AED (Gulf currency) on a demo portal, it confirms portal route handler is reading region context incorrectly. Fast visual smoke test for Part B fix verification when it lands.
+
+### Tone for resume
+
+Today was clean execution despite the handoff drift. Arabic body fix landed cleanly. Marketplace tracking gap was found and documented without panic. Both open threads (tracking + Part B) are well-scoped for tomorrow — neither is revenue-blocking, both are pilot-prep work. Open next session with: *"Tracking unification mı, Part B audit mı? İkisi de Cursor-scope, sırayla geçeriz."*
+
+---
+
+## ✅ CLOSED — 2026-05-13 late EOD (everything from this block landed via merge `74276b3f` on 2026-05-14)
 
 **Status:** Three new PR slices implemented and frontend deployed; one function redeploy + manual QA + commit split outstanding. Portal polish trilogy from earlier today (Cursor local work) is **still uncommitted alongside** these changes on the same branch.
 
