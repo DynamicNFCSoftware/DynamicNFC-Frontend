@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import { usePortalRegion } from "../../services/portalRegion";
 import './MarketplacePortal.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/portals/marketplacePortal';
@@ -467,6 +468,8 @@ const ROOM_COLORS = {
 
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function MarketplacePortal() {
+  const { projectName, fmtCurrency } = usePortalRegion("real_estate");
+
   const [lang, setLang] = useState("en");
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
@@ -498,7 +501,6 @@ export default function MarketplacePortal() {
 
   const toggleLang = () => setLang((prev) => (prev === "en" ? "ar" : "en"));
   const showToast = useCallback((msg) => { setToastHiding(false); setToast(msg); setTimeout(() => { setToastHiding(true); setTimeout(() => setToast(null), 300); }, 3000); }, []);
-  const fmtAED = (n) => lang === "en" ? `AED ${n.toLocaleString()}` : `${n.toLocaleString()} درهم`;
 
   // Lead gate — high-intent actions require registration
   const requireLead = (action) => {
@@ -581,7 +583,7 @@ export default function MarketplacePortal() {
         <span className="crossnav-persona"><i className="ti ti-world" aria-hidden="true" /> {lang === "ar" ? "زائر عام" : "Public visitor"}</span>
       </div>
       <header className={`mp-hd ${scrolled ? "sc" : ""}`}>
-        <div className="mp-logo">Vista <b>Residences</b></div>
+        <div className="mp-logo">{projectName(lang)}</div>
         <div className="mp-nav">
           {lead && <span className="mp-lead-badge">{lead.name}</span>}
           {compareList.length > 0 && <button className="mp-navbtn" onClick={openCompare}>{t.unitActions.compare}<span className="mp-cmp-count">{compareList.length}</span></button>}
@@ -598,7 +600,7 @@ export default function MarketplacePortal() {
         <div className="mp-hero-ov" />
         <div className="mp-hero-ct">
           <div className="mp-pvt">{t.hero.badge}</div>
-          <h1 className="mp-htitle">{lang === "en" ? (<>Vista<br />Residences</>) : (<>فيستا<br />ريزيدنسز</>)}</h1>
+          <h1 className="mp-htitle">{projectName(lang)}</h1>
           <p className="mp-hdesc">{t.hero.subtitle}</p>
           <div className="mp-hacts">
             <button type="button" className="mp-btn-d" onClick={() => { trackEvent("cta_browse"); resRef.current?.scrollIntoView({ behavior: "smooth" }); }}>{t.hero.cta} →</button>
@@ -794,7 +796,7 @@ export default function MarketplacePortal() {
             <div className="mp-modal-body">
               <h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.paymentModal.title}</h2>
               <p style={{ color: "var(--mp-t2)", fontSize: ".9rem", marginBottom: ".5rem" }}>{t.paymentModal.subtitle}</p>
-              <p style={{ fontFamily: "var(--mp-serif)", fontSize: "2rem", color: "var(--mp-t1)", marginBottom: "2rem" }}>{t.paymentModal.totalPrice}: {fmtAED(modalUnit.payment.base)}</p>
+              <p style={{ fontFamily: "var(--mp-serif)", fontSize: "2rem", color: "var(--mp-t1)", marginBottom: "2rem" }}>{t.paymentModal.totalPrice}: {fmtCurrency(modalUnit.payment.base)}</p>
               <div className="mp-pm-tabs">
                 <button className={`mp-pm-tab ${payPlan === "60/40" ? "active" : ""}`} onClick={() => setPayPlan("60/40")}><div style={{ fontWeight: 600, marginBottom: ".2rem" }}>{t.paymentModal.plan6040}</div><div style={{ fontSize: ".72rem", opacity: .6 }}>{t.paymentModal.plan6040Desc}</div></button>
                 <button className={`mp-pm-tab ${payPlan === "70/30" ? "active" : ""}`} onClick={() => setPayPlan("70/30")}><div style={{ fontWeight: 600, marginBottom: ".2rem" }}>{t.paymentModal.plan7030}</div><div style={{ fontSize: ".72rem", opacity: .6 }}>{t.paymentModal.plan7030Desc}</div></button>
@@ -805,7 +807,7 @@ export default function MarketplacePortal() {
                 <div className="mp-pm-m" key={i}>
                   <div style={{ width: 12, height: 12, borderRadius: "50%", background: m.color, flexShrink: 0 }} />
                   <div style={{ flex: 1 }}><div style={{ fontSize: ".85rem", fontWeight: 500, marginBottom: ".15rem" }}>{m.label}</div><div style={{ fontSize: ".72rem", color: "var(--mp-t3)" }}>{m.desc}</div></div>
-                  <div style={{ textAlign: "end" }}><div style={{ fontSize: ".75rem", color: "var(--mp-t3)" }}>{m.pct}%</div><div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.1rem", fontWeight: 500 }}>{fmtAED(modalUnit.payment.base * m.pct / 100)}</div></div>
+                  <div style={{ textAlign: "end" }}><div style={{ fontSize: ".75rem", color: "var(--mp-t3)" }}>{m.pct}%</div><div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.1rem", fontWeight: 500 }}>{fmtCurrency(modalUnit.payment.base * m.pct / 100)}</div></div>
                 </div>
               ))}</div>
               <button className="mp-btn-d" style={{ width: "100%", justifyContent: "center", marginTop: "2rem" }} onClick={() => showToast(t.toast.pricing)}>{t.paymentModal.requestCall}</button>
