@@ -468,9 +468,9 @@ const ROOM_COLORS = {
 
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function MarketplacePortal() {
-  const { projectName, fmtCurrency } = usePortalRegion("real_estate");
-
   const [lang, setLang] = useState("en");
+  const { projectName, fmtCurrency } = usePortalRegion("real_estate", lang);
+
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
   const [modalUnit, setModalUnit] = useState(null);

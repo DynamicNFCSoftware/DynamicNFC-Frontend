@@ -29,7 +29,7 @@ import {
  *   fmtCurrency: (value: number) => string,
  * }}
  */
-export function usePortalRegion(sectorId) {
+export function usePortalRegion(sectorId, lang) {
   const { regionId, region, currency, currencySymbol } = useRegion();
 
   return useMemo(() => {
@@ -39,12 +39,12 @@ export function usePortalRegion(sectorId) {
       region,
       currency,
       currencySymbol,
-      projectName: (lang) => getProjectName(sectorId, regionId, lang),
+      projectName: (l) => getProjectName(sectorId, regionId, l),
       personas,
       vipPersona: personas.find((p) => p.id === "vip1") || null,
       secondaryPersona: personas.find((p) => p.id === "vip2") || null,
       familyPersona: personas.find((p) => p.id === "fam1") || null,
-      fmtCurrency: (value) => formatCurrency(value, regionId),
+      fmtCurrency: (value) => formatCurrency(value, regionId, lang),
     };
-  }, [sectorId, regionId, region, currency, currencySymbol]);
+  }, [sectorId, regionId, region, currency, currencySymbol, lang]);
 }

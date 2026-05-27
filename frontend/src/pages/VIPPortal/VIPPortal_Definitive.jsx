@@ -432,7 +432,7 @@ const ROOM_COLORS = {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function VIPPortal() {
   const [lang, setLang] = useState("en");
-  const { projectName, fmtCurrency, vipPersona } = usePortalRegion("real_estate");
+  const { projectName, fmtCurrency, vipPersona } = usePortalRegion("real_estate", lang);
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
   const [modalUnit, setModalUnit] = useState(null);

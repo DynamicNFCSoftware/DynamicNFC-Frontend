@@ -199,7 +199,7 @@ const STATUS_LABELS = { available: { en: "Available", ar: "متاح" }, reserved
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function PublicShowroom() {
   const { lang } = useLanguage();
-  const { projectName } = usePortalRegion("automotive");
+  const { projectName } = usePortalRegion("automotive", lang);
   const [scrolled, setScrolled] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [compareList, setCompareList] = useState([]);

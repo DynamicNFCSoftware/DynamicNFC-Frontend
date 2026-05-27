@@ -149,10 +149,18 @@ export function getRegion(regionId) {
   return REGIONS[regionId] || GULF;
 }
 
-export function formatCurrency(value, regionId) {
+// Regions whose native locale renders bare "$" — force explicit prefix to disambiguate from USD
+const FORCED_CURRENCY_PREFIX = { mexico: 'MX$', canada: 'CA$' };
+
+export function formatCurrency(value, regionId, lang) {
   const region = getRegion(regionId);
+  const locale = lang ? getEffectiveLocale(regionId, lang) : region.locale;
+  const forced = FORCED_CURRENCY_PREFIX[region.id];
+  if (forced) {
+    return `${forced}${value.toLocaleString(locale)}`;
+  }
   try {
-    return new Intl.NumberFormat(region.locale, {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: region.currency,
       minimumFractionDigits: 0,

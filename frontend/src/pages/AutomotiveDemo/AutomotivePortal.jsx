@@ -405,7 +405,7 @@ const HERO_IMG = heroImg;
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function AutomotivePortal() {
   const { lang } = useLanguage();
-  const { projectName, fmtCurrency, vipPersona } = usePortalRegion("automotive");
+  const { projectName, fmtCurrency, vipPersona } = usePortalRegion("automotive", lang);
   const [scrolled, setScrolled] = useState(false);
   const [filter, setFilter] = useState("all");
   const [selectedVehicle, setSelectedVehicle] = useState(null);
