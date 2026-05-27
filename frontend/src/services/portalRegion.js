@@ -24,6 +24,7 @@ import {
  *   projectName: (lang: string) => string,
  *   personas: Array<{id, name, email, type, role}>,
  *   vipPersona: object | null,
+ *   secondaryPersona: object | null,
  *   familyPersona: object | null,
  *   fmtCurrency: (value: number) => string,
  * }}
@@ -41,6 +42,7 @@ export function usePortalRegion(sectorId) {
       projectName: (lang) => getProjectName(sectorId, regionId, lang),
       personas,
       vipPersona: personas.find((p) => p.id === "vip1") || null,
+      secondaryPersona: personas.find((p) => p.id === "vip2") || null,
       familyPersona: personas.find((p) => p.id === "fam1") || null,
       fmtCurrency: (value) => formatCurrency(value, regionId),
     };

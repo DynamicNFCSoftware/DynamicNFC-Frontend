@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import { usePortalRegion } from "../../services/portalRegion";
 import './VIPPortal.css';
 import '../../i18n/portals/vipPortal';
 import SEO from '../../components/SEO/SEO';
@@ -431,6 +432,7 @@ const ROOM_COLORS = {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function VIPPortal() {
   const [lang, setLang] = useState("en");
+  const { projectName, fmtCurrency, vipPersona } = usePortalRegion("real_estate");
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
   const [modalUnit, setModalUnit] = useState(null);
@@ -441,7 +443,7 @@ export default function VIPPortal() {
   const [toastHiding, setToastHiding] = useState(false);
   const [bookingOk, setBookingOk] = useState(false);
   const [bookingRef, setBookingRefVal] = useState("");
-  const [form, setForm] = useState({ name: "Khalid Al-Rashid", email: "", phone: "", unit: "", date: "", time: "", notes: "" });
+  const [form, setForm] = useState({ name: vipPersona?.name || "", email: "", phone: "", unit: "", date: "", time: "", notes: "" });
   const [formErr, setFormErr] = useState({});
 
   const resRef = useRef(null);
@@ -476,7 +478,7 @@ export default function VIPPortal() {
     };
   }, []);
 
-  const vipName = lang === "en" ? "Khalid Al-Rashid" : "خالد الراشد";
+  const vipName = vipPersona?.name || "VIP Guest";
   const toggleLang = () => {
     const n = lang === "en" ? "ar" : "en";
     setLang(n);
@@ -493,8 +495,6 @@ export default function VIPPortal() {
   }, []);
 
   // Format AED
-  const fmtAED = (n) => lang === "en" ? `AED ${n.toLocaleString()}` : `${n.toLocaleString()} درهم`;
-
   // Compare
   const toggleCompare = (unitId) => {
     setCompareList((prev) => {
@@ -622,7 +622,7 @@ export default function VIPPortal() {
         <span className="crossnav-persona">👤 {vipName}</span>
       </div>
       <header className={`vp-hd ${scrolled ? "sc" : ""}`}>
-        <div className="vp-logo">Vista <b>Residences</b></div>
+        <div className="vp-logo">{projectName(lang)}</div>
         <div className="vp-nav">
           <div className="vp-badge">{t.nav.vip}</div>
           {compareList.length > 0 && (
@@ -697,8 +697,8 @@ export default function VIPPortal() {
                   <span>🛏 {unit.beds[lang]}</span>
                   <span>📐 {unit.size[lang]}</span>
                 </div>
-                <div className="vp-card-price">{unit.priceShort[lang]}</div>
-                <div className="vp-card-sqft">{unit.perSqft[lang]}</div>
+                <div className="vp-card-price">{fmtCurrency(unit.price)}</div>
+                <div className="vp-card-sqft">{fmtCurrency(Math.round(unit.price / unit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div>
               </div>
               <div className="vp-card-acts" onClick={(e) => e.stopPropagation()}>
                 <button className="vp-btn-o vp-btn-sm" onClick={() => openFloor(unit)}>📐 {t.unitActions.floorPlan}</button>
@@ -810,7 +810,7 @@ export default function VIPPortal() {
               <label className="vp-flabel">{t.booking.preferred}</label>
               <select className="vp-fsel" onChange={(e) => setForm({ ...form, unit: e.target.value })}>
                 <option value="">—</option>
-                {UNITS.map((u) => (<option key={u.id} value={u.id}>{u.name[lang]} — {u.priceShort[lang]}</option>))}
+                {UNITS.map((u) => (<option key={u.id} value={u.id}>{u.name[lang]} — {fmtCurrency(u.price)}</option>))}
               </select>
             </div>
             <div className="vp-frow">
@@ -867,8 +867,8 @@ export default function VIPPortal() {
                   <p className="vp-md-floor">{selectedUnit.floor[lang]}</p>
                 </div>
                 <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
-                  <div className="vp-md-price">{selectedUnit.priceDisplay[lang]}</div>
-                  <div className="vp-md-sqft">{selectedUnit.perSqft[lang]}</div>
+                  <div className="vp-md-price">{fmtCurrency(selectedUnit.price)}</div>
+                  <div className="vp-md-sqft">{fmtCurrency(Math.round(selectedUnit.price / selectedUnit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div>
                 </div>
               </div>
               <p className="vp-md-desc">{selectedUnit.desc[lang]}</p>
@@ -896,9 +896,9 @@ export default function VIPPortal() {
                   <div className="vp-pay-seg" style={{ flex: 40, background: "rgba(197,164,103,.35)" }} />
                 </div>
                 <div className="vp-pay-legend">
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "Down payment" : "الدفعة الأولى"} (10%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.1)}</div></div></div>
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold-lt)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "During construction" : "خلال البناء"} (50%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.5)}</div></div></div>
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "rgba(197,164,103,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "On handover" : "عند التسليم"} (40%)</div><div className="vp-pay-amt">{fmtAED(selectedUnit.price * 0.4)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "Down payment" : "الدفعة الأولى"} (10%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.1)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold-lt)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "During construction" : "خلال البناء"} (50%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.5)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "rgba(197,164,103,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "On handover" : "عند التسليم"} (40%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.4)}</div></div></div>
                 </div>
               </div>
 
@@ -988,7 +988,7 @@ export default function VIPPortal() {
                 <h2 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.paymentModal.title}</h2>
                 <p style={{ color: "var(--vp-t2)", fontSize: ".9rem", marginBottom: ".5rem" }}>{t.paymentModal.subtitle}</p>
                 <p style={{ fontFamily: "var(--vp-serif)", fontSize: "2rem", color: "var(--vp-gold)", marginBottom: "2rem" }}>
-                  {t.paymentModal.totalPrice}: {fmtAED(modalUnit.payment.base)}
+                  {t.paymentModal.totalPrice}: {fmtCurrency(modalUnit.payment.base)}
                 </p>
                 <div className="vp-pm-tabs">
                   <button className={`vp-pm-tab ${payPlan === "60/40" ? "active" : ""}`} onClick={() => setPayPlan("60/40")}>
@@ -1014,7 +1014,7 @@ export default function VIPPortal() {
                       </div>
                       <div style={{ textAlign: "end" }}>
                         <div className="vp-pm-m-pct">{m.pct}%</div>
-                        <div className="vp-pm-m-val">{fmtAED(modalUnit.payment.base * m.pct / 100)}</div>
+                        <div className="vp-pm-m-val">{fmtCurrency(modalUnit.payment.base * m.pct / 100)}</div>
                       </div>
                     </div>
                   ))}
@@ -1042,7 +1042,7 @@ export default function VIPPortal() {
                 const units = compareList.map((id) => UNITS.find((u) => u.id === id)).filter(Boolean);
                 const cols = `180px repeat(${units.length}, 1fr)`;
                 const rows = [
-                  { label: t.compareModal.price, get: (u) => u.priceShort[lang] },
+                  { label: t.compareModal.price, get: (u) => fmtCurrency(u.price) },
                   { label: t.compareModal.floor, get: (u) => u.floor[lang] },
                   { label: t.compareModal.bedrooms, get: (u) => u.beds[lang] },
                   { label: t.compareModal.size, get: (u) => u.size[lang] },

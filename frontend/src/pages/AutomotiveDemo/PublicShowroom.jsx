@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from '../../i18n';
 import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import { usePortalRegion } from "../../services/portalRegion";
 import './PublicShowroom.css';
 import SEO from '../../components/SEO/SEO';
 // ═══════════════════════════════════════════════════════════════════
@@ -198,6 +199,7 @@ const STATUS_LABELS = { available: { en: "Available", ar: "متاح" }, reserved
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function PublicShowroom() {
   const { lang } = useLanguage();
+  const { projectName } = usePortalRegion("automotive");
   const [scrolled, setScrolled] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [compareList, setCompareList] = useState([]);
@@ -285,7 +287,7 @@ export default function PublicShowroom() {
       <SEO title="Public Showroom" description="Browse luxury automotive inventory with specs and configurations." path="/showroom" />
       {/* HEADER */}
       <header className={`ps-hd ${scrolled ? "sc" : ""}`}>
-        <div className="ps-logo">Prestige <b>Motors</b></div>
+        <div className="ps-logo">{projectName(lang)}</div>
         <div className="ps-nav">
           {lead && <span className="ps-lead-badge">{lead.name}</span>}
           {compareList.length > 0 && (
@@ -316,7 +318,7 @@ export default function PublicShowroom() {
         <div className="ps-hero-ov" />
         <div className="ps-hero-ct">
           <div className="ps-pvt">{t.hero.badge}</div>
-          <h1 className="ps-htitle">{lang === "en" ? (<>Prestige<br />Motors</>) : (<>بريستيج<br />موتورز</>)}</h1>
+          <h1 className="ps-htitle">{projectName(lang)}</h1>
           <p className="ps-hdesc">{t.hero.subtitle}</p>
           <div className="ps-hacts">
             <button className="ps-btn-accent" onClick={() => { trackEvent("cta_browse"); vehRef.current?.scrollIntoView({ behavior: "smooth" }); }}>{t.hero.cta} &#8594;</button>

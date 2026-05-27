@@ -77,7 +77,7 @@ const LANG = {
       ctaSub: "Register for exclusive pricing, floor plans, brochures, and priority viewing appointments.",
     },
     filters: { all: "All", penthouse: "Penthouse", bed3: "3 bedrooms", bed2: "2 bedrooms" },
-    card: { registerPrice: "Register for exact pricing", details: "View details", getPricing: "Get pricing" },
+    card: { registerPrice: "Register for exact pricing", details: "View details", getPricing: "Get pricing", priceFrom: "From " },
     unitActions: { floorPlan: "Floor plan", brochure: "Brochure", pricing: "Get exact pricing", book: "Book a visit", compare: "Compare" },
     floorPlanModal: {
       title: "Floor Plan", bathrooms: "Bathrooms", balcony: "Balcony / Terrace",
@@ -153,7 +153,7 @@ const LANG = {
       ctaSub: "سجّل للحصول على أسعار حصرية ومخططات وأولوية الوصول للوحدات المتاحة.",
     },
     filters: { all: "الكل", penthouse: "بنتهاوس", bed3: "٣ غرف", bed2: "غرفتان" },
-    card: { registerPrice: "سجّل للحصول على السعر", details: "التفاصيل", getPricing: "احصل على السعر" },
+    card: { registerPrice: "سجّل للحصول على السعر", details: "التفاصيل", getPricing: "احصل على السعر", priceFrom: "من " },
     unitActions: { floorPlan: "المخطط", brochure: "الكتيب", pricing: "السعر الدقيق", book: "حجز معاينة", compare: "مقارنة" },
     floorPlanModal: {
       title: "المخطط الطابقي", bathrooms: "الحمامات", balcony: "الشرفة / التراس",
@@ -642,7 +642,7 @@ export default function MarketplacePortal() {
                   <span className="mp-card-meta-item"><i className="ti ti-bed" aria-hidden="true" /> {unit.beds[lang]}</span>
                   <span className="mp-card-meta-item"><i className="ti ti-ruler-measure" aria-hidden="true" /> {unit.size[lang]}</span>
                 </div>
-                <div className="mp-card-price">{unit.priceRange[lang]}</div>
+                <div className="mp-card-price">{t.card.priceFrom}{fmtCurrency(unit.priceNum)}</div>
                 <div className="mp-card-hint mp-card-pricing-sub"><i className="ti ti-lock" aria-hidden="true" /><span>{t.card.registerPrice}</span></div>
               </div>
               <div className="mp-card-acts" onClick={(e) => e.stopPropagation()}>
@@ -716,7 +716,7 @@ export default function MarketplacePortal() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "2rem", marginBottom: "2rem", flexWrap: "wrap" }}>
               <div><h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "2.2rem", fontWeight: 500, color: "var(--mp-t1)" }}>{selectedUnit.name[lang]}</h2><p style={{ color: "var(--mp-t3)", fontSize: ".82rem", letterSpacing: ".1em", textTransform: "uppercase" }}>{selectedUnit.floor[lang]}</p></div>
               <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
-                <div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--mp-t1)" }}>{selectedUnit.priceRange[lang]}</div>
+                <div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--mp-t1)" }}>{t.card.priceFrom}{fmtCurrency(selectedUnit.priceNum)}</div>
                 <div className="mp-card-pricing-sub" style={{ justifyContent: lang === "ar" ? "flex-end" : "flex-start", marginTop: ".35rem" }}>
                   <i className="ti ti-lock" aria-hidden="true" />
                   <span>{t.card.registerPrice}</span>
@@ -827,7 +827,7 @@ export default function MarketplacePortal() {
               const units = compareList.map((id) => UNITS.find((u) => u.id === id)).filter(Boolean);
               const cols = `180px repeat(${units.length}, 1fr)`;
               const rows = [
-                { label: t.compareModal.price, get: (u) => u.priceRange[lang] },
+                { label: t.compareModal.price, get: (u) => t.card.priceFrom + fmtCurrency(u.priceNum) },
                 { label: t.compareModal.floor, get: (u) => u.floor[lang] },
                 { label: t.compareModal.bedrooms, get: (u) => u.beds[lang] },
                 { label: t.compareModal.size, get: (u) => u.size[lang] },

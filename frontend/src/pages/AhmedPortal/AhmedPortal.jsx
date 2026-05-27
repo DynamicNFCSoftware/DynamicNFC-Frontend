@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import { usePortalRegion } from "../../services/portalRegion";
 import './AhmedPortal.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/portals/ahmedPortal';
@@ -376,6 +377,7 @@ const ROOM_COLORS = {
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function AhmedPortal() {
   const [lang, setLang] = useState("en");
+  const { projectName, fmtCurrency, familyPersona } = usePortalRegion("real_estate");
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
   const [modalUnit, setModalUnit] = useState(null);
@@ -386,7 +388,7 @@ export default function AhmedPortal() {
   const [toastHiding, setToastHiding] = useState(false);
   const [bookingOk, setBookingOk] = useState(false);
   const [bookingRef, setBookingRefVal] = useState("");
-  const [form, setForm] = useState({ name: lang === "en" ? "Ahmed Al-Fahad" : "أحمد الفهد", email: "", phone: "", unit: "", date: "", time: "", notes: "" });
+  const [form, setForm] = useState({ name: familyPersona?.name || "", email: "", phone: "", unit: "", date: "", time: "", notes: "" });
   const [formErr, setFormErr] = useState({});
 
   const resRef = useRef(null);
@@ -404,7 +406,7 @@ export default function AhmedPortal() {
       document.documentElement.dir = "ltr";
     };
   }, []);
-  const vipName = lang === "en" ? "Ahmed Al-Fahad" : "أحمد الفهد";
+  const vipName = familyPersona?.name || "Family Guest";
   const toggleLang = () => {
     const n = lang === "en" ? "ar" : "en";
     setLang(n);
@@ -413,8 +415,6 @@ export default function AhmedPortal() {
     trackEvent("language_switch", { to: n });
   };
   const showToast = useCallback((msg, icon = "✓") => { setToastHiding(false); setToast({ msg, icon }); setTimeout(() => { setToastHiding(true); setTimeout(() => setToast(null), 300); }, 3000); }, []);
-  const fmtAED = (n) => lang === "en" ? `AED ${n.toLocaleString()}` : `${n.toLocaleString()} درهم`;
-
   const toggleCompare = (unitId) => { setCompareList((prev) => { if (prev.includes(unitId)) { showToast(t.toast.compareRemove, "↩"); return prev.filter((id) => id !== unitId); } if (prev.length >= 3) return prev; trackEvent("comparison_view", { unitId }); showToast(t.toast.compare, "⚖️"); return [...prev, unitId]; }); };
 
   const openDetail = (unit) => { setSelectedUnit(unit); trackEvent("view_unit", { unitId: unit.id, unitName: unit.name.en, price: unit.price, tower: unit.tower, unitType: unit.unitType }); };
@@ -465,7 +465,7 @@ export default function AhmedPortal() {
         <span className="crossnav-persona">👤 {vipName}</span>
       </div>
       <header className={`ap-hd ${scrolled ? "sc" : ""}`}>
-        <div className="ap-logo">Vista <b>Family</b></div>
+        <div className="ap-logo">{projectName(lang)}</div>
         <div className="ap-nav">
           <div className="ap-badge">{t.nav.vip}</div>
           {compareList.length > 0 && (<button className="ap-navbtn" onClick={openCompare}>{t.nav.compare}<span className="ap-cmp-count">{compareList.length}</span></button>)}
@@ -500,7 +500,7 @@ export default function AhmedPortal() {
           {UNITS.map((unit) => (
             <div className="ap-card ap-rv" key={unit.id} onClick={() => openDetail(unit)}>
               <div className="ap-card-img"><img src={unit.img} alt={unit.name[lang]} loading="lazy" /><div className="ap-card-fbadge">{unit.feature[lang]}</div><div className="ap-card-status" style={{ background: unit.statusColor }}>{unit.status[lang]}</div></div>
-              <div className="ap-card-body"><h3 className="ap-card-name">{unit.name[lang]}</h3><p className="ap-card-floor">{unit.floor[lang]}</p><div className="ap-card-meta"><span>🛏 {unit.beds[lang]}</span><span>📐 {unit.size[lang]}</span></div><div className="ap-card-price">{unit.priceShort[lang]}</div><div className="ap-card-sqft">{unit.perSqft[lang]}</div></div>
+              <div className="ap-card-body"><h3 className="ap-card-name">{unit.name[lang]}</h3><p className="ap-card-floor">{unit.floor[lang]}</p><div className="ap-card-meta"><span>🛏 {unit.beds[lang]}</span><span>📐 {unit.size[lang]}</span></div><div className="ap-card-price">{fmtCurrency(unit.price)}</div><div className="ap-card-sqft">{fmtCurrency(Math.round(unit.price / unit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div></div>
               <div className="ap-card-acts" onClick={(e) => e.stopPropagation()}>
                 <button className="ap-btn-o ap-btn-sm" onClick={() => openFloor(unit)}>📐 {t.unitActions.floorPlan}</button>
                 <button className="ap-btn-o ap-btn-sm" onClick={() => openBrochure(unit)}>📄 {t.unitActions.brochure}</button>
@@ -551,7 +551,7 @@ export default function AhmedPortal() {
             <div className="ap-fg"><label className="ap-flabel">{t.booking.name}</label><input className={`ap-finput ${formErr.name ? "ap-err" : ""}`} type="text" defaultValue={vipName} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
             <div className="ap-fg"><label className="ap-flabel">{t.booking.email}</label><input className={`ap-finput ${formErr.email ? "ap-err" : ""}`} type="text" inputMode="email" onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
             <div className="ap-fg"><label className="ap-flabel">{t.booking.phone}</label><input className={`ap-finput ${formErr.phone ? "ap-err" : ""}`} type="text" inputMode="tel" onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
-            <div className="ap-fg"><label className="ap-flabel">{t.booking.preferred}</label><select className="ap-fsel" onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">—</option>{UNITS.map((u) => (<option key={u.id} value={u.id}>{u.name[lang]} — {u.priceShort[lang]}</option>))}</select></div>
+            <div className="ap-fg"><label className="ap-flabel">{t.booking.preferred}</label><select className="ap-fsel" onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">—</option>{UNITS.map((u) => (<option key={u.id} value={u.id}>{u.name[lang]} — {fmtCurrency(u.price)}</option>))}</select></div>
             <div className="ap-frow">
               <div className="ap-fg"><label className="ap-flabel">{t.booking.date}</label><input className="ap-finput" type="date" onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
               <div className="ap-fg"><label className="ap-flabel">{t.booking.time}</label><select className="ap-fsel" onChange={(e) => setForm({ ...form, time: e.target.value })}><option value="">—</option><option value="morning">{t.booking.morning}</option><option value="afternoon">{t.booking.afternoon}</option><option value="evening">{t.booking.evening}</option></select></div>
@@ -571,7 +571,7 @@ export default function AhmedPortal() {
           <button className="ap-modal-x" onClick={closeAll}>✕</button>
           <div className="ap-md-gallery"><img src={selectedUnit.img} alt={selectedUnit.name[lang]} /><img src={IMAGES.hero} alt="View 2" /><img src={IMAGES.community} alt="View 3" /></div>
           <div className="ap-modal-body">
-            <div className="ap-md-top"><div><h2 className="ap-md-title">{selectedUnit.name[lang]}</h2><p className="ap-md-floor">{selectedUnit.floor[lang]}</p></div><div style={{ textAlign: lang === "ar" ? "start" : "end" }}><div className="ap-md-price">{selectedUnit.priceDisplay[lang]}</div><div className="ap-md-sqft">{selectedUnit.perSqft[lang]}</div></div></div>
+            <div className="ap-md-top"><div><h2 className="ap-md-title">{selectedUnit.name[lang]}</h2><p className="ap-md-floor">{selectedUnit.floor[lang]}</p></div><div style={{ textAlign: lang === "ar" ? "start" : "end" }}><div className="ap-md-price">{fmtCurrency(selectedUnit.price)}</div><div className="ap-md-sqft">{fmtCurrency(Math.round(selectedUnit.price / selectedUnit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div></div></div>
             <p className="ap-md-desc">{selectedUnit.desc[lang]}</p>
             <div className="ap-md-grid">
               <div className="ap-md-gi"><div className="ap-md-gi-l">{lang === "en" ? "Bedrooms" : "غرف النوم"}</div><div className="ap-md-gi-v">{selectedUnit.beds[lang]}</div></div>
@@ -584,9 +584,9 @@ export default function AhmedPortal() {
               <h4 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.2rem", marginBottom: "1rem" }}>{lang === "en" ? "Payment plan" : "خطة الدفع"}</h4>
               <div className="ap-pay-bar"><div className="ap-pay-seg" style={{ flex: 10, background: "var(--ap-blue)" }} /><div className="ap-pay-seg" style={{ flex: 50, background: "var(--ap-teal)" }} /><div className="ap-pay-seg" style={{ flex: 40, background: "rgba(46,196,182,.35)" }} /></div>
               <div className="ap-pay-legend">
-                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "var(--ap-blue)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{lang === "en" ? "Down payment" : "الدفعة الأولى"} (10%)</div><div className="ap-pay-amt">{fmtAED(selectedUnit.price * 0.1)}</div></div></div>
-                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "var(--ap-teal)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{lang === "en" ? "During construction" : "خلال البناء"} (50%)</div><div className="ap-pay-amt">{fmtAED(selectedUnit.price * 0.5)}</div></div></div>
-                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "rgba(46,196,182,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{lang === "en" ? "On handover" : "عند التسليم"} (40%)</div><div className="ap-pay-amt">{fmtAED(selectedUnit.price * 0.4)}</div></div></div>
+                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "var(--ap-blue)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{lang === "en" ? "Down payment" : "الدفعة الأولى"} (10%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.price * 0.1)}</div></div></div>
+                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "var(--ap-teal)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{lang === "en" ? "During construction" : "خلال البناء"} (50%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.price * 0.5)}</div></div></div>
+                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "rgba(46,196,182,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{lang === "en" ? "On handover" : "عند التسليم"} (40%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.price * 0.4)}</div></div></div>
               </div>
             </div>
             <div className="ap-md-acts">
@@ -650,14 +650,14 @@ export default function AhmedPortal() {
             <div className="ap-modal-body">
               <h2 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.paymentModal.title}</h2>
               <p style={{ color: "var(--ap-t2)", fontSize: ".9rem", marginBottom: ".5rem" }}>{t.paymentModal.subtitle}</p>
-              <p style={{ fontFamily: "var(--ap-serif)", fontSize: "2rem", color: "var(--ap-teal)", marginBottom: "2rem" }}>{t.paymentModal.totalPrice}: {fmtAED(modalUnit.payment.base)}</p>
+              <p style={{ fontFamily: "var(--ap-serif)", fontSize: "2rem", color: "var(--ap-teal)", marginBottom: "2rem" }}>{t.paymentModal.totalPrice}: {fmtCurrency(modalUnit.payment.base)}</p>
               <div className="ap-pm-tabs">
                 <button className={`ap-pm-tab ${payPlan === "60/40" ? "active" : ""}`} onClick={() => setPayPlan("60/40")}><div style={{ fontWeight: 600, marginBottom: ".2rem" }}>{t.paymentModal.plan6040}</div><div style={{ fontSize: ".72rem", opacity: .7 }}>{t.paymentModal.plan6040Desc}</div></button>
                 <button className={`ap-pm-tab ${payPlan === "70/30" ? "active" : ""}`} onClick={() => setPayPlan("70/30")}><div style={{ fontWeight: 600, marginBottom: ".2rem" }}>{t.paymentModal.plan7030}</div><div style={{ fontSize: ".72rem", opacity: .7 }}>{t.paymentModal.plan7030Desc}</div></button>
               </div>
               <div className="ap-pay-bar" style={{ height: "10px" }}>{milestones.map((m, i) => (<div key={i} className="ap-pay-seg" style={{ flex: m.pct, background: m.color }} />))}</div>
               <h4 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.2rem", margin: "1.5rem 0 1rem" }}>{t.paymentModal.milestones}</h4>
-              <div className="ap-pm-ms">{milestones.map((m, i) => (<div className="ap-pm-m" key={i}><div className="ap-pm-m-dot" style={{ background: m.color }} /><div className="ap-pm-m-info"><div className="ap-pm-m-label">{m.label}</div><div className="ap-pm-m-desc">{m.desc}</div></div><div style={{ textAlign: "end" }}><div className="ap-pm-m-pct">{m.pct}%</div><div className="ap-pm-m-val">{fmtAED(modalUnit.payment.base * m.pct / 100)}</div></div></div>))}</div>
+              <div className="ap-pm-ms">{milestones.map((m, i) => (<div className="ap-pm-m" key={i}><div className="ap-pm-m-dot" style={{ background: m.color }} /><div className="ap-pm-m-info"><div className="ap-pm-m-label">{m.label}</div><div className="ap-pm-m-desc">{m.desc}</div></div><div style={{ textAlign: "end" }}><div className="ap-pm-m-pct">{m.pct}%</div><div className="ap-pm-m-val">{fmtCurrency(modalUnit.payment.base * m.pct / 100)}</div></div></div>))}</div>
               <button className="ap-btn-g" style={{ width: "100%", justifyContent: "center", marginTop: "2rem" }} onClick={() => showToast(t.toast.advisorNotified, "📞")}>{t.paymentModal.requestCall}</button>
               <p style={{ textAlign: "center", fontSize: ".72rem", color: "var(--ap-t3)", marginTop: "1rem" }}>{t.paymentModal.disclaimer}</p>
             </div>
@@ -675,7 +675,7 @@ export default function AhmedPortal() {
               const units = compareList.map((id) => UNITS.find((u) => u.id === id)).filter(Boolean);
               const cols = `180px repeat(${units.length}, 1fr)`;
               const rows = [
-                { label: t.compareModal.price, get: (u) => u.priceShort[lang] },
+                { label: t.compareModal.price, get: (u) => fmtCurrency(u.price) },
                 { label: t.compareModal.floor, get: (u) => u.floor[lang] },
                 { label: t.compareModal.bedrooms, get: (u) => u.beds[lang] },
                 { label: t.compareModal.size, get: (u) => u.size[lang] },

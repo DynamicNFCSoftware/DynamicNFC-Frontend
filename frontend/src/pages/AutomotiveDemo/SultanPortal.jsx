@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from '../../i18n';
 import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import { usePortalRegion } from "../../services/portalRegion";
 import './SultanPortal.css';
 import SEO from '../../components/SEO/SEO';
 
@@ -358,6 +359,7 @@ const HERO_IMG = heroImg;
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function SultanPortal() {
   const { lang } = useLanguage();
+  const { projectName, fmtCurrency, secondaryPersona, vipPersona } = usePortalRegion("automotive");
   const [scrolled, setScrolled] = useState(false);
   const [filter, setFilter] = useState("all");
   const [selectedVehicle, setSelectedVehicle] = useState(null);
@@ -369,7 +371,7 @@ export default function SultanPortal() {
   const [toastHiding, setToastHiding] = useState(false);
   const [bookingOk, setBookingOk] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
-  const [form, setForm] = useState({ name: "Sultan Al-Dhaheri", email: "", phone: "", vehicle: "", date: "", time: "", notes: "" });
+  const [form, setForm] = useState({ name: secondaryPersona?.name || vipPersona?.name || "", email: "", phone: "", vehicle: "", date: "", time: "", notes: "" });
   const [formErr, setFormErr] = useState({});
   // Configure state
   const [selColor, setSelColor] = useState(0);
@@ -404,15 +406,13 @@ export default function SultanPortal() {
   // Track entry
   useEffect(() => { trackEvent("auto_portal_entry", { language: lang }); }, []);
 
-  const vipName = lang === "en" ? "Sultan Al-Dhaheri" : "سلطان الظاهري";
+  const vipName = secondaryPersona?.name || vipPersona?.name || "Collector";
 
   const showToast = useCallback((msg, icon = "✓") => {
     setToastHiding(false);
     setToast({ msg, icon });
     setTimeout(() => { setToastHiding(true); setTimeout(() => setToast(null), 300); }, 3000);
   }, []);
-
-  const fmtPrice = (n) => `$${n.toLocaleString()}`;
 
   // Filter vehicles
   const filtered = filter === "all" ? VEHICLES : VEHICLES.filter(v => v.collection === filter);
@@ -494,7 +494,7 @@ export default function SultanPortal() {
       <SEO title="VIP Automotive Portal" description="Personalized VIP automotive portal for family buyers." path="/sultan-portal" />
       {/* ── HEADER ── */}
       <header className={`sp-hd ${scrolled ? "sc" : ""}`}>
-        <Link to="/automotive" className="sp-logo">Dynamic <b>Showroom</b></Link>
+        <Link to="/automotive" className="sp-logo">{projectName(lang)}</Link>
         <div className="sp-nav">
           <div className="sp-badge">{t.nav.vip}</div>
           {compareList.length > 0 && (
@@ -513,7 +513,7 @@ export default function SultanPortal() {
         <Link to="/automotive/demo/showroom">Public Showroom</Link>
         <Link to="/automotive/dashboard">Dashboard</Link>
         <Link to="/automotive/demo/ai">AI Pipeline</Link>
-        <span className="crossnav-persona">👤 {lang === "ar" ? "سلطان الظاهري" : "Sultan Al-Dhaheri"}</span>
+        <span className="crossnav-persona">👤 {vipName}</span>
       </div>
 
       {/* ── HERO ── */}
@@ -611,8 +611,8 @@ export default function SultanPortal() {
                   <span className="sp-vcard-spec">{v.specs.acceleration}</span>
                   <span className="sp-vcard-spec">{v.specs.drivetrain[lang]}</span>
                 </div>
-                <div className="sp-vcard-price">{t.card.from} {fmtPrice(v.price)}</div>
-                <div className="sp-vcard-lease">{fmtPrice(v.monthlyLease)}{t.card.perMonth}</div>
+                <div className="sp-vcard-price">{t.card.from} {fmtCurrency(v.price)}</div>
+                <div className="sp-vcard-lease">{fmtCurrency(v.monthlyLease)}{t.card.perMonth}</div>
               </div>
               <div className="sp-vcard-acts" onClick={(e) => e.stopPropagation()}>
                 <button className="sp-btn-o sp-btn-sm" onClick={() => openDetail(v)}>🔍 {t.card.explore}</button>
@@ -665,7 +665,7 @@ export default function SultanPortal() {
               <label className="sp-flabel">{t.booking.vehicle}</label>
               <select className="sp-fsel" onChange={(e) => setForm({ ...form, vehicle: e.target.value })}>
                 <option value="">—</option>
-                {VEHICLES.map(v => <option key={v.id} value={v.id}>{lang === "ar" ? v.nameAr : v.name} — {fmtPrice(v.price)}</option>)}
+                {VEHICLES.map(v => <option key={v.id} value={v.id}>{lang === "ar" ? v.nameAr : v.name} — {fmtCurrency(v.price)}</option>)}
               </select>
             </div>
             <div className="sp-frow">
@@ -716,8 +716,8 @@ export default function SultanPortal() {
                   <p className="sp-md-coll">{COLLECTIONS[selectedVehicle.collection]?.name[lang]}</p>
                 </div>
                 <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
-                  <div className="sp-md-price">{fmtPrice(selectedVehicle.price)}</div>
-                  <div className="sp-md-lease">{fmtPrice(selectedVehicle.monthlyLease)}{t.card.perMonth} {t.finance.lease}</div>
+                  <div className="sp-md-price">{fmtCurrency(selectedVehicle.price)}</div>
+                  <div className="sp-md-lease">{fmtCurrency(selectedVehicle.monthlyLease)}{t.card.perMonth} {t.finance.lease}</div>
                 </div>
               </div>
 
@@ -814,10 +814,10 @@ export default function SultanPortal() {
                       <button className={`sp-fin-tog-btn ${finMode === "finance" ? "active" : ""}`} onClick={() => setFinMode("finance")}>{t.finance.financeBtn}</button>
                     </div>
                     <div className="sp-fin-field">
-                      <div className="sp-fin-label"><span>{t.finance.vehiclePrice}</span><span style={{ color: "var(--sp-blue)" }}>{fmtPrice(selectedVehicle.price)}</span></div>
+                      <div className="sp-fin-label"><span>{t.finance.vehiclePrice}</span><span style={{ color: "var(--sp-blue)" }}>{fmtCurrency(selectedVehicle.price)}</span></div>
                     </div>
                     <div className="sp-fin-field">
-                      <div className="sp-fin-label"><span>{t.finance.downPayment}</span><span style={{ color: "var(--sp-blue)" }}>{downPct}% — {fmtPrice(Math.round(selectedVehicle.price * downPct / 100))}</span></div>
+                      <div className="sp-fin-label"><span>{t.finance.downPayment}</span><span style={{ color: "var(--sp-blue)" }}>{downPct}% — {fmtCurrency(Math.round(selectedVehicle.price * downPct / 100))}</span></div>
                       <input type="range" className="sp-fin-slider" min="10" max="50" step="5" value={downPct} onChange={(e) => { setDownPct(Number(e.target.value)); trackEvent("finance_calc", { vehicleId: selectedVehicle.id, downPct: e.target.value }); }} />
                     </div>
                     <div className="sp-fin-field">
@@ -833,7 +833,7 @@ export default function SultanPortal() {
                     </div>
                     <div className="sp-fin-result">
                       <div className="sp-fin-result-label">{t.finance.monthlyPayment}</div>
-                      <div className="sp-fin-result-val">{fmtPrice(Math.round(monthly))}</div>
+                      <div className="sp-fin-result-val">{fmtCurrency(Math.round(monthly))}</div>
                     </div>
                     <button className="sp-btn-g" style={{ width: "100%", justifyContent: "center" }} onClick={() => {
                       trackEvent("quote_request", { vehicleId: selectedVehicle.id, vehicleName: selectedVehicle.name, mode: finMode, downPct, term: finTerm, monthly: Math.round(monthly) });
@@ -864,14 +864,14 @@ export default function SultanPortal() {
                 const units = compareList.map(id => VEHICLES.find(v => v.id === id)).filter(Boolean);
                 const cols = `180px repeat(${units.length}, 1fr)`;
                 const rows = [
-                  { label: t.compare.price, get: (v) => fmtPrice(v.price) },
+                  { label: t.compare.price, get: (v) => fmtCurrency(v.price) },
                   { label: t.compare.engine, get: (v) => v.specs.engine[lang] },
                   { label: t.compare.hp, get: (v) => v.specs.hp },
                   { label: t.compare.torque, get: (v) => v.specs.torque },
                   { label: t.compare.accel, get: (v) => v.specs.acceleration },
                   { label: t.compare.topSpeed, get: (v) => v.specs.topSpeed },
                   { label: t.compare.drivetrain, get: (v) => v.specs.drivetrain[lang] },
-                  { label: t.compare.lease, get: (v) => `${fmtPrice(v.monthlyLease)}${t.card.perMonth}` },
+                  { label: t.compare.lease, get: (v) => `${fmtCurrency(v.monthlyLease)}${t.card.perMonth}` },
                 ];
                 return (
                   <div className="sp-cmp-grid">
