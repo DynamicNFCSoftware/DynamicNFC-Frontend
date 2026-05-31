@@ -1,12 +1,381 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-14 EOD (America/Vancouver) — Polish branch merged to main last night; today shipped **LANG_INSTRUCTIONS fix** (Arabic brief body now renders) + **post-merge security & SW cleanup**. New production bug surfaced during QA: **Marketplace tracking writes silent** (Firestore analytics dead, BroadcastChannel still flows).
-**Session:** Cowork — Arabic body verify + diagnose write path (Firestore field-tree audit confirmed `byLang.ar.paragraph1` was English because LLM prompt missed `lang`) → Cursor 1-file fix → deploy verify → post-merge cleanup commits → Marketplace tracking QA → tracking gap documented for separate sprint
+**Last updated:** 2026-05-28 EOD (America/Vancouver) — Cowork session: Phase 2b.RE shipped → 3 portal 4-language parity (ES + FR added to VIP + Ahmed + Marketplace, ~820 strings) + persona gender field + AR floorPlan disclaimer bug fix + region-aware lang cycle button → ES/FR ErrorBoundary crash (UNITS bilingual data undefined) → `tr()` helper hotfix + Cursor proaktif scope extension (AMENITIES + INVEST + hero ternary) → atomic squash commit + push + production deploy. **Phase 2c.RE Data Architecture next session — canonical+overlay pattern, per-region unit names, 4-language overlay.**
+**Session:** Cowork — handoff read → Phase 2b kararları (translation provider = Claude inline; data shape = hibrit canonical+overlay RE / region-prefixed Auto) → sample ES onay → 3 portal × ES+FR translation bundles → Phase 2b.RE directive + Cursor execute → ES/FR sahnelerinde Marketplace+VIP+Ahmed ErrorBoundary crash → root cause: UNITS array bilingual `{en, ar}` data shape, `unit.X[lang]` ES/FR'de undefined → hotfix directive (`tr()` helper + mekanik replace ~75 site) → Cursor execute, proaktif AMENITIES/INVEST/hero ternary genişletmesi → crash gitti → karar: deploy şimdi + Phase 2c'yi başlat (in-place 4-dil eklemek Phase 2c canonical refactor'ünde silinecekti, boşa enerji).
 **Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — 2026-05-14 EOD (Cowork session)
+## ▶︎ RESUME HERE — 2026-05-28 EOD (Phase 2c.RE Data Architecture başlat)
+
+**Status:** Phase 2b.RE production'a deploy edildi (`https://dynamicnfc.ca`). ES/FR sahnelerinde UI copy + buton + form + modal'lar 100% lokalize; UNITS data layer (unit name/floor/beds/desc/features) + AMENITIES (8 amenity × 2 field) + INVEST (4 stat × 2 field) hala `{en, ar}` bilingual shape'inde — `tr()` helper EN fallback yapıyor. Demo'da Mexico ES + Canada FR'de "Sky Penthouse / FLOOR 42-44 / 4 Bedrooms / Infinity Edge Pool / Rental yield" gibi field'lar İngilizce kalıyor. **Phase 2c.RE Data Architecture sprint'i bu boşluğu kalıcı yapıyla kapatıyor — canonical+overlay pattern, per-region unit names.**
+
+### Tomorrow's first move
+
+1. **Karar al — per-region unit naming.** Phase 2c canonical+overlay pattern Mexico'da "Suite Cielo / Torre Sol", USA'da "Skyline Penthouse / Manhattan Tower", Canada'da "Harbour Penthouse / Vista North Tower" gibi region-spesifik isimler kullanır. Bu branding kararı — demo'da göze çarpan ilk şey. Claude (next session) 3 portal × 4 region × 3 unit = 36 unit ismini önerir, Oguzhan onaylar.
+
+2. **Phase 2c.RE directive yazımı — Claude scope:**
+   - **Yeni dosya:** `frontend/src/config/realEstateUnitData.js`
+   - **Export:** `UNITS` (canonical numeric — id, beds, baths, sqftBase, priceBase, type), `UNIT_REGION_OVERLAY[regionId][unitId] = { name: { en, ar, es, fr }, tower: {…}, view: {…}, desc: {…}, features: [{…}] }`, `PRICE_MULTIPLIER`, `getUnits(regionId, lang)` helper.
+   - **Aynı pattern:** `AMENITIES_REGION_OVERLAY` (Gulf minaret/dome ambient; Canada waterfront ambient), `INVEST_REGION_OVERLAY` (yields per region — Gulf 8.2%, USA 6.5%, Mexico 9%, Canada 5%).
+   - **portalRegion.js helper genişletme:** `usePortalRegion` return'una `units` array eklenir (regionId+lang ile pre-resolved).
+   - **3 portal render-site swap:** Mevcut local `const UNITS = [...]` siliniyor, `units` helper'dan tüketiliyor. `tr()` helper ihtiyacı kalkıyor.
+   - **Companion bundles:** `Phase2c_VIP_data.md`, `Phase2c_Ahmed_data.md`, `Phase2c_Marketplace_data.md` — sub-agent'la paralel üretim.
+
+3. **3 paralel sub-agent** — her portal için bir, 4 region × 3 unit × 4 dil tam veri üretsin. Per-region unit names + descriptions + features arrays + amenity localizations.
+
+4. **Cursor execute** → verify (build PASS + grep checkpointleri) → 8 senaryo QA (4 region × 2 dil her sahne crash-free + unit isimleri region-spesifik) → atomic commit + push + deploy.
+
+5. **Phase 2c.RE deploy sonrası:** Phase 2b.Auto başlar (VEHICLES_GULF/USA/MEXICO/CANADA region-prefixed arrays + ES/FR + `nameAr` → `name{en/ar}` schema fix).
+
+### What shipped today
+
+| Order | Item | State |
+|---|---|---|
+| 1 | Phase 2b.RE ana paket — `regionConfig.personas[].gender` field, 3 portal'a `welcomeMale`/`welcomeFemale`, ES + FR LANG blokları (~820 string), AR `floorPlanModal.disclaimer` bug fix (VIP + Ahmed), `nav.lang` region-aware cycle (`LANG_LABEL[nextLang]`), Marketplace flat AR duplicate keys cleanup (~100 satır), `document.documentElement.lang` ES/FR respect | Cursor execute, verify PASS, ES/FR'de ErrorBoundary crash |
+| 2 | Hotfix — `tr(obj) = obj?.[lang] ?? obj.en` helper 3 portal'a, ~75 mekanik `unit.X[lang]` → `tr(unit.X)` swap. Plus Cursor proaktif yakalama: `AMENITIES[lang]`/`INVEST[lang]`/`a[lang]`/hero h1 hardcoded ternary | Cursor execute, verify PASS |
+| 3 | Atomic squash commit + push + production deploy | ✅ Live `dynamicnfc.ca` |
+
+### Files modified today
+
+| File | Change |
+|---|---|
+| `config/regionConfig.js` | `gender: 'male'\|'female'` 30 persona'ya eklendi (11 female, 19 male) |
+| `pages/VIPPortal/VIPPortal_Definitive.jsx` | ES+FR LANG blokları (~132+132=264 string), `welcomeMale`/`welcomeFemale` (EN+AR+ES+FR), `greeting` kaldırıldı, AR floorPlanModal.disclaimer fix, `tr()` helper, ~25 mekanik `[lang]` swap, `LANG_LABEL`+`nextLang` region-aware cycle button |
+| `pages/AhmedPortal/AhmedPortal.jsx` | Aynı pattern VIP (~260 ES+FR string), `familyPersona.gender` aware welcome, AR disclaimer fix, `tr()` helper, ~20 swap |
+| `pages/MarketplacePortal/MarketplacePortal.jsx` | ES+FR LANG (~296 string), flat AR duplicate keys silindi, `LANG_LABEL[nextLang]`, hero zaten `projectName(lang)` kullanıyordu, `document.documentElement.lang` ES/FR respect, `tr()` helper, ~30 swap, hardcoded `lang === "en" ? X : Y` ternary'leri `t.X` i18n key'lerine çevrildi |
+
+### Open threads
+
+1. **Phase 2c.RE Data Architecture** (next session — Claude scope).
+   - **Pattern:** Hibrit — RE canonical+overlay, Auto region-prefixed (Phase 2b'de karar verildi).
+   - **Per-region unit naming** branding kararı önce — Claude öneri sunar, Oguzhan onaylar.
+   - **3 paralel sub-agent** veri üretimi, sonra Cursor execute.
+   - Tek karar bekliyor: per-region unit names + tower names final list.
+
+2. **Phase 2b.Auto** (Phase 2c.RE sonrası):
+   - VEHICLES_GULF/USA/MEXICO/CANADA region-prefixed arrays (gerçek region inventory: Mercedes Riyadh, Cadillac Manhattan, Lexus Vancouver)
+   - ES + FR translations (~780 string)
+   - `nameAr` field → `name{en/ar}` schema unification
+
+3. **Phase 2b.RE Marketplace LANG dead code:** `hero.title: "Vista\nResidences"` artık render edilmiyor (`projectName(lang)` çağrılıyor). Cleanup ayrı PR (`chore(i18n): marketplace hero.title dead key removal`).
+
+4. **Carry-over:** Phase 2c sonrası → Phase 2b.Auto → FAZ 5 legacy dashboard retire → Apple Dev / Sentry / pitch deck refresh.
+
+### Lessons added today (high-value, candidate for CLAUDE.md §15)
+
+- **Build PASS ≠ runtime safe — i18n sprintleri için mandatory dev mode crash check.** Cursor'un `npm run build` PASS verify'ı sözdizimi kontrol; UNITS bilingual data crash sadece runtime'da yakalanır. CLAUDE.md §15 QA Verification Protocol'e ekle: **i18n sprint sonrası `npm run dev` ile her yeni dil için en az 1 portal screenshot — ErrorBoundary trigger ediyor mu?** Bu yakalanmazsa pilot demoda canlı patlar.
+- **Bilingual data layer i18n sprintinden ayrı, paralel sorun.** Phase 2b LANG'ı 4 dile çıkardı; UNITS/AMENITIES/INVEST `{en, ar}` bilingual data layer ayrı scope ama directive bunu kapsamadı. **Yeni directive checklist'i:** "i18n adding language X — does any data array shaped `{ en, ar }` exist? Audit + fallback + Phase XX data refactor plan."
+- **`undefined[key]` React'te silent — sonra başka bir DOM operation'da patlar.** ErrorBoundary "Something went wrong" mesajı root cause'u gizler. Console filter aktifse hata mesajları görünmez. **Gelecek debug:** console filter sıfırla → tam stack trace → root cause. Filter kapatmadan tahmin yapmak boşa enerji.
+- **Cursor "FIXED" raporu hypothesis, fact değil — özellikle build PASS verify'ı runtime crash'i kanıtlamaz.** Phase 2b verify steps "build PASS" + "grep checkpoints" idi; her ikisi de geçti ama production crash etti. CLAUDE.md §15 QA Verification Protocol'e ek: **"Cursor verify suite tek başına sufficient değil — Oguzhan production-mode browser screenshot zorunlu."**
+- **Cursor proaktif refactor reflexi gelişiyor.** Bu sprintte directive `unit.X[lang]` swap'ı için yazılmıştı; Cursor `AMENITIES[lang]`, `INVEST[lang]`, `a[lang]`, hero h1 hardcoded ternary, `document.documentElement.lang` ES/FR extension'larını **kendisi** yakaladı. Trust building — gelecek directive'lerde Cursor'a daha yüksek autonomi vermek (mekanik kapsama daha esnek).
+- **Code Simplicity Mandate win:** Hotfix tek 1-liner helper `tr(obj) = obj?.[lang] ?? obj.en`, ~75 mekanik replace. Defensive wrapper class veya sub-component yazılmadı.
+- **In-place vs canonical refactor karar prensibi:** Phase 2b sonrası "ES/FR data'da EN gözüküyor" durumunda iki yol: (A) bilingual `{en, ar}` field'lara `es`+`fr` ekle (~900 string), (B) Phase 2c canonical+overlay refactor'unu erken başlat. **B doğru çünkü** Phase 2c'de unit isimleri zaten per-region olacak (Sky Penthouse Vancouver'da "Harbour Penthouse"), aynı veri 2 kez yazılır. **Lesson:** Bir refactor planlanmışsa ve geçici fix o refactor'u ezecekse, refactor'u öne çek.
+
+### Working-tree state (when this handoff was written)
+
+```
+On branch main
+Your branch is up to date with 'origin/main' (Phase 2b.RE merged + deployed).
+
+Pending uncommitted:
+        modified:   CLAUDE_HANDOFF.md ← bu update
+Untracked (Cowork session outputs — referans için):
+        outputs/PHASE_2B_RE_TRANSLATION_DIRECTIVE.md
+        outputs/PHASE_2B_RE_HOTFIX_UNITS_LANG_FALLBACK.md
+        outputs/Phase2b_RE_translations_VIPPortal.md
+        outputs/Phase2b_RE_translations_AhmedPortal.md
+        outputs/Phase2b_RE_translations_MarketplacePortal.md
+```
+
+### Tone for resume
+
+Bugün clean execution + 1 ders. Phase 2b directive'i i18n sprint'inde bilingual data audit'i kapsamamıştı — runtime crash. Hotfix hızlı uygulandı, Cursor proaktif scope'u genişletti. Phase 2c'yi hemen başlatma kararı disiplinli — in-place 4-dil eklemek Phase 2c canonical refactor'ünde silinecekti. Open next session with: *"Per-region unit naming önerileri → onay → directive yaz → 3 paralel sub-agent paralel üretim → Cursor execute."*
+
+---
+
+## ✅ CLOSED — 2026-05-26 EOD (Currency Formatter — Lang-Aware + Forced Prefix)
+
+**Status:** All currency rendering across 6 demo portals now respects (region, lang) tuple. Mexico + Canada forced "MX$" / "CA$" prefix to disambiguate from USD (Intl native renders bare "$" in both). Atomic commit `de16aa3d` pushed to origin/main. **Production deploy pending tomorrow + manual 8-scenario QA + docs commit.**
+
+### Tomorrow's first move
+
+1. **Restart Vite dev + hard refresh** (yesterday's Canada screenshot showed cached bundle):
+   ```powershell
+   cd C:\Users\oguzh\DynamicNFC\frontend
+   npm run dev
+   ```
+   Then `Ctrl+Shift+R` in browser.
+
+2. **8-scenario QA — REQUIRED before deploy** (yesterday's lesson: "Build PASS + spot check 2 region ≠ all 4 verified"):
+
+   | Region × Lang | Expected output |
+   |---|---|
+   | Gulf EN | `SAR 12,500,000` (Latin digits + SAR prefix) |
+   | Gulf AR | `١٢٬٥٠٠٬٠٠٠ ر.س.` (Arabic digits + symbol) |
+   | USA EN | `$12,500,000` |
+   | USA ES | `$12,500,000` (es-US locale + USD) |
+   | Mexico ES | `MX$12,500,000` (forced prefix) |
+   | Mexico EN | `MX$12,500,000` |
+   | Canada EN | `CA$12,500,000` (forced prefix) |
+   | Canada FR | `CA$12 500 000` (French digit grouping preserved) |
+
+   Test across: VIPPortal (Khalid), AhmedPortal, MarketplacePortal, AutomotivePortal, SultanPortal. At least one portal per region.
+
+3. **Production deploy:**
+   ```powershell
+   cd C:\Users\oguzh\DynamicNFC
+   firebase deploy --only hosting
+   ```
+
+4. **Docs + directives commit** (post-deploy, second atomic commit):
+   - `CLAUDE.md` modified (today's §10 tracking architecture correction + §15 region-QA lesson)
+   - `CLAUDE_HANDOFF.md` modified (this file)
+   - 4 directive `.md` untracked (PORTAL_BRIDGE_DUAL_WRITE, SPRINT2_3_PART_B_PHASE1_MARKETPLACE, SPRINT2_3_PART_B_PHASE2A_HOTFIX_RE_CURRENCY, SPRINT2_3_PART_B_PHASE2A_PORTALS)
+   - Add `.claude/settings.local.json` to `.gitignore` (handoff backlog item)
+   - Commit: `docs(handoff+directives): Phase 2a currency sprint trail`
+
+### What shipped today (chronological)
+
+| Order | Item | Commit |
+|---|---|---|
+| 1 | Marketplace 3 priceRange render sites → fmtCurrency + `priceFrom` i18n key (en+ar) | `8b0989f8` (squashed into atomic) |
+| 2 | `formatCurrency(value, regionId, lang)` — locale follows lang via `getEffectiveLocale`; Mexico forced "MX$" prefix | `8b0989f8` |
+| 3 | `usePortalRegion(sectorId, lang)` — lang threaded through fmtCurrency closure + useMemo dep | `8b0989f8` |
+| 4 | 6 portal callsites: `usePortalRegion("sector", lang)` — Marketplace `lang` declaration reordered before helper call | `8b0989f8` |
+| 5 | Canada added to `FORCED_CURRENCY_PREFIX = { mexico: 'MX$', canada: 'CA$' }` — `en-CA + CAD` Intl returns bare "$" same as `es-MX + MXN` | `8b0989f8` |
+| 6 | Atomic commit + push (post worktree cleanup) | `515fb832..de16aa3d main -> main` |
+
+### Files modified today (single commit `8b0989f8` → push `de16aa3d`)
+
+| File | Change |
+|---|---|
+| `config/regionConfig.js` | `formatCurrency(value, regionId, lang)` signature; `FORCED_CURRENCY_PREFIX` dict (mexico:'MX$', canada:'CA$'); locale resolved via `getEffectiveLocale(regionId, lang)` when lang provided; Intl bypass for forced-prefix regions |
+| `services/portalRegion.js` | `usePortalRegion(sectorId, lang)` param added; fmtCurrency closure binds lang; useMemo deps include lang; inner `projectName: (l)` renamed to avoid shadow |
+| `pages/MarketplacePortal/MarketplacePortal.jsx` | L645/L719/L830 `unit.priceRange[lang]` → `{t.card.priceFrom}{fmtCurrency(unit.priceNum)}`; `card.priceFrom` i18n key added (en: "From ", ar: "من "); `lang` declaration moved before usePortalRegion call |
+| `pages/VIPPortal/VIPPortal_Definitive.jsx` | `, lang` arg to usePortalRegion |
+| `pages/AhmedPortal/AhmedPortal.jsx` | `, lang` arg |
+| `pages/AutomotiveDemo/AutomotivePortal.jsx` | `, lang` arg |
+| `pages/AutomotiveDemo/SultanPortal.jsx` | `, lang` arg |
+| `pages/AutomotiveDemo/PublicShowroom.jsx` | `, lang` arg (projectName-only consumer, threaded for consistency) |
+
+### Root cause walkthrough (for future debug session)
+
+**Stage 1 — Marketplace 3 sites still hardcoded:** Phase 1 commit swapped only payment modal `fmtCurrency(payment.base)`. Cards (L645), detail modal (L719), compare modal (L830) kept reading legacy `unit.priceRange[lang]` = `"From AED 12M"` hardcoded. User perception was Gulf+Canada "OK" because (a) Gulf user sees "AED" as Arab-adjacent and didn't notice SAR mismatch, (b) Canada test was likely VIP/Ahmed (already fmtCurrency) and missed Marketplace. USA+Mexico immediately flagged "AED" as wrong.
+
+**Stage 2 — `formatCurrency` ignored active lang:** `Intl.NumberFormat(region.locale, ...)` always used `region.locale` (Gulf = `ar-SA`). User switching to EN in Gulf still saw Arabic digits + Arabic SAR symbol. Fix: `formatCurrency(value, regionId, lang)` — when lang provided, resolve locale via `getEffectiveLocale(regionId, lang)` which maps `gulf.en → "en-US"`.
+
+**Stage 3 — Mexico bare "$" (USD ambiguous):** `Intl.NumberFormat('es-MX', { currency: 'MXN' })` returns `"$12,500,000"` because MXN's native symbol in Mexican locale IS `$`. Indistinguishable from USD. Fix: `FORCED_CURRENCY_PREFIX = { mexico: 'MX$' }` — bypass Intl, use `${prefix}${value.toLocaleString(locale)}`.
+
+**Stage 4 — Canada same trap:** `Intl.NumberFormat('en-CA', { currency: 'CAD' })` also returns bare `"$"`. Fix: extend forced-prefix dict to `{ mexico: 'MX$', canada: 'CA$' }`. Data-driven (one block, two regions) instead of two branch arms — Code Simplicity Mandate.
+
+### Open threads
+
+1. **8-scenario QA + production deploy** — tomorrow first thing (see above).
+2. **Zombi UNITS data fields** — `priceDisplay` / `priceShort` / `perSqft` (VIP+Ahmed), `priceRange` (Marketplace) all still in UNITS arrays as hardcoded en/ar pairs. **No longer rendered** but bloat data and risk confusing future devs. Phase 2b data refactor: replace these with single numeric `price` (already exists) + everything else rendered via `fmtCurrency`. Clean removal task — Cursor-scope.
+3. **Phase 2b decisions blocked on user:**
+   - Translation provider (manual / LLM / DeepL) for ES + FR + AR portal copy
+   - Per-region unit data scope — 4 regions × 3 units = 12 unit blocks per RE portal (or one canonical unit array with region-keyed display variants)
+   - Per-region vehicle data — 4 × 9 = 36 entries for Auto portals
+   - LANG.es + LANG.fr translation tables on 5 portals (~10 large translation blocks)
+   - AR persona transliteration field (`regionConfig.personas[].nameAr`)
+4. **Yacht demo portals still planned, not built** — `/yacht`, `/yacht/demo`, `/yacht/demo/vip`, `/yacht/demo/showroom`, `/yacht/demo/ai`. Region-aware from day one.
+5. **Carry-over from yesterday:** FAZ 5 legacy cleanup (retire `/enterprise/crmdemo/dashboard` + `/automotive/dashboard`); Apple Developer enrollment; Sentry setup; pitch deck refresh.
+
+### Lessons added today (high-value, candidate for CLAUDE.md)
+
+- **`Intl.NumberFormat` is browser- and locale-dependent for ambiguous currencies.** `es-MX + MXN` and `en-CA + CAD` both render bare `"$"` in Chrome — indistinguishable from USD. Demo-critical currency display for these regions **must bypass Intl** with a forced prefix dict. Predictable output > native locale purism for sales demos. Pattern: `FORCED_CURRENCY_PREFIX = { mexico: 'MX$', canada: 'CA$' }` keyed by `region.id`.
+- **Currency formatters must explicitly accept active `lang`, not derive from `region.locale`.** Bilingual regions (Gulf EN/AR, Canada EN/FR, Mexico ES/EN) break the "locale follows region" assumption — when user is in Gulf EN, they expect Latin digits + currency code, not Arabic digits. Signature: `formatCurrency(value, regionId, lang)`. Pass `lang` from the same state that drives portal copy.
+- **"All render sites swapped" requires mechanical grep proof.** Phase 1 Marketplace commit was directive-faithful but missed 3 of 5 render sites because the directive said "swap 2 currency renders" instead of "list all priceRange usages and swap each one to fmtCurrency". **New pattern for region/currency swap directives:** include a verify step `grep "fieldName\[lang\]" → must be zero results post-edit`. Mechanical check catches what visual QA misses.
+- **Cursor Cloud Agent worktree orphans are silent `git status` traps.** Cursor creates worktrees under `.claude/worktrees/<name>/` (and under `Ex Files/2026-04-20_1323/.claude/worktrees/<name>/` when its job dir is preserved). When the parent `.git/worktrees/<name>/` directory is later cleaned up, the orphan `.git` **file** in the working tree still points to the deleted target — every `git status` then dies with `fatal: not a git repository: <deleted-path>`. **`git worktree list` ignores them** (since they're invalid), **`git worktree prune` doesn't reach them** (because the registry has already lost them). **Only fix:** manual `Get-ChildItem -Recurse -Force -Filter ".git"` on working tree, then `Remove-Item -Recurse -Force` on each orphan pointer directory. Add to onboarding runbook.
+- **`git pull --rebase --autostash` is the answer when working tree is dirty post-build.** Build artifacts + CRLF normalization on Windows leave the tree "modified" after a clean commit. Manual `git stash` invokes `git status` (which also crashes on worktree orphans); `--autostash` is the cleaner path when supported. Worth memorizing.
+- **Code Simplicity Mandate win:** Mexico + Canada both needed forced prefix. First instinct was two if-branches. Refactored to single dictionary `FORCED_CURRENCY_PREFIX = { mexico: 'MX$', canada: 'CA$' }` with one branch check. Two-line lookup beats six-line branching. Future regions with same Intl ambiguity (any future ISO-4217 currency whose native symbol is `$`) extend the dict, not the code.
+
+### Working-tree state (when this handoff was written)
+
+```
+On branch main
+Your branch is up to date with 'origin/main'.
+Changes not staged for commit:
+        modified:   CLAUDE.md
+        modified:   CLAUDE_HANDOFF.md
+Untracked files:
+        .claude/settings.local.json   ← add to .gitignore
+        frontend/directives/PORTAL_BRIDGE_DUAL_WRITE_DIRECTIVE.md
+        frontend/directives/SPRINT2_3_PART_B_PHASE1_MARKETPLACE_DIRECTIVE.md
+        frontend/directives/SPRINT2_3_PART_B_PHASE2A_HOTFIX_RE_CURRENCY.md
+        frontend/directives/SPRINT2_3_PART_B_PHASE2A_PORTALS_DIRECTIVE.md
+        shareholders/                  ← purpose unknown, ask user before commit/ignore
+```
+
+Cosmetic cleanup remaining: dead branch metadata in `.git/config` (`[branch "claude/flamboyant-dhawan"]`, `[branch "claude/naughty-haibt"]`, plus older Cursor sprint branches). Non-blocking. Remove via `git config --remove-section "branch.<name>"` when convenient.
+
+### Tone for resume
+
+Today was a "thought we shipped, then realized it shipped wrong" day, then a clean root-cause cascade. Each fix uncovered the next layer: Marketplace legacy field → Gulf EN locale → Mexico bare $ → Canada bare $ → atomic. Git workflow had genuine friction (orphan worktree pointers across `Ex Files/`) but the diagnostic path was clean once we stopped guessing and ran `Get-ChildItem -Filter ".git"`. Open next session with: *"npm run dev → 8 senaryo screenshot → her şey OK ise deploy + docs commit."*
+
+---
+
+## ✅ CLOSED — 2026-05-25 EOD (Phase 2a Currency Bug — USA + Mexico)
+
+**Status:** Bridge dual-write + Marketplace Phase 1 + Portals Phase 2a + RE Currency Hotfix → tüm Cursor execute oldu, build PASS, **Gulf + Canada QA ✅**, **USA + Mexico hâlâ yanlış sembol gösteriyor** (user beklenen "$" / "MX$" yerine "AED" benzeri çıktı görüyor). Root cause kazılmamış.
+
+### Tomorrow's first move
+
+1. **USA + Mexico debug** — `frontend/src/config/regionConfig.js` L152-162:
+   ```js
+   export function formatCurrency(value, regionId) {
+     // Intl.NumberFormat path + fallback `${region.currencySymbol}${value.toLocaleString()}`
+   }
+   ```
+   Console'da test:
+   ```js
+   formatCurrency(12500000, 'usa')      // beklenen "$12,500,000"
+   formatCurrency(12500000, 'mexico')   // beklenen "MX$12,500,000" veya "$12,500,000"
+   ```
+
+2. **Hipotez listesi (sıralı):**
+   - **H1 (en olası):** `useRegion()` localStorage'dan eski 'gulf' değerini hydrate ediyor; USA/Mexico seçimi unified topbar'da yapılıyor ama portal yeni tabda açıldığında `ud-region` localStorage key reload'da regress ediyor. **Debug:** Portal mount'unda `console.log(localStorage.getItem('ud-region'), regionId)` karşılaştır.
+   - **H2:** `getRegion('usa')` veya `getRegion('mexico')` fallback'le 'gulf' dönüyor (typo veya key mismatch). **Debug:** `regionConfig.REGIONS` object key'lerini bir grep et — 'usa' / 'mexico' tam string mi yoksa 'USA' / 'Mexico' mi?
+   - **H3:** `Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })` browser'da çalışıyor ama Mexico region için currency 'MXN' set ama symbol 'MX$' fallback'e düşmeyip Intl native '$' dönüyor ve user bunu "AED" zannediyor. **Debug:** User screenshot iste — gerçekten "AED" mi yoksa "$" mı?
+
+3. **Debug yöntemi (structured log per Debug Conventions):**
+   ```js
+   console.log(JSON.stringify({
+     sessionId: "dbg-0525-curr", runId: 1, hypothesisId: "H1",
+     location: "VIPPortal:mount",
+     message: "regionContext",
+     data: { regionId, currency, symbol: currencySymbol, lsRegion: localStorage.getItem('ud-region'), formatted: fmtCurrency(12500000) },
+     timestamp: Date.now()
+   }));
+   ```
+   Senaryo: USA seç → VIPPortal yeni tab → console oku → hangi alan beklenenden farklı?
+
+4. Fix landıktan sonra **Phase 2b directive** yazılır (translation provider + per-region unit data scope soruları).
+
+### What shipped today (chronological)
+
+| Order | Item | Status |
+|---|---|---|
+| 1 | Bridge dual-write (`portalFirestoreBridge.js`) | Pushed `85686583`, deployed, QA ✅ (behaviors + tenants/{uid}/events both write) |
+| 2 | Marketplace Phase 1 — `usePortalRegion` helper + 5-point edit | Local build PASS, committed/pushed by user (Phase 1 land confirmation alındı), deployed |
+| 3 | Portals Phase 2a — 5 portala helper apply + `secondaryPersona` ekleme | Local build PASS, pending commit (Cursor done, user QA Gulf+Canada ✅) |
+| 4 | RE Currency Hotfix — VIP + Ahmed 8 render site swap | Local build PASS, pending commit, **Gulf+Canada OK / USA+Mexico BUG** |
+
+### Files modified today
+
+| File | Change |
+|---|---|
+| `services/portalFirestoreBridge.js` | 26L → 34L. `if (!user) return;` silindi. Dual-write: `behaviors` always + `tenants/{uid}/events` if `auth.currentUser`. |
+| `services/portalRegion.js` | **NEW** (50L). Helper: `regionId, region, currency, currencySymbol, projectName(lang), personas, vipPersona, secondaryPersona, familyPersona, fmtCurrency`. |
+| `pages/MarketplacePortal/MarketplacePortal.jsx` | 864L → 866L. Region brand/currency + 2 currency render. |
+| `pages/VIPPortal/VIPPortal_Definitive.jsx` | +Helper apply, `vipName` from `vipPersona`, form name, logo `projectName(lang)`, 6 unit render → `fmtCurrency(unit.price)`. |
+| `pages/AhmedPortal/AhmedPortal.jsx` | +Helper apply, `familyPersona`, logo, 4 unit render swap. |
+| `pages/AutomotiveDemo/AutomotivePortal.jsx` | +Helper apply, `vipPersona`, fmtCurrency replace-all, logo, crossnav-persona. |
+| `pages/AutomotiveDemo/SultanPortal.jsx` | +Helper apply, `secondaryPersona` chain, fmtCurrency replace-all, logo, crossnav-persona. |
+| `pages/AutomotiveDemo/PublicShowroom.jsx` | +Helper apply, logo + hero title `projectName(lang)`. |
+
+### Directives landed today
+
+- `frontend/directives/PORTAL_BRIDGE_DUAL_WRITE_DIRECTIVE.md` ✅
+- `frontend/directives/SPRINT2_3_PART_B_PHASE1_MARKETPLACE_DIRECTIVE.md` ✅
+- `frontend/directives/SPRINT2_3_PART_B_PHASE2A_PORTALS_DIRECTIVE.md` ✅
+- `frontend/directives/SPRINT2_3_PART_B_PHASE2A_HOTFIX_RE_CURRENCY.md` ✅ (Gulf+Canada visual OK; USA+Mexico debug pending)
+
+### Pending commits (user'ın local'inde, henüz push olmadı)
+
+```bash
+git add frontend/src/services/portalRegion.js \
+        frontend/src/pages/MarketplacePortal/MarketplacePortal.jsx \
+        frontend/src/pages/VIPPortal/VIPPortal_Definitive.jsx \
+        frontend/src/pages/AhmedPortal/AhmedPortal.jsx \
+        frontend/src/pages/AutomotiveDemo/AutomotivePortal.jsx \
+        frontend/src/pages/AutomotiveDemo/SultanPortal.jsx \
+        frontend/src/pages/AutomotiveDemo/PublicShowroom.jsx
+# Tek commit (Phase 2a + hotfix beraber, atomic):
+git commit -m "feat(portals): region-aware brand/currency/persona on 5 demo portals + RE currency render hotfix (Part B Phase 2a)"
+git push
+```
+
+**Decision pending:** Bu commit'i USA/Mexico fix öncesi mi atalım, yoksa fix tek commit'te mi gitsin? **Önerim:** İkincisi (atomic). USA/Mexico debug ~30 dk iş, aynı PR'de gitsin.
+
+### Open threads
+
+1. **USA + Mexico currency render — DEBUG TOMORROW** (root cause unknown, 3 hipotez yukarıda).
+2. **Phase 2b directive** — blocked on (a) USA/Mexico fix + (b) user content strategy decision:
+   - Translation provider seçimi (manual / LLM / DeepL)
+   - Per-region unit data scope (4 region × 3 units = 12 unit data sets)
+   - Per-region vehicle data scope (4 region × 9 vehicles = 36 vehicle entries)
+   - LANG.es + LANG.fr tabloları (5 portal × 2 lang ≈ 10 büyük translation block)
+3. **AR persona transliteration** — Phase 2b backlog: `regionConfig.personas[].nameAr` field.
+4. **Zombi UNITS field cleanup** — Phase 2a hotfix sonrası `priceDisplay`/`priceShort`/`perSqft` dead code; Phase 2b'de data refactor'la silinir.
+
+### Lessons added today
+
+- **"Build PASS + spot check 2 region" ≠ "all 4 regions visible swap works."** Phase 2a hotfix Gulf+Canada gözle teyit edildi ama USA+Mexico kontrol atlandı. CLAUDE.md §15 QA checklist'e ekle: "Region-aware changes: **4/4 region screenshot zorunlu**, 2/4 yetmez."
+- **Static i18n strings within data arrays are a currency sinkhole.** `UNITS[].priceDisplay: { en: "AED 12.5M" }` pattern her unit için 3 field × 2 lang = 6 hardcoded currency string. **Lesson:** Data-driven displays için NEVER pre-format currency in source data. Always store numeric, format at render via region-aware helper. Phase 2b data refactor'a not.
+- **`Intl.NumberFormat` locale-currency combos are browser-dependent.** Aynı kod Chrome'da "$12,500,000" döner, Safari'de "USD 12,500,000" döner. Demo-critical currency display için **fallback path'i sade tut** (`${symbol}${value.toLocaleString()}`) ve Intl'i bypass et — predictable output garanti.
+- **User'ın gözü authoritative, Cursor'un QA tablosu hypothesis.** Cursor "USA: $12,500,000 (Intl native)" yazdı; gerçekte user "AED" gördü. CLAUDE.md §15 QA Verification Protocol'e güçlendirme: AI'nın "FIXED" claim'i = unverified hypothesis until user screenshot says otherwise.
+
+---
+
+## ✅ CLOSED — 2026-05-25 morning (Cowork session — bridge audit)
+
+**Root cause of Marketplace tracking silence (today's finding):**
+
+`portalFirestoreBridge.js` line 13: `if (!user) return;`. Anonymous Marketplace visitor → `auth.currentUser === null` → bridge silent no-op → neither `behaviors` nor `tenants/{uid}/events` receives the event. Bridge was designed for the cross-tab demo scenario (admin logged in same browser), not for real public/anonymous traffic. Public ziyaretçi pilot ölçümleri imkânsız oluyordu.
+
+Firestore rules already permit public create on `behaviors` (`allow create: if true`), so the fix is code-only — no rules change.
+
+**Architectural reality (CLAUDE.md §10 corrected today):**
+
+- **1 service file:** `services/firestoreTracking.js` (496L) — `track()` writes to top-level `behaviors`; `trackDashboardEvent()` writes to `tenants/{uid}/events`; plus EVENT_SCHEMA + scoring.
+- **1 bridge file:** `services/portalFirestoreBridge.js` (26L → ~30L after fix).
+- **6 portals each with own inline `trackEvent`:** VIPPortal_Definitive, AhmedPortal, MarketplacePortal, AutomotivePortal, SultanPortal, PublicShowroom. Each writes to localStorage + BroadcastChannel + calls `bridgeEventToFirestore(ev)`. Event counts: 13/13/13/18/18/10.
+- **Cross-tab listeners:** Dashboard.jsx, AutoDashboard.jsx, NotificationSystem.jsx — listen to `dnfc_tracking` BroadcastChannel for live UI updates.
+- **`shared/tracking.js` and `hooks/useTracking.js`: do not exist.** They were removed in earlier sprints; CLAUDE.md's "3 systems" claim was 49+ days of stale documentation.
+
+**Directive delivered today:**
+
+`frontend/directives/PORTAL_BRIDGE_DUAL_WRITE_DIRECTIVE.md` — Cursor 1-file fix. Bridge becomes dual-write: **always** to `behaviors` (anonymous traffic + legacy admin reads), **additionally** to `tenants/{uid}/events` when `auth.currentUser` is set (cross-tab demo + Unified Dashboard live). JSDoc rewritten. No new imports, no test changes (existing manual QA scenarios in directive §4).
+
+**Definition of done (per directive):**
+- `npm run build` PASS.
+- `npm test` PASS (120/120).
+- Marketplace incognito → 5 clicks → `behaviors` collection 5 new docs.
+- Same scenario admin-logged-in → behaviors + tenant events both get docs.
+- VIP / Ahmed / Auto Khalid regression → each produces ≥1 behaviors write.
+- Commit: `fix(tracking): bridge dual-write to behaviors (always) + tenant events (admin)`
+
+**CLAUDE.md edits made today:**
+- §10 Tracking section: replaced "3 systems" table with real architecture (1 service + 1 bridge + 6 inline portals + cross-tab listeners). Documented bridge contract.
+- §14 Technical Debt #1: marked CLOSED. New follow-up flagged (consolidate 6 portals' inline `trackEvent` into shared helper — defer until pilot data validates pipeline).
+
+**Memory updated:** `project_marketplace_tracking_silent.md` — root cause + fix + directive reference. MEMORY.md index line refreshed.
+
+**Open thread for tomorrow (after dual-write merge):**
+
+**Sprint 2 #3 Part B — Portal `useRegion()` data binding** — still unaddressed. Canary symptom unchanged: "Vista Residences + AED" appears on Marketplace because portal route handlers don't consume `useRegion()`. Audit demo portals for: `useRegion`/`useSector` imports? `getPersonas(sector, regionId)` calls? Region-aware project labels? Hardcoded data arrays (towers, currency)? Then write `SPRINT2_3_PART_B_PORTAL_REGION_DIRECTIVE.md` → Cursor implements → 4×3 region×sector QA → merge.
+
+**Working tree state (when this handoff was written):**
+
+```
+On branch main
+Local 1 commit behind origin/main (6d4711c2 chore: activity log).
+Working tree clean (apart from directive files Claude created in frontend/directives/).
+3 stale worktree refs (cosmetic): das, flamboyant-dhawan, naughty-haibt. Run `git worktree prune -v`.
+```
+
+### Lessons added today
+
+- **A 10-day-old memory that names a file path is a claim, not a fact.** Memory rule "before recommending: verify file exists" — today saved us from launching a "3 tracking systems unify" sprint against `shared/tracking.js` and `hooks/useTracking.js` that don't exist. Always `Glob`/`ls` the cited path before scoping work around it.
+- **Silent failures that fall back to a parallel system are the worst kind of bug.** BroadcastChannel + localStorage kept the demo "looking like it works" while Firestore writes were dead for 49+ days. Symptom: investor demos green, analytics empty. Lesson: when a write path has multiple destinations, **at least one must throw or warn loudly when the others silently skip.** The bridge's `try { ... } catch (_) {}` swallowed everything including the early-return diagnostic value.
+- **`allow create: if true` on a Firestore collection is a deliberate design choice — use it.** `behaviors` rules already permit anonymous create. The bridge was over-engineered with a `if (!user) return` guard that didn't match the rules. Lesson: when in doubt about whether public traffic should write, **check the rules first** — they're the source of truth.
+- **Auto-gen activity log commits make `git log` look busy when nothing happened.** Today: 11 days between sessions, single commit `6d4711c2 chore(summary): update day/hour github activity log`. Don't mistake bot commits for real work. Always check commit author/content before assuming progress.
+
+---
+
+## ✅ CLOSED — 2026-05-14 EOD (Cowork session)
 
 **Status:** Polish trilogy (PR 1 + 1.5 + 2 + portal D) fully landed on `main` last night. Today closed the **Arabic LLM body bug** and the **post-merge cleanup**. Two open production threads carry into tomorrow: Marketplace Firestore tracking (silent) and Sprint 2 #3 Part B (portal `useRegion()` data binding).
 
