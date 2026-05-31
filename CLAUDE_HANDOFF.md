@@ -1,12 +1,12 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-28 EOD (America/Vancouver) — Cowork session: Phase 2b.RE shipped → 3 portal 4-language parity (ES + FR added to VIP + Ahmed + Marketplace, ~820 strings) + persona gender field + AR floorPlan disclaimer bug fix + region-aware lang cycle button → ES/FR ErrorBoundary crash (UNITS bilingual data undefined) → `tr()` helper hotfix + Cursor proaktif scope extension (AMENITIES + INVEST + hero ternary) → atomic squash commit + push + production deploy. **Phase 2c.RE Data Architecture next session — canonical+overlay pattern, per-region unit names, 4-language overlay.**
+**Last updated:** 2026-05-31 EOD (America/Vancouver) — Cowork session: Phase 2b.RE shipped → 3 portal 4-language parity (ES + FR added to VIP + Ahmed + Marketplace, ~820 strings) + persona gender field + AR floorPlan disclaimer bug fix + region-aware lang cycle button → ES/FR ErrorBoundary crash (UNITS bilingual data undefined) → `tr()` helper hotfix + Cursor proaktif scope extension (AMENITIES + INVEST + hero ternary) → atomic squash commit + push + production deploy. **Phase 2c.RE Data Architecture next session — canonical+overlay pattern, per-region unit names, 4-language overlay.**
 **Session:** Cowork — handoff read → Phase 2b kararları (translation provider = Claude inline; data shape = hibrit canonical+overlay RE / region-prefixed Auto) → sample ES onay → 3 portal × ES+FR translation bundles → Phase 2b.RE directive + Cursor execute → ES/FR sahnelerinde Marketplace+VIP+Ahmed ErrorBoundary crash → root cause: UNITS array bilingual `{en, ar}` data shape, `unit.X[lang]` ES/FR'de undefined → hotfix directive (`tr()` helper + mekanik replace ~75 site) → Cursor execute, proaktif AMENITIES/INVEST/hero ternary genişletmesi → crash gitti → karar: deploy şimdi + Phase 2c'yi başlat (in-place 4-dil eklemek Phase 2c canonical refactor'ünde silinecekti, boşa enerji).
 **Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — 2026-05-28 EOD (Phase 2c.RE Data Architecture başlat)
+## ▶︎ RESUME HERE — 2026-05-31 EOD (Phase 2c.RE Data Architecture başlat)
 
 **Status:** Phase 2b.RE production'a deploy edildi (`https://dynamicnfc.ca`). ES/FR sahnelerinde UI copy + buton + form + modal'lar 100% lokalize; UNITS data layer (unit name/floor/beds/desc/features) + AMENITIES (8 amenity × 2 field) + INVEST (4 stat × 2 field) hala `{en, ar}` bilingual shape'inde — `tr()` helper EN fallback yapıyor. Demo'da Mexico ES + Canada FR'de "Sky Penthouse / FLOOR 42-44 / 4 Bedrooms / Infinity Edge Pool / Rental yield" gibi field'lar İngilizce kalıyor. **Phase 2c.RE Data Architecture sprint'i bu boşluğu kalıcı yapıyla kapatıyor — canonical+overlay pattern, per-region unit names.**
 
