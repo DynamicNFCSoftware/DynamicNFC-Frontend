@@ -52,6 +52,7 @@ const trackEvent = (event, data = {}) => {
 };
 
 // ─── BILINGUAL ───────────────────────────────────────────────────
+const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
 const LANG = {
   en: {
     dir: "ltr",
@@ -199,105 +200,159 @@ const LANG = {
     },
     footer: "إدراج عام. الأسعار المعروضة هي نطاقات بدء. سجل للحصول على الأسعار التفصيلية والتوافر.",
     poweredBy: "مشغل بواسطة", registerNow: "سجل الآن", registerDone: "مسجل",
-    brochureDesc: "تم إعداد كتيبك الشخصي مع تفاصيل الوحدة السكنية.",
-    brochureDownload: "تحميل كتيب PDF",
-    brochureEmail: "إرسال إلى البريد الإلكتروني",
-    brochureIncludes: "الكتيب يشمل:",
-    brochureItem1: "المخططات الطابقية التفصيلية والمواصفات",
-    brochureItem2: "كتالوج التشطيبات المميزة",
-    brochureItem3: "نظرة عامة على المرافق وأسلوب الحياة",
-    brochureItem4: "تحليل الاستثمار وخطط الدفع",
-    brochureItem5: "خريطة الموقع والاتصال",
-    brochureReady: "الكتيب جاهز",
-    brochureTitle: "الكتيب الرقمي",
-    cardDetails: "عرض التفاصيل",
-    cardGetPricing: "الحصول على الأسعار",
-    cardRegisterPrice: "التسجيل للحصول على الأسعار الدقيقة",
-    compareBedrooms: "غرف النوم",
-    compareCategory: "الفئة",
-    compareEmpty: "أضف وحدات للمقارنة باستخدام زر المقارنة في بطاقات الوحدات.",
-    compareFeature: "الميزة",
-    compareFloor: "الطابق",
-    comparePrice: "نطاق السعر",
-    compareRemoveBtn: "إزالة",
-    compareSize: "الحجم",
-    compareTitle: "مقارنة الوحدات السكنية",
-    compareView: "عرض",
-    filterAll: "الكل",
-    filterBed2: "غرفتي نوم",
-    filterBed3: "ثلاث غرف نوم",
-    filterPenthouse: "بنتهاوس",
-    floorPlanBalcony: "شرفة / تراس",
-    floorPlanBathrooms: "الحمامات",
-    floorPlanDisclaimer: "المخططات الطابقية إرشادية وقد تختلف. الأبعاد الفعلية مؤكدة عند التسليم.",
-    floorPlanDownload: "تحميل مخطط الطابق PDF",
-    floorPlanTitle: "مخطط الطابق",
-    floorPlanTotalArea: "المساحة الإجمالية",
-    heroBadge: "البيع الآن — المرحلة 2",
-    heroCta: "عرض المجموعة",
-    heroCtaSecondary: "حجز زيارة",
-    heroSubtitle: "معيشة على الواجهة المائية مميزة في قلب المدينة. استكشف مجموعتنا من الوحدات الحصرية من 2 إلى 4+ غرف نوم.",
-    heroTitle: "مساكن فيستا",
-    leadFormEmail: "البريد الإلكتروني",
-    leadFormName: "الاسم الكامل",
-    leadFormNote: "يتم حماية معلوماتك. لا رسائل مزعجة، أبدًا.",
-    leadFormPhone: "الهاتف",
-    leadFormSubmit: "التسجيل والمتابعة",
-    leadFormSubtitle: "سجل لفتح الأسعار الدقيقة، المخططات الطابقية، الكتيبات، ومواعيد الزيارة ذات الأولوية.",
-    leadFormTitle: "الحصول على وصول كامل",
-    navAccount: "حسابي",
-    navBrand: "مساكن فيستا",
-    navLang: "العربية",
-    navRegister: "التسجيل / تسجيل الدخول",
-    paymentDisclaimer: "خطط الدفع خاضعة للموافقة. سجل للحصول على الشروط الشخصية.",
-    paymentM1: "دفعة الحجز",
-    paymentM1d: "عند الحجز",
-    paymentM2: "الدفعة الأولى",
-    paymentM2d: "خلال 30 يومًا",
-    paymentM3: "البناء 30٪",
-    paymentM3d: "عند اكتمال 30٪",
-    paymentM4: "البناء 60٪",
-    paymentM4d: "عند اكتمال 60٪",
-    paymentM5: "التسليم",
-    paymentM5d: "عند تسليم المفتاح",
-    paymentM6: "ما بعد التسليم",
-    paymentM6d: "12 شهرًا بعد التسليم",
-    paymentMilestones: "معالم الدفع",
-    paymentPlan6040: "خطة 60/40",
-    paymentPlan6040Desc: "60٪ أثناء البناء · 40٪ عند التسليم",
-    paymentPlan7030: "خطة 70/30",
-    paymentPlan7030Desc: "70٪ أثناء البناء · 30٪ بعد التسليم (12 شهرًا)",
-    paymentRequestCall: "طلب استشارة الدفع",
-    paymentSubtitle: "هيكل دفع مرن",
-    paymentTitle: "خطة الدفع",
-    paymentTotalPrice: "ابتداءً من",
-    sectionAmenities: "أسلوب الحياة",
-    sectionAmenitiesSub: "مرافق عالمية المستوى",
-    sectionCta: "جاهز لاتخاذ الخطوة التالية؟",
-    sectionCtaSub: "سجل للحصول على الأسعار الحصرية، المخططات الطابقية، الكتيبات، ومواعيد الزيارة ذات الأولوية.",
-    sectionInvestment: "لمحة استثمارية",
-    sectionInvestmentSub: "لماذا مساكن فيستا",
-    sectionResidences: "الوحدات المتاحة",
-    sectionResidencesSub: "ابحث عن الوحدة المثالية لك",
-    statsBeds: "غرف النوم",
-    statsCompletion: "الانتهاء",
-    statsFloors: "الطوابق",
-    statsUnits: "الوحدات المميزة",
-    toastBooking: "تم إرسال طلب الزيارة — سنتواصل معك خلال 48 ساعة",
-    toastBrochure: "تم تنزيل الكتيب",
-    toastCompare: "تمت إضافته للمقارنة",
-    toastCompareRemove: "تمت إزالته من المقارنة",
-    toastEmailSent: "تم إرسال الكتيب إلى بريدك الإلكتروني",
-    toastFloorPlan: "تم فتح المخطط الطابقي",
-    toastLeadCaptured: "شكرًا لك! جاري معالجة طلبك...",
-    toastPricing: "تم إرسال تفاصيل الأسعار إلى بريدك الإلكتروني",
-    toastRegistered: "أنت مسجل بالفعل!",
-    unitBook: "حجز زيارة",
-    unitBrochure: "الكتيب",
-    unitCompare: "المقارنة",
-    unitFloorPlan: "مخطط الطابق",
-    unitPricing: "الحصول على الأسعار الدقيقة",
-},
+  },
+  es: {
+    dir: "ltr",
+    nav: { brand: "Vista Residences", lang: "English", register: "Registrarse / Acceder", account: "Mi cuenta" },
+    hero: {
+      badge: "En venta — Fase 2",
+      title: "Vista\nResidences",
+      subtitle: "Vivienda premium frente al mar en el corazón de la ciudad. Explore nuestra colección exclusiva de residencias de 2 a 4+ recámaras.",
+      cta: "Ver colección",
+      ctaSecondary: "Reservar visita",
+    },
+    stats: { units: "Residencias premium", floors: "Pisos", beds: "Recámaras", completion: "Entrega" },
+    roiBanner: {
+      title: "Calcule el rendimiento de su inversión",
+      desc: "Use nuestra calculadora interactiva de ROI para proyectar sus rendimientos según el valor de la propiedad, ingresos por renta, tasas de plusvalía y opciones de financiamiento.",
+      cta: "Abrir calculadora ROI →",
+    },
+    sections: {
+      residences: "Residencias disponibles", residencesSub: "Encuentre su residencia ideal",
+      amenities: "El estilo de vida", amenitiesSub: "Amenidades de clase mundial",
+      investment: "Resumen de inversión", investmentSub: "Por qué Vista Residences",
+      cta: "¿Listo para dar el siguiente paso?",
+      ctaSub: "Regístrese para recibir precios exclusivos, planos, catálogos y citas prioritarias de visita.",
+    },
+    filters: { all: "Todas", penthouse: "Penthouse", bed3: "3 recámaras", bed2: "2 recámaras" },
+    card: { registerPrice: "Registrarse para precio exacto", details: "Ver detalles", getPricing: "Obtener precio", priceFrom: "Desde " },
+    unitActions: { floorPlan: "Plano", brochure: "Catálogo", pricing: "Obtener precio exacto", book: "Reservar visita", compare: "Comparar" },
+    floorPlanModal: {
+      title: "Plano de planta", bathrooms: "Baños", balcony: "Balcón / terraza",
+      totalArea: "Superficie total", download: "Descargar plano en PDF",
+      disclaimer: "Los planos son indicativos y pueden variar. Las dimensiones finales se confirman a la entrega.",
+    },
+    brochureModal: {
+      title: "Catálogo digital", ready: "Catálogo listo",
+      desc: "Su catálogo personalizado ha sido preparado con los detalles de la residencia.",
+      download: "Descargar catálogo en PDF", email: "Enviar por correo",
+      includes: "El catálogo incluye:",
+      items: ["Planos detallados y especificaciones", "Catálogo de acabados premium", "Vista general de amenidades y estilo de vida", "Análisis de inversión y planes de pago", "Mapa de ubicación y conectividad"],
+    },
+    paymentModal: {
+      title: "Plan de pago", subtitle: "Estructura de pago flexible",
+      totalPrice: "Desde",
+      plan6040: "Plan 60/40", plan6040Desc: "60% durante construcción · 40% a la entrega",
+      plan7030: "Plan 70/30", plan7030Desc: "70% durante construcción · 30% post-entrega (12 meses)",
+      milestones: "Hitos de pago",
+      m1: "Depósito de reserva", m1d: "Al reservar",
+      m2: "Primer abono", m2d: "Dentro de 30 días",
+      m3: "Construcción 30%", m3d: "Al alcanzar 30%",
+      m4: "Construcción 60%", m4d: "Al alcanzar 60%",
+      m5: "Entrega", m5d: "Al entregar llaves",
+      m6: "Post-entrega", m6d: "12 meses después de la entrega",
+      requestCall: "Solicitar consulta de pago",
+      disclaimer: "Los planes de pago están sujetos a aprobación. Regístrese para condiciones personalizadas.",
+    },
+    compareModal: {
+      title: "Comparar residencias", feature: "Característica", remove: "Quitar",
+      price: "Rango de precio", floor: "Piso", bedrooms: "Recámaras",
+      size: "Superficie", view: "Vista", category: "Categoría",
+      empty: "Agregue residencias para comparar usando Comparar en cada tarjeta de unidad.",
+    },
+    leadForm: {
+      title: "Acceso completo",
+      subtitle: "Regístrese para desbloquear precios exactos, planos, catálogos y citas prioritarias de visita.",
+      name: "Nombre completo", email: "Correo electrónico", phone: "Teléfono",
+      submit: "Registrarse y continuar",
+      note: "Su información está protegida. Sin spam, jamás.",
+    },
+    toast: {
+      floorPlan: "Plano abierto", brochure: "Catálogo descargado",
+      pricing: "Detalles de precio enviados a su correo", booking: "Solicitud de visita enviada — le contactaremos en 48 horas",
+      compare: "Agregado a la comparación", compareRemove: "Quitado de la comparación",
+      emailSent: "Catálogo enviado a su correo", registered: "¡Ya está registrado!",
+      leadCaptured: "¡Gracias! Procesando su solicitud...",
+    },
+    footer: "Listado público. Los precios mostrados son rangos iniciales. Regístrese para precios detallados y disponibilidad.",
+    poweredBy: "Tecnología de", registerNow: "Registrarse ahora", registerDone: "Registrado",
+  },
+  fr: {
+    dir: "ltr",
+    nav: { brand: "Vista Residences", lang: "English", register: "S'inscrire / Se connecter", account: "Mon compte" },
+    hero: {
+      badge: "En vente — Phase 2",
+      title: "Vista\nResidences",
+      subtitle: "Vie haut de gamme au bord de l'eau au cœur de la ville. Explorez notre collection exclusive de résidences de 2 à 4+ chambres.",
+      cta: "Voir la collection",
+      ctaSecondary: "Réserver une visite",
+    },
+    stats: { units: "Résidences premium", floors: "Étages", beds: "Chambres", completion: "Livraison" },
+    roiBanner: {
+      title: "Calculez le rendement de votre investissement",
+      desc: "Utilisez notre calculateur de ROI interactif pour projeter vos rendements selon la valeur de la propriété, les revenus locatifs, les taux d'appréciation et les options de financement.",
+      cta: "Ouvrir le calculateur ROI →",
+    },
+    sections: {
+      residences: "Résidences disponibles", residencesSub: "Trouvez votre résidence idéale",
+      amenities: "L'art de vivre", amenitiesSub: "Commodités de classe mondiale",
+      investment: "Aperçu de l'investissement", investmentSub: "Pourquoi Vista Residences",
+      cta: "Prêt à passer à l'étape suivante ?",
+      ctaSub: "Inscrivez-vous pour des prix exclusifs, plans, brochures et rendez-vous de visite prioritaires.",
+    },
+    filters: { all: "Toutes", penthouse: "Penthouse", bed3: "3 chambres", bed2: "2 chambres" },
+    card: { registerPrice: "S'inscrire pour le prix exact", details: "Voir les détails", getPricing: "Obtenir le prix", priceFrom: "À partir de " },
+    unitActions: { floorPlan: "Plan d'étage", brochure: "Brochure", pricing: "Obtenir le prix exact", book: "Réserver une visite", compare: "Comparer" },
+    floorPlanModal: {
+      title: "Plan d'étage", bathrooms: "Salles de bain", balcony: "Balcon / terrasse",
+      totalArea: "Superficie totale", download: "Télécharger le plan en PDF",
+      disclaimer: "Les plans sont indicatifs et peuvent varier. Les dimensions finales sont confirmées à la livraison.",
+    },
+    brochureModal: {
+      title: "Brochure numérique", ready: "Brochure prête",
+      desc: "Votre brochure personnalisée a été préparée avec les détails de la résidence.",
+      download: "Télécharger la brochure en PDF", email: "Envoyer par courriel",
+      includes: "La brochure comprend :",
+      items: ["Plans détaillés et spécifications", "Catalogue des finitions haut de gamme", "Aperçu des commodités et de l'art de vivre", "Analyse d'investissement et plans de paiement", "Carte d'emplacement et de connectivité"],
+    },
+    paymentModal: {
+      title: "Plan de paiement", subtitle: "Structure de paiement flexible",
+      totalPrice: "À partir de",
+      plan6040: "Plan 60/40", plan6040Desc: "60 % pendant la construction · 40 % à la livraison",
+      plan7030: "Plan 70/30", plan7030Desc: "70 % pendant la construction · 30 % après livraison (12 mois)",
+      milestones: "Jalons de paiement",
+      m1: "Dépôt de réservation", m1d: "À la réservation",
+      m2: "Premier versement", m2d: "Dans les 30 jours",
+      m3: "Construction 30 %", m3d: "À 30 % d'achèvement",
+      m4: "Construction 60 %", m4d: "À 60 % d'achèvement",
+      m5: "Livraison", m5d: "À la remise des clés",
+      m6: "Après livraison", m6d: "12 mois après la livraison",
+      requestCall: "Demander une consultation de paiement",
+      disclaimer: "Les plans de paiement sont sujets à approbation. Inscrivez-vous pour des conditions personnalisées.",
+    },
+    compareModal: {
+      title: "Comparer les résidences", feature: "Caractéristique", remove: "Retirer",
+      price: "Fourchette de prix", floor: "Étage", bedrooms: "Chambres",
+      size: "Superficie", view: "Vue", category: "Catégorie",
+      empty: "Ajoutez des résidences à comparer en utilisant Comparer sur chaque carte d'unité.",
+    },
+    leadForm: {
+      title: "Accès complet",
+      subtitle: "Inscrivez-vous pour débloquer les prix exacts, plans, brochures et rendez-vous de visite prioritaires.",
+      name: "Nom complet", email: "Courriel", phone: "Téléphone",
+      submit: "S'inscrire et continuer",
+      note: "Vos informations sont protégées. Aucun spam, jamais.",
+    },
+    toast: {
+      floorPlan: "Plan ouvert", brochure: "Brochure téléchargée",
+      pricing: "Détails de prix envoyés à votre courriel", booking: "Demande de visite envoyée — nous vous contacterons sous 48 heures",
+      compare: "Ajouté à la comparaison", compareRemove: "Retiré de la comparaison",
+      emailSent: "Brochure envoyée à votre courriel", registered: "Vous êtes déjà inscrit !",
+      leadCaptured: "Merci ! Traitement de votre demande...",
+    },
+    footer: "Annonce publique. Les prix affichés sont des fourchettes initiales. Inscrivez-vous pour les prix détaillés et la disponibilité.",
+    poweredBy: "Propulsé par", registerNow: "S'inscrire maintenant", registerDone: "Inscrit",
+  },
 };
 
 // ─── PROPERTY DATA (public — price ranges, not exact) ────────────
@@ -469,7 +524,7 @@ const ROOM_COLORS = {
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function MarketplacePortal() {
   const [lang, setLang] = useState("en");
-  const { projectName, fmtCurrency } = usePortalRegion("real_estate", lang);
+  const { projectName, fmtCurrency, region } = usePortalRegion("real_estate", lang);
 
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
@@ -486,12 +541,13 @@ export default function MarketplacePortal() {
 
   const resRef = useRef(null);
   const t = LANG[lang];
+  const tr = (obj) => (obj && (obj[lang] ?? obj.en)) ?? "";
 
   useEffect(() => { const fn = () => setScrolled(window.scrollY > 60); window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn); }, []);
   useEffect(() => { const obs = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("vis"); }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }); document.querySelectorAll(".mp-rv").forEach((el) => obs.observe(el)); return () => obs.disconnect(); }, [lang, modal, selectedUnit, showLeadForm]);
   useEffect(() => { trackEvent("marketplace_visit"); }, []);
   useEffect(() => {
-    document.documentElement.lang = lang === "ar" ? "ar" : "en";
+    document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   }, [lang]);
   useEffect(() => () => {
@@ -499,7 +555,11 @@ export default function MarketplacePortal() {
     document.documentElement.dir = "ltr";
   }, []);
 
-  const toggleLang = () => setLang((prev) => (prev === "en" ? "ar" : "en"));
+  const nextLang = region.languages.find((l) => l !== lang) || region.languages[0];
+  const toggleLang = () => {
+    const n = region.languages.find((l) => l !== lang) || region.languages[0];
+    setLang(n);
+  };
   const showToast = useCallback((msg) => { setToastHiding(false); setToast(msg); setTimeout(() => { setToastHiding(true); setTimeout(() => setToast(null), 300); }, 3000); }, []);
 
   // Lead gate — high-intent actions require registration
@@ -587,7 +647,7 @@ export default function MarketplacePortal() {
         <div className="mp-nav">
           {lead && <span className="mp-lead-badge">{lead.name}</span>}
           {compareList.length > 0 && <button className="mp-navbtn" onClick={openCompare}>{t.unitActions.compare}<span className="mp-cmp-count">{compareList.length}</span></button>}
-          <button className="mp-navbtn" onClick={toggleLang}>{t.nav.lang}</button>
+          <button className="mp-navbtn" onClick={toggleLang}>{LANG_LABEL[nextLang]}</button>
           <button type="button" className="mp-navbtn-dark mp-nav-register" onClick={() => { if (!lead) setShowLeadForm(true); else showToast(t.toast.registered); }}>
             {lead ? t.nav.account : t.nav.register}
           </button>
@@ -631,16 +691,16 @@ export default function MarketplacePortal() {
           {filteredUnits.map((unit) => (
             <div className="mp-card mp-rv" key={unit.id} onClick={() => openDetail(unit)}>
               <div className="mp-card-img">
-                <img src={unit.img} alt={unit.name[lang]} loading="lazy" />
-                <div className="mp-card-fbadge">{unit.type[lang]}</div>
-                <div className="mp-card-status" style={{ background: unit.statusColor }}>{unit.status[lang]}</div>
+                <img src={unit.img} alt={tr(unit.name)} loading="lazy" />
+                <div className="mp-card-fbadge">{tr(unit.type)}</div>
+                <div className="mp-card-status" style={{ background: unit.statusColor }}>{tr(unit.status)}</div>
               </div>
               <div className="mp-card-body">
-                <h3 className="mp-card-name">{unit.name[lang]}</h3>
-                <p className="mp-card-floor">{unit.floor[lang]}</p>
+                <h3 className="mp-card-name">{tr(unit.name)}</h3>
+                <p className="mp-card-floor">{tr(unit.floor)}</p>
                 <div className="mp-card-meta">
-                  <span className="mp-card-meta-item"><i className="ti ti-bed" aria-hidden="true" /> {unit.beds[lang]}</span>
-                  <span className="mp-card-meta-item"><i className="ti ti-ruler-measure" aria-hidden="true" /> {unit.size[lang]}</span>
+                  <span className="mp-card-meta-item"><i className="ti ti-bed" aria-hidden="true" /> {tr(unit.beds)}</span>
+                  <span className="mp-card-meta-item"><i className="ti ti-ruler-measure" aria-hidden="true" /> {tr(unit.size)}</span>
                 </div>
                 <div className="mp-card-price">{t.card.priceFrom}{fmtCurrency(unit.priceNum)}</div>
                 <div className="mp-card-hint mp-card-pricing-sub"><i className="ti ti-lock" aria-hidden="true" /><span>{t.card.registerPrice}</span></div>
@@ -663,7 +723,7 @@ export default function MarketplacePortal() {
       {/* AMENITIES */}
       <section className="mp-sec">
         <div className="mp-sh mp-rv"><span className="mp-sl">{t.sections.amenities}</span><h2 className="mp-st">{t.sections.amenitiesSub}</h2></div>
-        <div className="mp-am-grid">{AMENITIES.map((a, i) => (<div className="mp-am mp-rv" key={i}><div className="mp-am-icon"><i className={`ti ${a.tabler}`} aria-hidden="true" /></div><div className="mp-am-name">{a[lang]}</div></div>))}</div>
+        <div className="mp-am-grid">{AMENITIES.map((a, i) => (<div className="mp-am mp-rv" key={i}><div className="mp-am-icon"><i className={`ti ${a.tabler}`} aria-hidden="true" /></div><div className="mp-am-name">{tr(a)}</div></div>))}</div>
       </section>
 
       <div className="mp-div"><div className="mp-div-l" /><div className="mp-div-d">◆</div><div className="mp-div-l" /></div>
@@ -671,7 +731,7 @@ export default function MarketplacePortal() {
       {/* INVESTMENT */}
       <section className="mp-sec">
         <div className="mp-sh mp-rv"><span className="mp-sl">{t.sections.investment}</span><h2 className="mp-st">{t.sections.investmentSub}</h2></div>
-        <div className="mp-inv-grid">{INVEST[lang].map((item, i) => (<div className="mp-inv mp-rv" key={i}><div className="mp-inv-v">{item.value}</div><div className="mp-inv-l">{item.label}</div><div className="mp-inv-n">{item.note}</div></div>))}</div>
+        <div className="mp-inv-grid">{tr(INVEST).map((item, i) => (<div className="mp-inv mp-rv" key={i}><div className="mp-inv-v">{item.value}</div><div className="mp-inv-l">{item.label}</div><div className="mp-inv-n">{item.note}</div></div>))}</div>
 
       </section>
 
@@ -711,10 +771,10 @@ export default function MarketplacePortal() {
       {selectedUnit && (
         <div className="mp-modal-ov" onClick={closeAll}><div className="mp-modal" onClick={(e) => e.stopPropagation()}>
           <button className="mp-modal-x" onClick={closeAll}>✕</button>
-          <div className="mp-md-gallery">{selectedUnit.gallery.map((src, i) => <img key={i} src={src} alt={`${selectedUnit.name[lang]} ${i+1}`} loading="lazy" />)}</div>
+          <div className="mp-md-gallery">{selectedUnit.gallery.map((src, i) => <img key={i} src={src} alt={`${tr(selectedUnit.name)} ${i+1}`} loading="lazy" />)}</div>
           <div className="mp-modal-body">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "2rem", marginBottom: "2rem", flexWrap: "wrap" }}>
-              <div><h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "2.2rem", fontWeight: 500, color: "var(--mp-t1)" }}>{selectedUnit.name[lang]}</h2><p style={{ color: "var(--mp-t3)", fontSize: ".82rem", letterSpacing: ".1em", textTransform: "uppercase" }}>{selectedUnit.floor[lang]}</p></div>
+              <div><h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "2.2rem", fontWeight: 500, color: "var(--mp-t1)" }}>{tr(selectedUnit.name)}</h2><p style={{ color: "var(--mp-t3)", fontSize: ".82rem", letterSpacing: ".1em", textTransform: "uppercase" }}>{tr(selectedUnit.floor)}</p></div>
               <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
                 <div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--mp-t1)" }}>{t.card.priceFrom}{fmtCurrency(selectedUnit.priceNum)}</div>
                 <div className="mp-card-pricing-sub" style={{ justifyContent: lang === "ar" ? "flex-end" : "flex-start", marginTop: ".35rem" }}>
@@ -723,9 +783,9 @@ export default function MarketplacePortal() {
                 </div>
               </div>
             </div>
-            <p style={{ color: "var(--mp-t2)", fontSize: "1.05rem", lineHeight: 1.8, fontWeight: 400, marginBottom: "2rem", maxWidth: "700px" }}>{selectedUnit.desc[lang]}</p>
+            <p style={{ color: "var(--mp-t2)", fontSize: "1.05rem", lineHeight: 1.8, fontWeight: 400, marginBottom: "2rem", maxWidth: "700px" }}>{tr(selectedUnit.desc)}</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.5rem", marginBottom: "2rem" }}>
-              {[{ l: lang === "en" ? "Bedrooms" : "غرف النوم", v: selectedUnit.beds[lang] },{ l: lang === "en" ? "Bathrooms" : "الحمامات", v: selectedUnit.baths[lang] },{ l: lang === "en" ? "Living Area" : "المساحة", v: selectedUnit.size[lang] },{ l: lang === "en" ? "Status" : "الحالة", v: selectedUnit.status[lang], isSt: true }].map((item, i) => (
+              {[{ l: t.compareModal.bedrooms, v: tr(selectedUnit.beds) },{ l: t.floorPlanModal.bathrooms, v: tr(selectedUnit.baths) },{ l: t.floorPlanModal.totalArea, v: tr(selectedUnit.size) },{ l: t.compareModal.category, v: tr(selectedUnit.status), isSt: true }].map((item, i) => (
                 <div key={i} style={{ padding: "1rem", border: "1px solid var(--mp-bdr)", borderRadius: "6px", textAlign: "center" }}>
                   <div style={{ fontSize: ".65rem", letterSpacing: ".12em", textTransform: "uppercase", color: "var(--mp-t3)", marginBottom: ".3rem" }}>{item.l}</div>
                   {item.isSt ? <div style={{ color: "#fff", fontSize: ".9rem", background: selectedUnit.statusColor, display: "inline-block", padding: ".2rem .6rem", borderRadius: "4px", fontWeight: 600 }}>{item.v}</div>
@@ -734,7 +794,7 @@ export default function MarketplacePortal() {
               ))}
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: ".5rem", marginBottom: "2rem" }}>
-              {selectedUnit.features[lang].map((f, i) => (<span key={i} style={{ padding: ".4rem .9rem", background: "rgba(26,26,31,.04)", border: "1px solid var(--mp-bdr)", borderRadius: "4px", fontSize: ".78rem", color: "var(--mp-t2)" }}>{f}</span>))}
+              {tr(selectedUnit.features).map((f, i) => (<span key={i} style={{ padding: ".4rem .9rem", background: "rgba(26,26,31,.04)", border: "1px solid var(--mp-bdr)", borderRadius: "4px", fontSize: ".78rem", color: "var(--mp-t2)" }}>{f}</span>))}
             </div>
             <div style={{ display: "flex", gap: ".6rem", flexWrap: "wrap", paddingTop: "1.5rem", borderTop: "1px solid var(--mp-bdr)" }}>
               <button type="button" className="mp-btn-d mp-btn-sm" onClick={() => { closeAll(); reqPricing(selectedUnit); }}><i className="ti ti-currency-dollar" aria-hidden="true" /> {t.unitActions.pricing}</button>
@@ -752,17 +812,17 @@ export default function MarketplacePortal() {
         <div className="mp-modal-ov" onClick={closeAll}><div className="mp-modal" style={{ maxWidth: "800px" }} onClick={(e) => e.stopPropagation()}>
           <button className="mp-modal-x" onClick={closeAll}>✕</button>
           <div className="mp-modal-body">
-            <h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {modalUnit.name[lang]}</h2>
-            <p style={{ color: "var(--mp-t3)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{modalUnit.floor[lang]}</p>
+            <h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {tr(modalUnit.name)}</h2>
+            <p style={{ color: "var(--mp-t3)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{tr(modalUnit.floor)}</p>
             <svg className="mp-fp-svg" viewBox="0 0 100 65">
-              {modalUnit.floorPlan.rooms.map((room, i) => (<g key={i}><rect x={room.x} y={room.y} width={room.w} height={room.h} fill={ROOM_COLORS[room.key] || "#999"} fillOpacity="0.15" stroke={ROOM_COLORS[room.key] || "#999"} strokeWidth="0.3" rx="0.5" />{room.label[lang].split("\n").map((line, li) => (<text key={li} x={room.x + room.w / 2} y={room.y + room.h / 2 + (li - 0.3) * 3.5} textAnchor="middle" fill={ROOM_COLORS[room.key] || "#888"} fontSize="2.2" fontFamily="Outfit, sans-serif" fontWeight={li === 0 ? "500" : "400"}>{line}</text>))}</g>))}
+              {modalUnit.floorPlan.rooms.map((room, i) => (<g key={i}><rect x={room.x} y={room.y} width={room.w} height={room.h} fill={ROOM_COLORS[room.key] || "#999"} fillOpacity="0.15" stroke={ROOM_COLORS[room.key] || "#999"} strokeWidth="0.3" rx="0.5" />{tr(room.label).split("\n").map((line, li) => (<text key={li} x={room.x + room.w / 2} y={room.y + room.h / 2 + (li - 0.3) * 3.5} textAnchor="middle" fill={ROOM_COLORS[room.key] || "#888"} fontSize="2.2" fontFamily="Outfit, sans-serif" fontWeight={li === 0 ? "500" : "400"}>{line}</text>))}</g>))}
             </svg>
             <div className="mp-fp-specs">
               <div className="mp-fp-spec"><div className="mp-fp-spec-l">{t.floorPlanModal.bathrooms}</div><div className="mp-fp-spec-v">{modalUnit.floorPlan.specs.bathrooms}</div></div>
               <div className="mp-fp-spec"><div className="mp-fp-spec-l">{t.floorPlanModal.balcony}</div><div className="mp-fp-spec-v">{modalUnit.floorPlan.specs.balconySize}</div></div>
               <div className="mp-fp-spec"><div className="mp-fp-spec-l">{t.floorPlanModal.totalArea}</div><div className="mp-fp-spec-v">{modalUnit.floorPlan.specs.totalArea}</div></div>
             </div>
-            <button className="mp-btn-d" style={{ width: "100%", justifyContent: "center" }} onClick={() => showToast(lang === "en" ? "Floor plan PDF downloading..." : "جاري تحميل المخطط...")}>{t.floorPlanModal.download}</button>
+            <button className="mp-btn-d" style={{ width: "100%", justifyContent: "center" }} onClick={() => showToast(t.toast.floorPlan)}>{t.floorPlanModal.download}</button>
             <p style={{ textAlign: "center", fontSize: ".72rem", color: "var(--mp-t3)", marginTop: "1rem" }}>{t.floorPlanModal.disclaimer}</p>
           </div>
         </div></div>
@@ -780,7 +840,7 @@ export default function MarketplacePortal() {
             <p style={{ color: "var(--mp-t1)", fontSize: ".85rem", fontWeight: 500, marginBottom: ".5rem" }}>{t.brochureModal.includes}</p>
             <div className="mp-br-items" style={{ textAlign: "start" }}>{t.brochureModal.items.map((item, i) => (<div className="mp-br-item" key={i}>{item}</div>))}</div>
             <div style={{ display: "flex", gap: ".75rem", marginTop: "1.5rem" }}>
-              <button className="mp-btn-d" style={{ flex: 1, justifyContent: "center" }} onClick={() => showToast(lang === "en" ? "PDF downloading..." : "جاري التحميل...")}>{t.brochureModal.download}</button>
+              <button className="mp-btn-d" style={{ flex: 1, justifyContent: "center" }} onClick={() => showToast(t.toast.brochure)}>{t.brochureModal.download}</button>
               <button className="mp-btn-l" style={{ flex: 1, justifyContent: "center" }} onClick={() => showToast(t.toast.emailSent)}>{t.brochureModal.email}</button>
             </div>
           </div>
@@ -828,14 +888,14 @@ export default function MarketplacePortal() {
               const cols = `180px repeat(${units.length}, 1fr)`;
               const rows = [
                 { label: t.compareModal.price, get: (u) => t.card.priceFrom + fmtCurrency(u.priceNum) },
-                { label: t.compareModal.floor, get: (u) => u.floor[lang] },
-                { label: t.compareModal.bedrooms, get: (u) => u.beds[lang] },
-                { label: t.compareModal.size, get: (u) => u.size[lang] },
-                { label: t.compareModal.view, get: (u) => u.feature[lang] },
-                { label: t.compareModal.category, get: (u) => u.category[lang] },
+                { label: t.compareModal.floor, get: (u) => tr(u.floor) },
+                { label: t.compareModal.bedrooms, get: (u) => tr(u.beds) },
+                { label: t.compareModal.size, get: (u) => tr(u.size) },
+                { label: t.compareModal.view, get: (u) => tr(u.feature) },
+                { label: t.compareModal.category, get: (u) => tr(u.category) },
               ];
               return (<div>
-                <div className="mp-cmp-row hdr" style={{ gridTemplateColumns: cols }}><div>{t.compareModal.feature}</div>{units.map((u) => (<div key={u.id} style={{ textAlign: "center" }}><div style={{ fontFamily: "var(--mp-serif)", fontSize: "1rem", fontWeight: 500, marginBottom: ".3rem" }}>{u.name[lang]}</div><button className="mp-cmp-rm" onClick={() => toggleCompare(u.id)}>{t.compareModal.remove}</button></div>))}</div>
+                <div className="mp-cmp-row hdr" style={{ gridTemplateColumns: cols }}><div>{t.compareModal.feature}</div>{units.map((u) => (<div key={u.id} style={{ textAlign: "center" }}><div style={{ fontFamily: "var(--mp-serif)", fontSize: "1rem", fontWeight: 500, marginBottom: ".3rem" }}>{tr(u.name)}</div><button className="mp-cmp-rm" onClick={() => toggleCompare(u.id)}>{t.compareModal.remove}</button></div>))}</div>
                 {rows.map((row, ri) => (<div className="mp-cmp-row" key={ri} style={{ gridTemplateColumns: cols }}><div className="mp-cmp-label">{row.label}</div>{units.map((u) => (<div className="mp-cmp-val" key={u.id}>{row.get(u)}</div>))}</div>))}
               </div>);
             })()}

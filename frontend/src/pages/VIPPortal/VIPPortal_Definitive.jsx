@@ -45,13 +45,15 @@ const trackEvent = (event, data = {}) => {
 };
 
 // ─── BILINGUAL CONTENT ───────────────────────────────────────────
+const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
 const LANG = {
   en: {
     dir: "ltr",
     nav: { vip: "VIP access", lang: "العربية", compare: "Compare" },
     hero: {
       badge: "Private invitation",
-      greeting: "Welcome,",
+      welcomeMale: "Welcome,",
+      welcomeFemale: "Welcome,",
       tagline: "Your exclusive residence awaits",
       subtitle: "A curated selection of premium residences, handpicked for discerning investors who demand nothing less than extraordinary.",
       cta: "Explore residences",
@@ -161,7 +163,8 @@ const LANG = {
     nav: { vip: "الوصول كبار الشخصيات", lang: "العربية", compare: "المقارنة" },
     hero: {
       badge: "دعوة خاصة",
-      greeting: "مرحبًا،",
+      welcomeMale: "مرحبًا،",
+      welcomeFemale: "مرحبًا،",
       tagline: "وحدتك الحصرية في انتظارك",
       subtitle: "مجموعة مختارة من الوحدات الفاخرة، بعنايةٍ لمن يبحثون عن ما يفوق العادي.",
       cta: "استكشاف الوحدات",
@@ -200,7 +203,7 @@ const LANG = {
       bedrooms: "غرف النوم", living: "غرفة المعيشة", balcony: "شرفة / تراس",
       kitchen: "المطبخ", master: "الجناح الرئيسي", bathrooms: "الحمامات",
       totalArea: "المساحة الإجمالية", download: "تحميل مخطط الطابق PDF",
-      disclaimer: "خطط الدفع خاضعة للموافقة. قد تختلف الشروط حسب اختيار الوحدة.",
+      disclaimer: "المخططات إرشادية وقد تختلف. الأبعاد الفعلية تُؤكد عند التسليم.",
     },
     brochureModal: {
       title: "الكتيب الرقمي",
@@ -256,7 +259,229 @@ const LANG = {
     },
     footer: "هذا بوابة خاصة. المحتوى مخصص للوصول الحصري لك.",
     poweredBy: "مشغل بواسطة",
-},
+  },
+  es: {
+    dir: "ltr",
+    nav: { vip: "Acceso VIP", lang: "English", compare: "Comparar" },
+    hero: {
+      badge: "Invitación privada",
+      welcomeMale: "Bienvenido,",
+      welcomeFemale: "Bienvenida,",
+      tagline: "Su residencia exclusiva le espera",
+      subtitle: "Una selección curada de residencias premium, escogidas a mano para inversionistas exigentes que no aceptan menos que lo extraordinario.",
+      cta: "Explorar residencias",
+      ctaSecondary: "Agendar visita privada",
+    },
+    stats: { units: "Residencias premium", floors: "Pisos de lujo", roi: "ROI proyectado", completion: "Entrega" },
+    roiBanner: {
+      title: "Calcule el rendimiento de su inversión",
+      desc: "Use nuestra calculadora interactiva de ROI para proyectar sus rendimientos según el valor de la propiedad, ingresos por renta, tasas de plusvalía y opciones de financiamiento.",
+      cta: "Abrir calculadora ROI →",
+    },
+    sections: {
+      residences: "Las residencias",
+      residencesSub: "Donde la visión se encuentra con el horizonte",
+      residencesHint: "Seleccione cualquier residencia para explorar todos los detalles",
+      amenities: "El estilo de vida",
+      amenitiesSub: "Experiencias curadas más allá de lo ordinario",
+      investment: "La oportunidad",
+      investmentSub: "Valor estratégico en cada detalle",
+      contact: "Consulta privada",
+      contactSub: "Agende su visita privada",
+      contactHint: "Su asesor dedicado organizará un recorrido exclusivo",
+    },
+    unitActions: {
+      viewDetails: "Ver detalles",
+      floorPlan: "Plano",
+      brochure: "Catálogo",
+      pricing: "Solicitar precio",
+      book: "Reservar visita",
+      compare: "Comparar",
+      payment: "Plan de pago",
+      callAdvisor: "Llamar al asesor",
+    },
+    floorPlanModal: {
+      title: "Plano de planta",
+      bedrooms: "Recámaras",
+      living: "Sala",
+      balcony: "Balcón / terraza",
+      kitchen: "Cocina",
+      master: "Recámara principal",
+      bathrooms: "Baños",
+      totalArea: "Superficie total",
+      download: "Descargar plano en PDF",
+      disclaimer: "Los planos son indicativos y pueden variar. Las dimensiones finales se confirman a la entrega.",
+    },
+    brochureModal: {
+      title: "Catálogo digital",
+      downloading: "Preparando su catálogo...",
+      ready: "Catálogo listo",
+      desc: "Su catálogo digital personalizado ha sido preparado con detalles exclusivos.",
+      download: "Descargar catálogo en PDF",
+      email: "Enviar por correo",
+      includes: "El catálogo incluye:",
+      items: ["Planos detallados y especificaciones", "Catálogo de acabados premium", "Vista general de amenidades y estilo de vida", "Análisis de inversión y planes de pago", "Mapa de ubicación y conectividad"],
+    },
+    paymentModal: {
+      title: "Plan de pago",
+      subtitle: "Estructura de pago flexible diseñada para inversionistas",
+      totalPrice: "Precio total",
+      plan6040: "Plan 60/40",
+      plan6040Desc: "60% durante construcción · 40% a la entrega",
+      plan7030: "Plan 70/30",
+      plan7030Desc: "70% durante construcción · 30% post-entrega (12 meses)",
+      milestones: "Hitos de pago",
+      m1: "Depósito de reserva", m1d: "Al reservar",
+      m2: "Primer abono", m2d: "Dentro de 30 días",
+      m3: "Construcción 30%", m3d: "Al alcanzar 30%",
+      m4: "Construcción 60%", m4d: "Al alcanzar 60%",
+      m5: "Entrega", m5d: "Al entregar llaves",
+      m6: "Post-entrega", m6d: "12 meses después de la entrega",
+      requestCall: "Solicitar consulta de pago",
+      disclaimer: "Los planes de pago están sujetos a aprobación. Las condiciones pueden variar según la unidad seleccionada.",
+    },
+    compareModal: {
+      title: "Comparar residencias",
+      feature: "Característica",
+      remove: "Quitar",
+      price: "Precio", floor: "Piso", bedrooms: "Recámaras",
+      size: "Superficie", view: "Vista", category: "Categoría",
+      empty: "Agregue residencias para comparar haciendo clic en el ícono ⚖️ de las tarjetas.",
+    },
+    booking: {
+      name: "Nombre completo", email: "Correo electrónico", phone: "Teléfono",
+      preferred: "Residencia preferida", date: "Fecha preferida", time: "Horario preferido",
+      notes: "Notas adicionales", submit: "Solicitar visita privada",
+      note: "Su información está protegida. Le contactaremos en un plazo de 24 horas.",
+      morning: "Mañana (9-12)", afternoon: "Tarde (12-16)", evening: "Noche (16-19)",
+      success: "Solicitud de visita enviada",
+      successDesc: "¡Gracias! Su asesor dedicado le contactará en un plazo de 24 horas para confirmar su visita privada.",
+      successRef: "Referencia",
+    },
+    toast: {
+      floorPlan: "Plano abierto",
+      brochure: "Catálogo descargado",
+      pricing: "Solicitud de precio enviada — revise su correo",
+      booking: "Solicitud de visita privada enviada",
+      compare: "Agregado a la comparación",
+      compareRemove: "Quitado de la comparación",
+      emailSent: "Catálogo enviado a su correo",
+      advisorNotified: "Su asesor dedicado ha sido notificado",
+    },
+    footer: "Este es un portal privado. El contenido está personalizado para su acceso exclusivo.",
+    poweredBy: "Tecnología de",
+  },
+  fr: {
+    dir: "ltr",
+    nav: { vip: "Accès VIP", lang: "English", compare: "Comparer" },
+    hero: {
+      badge: "Invitation privée",
+      welcomeMale: "Bienvenue,",
+      welcomeFemale: "Bienvenue,",
+      tagline: "Votre résidence exclusive vous attend",
+      subtitle: "Une sélection raffinée de résidences haut de gamme, choisies avec soin pour les investisseurs avertis qui n'acceptent rien de moins que l'extraordinaire.",
+      cta: "Explorer les résidences",
+      ctaSecondary: "Planifier une visite privée",
+    },
+    stats: { units: "Résidences premium", floors: "Étages de luxe", roi: "ROI projeté", completion: "Livraison" },
+    roiBanner: {
+      title: "Calculez le rendement de votre investissement",
+      desc: "Utilisez notre calculateur de ROI interactif pour projeter vos rendements selon la valeur de la propriété, les revenus locatifs, les taux d'appréciation et les options de financement.",
+      cta: "Ouvrir le calculateur ROI →",
+    },
+    sections: {
+      residences: "Les résidences",
+      residencesSub: "Là où la vision rencontre l'horizon",
+      residencesHint: "Sélectionnez une résidence pour explorer tous les détails",
+      amenities: "L'art de vivre",
+      amenitiesSub: "Des expériences raffinées au-delà de l'ordinaire",
+      investment: "L'opportunité",
+      investmentSub: "Une valeur stratégique dans chaque détail",
+      contact: "Consultation privée",
+      contactSub: "Planifiez votre visite privée",
+      contactHint: "Votre conseiller dédié organisera une visite exclusive",
+    },
+    unitActions: {
+      viewDetails: "Voir les détails",
+      floorPlan: "Plan d'étage",
+      brochure: "Brochure",
+      pricing: "Demander le prix",
+      book: "Réserver une visite",
+      compare: "Comparer",
+      payment: "Plan de paiement",
+      callAdvisor: "Appeler le conseiller",
+    },
+    floorPlanModal: {
+      title: "Plan d'étage",
+      bedrooms: "Chambres",
+      living: "Salon",
+      balcony: "Balcon / terrasse",
+      kitchen: "Cuisine",
+      master: "Suite principale",
+      bathrooms: "Salles de bain",
+      totalArea: "Superficie totale",
+      download: "Télécharger le plan en PDF",
+      disclaimer: "Les plans sont indicatifs et peuvent varier. Les dimensions finales sont confirmées à la livraison.",
+    },
+    brochureModal: {
+      title: "Brochure numérique",
+      downloading: "Préparation de votre brochure...",
+      ready: "Brochure prête",
+      desc: "Votre brochure numérique personnalisée a été préparée avec des détails exclusifs.",
+      download: "Télécharger la brochure en PDF",
+      email: "Envoyer par courriel",
+      includes: "La brochure comprend :",
+      items: ["Plans détaillés et spécifications", "Catalogue des finitions haut de gamme", "Aperçu des commodités et de l'art de vivre", "Analyse d'investissement et plans de paiement", "Carte d'emplacement et de connectivité"],
+    },
+    paymentModal: {
+      title: "Plan de paiement",
+      subtitle: "Structure de paiement flexible conçue pour les investisseurs",
+      totalPrice: "Prix total",
+      plan6040: "Plan 60/40",
+      plan6040Desc: "60 % pendant la construction · 40 % à la livraison",
+      plan7030: "Plan 70/30",
+      plan7030Desc: "70 % pendant la construction · 30 % après livraison (12 mois)",
+      milestones: "Jalons de paiement",
+      m1: "Dépôt de réservation", m1d: "À la réservation",
+      m2: "Premier versement", m2d: "Dans les 30 jours",
+      m3: "Construction 30 %", m3d: "À 30 % d'achèvement",
+      m4: "Construction 60 %", m4d: "À 60 % d'achèvement",
+      m5: "Livraison", m5d: "À la remise des clés",
+      m6: "Après livraison", m6d: "12 mois après la livraison",
+      requestCall: "Demander une consultation de paiement",
+      disclaimer: "Les plans de paiement sont sujets à approbation. Les conditions peuvent varier selon l'unité choisie.",
+    },
+    compareModal: {
+      title: "Comparer les résidences",
+      feature: "Caractéristique",
+      remove: "Retirer",
+      price: "Prix", floor: "Étage", bedrooms: "Chambres",
+      size: "Superficie", view: "Vue", category: "Catégorie",
+      empty: "Ajoutez des résidences à comparer en cliquant sur l'icône ⚖️ des cartes.",
+    },
+    booking: {
+      name: "Nom complet", email: "Adresse courriel", phone: "Téléphone",
+      preferred: "Résidence préférée", date: "Date préférée", time: "Heure préférée",
+      notes: "Notes supplémentaires", submit: "Demander une visite privée",
+      note: "Vos informations sont protégées. Nous vous contacterons dans les 24 heures.",
+      morning: "Matin (9 h - 12 h)", afternoon: "Après-midi (12 h - 16 h)", evening: "Soir (16 h - 19 h)",
+      success: "Demande de visite envoyée",
+      successDesc: "Merci ! Votre conseiller dédié vous contactera dans les 24 heures pour confirmer votre visite privée.",
+      successRef: "Référence",
+    },
+    toast: {
+      floorPlan: "Plan ouvert",
+      brochure: "Brochure téléchargée",
+      pricing: "Demande de prix envoyée — vérifiez votre courriel",
+      booking: "Demande de visite privée envoyée",
+      compare: "Ajouté à la comparaison",
+      compareRemove: "Retiré de la comparaison",
+      emailSent: "Brochure envoyée à votre courriel",
+      advisorNotified: "Votre conseiller dédié a été notifié",
+    },
+    footer: "Ceci est un portail privé. Le contenu est personnalisé pour votre accès exclusif.",
+    poweredBy: "Propulsé par",
+  },
 };
 
 // ─── PROPERTY DATA (Rich: galleries, features, floor plans, payments) ──
@@ -432,7 +657,7 @@ const ROOM_COLORS = {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function VIPPortal() {
   const [lang, setLang] = useState("en");
-  const { projectName, fmtCurrency, vipPersona } = usePortalRegion("real_estate", lang);
+  const { projectName, fmtCurrency, vipPersona, region } = usePortalRegion("real_estate", lang);
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
   const [modalUnit, setModalUnit] = useState(null);
@@ -449,6 +674,7 @@ export default function VIPPortal() {
   const resRef = useRef(null);
   const bookRef = useRef(null);
   const t = LANG[lang];
+  const tr = (obj) => (obj && (obj[lang] ?? obj.en)) ?? "";
 
   // Scroll
   useEffect(() => {
@@ -479,8 +705,9 @@ export default function VIPPortal() {
   }, []);
 
   const vipName = vipPersona?.name || "VIP Guest";
+  const nextLang = region.languages.find((l) => l !== lang) || region.languages[0];
   const toggleLang = () => {
-    const n = lang === "en" ? "ar" : "en";
+    const n = region.languages.find((l) => l !== lang) || region.languages[0];
     setLang(n);
     document.documentElement.lang = n;
     document.documentElement.dir = n === "ar" ? "rtl" : "ltr";
@@ -630,7 +857,7 @@ export default function VIPPortal() {
               {t.nav.compare}<span className="vp-cmp-count">{compareList.length}</span>
             </button>
           )}
-          <button className="vp-navbtn" onClick={toggleLang}>{t.nav.lang}</button>
+          <button className="vp-navbtn" onClick={toggleLang}>{LANG_LABEL[nextLang]}</button>
         </div>
       </header>
 
@@ -640,9 +867,9 @@ export default function VIPPortal() {
         <div className="vp-hero-ov" />
         <div className="vp-hero-ct">
           <div className="vp-pvt">{t.hero.badge}</div>
-          <p className="vp-greet">{t.hero.greeting} <span>{vipName}</span></p>
+          <p className="vp-greet">{t.hero[vipPersona?.gender === "female" ? "welcomeFemale" : "welcomeMale"]} <span>{vipName}</span></p>
           <h1 className="vp-htitle">
-            {lang === "en" ? (<>Your Exclusive<br /><em>Residence</em> Awaits</>) : (<>مسكنك<br /><em>الحصري</em> بانتظارك</>)}
+            {lang === "ar" ? (<>مسكنك<br /><em>الحصري</em> بانتظارك</>) : (<>Your Exclusive<br /><em>Residence</em> Awaits</>)}
           </h1>
           <p className="vp-hdesc">{t.hero.subtitle}</p>
           <div className="vp-hacts">
@@ -686,16 +913,16 @@ export default function VIPPortal() {
           {UNITS.map((unit) => (
             <div className="vp-card vp-rv" key={unit.id} onClick={() => openDetail(unit)}>
               <div className="vp-card-img">
-                <img src={unit.img} alt={unit.name[lang]} loading="lazy" />
-                <div className="vp-card-fbadge">{unit.feature[lang]}</div>
-                <div className="vp-card-status" style={{ background: unit.statusColor }}>{unit.status[lang]}</div>
+                <img src={unit.img} alt={tr(unit.name)} loading="lazy" />
+                <div className="vp-card-fbadge">{tr(unit.feature)}</div>
+                <div className="vp-card-status" style={{ background: unit.statusColor }}>{tr(unit.status)}</div>
               </div>
               <div className="vp-card-body">
-                <h3 className="vp-card-name">{unit.name[lang]}</h3>
-                <p className="vp-card-floor">{unit.floor[lang]}</p>
+                <h3 className="vp-card-name">{tr(unit.name)}</h3>
+                <p className="vp-card-floor">{tr(unit.floor)}</p>
                 <div className="vp-card-meta">
-                  <span>🛏 {unit.beds[lang]}</span>
-                  <span>📐 {unit.size[lang]}</span>
+                  <span>🛏 {tr(unit.beds)}</span>
+                  <span>📐 {tr(unit.size)}</span>
                 </div>
                 <div className="vp-card-price">{fmtCurrency(unit.price)}</div>
                 <div className="vp-card-sqft">{fmtCurrency(Math.round(unit.price / unit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div>
@@ -724,7 +951,7 @@ export default function VIPPortal() {
           <h2 className="vp-st">{t.sections.amenitiesSub}</h2>
         </div>
         <div className="vp-am-grid">
-          {AMENITIES[lang].map((a, i) => (
+          {tr(AMENITIES).map((a, i) => (
             <div className="vp-am vp-rv" key={i}>
               <div className="vp-am-icon">
                 <i className={`ti ${a.icon}`} aria-hidden="true" />
@@ -746,7 +973,7 @@ export default function VIPPortal() {
           <h2 className="vp-st">{t.sections.investmentSub}</h2>
         </div>
         <div className="vp-inv-grid">
-          {INVEST[lang].map((item, i) => (
+          {tr(INVEST).map((item, i) => (
             <div className="vp-inv vp-rv" key={i}>
               <div className="vp-inv-v">{item.value}</div>
               <div className="vp-inv-l">{item.label}</div>
@@ -810,7 +1037,7 @@ export default function VIPPortal() {
               <label className="vp-flabel">{t.booking.preferred}</label>
               <select className="vp-fsel" onChange={(e) => setForm({ ...form, unit: e.target.value })}>
                 <option value="">—</option>
-                {UNITS.map((u) => (<option key={u.id} value={u.id}>{u.name[lang]} — {fmtCurrency(u.price)}</option>))}
+                {UNITS.map((u) => (<option key={u.id} value={u.id}>{tr(u.name)} — {fmtCurrency(u.price)}</option>))}
               </select>
             </div>
             <div className="vp-frow">
@@ -856,49 +1083,49 @@ export default function VIPPortal() {
           <div className="vp-modal" onClick={(e) => e.stopPropagation()}>
             <button className="vp-modal-x" onClick={closeAll}>✕</button>
             <div className="vp-md-gallery">
-              <img src={selectedUnit.img} alt={selectedUnit.name[lang]} />
+              <img src={selectedUnit.img} alt={tr(selectedUnit.name)} />
               <img src={IMAGES.hero} alt="View 2" />
               <img src={IMAGES.pool} alt="View 3" />
             </div>
             <div className="vp-modal-body">
               <div className="vp-md-top">
                 <div>
-                  <h2 className="vp-md-title">{selectedUnit.name[lang]}</h2>
-                  <p className="vp-md-floor">{selectedUnit.floor[lang]}</p>
+                  <h2 className="vp-md-title">{tr(selectedUnit.name)}</h2>
+                  <p className="vp-md-floor">{tr(selectedUnit.floor)}</p>
                 </div>
                 <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
                   <div className="vp-md-price">{fmtCurrency(selectedUnit.price)}</div>
                   <div className="vp-md-sqft">{fmtCurrency(Math.round(selectedUnit.price / selectedUnit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div>
                 </div>
               </div>
-              <p className="vp-md-desc">{selectedUnit.desc[lang]}</p>
+              <p className="vp-md-desc">{tr(selectedUnit.desc)}</p>
               <div className="vp-md-grid">
-                <div className="vp-md-gi"><div className="vp-md-gi-l">{lang === "en" ? "Bedrooms" : "غرف النوم"}</div><div className="vp-md-gi-v">{selectedUnit.beds[lang]}</div></div>
-                <div className="vp-md-gi"><div className="vp-md-gi-l">{lang === "en" ? "Bathrooms" : "الحمامات"}</div><div className="vp-md-gi-v">{selectedUnit.baths[lang]}</div></div>
-                <div className="vp-md-gi"><div className="vp-md-gi-l">{lang === "en" ? "Living area" : "المساحة"}</div><div className="vp-md-gi-v">{selectedUnit.size[lang]}</div></div>
+                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.bedrooms}</div><div className="vp-md-gi-v">{tr(selectedUnit.beds)}</div></div>
+                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.bathrooms}</div><div className="vp-md-gi-v">{tr(selectedUnit.baths)}</div></div>
+                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.living}</div><div className="vp-md-gi-v">{tr(selectedUnit.size)}</div></div>
                 <div className="vp-md-gi">
-                  <div className="vp-md-gi-l">{lang === "en" ? "Status" : "الحالة"}</div>
+                  <div className="vp-md-gi-l">{t.compareModal.category}</div>
                   <div className="vp-md-gi-v" style={{ background: selectedUnit.statusColor, color: "#fff", display: "inline-block", padding: ".2rem .6rem", borderRadius: "4px", fontSize: ".9rem" }}>
-                    {selectedUnit.status[lang]}
+                    {tr(selectedUnit.status)}
                   </div>
                 </div>
               </div>
               <div className="vp-md-feats">
-                {selectedUnit.features[lang].map((f, i) => (<span className="vp-md-feat" key={i}>{f}</span>))}
+                {tr(selectedUnit.features).map((f, i) => (<span className="vp-md-feat" key={i}>{f}</span>))}
               </div>
 
               {/* Inline Payment Preview */}
               <div style={{ padding: "1.5rem", border: "1px solid var(--vp-glb)", borderRadius: "8px", background: "var(--vp-gl)" }}>
-                <h4 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.2rem", marginBottom: "1rem" }}>{lang === "en" ? "Payment plan" : "خطة الدفع"}</h4>
+                <h4 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.2rem", marginBottom: "1rem" }}>{t.paymentModal.title}</h4>
                 <div className="vp-pay-bar">
                   <div className="vp-pay-seg" style={{ flex: 10, background: "var(--vp-gold)" }} />
                   <div className="vp-pay-seg" style={{ flex: 50, background: "var(--vp-gold-lt)" }} />
                   <div className="vp-pay-seg" style={{ flex: 40, background: "rgba(197,164,103,.35)" }} />
                 </div>
                 <div className="vp-pay-legend">
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "Down payment" : "الدفعة الأولى"} (10%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.1)}</div></div></div>
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold-lt)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "During construction" : "خلال البناء"} (50%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.5)}</div></div></div>
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "rgba(197,164,103,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{lang === "en" ? "On handover" : "عند التسليم"} (40%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.4)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m1} (10%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.1)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold-lt)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m3} (50%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.5)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "rgba(197,164,103,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m5} (40%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.4)}</div></div></div>
                 </div>
               </div>
 
@@ -922,13 +1149,13 @@ export default function VIPPortal() {
           <div className="vp-modal" style={{ maxWidth: "800px" }} onClick={(e) => e.stopPropagation()}>
             <button className="vp-modal-x" onClick={closeAll}>✕</button>
             <div className="vp-modal-body">
-              <h2 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {modalUnit.name[lang]}</h2>
-              <p style={{ color: "var(--vp-gold)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{modalUnit.floor[lang]}</p>
+              <h2 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {tr(modalUnit.name)}</h2>
+              <p style={{ color: "var(--vp-gold)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{tr(modalUnit.floor)}</p>
               <svg className="vp-fp-svg" viewBox="0 0 100 65" style={{ background: "var(--vp-ch)" }}>
                 {modalUnit.floorPlan.rooms.map((room, i) => (
                   <g key={i}>
                     <rect x={room.x} y={room.y} width={room.w} height={room.h} fill={ROOM_COLORS[room.key] || "#666"} fillOpacity="0.2" stroke={ROOM_COLORS[room.key] || "#666"} strokeWidth="0.3" rx="0.5" />
-                    {room.label[lang].split("\n").map((line, li) => (
+                    {tr(room.label).split("\n").map((line, li) => (
                       <text key={li} x={room.x + room.w / 2} y={room.y + room.h / 2 + (li - 0.3) * 3.5} textAnchor="middle" fill={ROOM_COLORS[room.key] || "#aaa"} fontSize="2.2" fontFamily="Outfit, sans-serif" fontWeight={li === 0 ? "500" : "300"}>
                         {line}
                       </text>
@@ -941,7 +1168,7 @@ export default function VIPPortal() {
                 <div className="vp-fp-spec"><div className="vp-fp-spec-l">{t.floorPlanModal.balcony}</div><div className="vp-fp-spec-v">{modalUnit.floorPlan.specs.balconySize}</div></div>
                 <div className="vp-fp-spec"><div className="vp-fp-spec-l">{t.floorPlanModal.totalArea}</div><div className="vp-fp-spec-v">{modalUnit.floorPlan.specs.totalArea}</div></div>
               </div>
-              <button className="vp-btn-g" style={{ width: "100%", justifyContent: "center" }} onClick={() => showToast(lang === "en" ? "Floor plan PDF downloading..." : "جاري تحميل المخطط...", "📥")}>
+              <button className="vp-btn-g" style={{ width: "100%", justifyContent: "center" }} onClick={() => showToast(t.toast.floorPlan, "📥")}>
                 {t.floorPlanModal.download}
               </button>
               <p style={{ textAlign: "center", fontSize: ".72rem", color: "var(--vp-t3)", marginTop: "1rem" }}>{t.floorPlanModal.disclaimer}</p>
@@ -965,7 +1192,7 @@ export default function VIPPortal() {
                 {t.brochureModal.items.map((item, i) => (<div className="vp-br-item" key={i}>{item}</div>))}
               </div>
               <div style={{ display: "flex", gap: ".75rem", marginTop: "1.5rem" }}>
-                <button className="vp-btn-g" style={{ flex: 1, justifyContent: "center" }} onClick={() => showToast(lang === "en" ? "Brochure PDF downloading..." : "جاري تحميل الكتيب...", "📥")}>
+                <button className="vp-btn-g" style={{ flex: 1, justifyContent: "center" }} onClick={() => showToast(t.toast.brochure, "📥")}>
                   {t.brochureModal.download}
                 </button>
                 <button className="vp-btn-o" style={{ flex: 1, justifyContent: "center" }} onClick={() => showToast(t.toast.emailSent, "📧")}>
@@ -1043,11 +1270,11 @@ export default function VIPPortal() {
                 const cols = `180px repeat(${units.length}, 1fr)`;
                 const rows = [
                   { label: t.compareModal.price, get: (u) => fmtCurrency(u.price) },
-                  { label: t.compareModal.floor, get: (u) => u.floor[lang] },
-                  { label: t.compareModal.bedrooms, get: (u) => u.beds[lang] },
-                  { label: t.compareModal.size, get: (u) => u.size[lang] },
-                  { label: t.compareModal.view, get: (u) => u.feature[lang] },
-                  { label: t.compareModal.category, get: (u) => u.category[lang] },
+                  { label: t.compareModal.floor, get: (u) => tr(u.floor) },
+                  { label: t.compareModal.bedrooms, get: (u) => tr(u.beds) },
+                  { label: t.compareModal.size, get: (u) => tr(u.size) },
+                  { label: t.compareModal.view, get: (u) => tr(u.feature) },
+                  { label: t.compareModal.category, get: (u) => tr(u.category) },
                 ];
                 return (
                   <div className="vp-cmp-grid">
@@ -1055,7 +1282,7 @@ export default function VIPPortal() {
                       <div>{t.compareModal.feature}</div>
                       {units.map((u) => (
                         <div key={u.id} style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "var(--vp-serif)", fontSize: "1rem", color: "var(--vp-t1)", fontWeight: 400, marginBottom: ".3rem" }}>{u.name[lang]}</div>
+                          <div style={{ fontFamily: "var(--vp-serif)", fontSize: "1rem", color: "var(--vp-t1)", fontWeight: 400, marginBottom: ".3rem" }}>{tr(u.name)}</div>
                           <button className="vp-cmp-rm" onClick={() => toggleCompare(u.id)}>{t.compareModal.remove}</button>
                         </div>
                       ))}
