@@ -355,31 +355,9 @@ const LANG = {
   },
 };
 
-// ─── PROPERTY DATA (public — price ranges, not exact) ────────────
-const UNITS = [
-  {
-    id: "SKY-PH-01",
-    tower: "Al Qamar",
-    unitType: "penthouse",
-    name: { en: "Sky Penthouse", ar: "بنتهاوس السماء" },
-    floor: { en: "Floor 42–44", ar: "الطابق ٤٢-٤٤" },
-    beds: { en: "4 Bedrooms", ar: "٤ غرف نوم" }, bedNum: 4,
-    baths: { en: "5 Bathrooms", ar: "٥ حمامات" },
-    size: { en: "6,200 sq ft", ar: "٦,٢٠٠ قدم²" }, sizeNum: 6200,
-    priceRange: { en: "From AED 12M", ar: "من ١٢ مليون درهم" }, priceNum: 12500000,
-    feature: { en: "360° Panoramic Views", ar: "إطلالة بانورامية ٣٦٠°" },
-    type: { en: "Penthouse", ar: "بنتهاوس" }, filterKey: "penthouse",
-    status: { en: "Available", ar: "متاح" }, statusColor: "#2A9D5C",
-    category: { en: "Penthouse", ar: "بنتهاوس" },
-    view: { en: "Sea + City Panoramic", ar: "بانورامية بحر + مدينة" },
-    desc: {
-      en: "A triple-height masterpiece crowning the tower with private infinity pool, direct elevator access, and wraparound terrace overlooking the Arabian Gulf.",
-      ar: "تحفة معمارية بارتفاع ثلاثي تتوّج البرج مع مسبح إنفينيتي خاص ومصعد مباشر وتراس محيطي يطل على الخليج العربي.",
-    },
-    features: {
-      en: ["Private Pool", "Smart Home", "Wine Cellar", "Staff Quarters", "Private Garage"],
-      ar: ["مسبح خاص", "منزل ذكي", "قبو نبيذ", "غرف الخدم", "مرآب خاص"],
-    },
+// ─── PROPERTY DATA — extras keyed by canonical unit id (lux-ph/lux-grand/lux-exec)
+const UNIT_EXTRAS = {
+  "lux-ph": {
     img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
@@ -388,40 +366,18 @@ const UNITS = [
     ],
     floorPlan: {
       rooms: [
-        { key: "master", w: 42, h: 30, x: 5, y: 5, label: { en: "Master Suite\n580 sq ft", ar: "الجناح الرئيسي\n٥٨٠ قدم²" } },
-        { key: "bed2", w: 22, h: 20, x: 50, y: 5, label: { en: "Bedroom 2\n320 sq ft", ar: "غرفة ٢\n٣٢٠ قدم²" } },
-        { key: "bed3", w: 22, h: 20, x: 75, y: 5, label: { en: "Bedroom 3\n280 sq ft", ar: "غرفة ٣\n٢٨٠ قدم²" } },
-        { key: "living", w: 42, h: 30, x: 5, y: 38, label: { en: "Grand Living\n980 sq ft", ar: "صالة كبرى\n٩٨٠ قدم²" } },
-        { key: "kitchen", w: 25, h: 20, x: 50, y: 38, label: { en: "Chef's Kitchen\n420 sq ft", ar: "مطبخ الشيف\n٤٢٠ قدم²" } },
-        { key: "balcony", w: 92, h: 14, x: 5, y: 72, label: { en: "Wraparound Terrace\n1,200 sq ft", ar: "تراس محيطي\n١,٢٠٠ قدم²" } },
+        { key: "master",  w: 42, h: 30, x:  5, y:  5, label: { en: "Master Suite\n580 sq ft",       ar: "الجناح الرئيسي\n٥٨٠ قدم²" } },
+        { key: "bed2",    w: 22, h: 20, x: 50, y:  5, label: { en: "Bedroom 2\n320 sq ft",          ar: "غرفة ٢\n٣٢٠ قدم²" } },
+        { key: "bed3",    w: 22, h: 20, x: 75, y:  5, label: { en: "Bedroom 3\n280 sq ft",          ar: "غرفة ٣\n٢٨٠ قدم²" } },
+        { key: "living",  w: 42, h: 30, x:  5, y: 38, label: { en: "Grand Living\n980 sq ft",       ar: "صالة كبرى\n٩٨٠ قدم²" } },
+        { key: "kitchen", w: 25, h: 20, x: 50, y: 38, label: { en: "Chef's Kitchen\n420 sq ft",     ar: "مطبخ الشيف\n٤٢٠ قدم²" } },
+        { key: "balcony", w: 92, h: 14, x:  5, y: 72, label: { en: "Wraparound Terrace\n1,200 sq ft", ar: "تراس محيطي\n١,٢٠٠ قدم²" } },
       ],
       specs: { bathrooms: "5+1", balconySize: "1,200 sq ft", totalArea: "6,200 sq ft" },
     },
     payment: { base: 12500000, plans: ["60/40", "70/30"] },
   },
-  {
-    id: "GR-35-01",
-    tower: "Al Safwa",
-    unitType: "3br",
-    name: { en: "Grand Residence", ar: "الإقامة الكبرى" },
-    floor: { en: "Floor 35–38", ar: "الطابق ٣٥-٣٨" },
-    beds: { en: "3 Bedrooms", ar: "٣ غرف نوم" }, bedNum: 3,
-    baths: { en: "4 Bathrooms", ar: "٤ حمامات" },
-    size: { en: "4,100 sq ft", ar: "٤,١٠٠ قدم²" }, sizeNum: 4100,
-    priceRange: { en: "From AED 7.5M", ar: "من ٧.٥ مليون درهم" }, priceNum: 7800000,
-    feature: { en: "Marina & Sea View", ar: "إطلالة على المارينا والبحر" },
-    type: { en: "3BR residence", ar: "مسكن ٣ غرف" }, filterKey: "3bed",
-    status: { en: "Available", ar: "متاح" }, statusColor: "#2A9D5C",
-    category: { en: "Grand Residence", ar: "إقامة كبرى" },
-    view: { en: "Marina & Sea", ar: "مارينا وبحر" },
-    desc: {
-      en: "Expansive living with floor-to-ceiling glazing, Italian marble throughout, a private terrace overlooking the marina, and a chef's kitchen with Miele appliances.",
-      ar: "مساحة واسعة مع زجاج من الأرض إلى السقف، رخام إيطالي، تراس خاص يطل على المارينا، ومطبخ الشيف بأجهزة ميلي.",
-    },
-    features: {
-      en: ["Marina View", "Maid's Room", "Walk-in Closet", "Home Office", "Balcony"],
-      ar: ["إطلالة المارينا", "غرفة الخادمة", "غرفة ملابس", "مكتب منزلي", "شرفة"],
-    },
+  "lux-grand": {
     img: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
@@ -430,40 +386,18 @@ const UNITS = [
     ],
     floorPlan: {
       rooms: [
-        { key: "master", w: 35, h: 32, x: 5, y: 5, label: { en: "Master Suite\n480 sq ft", ar: "الجناح الرئيسي\n٤٨٠ قدم²" } },
-        { key: "bed2", w: 25, h: 25, x: 43, y: 5, label: { en: "Bedroom 2\n320 sq ft", ar: "غرفة ٢\n٣٢٠ قدم²" } },
-        { key: "bed3", w: 25, h: 25, x: 72, y: 5, label: { en: "Bedroom 3\n280 sq ft", ar: "غرفة ٣\n٢٨٠ قدم²" } },
-        { key: "living", w: 45, h: 28, x: 5, y: 40, label: { en: "Living & Dining\n860 sq ft", ar: "معيشة وطعام\n٨٦٠ قدم²" } },
-        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Kitchen\n340 sq ft", ar: "مطبخ\n٣٤٠ قدم²" } },
-        { key: "balcony", w: 92, h: 16, x: 5, y: 72, label: { en: "Marina Terrace\n680 sq ft", ar: "تراس المارينا\n٦٨٠ قدم²" } },
+        { key: "master",  w: 35, h: 32, x:  5, y:  5, label: { en: "Master Suite\n480 sq ft",       ar: "الجناح الرئيسي\n٤٨٠ قدم²" } },
+        { key: "bed2",    w: 25, h: 25, x: 43, y:  5, label: { en: "Bedroom 2\n320 sq ft",          ar: "غرفة ٢\n٣٢٠ قدم²" } },
+        { key: "bed3",    w: 25, h: 25, x: 72, y:  5, label: { en: "Bedroom 3\n280 sq ft",          ar: "غرفة ٣\n٢٨٠ قدم²" } },
+        { key: "living",  w: 45, h: 28, x:  5, y: 40, label: { en: "Living & Dining\n860 sq ft",    ar: "معيشة وطعام\n٨٦٠ قدم²" } },
+        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Kitchen\n340 sq ft",            ar: "مطبخ\n٣٤٠ قدم²" } },
+        { key: "balcony", w: 92, h: 16, x:  5, y: 72, label: { en: "Marina Terrace\n680 sq ft",     ar: "تراس المارينا\n٦٨٠ قدم²" } },
       ],
       specs: { bathrooms: "3+1", balconySize: "680 sq ft", totalArea: "4,100 sq ft" },
     },
     payment: { base: 7800000, plans: ["60/40", "70/30"] },
   },
-  {
-    id: "EX-25-01",
-    tower: "Al Rawda",
-    unitType: "2br",
-    name: { en: "Executive Suite", ar: "الجناح التنفيذي" },
-    floor: { en: "Floor 25–30", ar: "الطابق ٢٥-٣٠" },
-    beds: { en: "2 Bedrooms", ar: "غرفتا نوم" }, bedNum: 2,
-    baths: { en: "3 Bathrooms", ar: "٣ حمامات" },
-    size: { en: "2,800 sq ft", ar: "٢,٨٠٠ قدم²" }, sizeNum: 2800,
-    priceRange: { en: "From AED 4M", ar: "من ٤ مليون درهم" }, priceNum: 4200000,
-    feature: { en: "City Skyline View", ar: "إطلالة على أفق المدينة" },
-    type: { en: "2BR suite", ar: "جناح غرفتين" }, filterKey: "2bed",
-    status: { en: "Last 3 Units", ar: "آخر ٣ وحدات" }, statusColor: "#C1121F",
-    category: { en: "Executive Suite", ar: "جناح تنفيذي" },
-    view: { en: "City Skyline", ar: "أفق المدينة" },
-    desc: {
-      en: "Refined elegance for the modern professional. Featuring a dedicated home office, walk-in wardrobe, chef's kitchen, and floor-to-ceiling windows framing the city skyline.",
-      ar: "أناقة راقية للمحترف العصري. يتميز بمكتب منزلي مخصص، غرفة ملابس، مطبخ الشيف، ونوافذ من الأرض إلى السقف تؤطر أفق المدينة.",
-    },
-    features: {
-      en: ["City View", "Home Office", "Gym Access", "Concierge", "Smart Lock"],
-      ar: ["إطلالة المدينة", "مكتب منزلي", "صالة رياضة", "كونسيرج", "قفل ذكي"],
-    },
+  "lux-exec": {
     img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
@@ -472,43 +406,17 @@ const UNITS = [
     ],
     floorPlan: {
       rooms: [
-        { key: "master", w: 35, h: 35, x: 5, y: 5, label: { en: "Master Suite\n420 sq ft", ar: "الجناح الرئيسي\n٤٢٠ قدم²" } },
-        { key: "bed2", w: 28, h: 28, x: 44, y: 5, label: { en: "Bedroom 2\n300 sq ft", ar: "غرفة ٢\n٣٠٠ قدم²" } },
-        { key: "office", w: 22, h: 25, x: 76, y: 5, label: { en: "Home Office\n180 sq ft", ar: "مكتب منزلي\n١٨٠ قدم²" } },
-        { key: "living", w: 42, h: 28, x: 5, y: 44, label: { en: "Living Room\n620 sq ft", ar: "غرفة المعيشة\n٦٢٠ قدم²" } },
-        { key: "kitchen", w: 28, h: 22, x: 50, y: 44, label: { en: "Chef's Kitchen\n280 sq ft", ar: "مطبخ الشيف\n٢٨٠ قدم²" } },
-        { key: "balcony", w: 70, h: 14, x: 5, y: 76, label: { en: "Sky Balcony\n380 sq ft", ar: "شرفة سماوية\n٣٨٠ قدم²" } },
+        { key: "master",  w: 35, h: 35, x:  5, y:  5, label: { en: "Master Suite\n420 sq ft",       ar: "الجناح الرئيسي\n٤٢٠ قدم²" } },
+        { key: "bed2",    w: 28, h: 28, x: 44, y:  5, label: { en: "Bedroom 2\n300 sq ft",          ar: "غرفة ٢\n٣٠٠ قدم²" } },
+        { key: "office",  w: 22, h: 25, x: 76, y:  5, label: { en: "Home Office\n180 sq ft",        ar: "مكتب منزلي\n١٨٠ قدم²" } },
+        { key: "living",  w: 42, h: 28, x:  5, y: 44, label: { en: "Living Room\n620 sq ft",        ar: "غرفة المعيشة\n٦٢٠ قدم²" } },
+        { key: "kitchen", w: 28, h: 22, x: 50, y: 44, label: { en: "Chef's Kitchen\n280 sq ft",     ar: "مطبخ الشيف\n٢٨٠ قدم²" } },
+        { key: "balcony", w: 70, h: 14, x:  5, y: 76, label: { en: "Sky Balcony\n380 sq ft",        ar: "شرفة سماوية\n٣٨٠ قدم²" } },
       ],
       specs: { bathrooms: "2+1", balconySize: "380 sq ft", totalArea: "2,800 sq ft" },
     },
     payment: { base: 4200000, plans: ["60/40", "70/30"] },
   },
-];
-
-const AMENITIES = [
-  { tabler: "ti-pool", en: "Infinity pool", ar: "مسبح إنفينيتي" },
-  { tabler: "ti-bath", en: "Spa & wellness", ar: "سبا وعافية" },
-  { tabler: "ti-tools-kitchen-2", en: "Fine dining", ar: "مطاعم فاخرة" },
-  { tabler: "ti-barbell", en: "Fitness center", ar: "مركز لياقة" },
-  { tabler: "ti-sailboat", en: "Marina access", ar: "مرسى خاص" },
-  { tabler: "ti-plant-2", en: "Sky gardens", ar: "حدائق سماوية" },
-  { tabler: "ti-stethoscope", en: "Medical center", ar: "مركز طبي" },
-  { tabler: "ti-shopping-cart", en: "Retail & cafés", ar: "تسوق ومقاهي" },
-];
-
-const INVEST = {
-  en: [
-    { label: "Rental yield", value: "8.2%", note: "Above market average" },
-    { label: "Capital growth", value: "23%", note: "3-year projection" },
-    { label: "Payment plan", value: "60/40", note: "Flexible terms" },
-    { label: "Handover", value: "Q4 2027", note: "On schedule" },
-  ],
-  ar: [
-    { label: "عائد الإيجار", value: "٨.٢٪", note: "أعلى من السوق" },
-    { label: "نمو رأس المال", value: "٢٣٪", note: "توقعات ٣ سنوات" },
-    { label: "خطة الدفع", value: "٦٠/٤٠", note: "شروط مرنة" },
-    { label: "التسليم", value: "Q4 2027", note: "في الموعد" },
-  ],
 };
 
 const IMAGES = { hero: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=85" };
@@ -524,7 +432,7 @@ const ROOM_COLORS = {
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function MarketplacePortal() {
   const [lang, setLang] = useState("en");
-  const { projectName, fmtCurrency, region } = usePortalRegion("real_estate", lang);
+  const { projectName, fmtCurrency, region, luxuryUnits, amenities, investStats } = usePortalRegion("real_estate", lang);
 
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
@@ -542,6 +450,9 @@ export default function MarketplacePortal() {
   const resRef = useRef(null);
   const t = LANG[lang];
   const tr = (obj) => (obj && (obj[lang] ?? obj.en)) ?? "";
+
+  const withExtras = (unit) => ({ ...unit, ...UNIT_EXTRAS[unit.id] });
+  const units = luxuryUnits.map(withExtras);
 
   useEffect(() => { const fn = () => setScrolled(window.scrollY > 60); window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn); }, []);
   useEffect(() => { const obs = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("vis"); }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }); document.querySelectorAll(".mp-rv").forEach((el) => obs.observe(el)); return () => obs.disconnect(); }, [lang, modal, selectedUnit, showLeadForm]);
@@ -595,16 +506,16 @@ export default function MarketplacePortal() {
   };
 
   // Actions (all behind lead gate except view)
-  const openDetail = (unit) => { setSelectedUnit(unit); trackEvent("view_unit", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); };
-  const openFloor = (unit) => requireLead(() => { setModalUnit(unit); setModal("floorplan"); trackEvent("view_floorplan", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.floorPlan); });
-  const openBrochure = (unit) => requireLead(() => { setModalUnit(unit); setModal("brochure"); trackEvent("download_brochure", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.brochure); });
-  const openPayment = (unit) => requireLead(() => { setModalUnit(unit); setModal("payment"); setPayPlan("60/40"); trackEvent("explore_payment_plan", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); });
+  const openDetail = (unit) => { setSelectedUnit(unit); trackEvent("view_unit", { unitId: unit.id, unitName: unit.nameEn, tower: unit.tower, unitType: unit.type }); };
+  const openFloor = (unit) => requireLead(() => { setModalUnit(unit); setModal("floorplan"); trackEvent("view_floorplan", { unitId: unit.id, unitName: unit.nameEn, tower: unit.tower, unitType: unit.type }); showToast(t.toast.floorPlan); });
+  const openBrochure = (unit) => requireLead(() => { setModalUnit(unit); setModal("brochure"); trackEvent("download_brochure", { unitId: unit.id, unitName: unit.nameEn, tower: unit.tower, unitType: unit.type }); showToast(t.toast.brochure); });
+  const openPayment = (unit) => requireLead(() => { setModalUnit(unit); setModal("payment"); setPayPlan("60/40"); trackEvent("explore_payment_plan", { unitId: unit.id, unitName: unit.nameEn, tower: unit.tower, unitType: unit.type }); });
   const openCompare = () => { setModal("compare"); };
-  const reqPricing = (unit) => requireLead(() => { trackEvent("request_pricing", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.pricing); });
+  const reqPricing = (unit) => requireLead(() => { trackEvent("request_pricing", { unitId: unit.id, unitName: unit.nameEn, tower: unit.tower, unitType: unit.type }); showToast(t.toast.pricing); });
   const handleBooking = (unit) => requireLead(() => { trackEvent("book_viewing", { unitId: unit?.id || "general" }); showToast(t.toast.booking); });
   const closeAll = () => { setModal(null); setModalUnit(null); setSelectedUnit(null); };
 
-  const filteredUnits = filter === "all" ? UNITS : UNITS.filter(u => u.filterKey === filter);
+  const filteredUnits = filter === "all" ? units : units.filter(u => u.type === filter);
 
   const getMilestones = (price, plan) => {
     if (plan === "60/40") return [
@@ -682,7 +593,7 @@ export default function MarketplacePortal() {
           <span className="mp-sl">{t.sections.residences}</span>
           <h2 className="mp-st">{t.sections.residencesSub}</h2>
           <div className="mp-filters">
-            {[{ key: "all", l: t.filters.all }, { key: "penthouse", l: t.filters.penthouse }, { key: "3bed", l: t.filters.bed3 }, { key: "2bed", l: t.filters.bed2 }].map(f => (
+            {[{ key: "all", l: t.filters.all }, { key: "penthouse", l: t.filters.penthouse }, { key: "3br", l: t.filters.bed3 }, { key: "2br", l: t.filters.bed2 }].map(f => (
               <button type="button" key={f.key} className={`mp-ftab ${filter === f.key ? "on" : "off"}`} onClick={() => { setFilter(f.key); trackEvent("filter_units", { filter: f.key }); }}>{f.l}</button>
             ))}
           </div>
@@ -691,18 +602,18 @@ export default function MarketplacePortal() {
           {filteredUnits.map((unit) => (
             <div className="mp-card mp-rv" key={unit.id} onClick={() => openDetail(unit)}>
               <div className="mp-card-img">
-                <img src={unit.img} alt={tr(unit.name)} loading="lazy" />
-                <div className="mp-card-fbadge">{tr(unit.type)}</div>
-                <div className="mp-card-status" style={{ background: unit.statusColor }}>{tr(unit.status)}</div>
+                <img src={unit.img} alt={unit.name} loading="lazy" />
+                <div className="mp-card-fbadge">{unit.type}</div>
+                <div className="mp-card-status" style={{ background: unit.statusColor }}>{unit.status}</div>
               </div>
               <div className="mp-card-body">
-                <h3 className="mp-card-name">{tr(unit.name)}</h3>
-                <p className="mp-card-floor">{tr(unit.floor)}</p>
+                <h3 className="mp-card-name">{unit.name}</h3>
+                <p className="mp-card-floor">{unit.floor}</p>
                 <div className="mp-card-meta">
-                  <span className="mp-card-meta-item"><i className="ti ti-bed" aria-hidden="true" /> {tr(unit.beds)}</span>
-                  <span className="mp-card-meta-item"><i className="ti ti-ruler-measure" aria-hidden="true" /> {tr(unit.size)}</span>
+                  <span className="mp-card-meta-item"><i className="ti ti-bed" aria-hidden="true" /> {unit.beds}</span>
+                  <span className="mp-card-meta-item"><i className="ti ti-ruler-measure" aria-hidden="true" /> {unit.size}</span>
                 </div>
-                <div className="mp-card-price">{t.card.priceFrom}{fmtCurrency(unit.priceNum)}</div>
+                <div className="mp-card-price">{t.card.priceFrom}{fmtCurrency(unit.priceBase)}</div>
                 <div className="mp-card-hint mp-card-pricing-sub"><i className="ti ti-lock" aria-hidden="true" /><span>{t.card.registerPrice}</span></div>
               </div>
               <div className="mp-card-acts" onClick={(e) => e.stopPropagation()}>
@@ -723,7 +634,7 @@ export default function MarketplacePortal() {
       {/* AMENITIES */}
       <section className="mp-sec">
         <div className="mp-sh mp-rv"><span className="mp-sl">{t.sections.amenities}</span><h2 className="mp-st">{t.sections.amenitiesSub}</h2></div>
-        <div className="mp-am-grid">{AMENITIES.map((a, i) => (<div className="mp-am mp-rv" key={i}><div className="mp-am-icon"><i className={`ti ${a.tabler}`} aria-hidden="true" /></div><div className="mp-am-name">{tr(a)}</div></div>))}</div>
+        <div className="mp-am-grid">{amenities.map((a, i) => (<div className="mp-am mp-rv" key={i}><div className="mp-am-icon"><i className={`ti ${a.icon}`} aria-hidden="true" /></div><div className="mp-am-name">{a.title}</div><div className="mp-am-desc">{a.desc}</div></div>))}</div>
       </section>
 
       <div className="mp-div"><div className="mp-div-l" /><div className="mp-div-d">◆</div><div className="mp-div-l" /></div>
@@ -731,7 +642,7 @@ export default function MarketplacePortal() {
       {/* INVESTMENT */}
       <section className="mp-sec">
         <div className="mp-sh mp-rv"><span className="mp-sl">{t.sections.investment}</span><h2 className="mp-st">{t.sections.investmentSub}</h2></div>
-        <div className="mp-inv-grid">{tr(INVEST).map((item, i) => (<div className="mp-inv mp-rv" key={i}><div className="mp-inv-v">{item.value}</div><div className="mp-inv-l">{item.label}</div><div className="mp-inv-n">{item.note}</div></div>))}</div>
+        <div className="mp-inv-grid">{investStats.map((item, i) => (<div className="mp-inv mp-rv" key={i}><div className="mp-inv-v">{item.stat}</div><div className="mp-inv-l">{item.label}</div><div className="mp-inv-n">{item.desc}</div></div>))}</div>
 
       </section>
 
@@ -771,21 +682,21 @@ export default function MarketplacePortal() {
       {selectedUnit && (
         <div className="mp-modal-ov" onClick={closeAll}><div className="mp-modal" onClick={(e) => e.stopPropagation()}>
           <button className="mp-modal-x" onClick={closeAll}>✕</button>
-          <div className="mp-md-gallery">{selectedUnit.gallery.map((src, i) => <img key={i} src={src} alt={`${tr(selectedUnit.name)} ${i+1}`} loading="lazy" />)}</div>
+          <div className="mp-md-gallery">{selectedUnit.gallery.map((src, i) => <img key={i} src={src} alt={`${selectedUnit.name} ${i+1}`} loading="lazy" />)}</div>
           <div className="mp-modal-body">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "2rem", marginBottom: "2rem", flexWrap: "wrap" }}>
-              <div><h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "2.2rem", fontWeight: 500, color: "var(--mp-t1)" }}>{tr(selectedUnit.name)}</h2><p style={{ color: "var(--mp-t3)", fontSize: ".82rem", letterSpacing: ".1em", textTransform: "uppercase" }}>{tr(selectedUnit.floor)}</p></div>
+              <div><h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "2.2rem", fontWeight: 500, color: "var(--mp-t1)" }}>{selectedUnit.name}</h2><p style={{ color: "var(--mp-t3)", fontSize: ".82rem", letterSpacing: ".1em", textTransform: "uppercase" }}>{selectedUnit.floor}</p></div>
               <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
-                <div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--mp-t1)" }}>{t.card.priceFrom}{fmtCurrency(selectedUnit.priceNum)}</div>
+                <div style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--mp-t1)" }}>{t.card.priceFrom}{fmtCurrency(selectedUnit.priceBase)}</div>
                 <div className="mp-card-pricing-sub" style={{ justifyContent: lang === "ar" ? "flex-end" : "flex-start", marginTop: ".35rem" }}>
                   <i className="ti ti-lock" aria-hidden="true" />
                   <span>{t.card.registerPrice}</span>
                 </div>
               </div>
             </div>
-            <p style={{ color: "var(--mp-t2)", fontSize: "1.05rem", lineHeight: 1.8, fontWeight: 400, marginBottom: "2rem", maxWidth: "700px" }}>{tr(selectedUnit.desc)}</p>
+            <p style={{ color: "var(--mp-t2)", fontSize: "1.05rem", lineHeight: 1.8, fontWeight: 400, marginBottom: "2rem", maxWidth: "700px" }}>{selectedUnit.desc}</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.5rem", marginBottom: "2rem" }}>
-              {[{ l: t.compareModal.bedrooms, v: tr(selectedUnit.beds) },{ l: t.floorPlanModal.bathrooms, v: tr(selectedUnit.baths) },{ l: t.floorPlanModal.totalArea, v: tr(selectedUnit.size) },{ l: t.compareModal.category, v: tr(selectedUnit.status), isSt: true }].map((item, i) => (
+              {[{ l: t.compareModal.bedrooms, v: selectedUnit.beds },{ l: t.floorPlanModal.bathrooms, v: selectedUnit.baths },{ l: t.floorPlanModal.totalArea, v: selectedUnit.size },{ l: t.compareModal.category, v: selectedUnit.status, isSt: true }].map((item, i) => (
                 <div key={i} style={{ padding: "1rem", border: "1px solid var(--mp-bdr)", borderRadius: "6px", textAlign: "center" }}>
                   <div style={{ fontSize: ".65rem", letterSpacing: ".12em", textTransform: "uppercase", color: "var(--mp-t3)", marginBottom: ".3rem" }}>{item.l}</div>
                   {item.isSt ? <div style={{ color: "#fff", fontSize: ".9rem", background: selectedUnit.statusColor, display: "inline-block", padding: ".2rem .6rem", borderRadius: "4px", fontWeight: 600 }}>{item.v}</div>
@@ -794,7 +705,7 @@ export default function MarketplacePortal() {
               ))}
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: ".5rem", marginBottom: "2rem" }}>
-              {tr(selectedUnit.features).map((f, i) => (<span key={i} style={{ padding: ".4rem .9rem", background: "rgba(26,26,31,.04)", border: "1px solid var(--mp-bdr)", borderRadius: "4px", fontSize: ".78rem", color: "var(--mp-t2)" }}>{f}</span>))}
+              {selectedUnit.features.map((f, i) => (<span key={i} style={{ padding: ".4rem .9rem", background: "rgba(26,26,31,.04)", border: "1px solid var(--mp-bdr)", borderRadius: "4px", fontSize: ".78rem", color: "var(--mp-t2)" }}>{f}</span>))}
             </div>
             <div style={{ display: "flex", gap: ".6rem", flexWrap: "wrap", paddingTop: "1.5rem", borderTop: "1px solid var(--mp-bdr)" }}>
               <button type="button" className="mp-btn-d mp-btn-sm" onClick={() => { closeAll(); reqPricing(selectedUnit); }}><i className="ti ti-currency-dollar" aria-hidden="true" /> {t.unitActions.pricing}</button>
@@ -812,8 +723,8 @@ export default function MarketplacePortal() {
         <div className="mp-modal-ov" onClick={closeAll}><div className="mp-modal" style={{ maxWidth: "800px" }} onClick={(e) => e.stopPropagation()}>
           <button className="mp-modal-x" onClick={closeAll}>✕</button>
           <div className="mp-modal-body">
-            <h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {tr(modalUnit.name)}</h2>
-            <p style={{ color: "var(--mp-t3)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{tr(modalUnit.floor)}</p>
+            <h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {modalUnit.name}</h2>
+            <p style={{ color: "var(--mp-t3)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{modalUnit.floor}</p>
             <svg className="mp-fp-svg" viewBox="0 0 100 65">
               {modalUnit.floorPlan.rooms.map((room, i) => (<g key={i}><rect x={room.x} y={room.y} width={room.w} height={room.h} fill={ROOM_COLORS[room.key] || "#999"} fillOpacity="0.15" stroke={ROOM_COLORS[room.key] || "#999"} strokeWidth="0.3" rx="0.5" />{tr(room.label).split("\n").map((line, li) => (<text key={li} x={room.x + room.w / 2} y={room.y + room.h / 2 + (li - 0.3) * 3.5} textAnchor="middle" fill={ROOM_COLORS[room.key] || "#888"} fontSize="2.2" fontFamily="Outfit, sans-serif" fontWeight={li === 0 ? "500" : "400"}>{line}</text>))}</g>))}
             </svg>
@@ -884,19 +795,19 @@ export default function MarketplacePortal() {
           <div className="mp-modal-body">
             <h2 style={{ fontFamily: "var(--mp-serif)", fontSize: "1.8rem", marginBottom: "2rem" }}>{t.compareModal.title}</h2>
             {compareList.length === 0 ? (<div className="mp-cmp-empty">{t.compareModal.empty}</div>) : (() => {
-              const units = compareList.map((id) => UNITS.find((u) => u.id === id)).filter(Boolean);
-              const cols = `180px repeat(${units.length}, 1fr)`;
+              const compareUnits = compareList.map((id) => units.find((u) => u.id === id)).filter(Boolean);
+              const cols = `180px repeat(${compareUnits.length}, 1fr)`;
               const rows = [
-                { label: t.compareModal.price, get: (u) => t.card.priceFrom + fmtCurrency(u.priceNum) },
-                { label: t.compareModal.floor, get: (u) => tr(u.floor) },
-                { label: t.compareModal.bedrooms, get: (u) => tr(u.beds) },
-                { label: t.compareModal.size, get: (u) => tr(u.size) },
-                { label: t.compareModal.view, get: (u) => tr(u.feature) },
-                { label: t.compareModal.category, get: (u) => tr(u.category) },
+                { label: t.compareModal.price, get: (u) => t.card.priceFrom + fmtCurrency(u.priceBase) },
+                { label: t.compareModal.floor, get: (u) => u.floor },
+                { label: t.compareModal.bedrooms, get: (u) => u.beds },
+                { label: t.compareModal.size, get: (u) => u.size },
+                { label: t.compareModal.view, get: (u) => u.feature },
+                { label: t.compareModal.category, get: (u) => u.category },
               ];
               return (<div>
-                <div className="mp-cmp-row hdr" style={{ gridTemplateColumns: cols }}><div>{t.compareModal.feature}</div>{units.map((u) => (<div key={u.id} style={{ textAlign: "center" }}><div style={{ fontFamily: "var(--mp-serif)", fontSize: "1rem", fontWeight: 500, marginBottom: ".3rem" }}>{tr(u.name)}</div><button className="mp-cmp-rm" onClick={() => toggleCompare(u.id)}>{t.compareModal.remove}</button></div>))}</div>
-                {rows.map((row, ri) => (<div className="mp-cmp-row" key={ri} style={{ gridTemplateColumns: cols }}><div className="mp-cmp-label">{row.label}</div>{units.map((u) => (<div className="mp-cmp-val" key={u.id}>{row.get(u)}</div>))}</div>))}
+                <div className="mp-cmp-row hdr" style={{ gridTemplateColumns: cols }}><div>{t.compareModal.feature}</div>{compareUnits.map((u) => (<div key={u.id} style={{ textAlign: "center" }}><div style={{ fontFamily: "var(--mp-serif)", fontSize: "1rem", fontWeight: 500, marginBottom: ".3rem" }}>{u.name}</div><button className="mp-cmp-rm" onClick={() => toggleCompare(u.id)}>{t.compareModal.remove}</button></div>))}</div>
+                {rows.map((row, ri) => (<div className="mp-cmp-row" key={ri} style={{ gridTemplateColumns: cols }}><div className="mp-cmp-label">{row.label}</div>{compareUnits.map((u) => (<div className="mp-cmp-val" key={u.id}>{row.get(u)}</div>))}</div>))}
               </div>);
             })()}
           </div>

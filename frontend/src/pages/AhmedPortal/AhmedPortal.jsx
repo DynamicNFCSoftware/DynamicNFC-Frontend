@@ -362,166 +362,56 @@ const LANG = {
   },
 };
 
-// ─── FAMILY PROPERTY DATA ────────────────────────────────────────
-const UNITS = [
-  {
-    id: "FR-3B-18",
-    tower: "Al Safwa",
-    unitType: "3br",
-    name: { en: "Family Haven", ar: "واحة العائلة" },
-    floor: { en: "Floor 18–22", ar: "الطابق ١٨-٢٢" },
-    beds: { en: "3 Bedrooms + Maid", ar: "٣ غرف نوم + خادمة" }, bedNum: 3,
-    baths: { en: "4 Bathrooms", ar: "٤ حمامات" },
-    size: { en: "3,200 sq ft", ar: "٣,٢٠٠ قدم²" }, sizeNum: 3200,
-    price: 5200000,
-    priceDisplay: { en: "AED 5,200,000", ar: "٥,٢٠٠,٠٠٠ درهم" },
-    priceShort: { en: "AED 5.2M", ar: "٥.٢ مليون درهم" },
-    perSqft: { en: "AED 1,625/sq ft", ar: "١,٦٢٥ درهم/قدم²" },
-    feature: { en: "Garden & pool view", ar: "إطلالة على الحديقة والمسبح" },
-    status: { en: "Available", ar: "متاح" }, statusColor: "#2D8F6F",
-    category: { en: "Family Residence", ar: "مسكن عائلي" },
-    view: { en: "Garden & Community", ar: "حديقة ومجتمع" },
-    desc: {
-      en: "A spacious family residence with open-plan living, dedicated kids' playroom, chef's kitchen with breakfast bar, and direct access to landscaped community gardens. Perfect for growing families.",
-      ar: "مسكن عائلي فسيح بتصميم مفتوح، غرفة ألعاب مخصصة للأطفال، مطبخ الشيف مع بار إفطار، ووصول مباشر إلى الحدائق المجتمعية المنسقة. مثالي للعائلات المتنامية.",
-    },
-    features: {
-      en: ["Kids Playroom", "Maid's Room", "Walk-in Closets", "Storage Room", "Garden Access"],
-      ar: ["غرفة ألعاب أطفال", "غرفة خادمة", "خزائن ملابس", "غرفة تخزين", "وصول للحديقة"],
-    },
+// ─── FAMILY PROPERTY DATA — extras keyed by canonical unit id (fam-3br/fam-4br/fam-2br)
+const UNIT_EXTRAS = {
+  "fam-3br": {
     img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
     floorPlan: {
       rooms: [
-        { key: "master", w: 35, h: 30, x: 5, y: 5, label: { en: "Master Suite\n450 sq ft", ar: "الجناح الرئيسي\n٤٥٠ قدم²" } },
-        { key: "bed2", w: 22, h: 22, x: 43, y: 5, label: { en: "Bedroom 2\n280 sq ft", ar: "غرفة ٢\n٢٨٠ قدم²" } },
-        { key: "bed3", w: 22, h: 22, x: 68, y: 5, label: { en: "Bedroom 3\n260 sq ft", ar: "غرفة ٣\n٢٦٠ قدم²" } },
-        { key: "living", w: 45, h: 28, x: 5, y: 38, label: { en: "Family Living\n780 sq ft", ar: "صالة عائلية\n٧٨٠ قدم²" } },
-        { key: "kitchen", w: 25, h: 22, x: 53, y: 38, label: { en: "Chef's Kitchen\n320 sq ft", ar: "مطبخ الشيف\n٣٢٠ قدم²" } },
-        { key: "office", w: 18, h: 22, x: 80, y: 38, label: { en: "Kids Room\n180 sq ft", ar: "غرفة أطفال\n١٨٠ قدم²" } },
-        { key: "balcony", w: 92, h: 16, x: 5, y: 72, label: { en: "Garden Terrace\n560 sq ft", ar: "تراس الحديقة\n٥٦٠ قدم²" } },
+        { key: "master",  w: 35, h: 30, x:  5, y:  5, label: { en: "Master Suite\n450 sq ft",       ar: "الجناح الرئيسي\n٤٥٠ قدم²" } },
+        { key: "bed2",    w: 22, h: 22, x: 43, y:  5, label: { en: "Bedroom 2\n280 sq ft",          ar: "غرفة ٢\n٢٨٠ قدم²" } },
+        { key: "bed3",    w: 22, h: 22, x: 68, y:  5, label: { en: "Bedroom 3\n260 sq ft",          ar: "غرفة ٣\n٢٦٠ قدم²" } },
+        { key: "living",  w: 45, h: 28, x:  5, y: 38, label: { en: "Family Living\n780 sq ft",      ar: "صالة عائلية\n٧٨٠ قدم²" } },
+        { key: "kitchen", w: 25, h: 22, x: 53, y: 38, label: { en: "Chef's Kitchen\n320 sq ft",     ar: "مطبخ الشيف\n٣٢٠ قدم²" } },
+        { key: "office",  w: 18, h: 22, x: 80, y: 38, label: { en: "Kids Room\n180 sq ft",         ar: "غرفة أطفال\n١٨٠ قدم²" } },
+        { key: "balcony", w: 92, h: 16, x:  5, y: 72, label: { en: "Garden Terrace\n560 sq ft",    ar: "تراس الحديقة\n٥٦٠ قدم²" } },
       ],
       specs: { bathrooms: "3+1", balconySize: "560 sq ft", totalArea: "3,200 sq ft" },
     },
-    payment: { base: 5200000, plans: ["60/40", "70/30"] },
+    payment: { base: 4500000, plans: ["60/40", "70/30"] },
   },
-  {
-    id: "FR-4B-28",
-    tower: "Al Safwa",
-    unitType: "3br",
-    name: { en: "Grand Family Suite", ar: "الجناح العائلي الكبير" },
-    floor: { en: "Floor 28–32", ar: "الطابق ٢٨-٣٢" },
-    beds: { en: "4 Bedrooms + Maid", ar: "٤ غرف نوم + خادمة" }, bedNum: 4,
-    baths: { en: "5 Bathrooms", ar: "٥ حمامات" },
-    size: { en: "4,500 sq ft", ar: "٤,٥٠٠ قدم²" }, sizeNum: 4500,
-    price: 8500000,
-    priceDisplay: { en: "AED 8,500,000", ar: "٨,٥٠٠,٠٠٠ درهم" },
-    priceShort: { en: "AED 8.5M", ar: "٨.٥ مليون درهم" },
-    perSqft: { en: "AED 1,889/sq ft", ar: "١,٨٨٩ درهم/قدم²" },
-    feature: { en: "Sea view + community", ar: "إطلالة بحرية + مجتمع" },
-    status: { en: "Available", ar: "متاح" }, statusColor: "#2D8F6F",
-    category: { en: "Premium Family", ar: "عائلي فاخر" },
-    view: { en: "Sea & Park Panoramic", ar: "بانورامية بحر وحديقة" },
-    desc: {
-      en: "An expansive 4-bedroom family suite with separate living and dining areas, home office, dedicated kids' wing with two connected bedrooms, and a wraparound terrace overlooking both the sea and community park.",
-      ar: "جناح عائلي فسيح من ٤ غرف نوم مع صالة ومنطقة طعام منفصلة، مكتب منزلي، جناح أطفال مخصص بغرفتين متصلتين، وتراس محيطي يطل على البحر والحديقة المجتمعية.",
-    },
-    features: {
-      en: ["Kids Wing", "Home Office", "Double Living", "Maid's Quarter", "Laundry Room"],
-      ar: ["جناح الأطفال", "مكتب منزلي", "صالة مزدوجة", "غرفة الخادمة", "غرفة غسيل"],
-    },
+  "fam-4br": {
     img: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
     floorPlan: {
       rooms: [
-        { key: "master", w: 35, h: 28, x: 5, y: 5, label: { en: "Master Suite\n520 sq ft", ar: "الجناح الرئيسي\n٥٢٠ قدم²" } },
-        { key: "bed2", w: 20, h: 20, x: 43, y: 5, label: { en: "Bedroom 2\n300 sq ft", ar: "غرفة ٢\n٣٠٠ قدم²" } },
-        { key: "bed3", w: 18, h: 20, x: 65, y: 5, label: { en: "Kids Room 1\n260 sq ft", ar: "غرفة أطفال ١\n٢٦٠ قدم²" } },
-        { key: "bed4", w: 15, h: 20, x: 85, y: 5, label: { en: "Kids Room 2\n240 sq ft", ar: "غرفة أطفال ٢\n٢٤٠ قدم²" } },
-        { key: "living", w: 40, h: 26, x: 5, y: 36, label: { en: "Family Living\n920 sq ft", ar: "صالة عائلية\n٩٢٠ قدم²" } },
-        { key: "kitchen", w: 22, h: 20, x: 48, y: 36, label: { en: "Kitchen\n380 sq ft", ar: "مطبخ\n٣٨٠ قدم²" } },
-        { key: "dining", w: 22, h: 18, x: 48, y: 58, label: { en: "Dining\n340 sq ft", ar: "طعام\n٣٤٠ قدم²" } },
-        { key: "maid", w: 15, h: 20, x: 73, y: 36, label: { en: "Maid", ar: "خادمة" } },
-        { key: "balcony", w: 92, h: 14, x: 5, y: 78, label: { en: "Sea & Park Terrace\n880 sq ft", ar: "تراس البحر والحديقة\n٨٨٠ قدم²" } },
+        { key: "master",  w: 35, h: 28, x:  5, y:  5, label: { en: "Master Suite\n520 sq ft",       ar: "الجناح الرئيسي\n٥٢٠ قدم²" } },
+        { key: "bed2",    w: 20, h: 20, x: 43, y:  5, label: { en: "Bedroom 2\n300 sq ft",          ar: "غرفة ٢\n٣٠٠ قدم²" } },
+        { key: "bed3",    w: 18, h: 20, x: 65, y:  5, label: { en: "Kids Room 1\n260 sq ft",        ar: "غرفة أطفال ١\n٢٦٠ قدم²" } },
+        { key: "bed4",    w: 15, h: 20, x: 85, y:  5, label: { en: "Kids Room 2\n240 sq ft",        ar: "غرفة أطفال ٢\n٢٤٠ قدم²" } },
+        { key: "living",  w: 40, h: 26, x:  5, y: 36, label: { en: "Family Living\n920 sq ft",      ar: "صالة عائلية\n٩٢٠ قدم²" } },
+        { key: "kitchen", w: 22, h: 20, x: 48, y: 36, label: { en: "Kitchen\n380 sq ft",            ar: "مطبخ\n٣٨٠ قدم²" } },
+        { key: "dining",  w: 22, h: 18, x: 48, y: 58, label: { en: "Dining\n340 sq ft",            ar: "طعام\n٣٤٠ قدم²" } },
+        { key: "maid",    w: 15, h: 20, x: 73, y: 36, label: { en: "Maid",                          ar: "خادمة" } },
+        { key: "balcony", w: 92, h: 14, x:  5, y: 78, label: { en: "Sea & Park Terrace\n880 sq ft", ar: "تراس البحر والحديقة\n٨٨٠ قدم²" } },
       ],
       specs: { bathrooms: "4+1", balconySize: "880 sq ft", totalArea: "4,500 sq ft" },
     },
-    payment: { base: 8500000, plans: ["60/40", "70/30"] },
+    payment: { base: 6500000, plans: ["60/40", "70/30"] },
   },
-  {
-    id: "FR-2B-10",
-    tower: "Al Rawda",
-    unitType: "studio",
-    name: { en: "Smart Start Home", ar: "البداية الذكية" },
-    floor: { en: "Floor 10–15", ar: "الطابق ١٠-١٥" },
-    beds: { en: "2 Bedrooms", ar: "غرفتا نوم" }, bedNum: 2,
-    baths: { en: "3 Bathrooms", ar: "٣ حمامات" },
-    size: { en: "1,800 sq ft", ar: "١,٨٠٠ قدم²" }, sizeNum: 1800,
-    price: 2800000,
-    priceDisplay: { en: "AED 2,800,000", ar: "٢,٨٠٠,٠٠٠ درهم" },
-    priceShort: { en: "AED 2.8M", ar: "٢.٨ مليون درهم" },
-    perSqft: { en: "AED 1,556/sq ft", ar: "١,٥٥٦ درهم/قدم²" },
-    feature: { en: "Park & playground view", ar: "إطلالة على الحديقة والملعب" },
-    status: { en: "Last 5 Units", ar: "آخر ٥ وحدات" }, statusColor: "#C1121F",
-    category: { en: "Starter Home", ar: "منزل البداية" },
-    view: { en: "Park & Playground", ar: "حديقة وملعب" },
-    desc: {
-      en: "An ideal first family home with smart space design, open kitchen with dining area, generous balcony overlooking the children's playground, and access to all community amenities.",
-      ar: "منزل عائلي أول مثالي بتصميم ذكي للمساحات، مطبخ مفتوح مع منطقة طعام، شرفة واسعة تطل على ملعب الأطفال، ووصول لجميع المرافق المجتمعية.",
-    },
-    features: {
-      en: ["Smart Layout", "Open Kitchen", "Playground View", "Storage Unit", "Covered Parking"],
-      ar: ["تصميم ذكي", "مطبخ مفتوح", "إطلالة الملعب", "وحدة تخزين", "موقف مغطى"],
-    },
+  "fam-2br": {
     img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
     floorPlan: {
       rooms: [
-        { key: "master", w: 35, h: 32, x: 5, y: 5, label: { en: "Master Suite\n350 sq ft", ar: "الجناح الرئيسي\n٣٥٠ قدم²" } },
-        { key: "bed2", w: 28, h: 28, x: 44, y: 5, label: { en: "Kids Room\n280 sq ft", ar: "غرفة الأطفال\n٢٨٠ قدم²" } },
-        { key: "living", w: 45, h: 28, x: 5, y: 40, label: { en: "Living & Dining\n520 sq ft", ar: "معيشة وطعام\n٥٢٠ قدم²" } },
-        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Open Kitchen\n220 sq ft", ar: "مطبخ مفتوح\n٢٢٠ قدم²" } },
-        { key: "balcony", w: 65, h: 14, x: 5, y: 72, label: { en: "Park Balcony\n280 sq ft", ar: "شرفة الحديقة\n٢٨٠ قدم²" } },
+        { key: "master",  w: 35, h: 32, x:  5, y:  5, label: { en: "Master Suite\n350 sq ft",       ar: "الجناح الرئيسي\n٣٥٠ قدم²" } },
+        { key: "bed2",    w: 28, h: 28, x: 44, y:  5, label: { en: "Kids Room\n280 sq ft",          ar: "غرفة الأطفال\n٢٨٠ قدم²" } },
+        { key: "living",  w: 45, h: 28, x:  5, y: 40, label: { en: "Living & Dining\n520 sq ft",   ar: "معيشة وطعام\n٥٢٠ قدم²" } },
+        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Open Kitchen\n220 sq ft",      ar: "مطبخ مفتوح\n٢٢٠ قدم²" } },
+        { key: "balcony", w: 65, h: 14, x:  5, y: 72, label: { en: "Park Balcony\n280 sq ft",       ar: "شرفة الحديقة\n٢٨٠ قدم²" } },
       ],
       specs: { bathrooms: "2+1", balconySize: "280 sq ft", totalArea: "1,800 sq ft" },
     },
     payment: { base: 2800000, plans: ["60/40", "70/30"] },
   },
-];
-
-const AMENITIES = {
-  en: [
-    { icon: "ti-school", name: "International Schools", desc: "3 top-rated schools within walking distance" },
-    { icon: "ti-trees", name: "Central Park", desc: "12-acre landscaped park with jogging tracks" },
-    { icon: "ti-pool", name: "Family Pool Complex", desc: "Separate kids pool, adult pool & splash zone" },
-    { icon: "ti-mood-kid", name: "Kids Club & Nursery", desc: "Supervised play areas & early learning center" },
-    { icon: "ti-ball-tennis", name: "Sports & Fitness", desc: "Tennis courts, gym & yoga studio" },
-    { icon: "ti-shopping-cart", name: "Retail & Dining", desc: "Supermarket, cafés & family restaurants" },
-    { icon: "ti-stethoscope", name: "Medical Center", desc: "24/7 clinic with pediatric care" },
-    { icon: "ti-bus", name: "School Bus Routes", desc: "Dedicated school bus pickup points" },
-  ],
-  ar: [
-    { icon: "ti-school", name: "مدارس دولية", desc: "٣ مدارس عالية التقييم على بُعد مشي" },
-    { icon: "ti-trees", name: "حديقة مركزية", desc: "حديقة منسقة بمساحة ١٢ فدان مع مسارات للجري" },
-    { icon: "ti-pool", name: "مجمع المسبح العائلي", desc: "مسبح أطفال منفصل ومسبح كبار ومنطقة رذاذ" },
-    { icon: "ti-mood-kid", name: "نادي ومرحلة حضانة", desc: "مناطق لعب مراقبة ومركز تعلم مبكر" },
-    { icon: "ti-ball-tennis", name: "رياضة ولياقة", desc: "ملاعب تنس وصالة وستوديو يوغا" },
-    { icon: "ti-shopping-cart", name: "تجزئة ومطاعم", desc: "سوبرماركت ومقاهي ومطاعم عائلية" },
-    { icon: "ti-stethoscope", name: "مركز طبي", desc: "عيادة على مدار الساعة مع رعاية أطفال" },
-    { icon: "ti-bus", name: "مسارات حافلات المدارس", desc: "نقاط استقبال مخصصة لحافلات المدارس" },
-  ],
-};
-
-const INVEST = {
-  en: [
-    { label: "Rental yield", value: "7.8%", note: "Family units premium" },
-    { label: "Capital growth", value: "19%", note: "3-year community appreciation" },
-    { label: "Payment plan", value: "60/40", note: "Family-friendly terms" },
-    { label: "Handover", value: "Q2 2027", note: "On schedule" },
-  ],
-  ar: [
-    { label: "عائد الإيجار", value: "٧.٨٪", note: "علاوة الوحدات العائلية" },
-    { label: "نمو رأس المال", value: "١٩٪", note: "ارتفاع مجتمعي خلال ٣ سنوات" },
-    { label: "خطة الدفع", value: "٦٠/٤٠", note: "شروط مناسبة للعائلات" },
-    { label: "التسليم", value: "Q2 2027", note: "في الموعد المحدد" },
-  ],
 };
 
 const IMAGES = {
@@ -540,7 +430,7 @@ const ROOM_COLORS = {
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function AhmedPortal() {
   const [lang, setLang] = useState("en");
-  const { projectName, fmtCurrency, familyPersona, region } = usePortalRegion("real_estate", lang);
+  const { projectName, fmtCurrency, familyPersona, region, familyUnits, amenities, investStats } = usePortalRegion("real_estate", lang);
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
   const [modalUnit, setModalUnit] = useState(null);
@@ -558,6 +448,9 @@ export default function AhmedPortal() {
   const bookRef = useRef(null);
   const t = LANG[lang];
   const tr = (obj) => (obj && (obj[lang] ?? obj.en)) ?? "";
+
+  const withExtras = (unit) => ({ ...unit, ...UNIT_EXTRAS[unit.id] });
+  const units = familyUnits.map(withExtras);
 
   useEffect(() => { const fn = () => setScrolled(window.scrollY > 60); window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn); }, []);
   useEffect(() => { const obs = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("vis"); }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }); document.querySelectorAll(".ap-rv").forEach((el) => obs.observe(el)); return () => obs.disconnect(); }, [lang, modal, selectedUnit]);
@@ -582,12 +475,12 @@ export default function AhmedPortal() {
   const showToast = useCallback((msg, icon = "✓") => { setToastHiding(false); setToast({ msg, icon }); setTimeout(() => { setToastHiding(true); setTimeout(() => setToast(null), 300); }, 3000); }, []);
   const toggleCompare = (unitId) => { setCompareList((prev) => { if (prev.includes(unitId)) { showToast(t.toast.compareRemove, "↩"); return prev.filter((id) => id !== unitId); } if (prev.length >= 3) return prev; trackEvent("comparison_view", { unitId }); showToast(t.toast.compare, "⚖️"); return [...prev, unitId]; }); };
 
-  const openDetail = (unit) => { setSelectedUnit(unit); trackEvent("view_unit", { unitId: unit.id, unitName: unit.name.en, price: unit.price, tower: unit.tower, unitType: unit.unitType }); };
-  const openFloor = (unit) => { setModalUnit(unit); setModal("floorplan"); trackEvent("view_floorplan", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.floorPlan, "📐"); };
-  const openBrochure = (unit) => { setModalUnit(unit); setModal("brochure"); trackEvent("download_brochure", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.brochure, "📄"); };
-  const openPayment = (unit) => { setModalUnit(unit); setModal("payment"); setPayPlan("60/40"); trackEvent("explore_payment_plan", { unitId: unit.id, unitName: unit.name.en, tower: unit.tower, unitType: unit.unitType }); };
+  const openDetail = (unit) => { setSelectedUnit(unit); trackEvent("view_unit", { unitId: unit.id, unitName: unit.nameEn, price: unit.priceBase, tower: unit.tower, unitType: unit.type }); };
+  const openFloor = (unit) => { setModalUnit(unit); setModal("floorplan"); trackEvent("view_floorplan", { unitId: unit.id, unitName: unit.nameEn, tower: unit.tower, unitType: unit.type }); showToast(t.toast.floorPlan, "📐"); };
+  const openBrochure = (unit) => { setModalUnit(unit); setModal("brochure"); trackEvent("download_brochure", { unitId: unit.id, unitName: unit.nameEn, tower: unit.tower, unitType: unit.type }); showToast(t.toast.brochure, "📄"); };
+  const openPayment = (unit) => { setModalUnit(unit); setModal("payment"); setPayPlan("60/40"); trackEvent("explore_payment_plan", { unitId: unit.id, unitName: unit.nameEn, tower: unit.tower, unitType: unit.type }); };
   const openCompare = () => { setModal("compare"); };
-  const reqPricing = (unit) => { trackEvent("request_pricing", { unitId: unit.id, unitName: unit.name.en, price: unit.price, tower: unit.tower, unitType: unit.unitType }); showToast(t.toast.pricing, "💰"); };
+  const reqPricing = (unit) => { trackEvent("request_pricing", { unitId: unit.id, unitName: unit.nameEn, price: unit.priceBase, tower: unit.tower, unitType: unit.type }); showToast(t.toast.pricing, "💰"); };
   const callAdvisor = () => { trackEvent("contact_advisor", { vipName }); showToast(t.toast.advisorNotified, "📞"); };
   const closeAll = () => { setModal(null); setModalUnit(null); setSelectedUnit(null); };
 
@@ -662,10 +555,10 @@ export default function AhmedPortal() {
       <section className="ap-sec" ref={resRef}>
         <div className="ap-sh ap-rv"><span className="ap-sl">◆ {t.sections.residences}</span><h2 className="ap-st">{t.sections.residencesSub}</h2><p className="ap-ss">{t.sections.residencesHint}</p></div>
         <div className="ap-units">
-          {UNITS.map((unit) => (
+          {units.map((unit) => (
             <div className="ap-card ap-rv" key={unit.id} onClick={() => openDetail(unit)}>
-              <div className="ap-card-img"><img src={unit.img} alt={tr(unit.name)} loading="lazy" /><div className="ap-card-fbadge">{tr(unit.feature)}</div><div className="ap-card-status" style={{ background: unit.statusColor }}>{tr(unit.status)}</div></div>
-              <div className="ap-card-body"><h3 className="ap-card-name">{tr(unit.name)}</h3><p className="ap-card-floor">{tr(unit.floor)}</p><div className="ap-card-meta"><span>🛏 {tr(unit.beds)}</span><span>📐 {tr(unit.size)}</span></div><div className="ap-card-price">{fmtCurrency(unit.price)}</div><div className="ap-card-sqft">{fmtCurrency(Math.round(unit.price / unit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div></div>
+              <div className="ap-card-img"><img src={unit.img} alt={unit.name} loading="lazy" /><div className="ap-card-fbadge">{unit.feature}</div><div className="ap-card-status" style={{ background: unit.statusColor }}>{unit.status}</div></div>
+              <div className="ap-card-body"><h3 className="ap-card-name">{unit.name}</h3><p className="ap-card-floor">{unit.floor}</p><div className="ap-card-meta"><span>🛏 {unit.beds}</span><span>📐 {unit.size}</span></div><div className="ap-card-price">{fmtCurrency(unit.priceBase)}</div><div className="ap-card-sqft">{fmtCurrency(Math.round(unit.priceBase / unit.sqftBase))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div></div>
               <div className="ap-card-acts" onClick={(e) => e.stopPropagation()}>
                 <button className="ap-btn-o ap-btn-sm" onClick={() => openFloor(unit)}>📐 {t.unitActions.floorPlan}</button>
                 <button className="ap-btn-o ap-btn-sm" onClick={() => openBrochure(unit)}>📄 {t.unitActions.brochure}</button>
@@ -684,14 +577,14 @@ export default function AhmedPortal() {
       <section className="ap-sec ap-am-sec">
         <div className="ap-am-bg" style={{ backgroundImage: `url(${IMAGES.community})` }} />
         <div className="ap-sh ap-rv" style={{ position: "relative", zIndex: 2 }}><span className="ap-sl">◆ {t.sections.amenities}</span><h2 className="ap-st">{t.sections.amenitiesSub}</h2></div>
-        <div className="ap-am-grid">{tr(AMENITIES).map((a, i) => (<div className="ap-am ap-rv" key={i}><div className="ap-am-icon"><i className={`ti ${a.icon}`} aria-hidden="true" /></div><div className="ap-am-name">{a.name}</div><div className="ap-am-desc">{a.desc}</div></div>))}</div>
+        <div className="ap-am-grid">{amenities.map((a, i) => (<div className="ap-am ap-rv" key={i}><div className="ap-am-icon"><i className={`ti ${a.icon}`} aria-hidden="true" /></div><div className="ap-am-name">{a.title}</div><div className="ap-am-desc">{a.desc}</div></div>))}</div>
       </section>
 
       <div className="ap-div"><div className="ap-div-l" /><div className="ap-div-d">◆</div><div className="ap-div-l" /></div>
 
       <section className="ap-sec">
         <div className="ap-sh ap-rv"><span className="ap-sl">◆ {t.sections.investment}</span><h2 className="ap-st">{t.sections.investmentSub}</h2></div>
-        <div className="ap-inv-grid">{tr(INVEST).map((item, i) => (<div className="ap-inv ap-rv" key={i}><div className="ap-inv-v">{item.value}</div><div className="ap-inv-l">{item.label}</div><div className="ap-inv-n">{item.note}</div></div>))}</div>
+        <div className="ap-inv-grid">{investStats.map((item, i) => (<div className="ap-inv ap-rv" key={i}><div className="ap-inv-v">{item.stat}</div><div className="ap-inv-l">{item.label}</div><div className="ap-inv-n">{item.desc}</div></div>))}</div>
 
       </section>
 
@@ -716,7 +609,7 @@ export default function AhmedPortal() {
             <div className="ap-fg"><label className="ap-flabel">{t.booking.name}</label><input className={`ap-finput ${formErr.name ? "ap-err" : ""}`} type="text" defaultValue={vipName} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
             <div className="ap-fg"><label className="ap-flabel">{t.booking.email}</label><input className={`ap-finput ${formErr.email ? "ap-err" : ""}`} type="text" inputMode="email" onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
             <div className="ap-fg"><label className="ap-flabel">{t.booking.phone}</label><input className={`ap-finput ${formErr.phone ? "ap-err" : ""}`} type="text" inputMode="tel" onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
-            <div className="ap-fg"><label className="ap-flabel">{t.booking.preferred}</label><select className="ap-fsel" onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">—</option>{UNITS.map((u) => (<option key={u.id} value={u.id}>{tr(u.name)} — {fmtCurrency(u.price)}</option>))}</select></div>
+            <div className="ap-fg"><label className="ap-flabel">{t.booking.preferred}</label><select className="ap-fsel" onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">—</option>{units.map((u) => (<option key={u.id} value={u.id}>{u.name} — {fmtCurrency(u.priceBase)}</option>))}</select></div>
             <div className="ap-frow">
               <div className="ap-fg"><label className="ap-flabel">{t.booking.date}</label><input className="ap-finput" type="date" onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
               <div className="ap-fg"><label className="ap-flabel">{t.booking.time}</label><select className="ap-fsel" onChange={(e) => setForm({ ...form, time: e.target.value })}><option value="">—</option><option value="morning">{t.booking.morning}</option><option value="afternoon">{t.booking.afternoon}</option><option value="evening">{t.booking.evening}</option></select></div>
@@ -734,24 +627,24 @@ export default function AhmedPortal() {
       {selectedUnit && (
         <div className="ap-modal-ov" onClick={closeAll}><div className="ap-modal" onClick={(e) => e.stopPropagation()}>
           <button className="ap-modal-x" onClick={closeAll}>✕</button>
-          <div className="ap-md-gallery"><img src={selectedUnit.img} alt={tr(selectedUnit.name)} /><img src={IMAGES.hero} alt="View 2" /><img src={IMAGES.community} alt="View 3" /></div>
+          <div className="ap-md-gallery"><img src={selectedUnit.img} alt={selectedUnit.name} /><img src={IMAGES.hero} alt="View 2" /><img src={IMAGES.community} alt="View 3" /></div>
           <div className="ap-modal-body">
-            <div className="ap-md-top"><div><h2 className="ap-md-title">{tr(selectedUnit.name)}</h2><p className="ap-md-floor">{tr(selectedUnit.floor)}</p></div><div style={{ textAlign: lang === "ar" ? "start" : "end" }}><div className="ap-md-price">{fmtCurrency(selectedUnit.price)}</div><div className="ap-md-sqft">{fmtCurrency(Math.round(selectedUnit.price / selectedUnit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div></div></div>
-            <p className="ap-md-desc">{tr(selectedUnit.desc)}</p>
+            <div className="ap-md-top"><div><h2 className="ap-md-title">{selectedUnit.name}</h2><p className="ap-md-floor">{selectedUnit.floor}</p></div><div style={{ textAlign: lang === "ar" ? "start" : "end" }}><div className="ap-md-price">{fmtCurrency(selectedUnit.priceBase)}</div><div className="ap-md-sqft">{fmtCurrency(Math.round(selectedUnit.priceBase / selectedUnit.sqftBase))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div></div></div>
+            <p className="ap-md-desc">{selectedUnit.desc}</p>
             <div className="ap-md-grid">
-              <div className="ap-md-gi"><div className="ap-md-gi-l">{t.floorPlanModal.bedrooms}</div><div className="ap-md-gi-v">{tr(selectedUnit.beds)}</div></div>
-              <div className="ap-md-gi"><div className="ap-md-gi-l">{t.floorPlanModal.bathrooms}</div><div className="ap-md-gi-v">{tr(selectedUnit.baths)}</div></div>
-              <div className="ap-md-gi"><div className="ap-md-gi-l">{t.floorPlanModal.living}</div><div className="ap-md-gi-v">{tr(selectedUnit.size)}</div></div>
-              <div className="ap-md-gi"><div className="ap-md-gi-l">{t.compareModal.category}</div><div className="ap-md-gi-v" style={{ background: selectedUnit.statusColor, color: "#fff", display: "inline-block", padding: ".2rem .6rem", borderRadius: "4px", fontSize: ".9rem" }}>{tr(selectedUnit.status)}</div></div>
+              <div className="ap-md-gi"><div className="ap-md-gi-l">{t.floorPlanModal.bedrooms}</div><div className="ap-md-gi-v">{selectedUnit.beds}</div></div>
+              <div className="ap-md-gi"><div className="ap-md-gi-l">{t.floorPlanModal.bathrooms}</div><div className="ap-md-gi-v">{selectedUnit.baths}</div></div>
+              <div className="ap-md-gi"><div className="ap-md-gi-l">{t.floorPlanModal.living}</div><div className="ap-md-gi-v">{selectedUnit.size}</div></div>
+              <div className="ap-md-gi"><div className="ap-md-gi-l">{t.compareModal.category}</div><div className="ap-md-gi-v" style={{ background: selectedUnit.statusColor, color: "#fff", display: "inline-block", padding: ".2rem .6rem", borderRadius: "4px", fontSize: ".9rem" }}>{selectedUnit.status}</div></div>
             </div>
-            <div className="ap-md-feats">{tr(selectedUnit.features).map((f, i) => (<span className="ap-md-feat" key={i}>{f}</span>))}</div>
+            <div className="ap-md-feats">{selectedUnit.features.map((f, i) => (<span className="ap-md-feat" key={i}>{f}</span>))}</div>
             <div style={{ padding: "1.5rem", border: "1px solid var(--ap-glb)", borderRadius: "8px", background: "var(--ap-gl)" }}>
               <h4 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.2rem", marginBottom: "1rem" }}>{t.paymentModal.title}</h4>
               <div className="ap-pay-bar"><div className="ap-pay-seg" style={{ flex: 10, background: "var(--ap-blue)" }} /><div className="ap-pay-seg" style={{ flex: 50, background: "var(--ap-teal)" }} /><div className="ap-pay-seg" style={{ flex: 40, background: "rgba(46,196,182,.35)" }} /></div>
               <div className="ap-pay-legend">
-                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "var(--ap-blue)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{t.paymentModal.m1} (10%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.price * 0.1)}</div></div></div>
-                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "var(--ap-teal)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{t.paymentModal.m3} (50%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.price * 0.5)}</div></div></div>
-                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "rgba(46,196,182,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{t.paymentModal.m5} (40%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.price * 0.4)}</div></div></div>
+                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "var(--ap-blue)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{t.paymentModal.m1} (10%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.priceBase * 0.1)}</div></div></div>
+                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "var(--ap-teal)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{t.paymentModal.m3} (50%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.priceBase * 0.5)}</div></div></div>
+                <div className="ap-pay-item"><div className="ap-pay-dot" style={{ background: "rgba(46,196,182,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--ap-t3)" }}>{t.paymentModal.m5} (40%)</div><div className="ap-pay-amt">{fmtCurrency(selectedUnit.priceBase * 0.4)}</div></div></div>
               </div>
             </div>
             <div className="ap-md-acts">
@@ -771,8 +664,8 @@ export default function AhmedPortal() {
         <div className="ap-modal-ov" onClick={closeAll}><div className="ap-modal" style={{ maxWidth: "800px" }} onClick={(e) => e.stopPropagation()}>
           <button className="ap-modal-x" onClick={closeAll}>✕</button>
           <div className="ap-modal-body">
-            <h2 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {tr(modalUnit.name)}</h2>
-            <p style={{ color: "var(--ap-teal)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{tr(modalUnit.floor)}</p>
+            <h2 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {modalUnit.name}</h2>
+            <p style={{ color: "var(--ap-teal)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{modalUnit.floor}</p>
             <svg className="ap-fp-svg" viewBox="0 0 100 65" style={{ background: "var(--ap-ch)" }}>
               {modalUnit.floorPlan.rooms.map((room, i) => (<g key={i}><rect x={room.x} y={room.y} width={room.w} height={room.h} fill={ROOM_COLORS[room.key] || "#666"} fillOpacity="0.2" stroke={ROOM_COLORS[room.key] || "#666"} strokeWidth="0.3" rx="0.5" />{tr(room.label).split("\n").map((line, li) => (<text key={li} x={room.x + room.w / 2} y={room.y + room.h / 2 + (li - 0.3) * 3.5} textAnchor="middle" fill={ROOM_COLORS[room.key] || "#aaa"} fontSize="2.2" fontFamily="Outfit, sans-serif" fontWeight={li === 0 ? "500" : "300"}>{line}</text>))}</g>))}
             </svg>
@@ -837,18 +730,18 @@ export default function AhmedPortal() {
           <div className="ap-modal-body">
             <h2 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.8rem", marginBottom: "2rem" }}>{t.compareModal.title}</h2>
             {compareList.length === 0 ? (<div className="ap-cmp-empty">{t.compareModal.empty}</div>) : (() => {
-              const units = compareList.map((id) => UNITS.find((u) => u.id === id)).filter(Boolean);
+              const units = compareList.map((id) => units.find((u) => u.id === id)).filter(Boolean);
               const cols = `180px repeat(${units.length}, 1fr)`;
               const rows = [
-                { label: t.compareModal.price, get: (u) => fmtCurrency(u.price) },
-                { label: t.compareModal.floor, get: (u) => tr(u.floor) },
-                { label: t.compareModal.bedrooms, get: (u) => tr(u.beds) },
-                { label: t.compareModal.size, get: (u) => tr(u.size) },
-                { label: t.compareModal.view, get: (u) => tr(u.feature) },
-                { label: t.compareModal.category, get: (u) => tr(u.category) },
+                { label: t.compareModal.price, get: (u) => fmtCurrency(u.priceBase) },
+                { label: t.compareModal.floor, get: (u) => u.floor },
+                { label: t.compareModal.bedrooms, get: (u) => u.beds },
+                { label: t.compareModal.size, get: (u) => u.size },
+                { label: t.compareModal.view, get: (u) => u.feature },
+                { label: t.compareModal.category, get: (u) => u.category },
               ];
               return (<div className="ap-cmp-grid">
-                <div className="ap-cmp-row hdr" style={{ gridTemplateColumns: cols }}><div>{t.compareModal.feature}</div>{units.map((u) => (<div key={u.id} style={{ textAlign: "center" }}><div style={{ fontFamily: "var(--ap-serif)", fontSize: "1rem", color: "var(--ap-t1)", fontWeight: 400, marginBottom: ".3rem" }}>{tr(u.name)}</div><button className="ap-cmp-rm" onClick={() => toggleCompare(u.id)}>{t.compareModal.remove}</button></div>))}</div>
+                <div className="ap-cmp-row hdr" style={{ gridTemplateColumns: cols }}><div>{t.compareModal.feature}</div>{units.map((u) => (<div key={u.id} style={{ textAlign: "center" }}><div style={{ fontFamily: "var(--ap-serif)", fontSize: "1rem", color: "var(--ap-t1)", fontWeight: 400, marginBottom: ".3rem" }}>{u.name}</div><button className="ap-cmp-rm" onClick={() => toggleCompare(u.id)}>{t.compareModal.remove}</button></div>))}</div>
                 {rows.map((row, ri) => (<div className="ap-cmp-row" key={ri} style={{ gridTemplateColumns: cols }}><div className="ap-cmp-label">{row.label}</div>{units.map((u) => (<div className="ap-cmp-val" key={u.id}>{row.get(u)}</div>))}</div>))}
               </div>);
             })()}

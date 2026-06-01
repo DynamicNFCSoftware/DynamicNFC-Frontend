@@ -484,161 +484,59 @@ const LANG = {
   },
 };
 
-// ─── PROPERTY DATA (Rich: galleries, features, floor plans, payments) ──
-const UNITS = [
-  {
-    id: "SKY-PH-42",
-    name: { en: "Sky Penthouse", ar: "بنتهاوس السماء" },
-    floor: { en: "Floor 42–44", ar: "الطابق ٤٢-٤٤" },
-    beds: { en: "4 Bedrooms", ar: "٤ غرف نوم" }, bedNum: 4,
-    baths: { en: "5 Bathrooms", ar: "٥ حمامات" },
-    size: { en: "6,200 sq ft", ar: "٦,٢٠٠ قدم²" }, sizeNum: 6200,
-    price: 12500000,
-    priceDisplay: { en: "AED 12,500,000", ar: "١٢,٥٠٠,٠٠٠ درهم" },
-    priceShort: { en: "AED 12.5M", ar: "١٢.٥ مليون درهم" },
-    perSqft: { en: "AED 2,016/sq ft", ar: "٢,٠١٦ درهم/قدم²" },
-    feature: { en: "360° panoramic views", ar: "إطلالة بانورامية ٣٦٠°" },
-    status: { en: "Available", ar: "متاح" }, statusColor: "#2D8F6F",
-    category: { en: "Penthouse", ar: "بنتهاوس" },
-    view: { en: "Sea + City Panoramic", ar: "بانورامية بحر + مدينة" },
-    desc: {
-      en: "A triple-height masterpiece crowning the tower. Private infinity pool, direct elevator access, Gaggenau kitchen, Italian marble throughout, and a wraparound terrace with unobstructed views of the Arabian Gulf.",
-      ar: "تحفة معمارية بارتفاع ثلاثي تتوّج البرج. مسبح إنفينيتي خاص، مصعد مباشر، مطبخ غاغيناو، رخام إيطالي في كل مكان، وتراس محيطي بإطلالات خلابة على الخليج العربي.",
-    },
-    features: {
-      en: ["Private Pool", "Smart Home", "Wine Cellar", "Staff Quarters", "Private Garage"],
-      ar: ["مسبح خاص", "منزل ذكي", "قبو نبيذ", "غرف الخدم", "مرآب خاص"],
-    },
+// ─── PROPERTY DATA — extras keyed by canonical unit id (lux-ph/lux-grand/lux-exec)
+// Localized fields come from `luxuryUnits` (config/realEstateUnitData.js).
+// Floor plan room labels + payment plans remain bilingual here (tr() helper).
+const UNIT_EXTRAS = {
+  "lux-ph": {
     img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
     floorPlan: {
       rooms: [
-        { key: "master", w: 42, h: 30, x: 5, y: 5, label: { en: "Master Suite\n580 sq ft", ar: "الجناح الرئيسي\n٥٨٠ قدم²" } },
-        { key: "bed2", w: 22, h: 20, x: 50, y: 5, label: { en: "Bedroom 2\n320 sq ft", ar: "غرفة ٢\n٣٢٠ قدم²" } },
-        { key: "bed3", w: 22, h: 20, x: 75, y: 5, label: { en: "Bedroom 3\n280 sq ft", ar: "غرفة ٣\n٢٨٠ قدم²" } },
-        { key: "bed4", w: 22, h: 20, x: 75, y: 28, label: { en: "Bedroom 4\n260 sq ft", ar: "غرفة ٤\n٢٦٠ قدم²" } },
-        { key: "living", w: 42, h: 30, x: 5, y: 38, label: { en: "Grand Living\n980 sq ft", ar: "صالة كبرى\n٩٨٠ قدم²" } },
-        { key: "kitchen", w: 25, h: 20, x: 50, y: 38, label: { en: "Chef's Kitchen\n420 sq ft", ar: "مطبخ الشيف\n٤٢٠ قدم²" } },
-        { key: "dining", w: 25, h: 18, x: 50, y: 60, label: { en: "Dining\n380 sq ft", ar: "طعام\n٣٨٠ قدم²" } },
-        { key: "balcony", w: 92, h: 14, x: 5, y: 72, label: { en: "Wraparound Terrace\n1,200 sq ft", ar: "تراس محيطي\n١,٢٠٠ قدم²" } },
-        { key: "pool", w: 30, h: 10, x: 35, y: 88, label: { en: "Private Pool", ar: "مسبح خاص" } },
+        { key: "master",  w: 42, h: 30, x:  5, y:  5, label: { en: "Master Suite\n580 sq ft",       ar: "الجناح الرئيسي\n٥٨٠ قدم²" } },
+        { key: "bed2",    w: 22, h: 20, x: 50, y:  5, label: { en: "Bedroom 2\n320 sq ft",          ar: "غرفة ٢\n٣٢٠ قدم²" } },
+        { key: "bed3",    w: 22, h: 20, x: 75, y:  5, label: { en: "Bedroom 3\n280 sq ft",          ar: "غرفة ٣\n٢٨٠ قدم²" } },
+        { key: "bed4",    w: 22, h: 20, x: 75, y: 28, label: { en: "Bedroom 4\n260 sq ft",          ar: "غرفة ٤\n٢٦٠ قدم²" } },
+        { key: "living",  w: 42, h: 30, x:  5, y: 38, label: { en: "Grand Living\n980 sq ft",       ar: "صالة كبرى\n٩٨٠ قدم²" } },
+        { key: "kitchen", w: 25, h: 20, x: 50, y: 38, label: { en: "Chef's Kitchen\n420 sq ft",     ar: "مطبخ الشيف\n٤٢٠ قدم²" } },
+        { key: "dining",  w: 25, h: 18, x: 50, y: 60, label: { en: "Dining\n380 sq ft",             ar: "طعام\n٣٨٠ قدم²" } },
+        { key: "balcony", w: 92, h: 14, x:  5, y: 72, label: { en: "Wraparound Terrace\n1,200 sq ft", ar: "تراس محيطي\n١,٢٠٠ قدم²" } },
+        { key: "pool",    w: 30, h: 10, x: 35, y: 88, label: { en: "Private Pool",                  ar: "مسبح خاص" } },
       ],
       specs: { bathrooms: "5+1", balconySize: "1,200 sq ft", totalArea: "6,200 sq ft" },
     },
     payment: { base: 12500000, plans: ["60/40", "70/30"] },
   },
-  {
-    id: "GR-35-01",
-    name: { en: "Grand Residence", ar: "الإقامة الكبرى" },
-    floor: { en: "Floor 35–38", ar: "الطابق ٣٥-٣٨" },
-    beds: { en: "3 Bedrooms", ar: "٣ غرف نوم" }, bedNum: 3,
-    baths: { en: "4 Bathrooms", ar: "٤ حمامات" },
-    size: { en: "4,100 sq ft", ar: "٤,١٠٠ قدم²" }, sizeNum: 4100,
-    price: 7800000,
-    priceDisplay: { en: "AED 7,800,000", ar: "٧,٨٠٠,٠٠٠ درهم" },
-    priceShort: { en: "AED 7.8M", ar: "٧.٨ مليون درهم" },
-    perSqft: { en: "AED 1,902/sq ft", ar: "١,٩٠٢ درهم/قدم²" },
-    feature: { en: "Marina & sea view", ar: "إطلالة على المارينا والبحر" },
-    status: { en: "Available", ar: "متاح" }, statusColor: "#2D8F6F",
-    category: { en: "Grand Residence", ar: "إقامة كبرى" },
-    view: { en: "Marina & Sea", ar: "مارينا وبحر" },
-    desc: {
-      en: "Expansive living with floor-to-ceiling glazing, Italian marble throughout, a private terrace overlooking the marina, and a chef's kitchen with Miele appliances.",
-      ar: "مساحة واسعة مع زجاج من الأرض إلى السقف، رخام إيطالي، تراس خاص يطل على المارينا، ومطبخ الشيف بأجهزة ميلي.",
-    },
-    features: {
-      en: ["Marina View", "Maid's Room", "Walk-in Closet", "Home Office", "Balcony"],
-      ar: ["إطلالة المارينا", "غرفة الخادمة", "غرفة ملابس", "مكتب منزلي", "شرفة"],
-    },
+  "lux-grand": {
     img: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
     floorPlan: {
       rooms: [
-        { key: "master", w: 35, h: 32, x: 5, y: 5, label: { en: "Master Suite\n480 sq ft", ar: "الجناح الرئيسي\n٤٨٠ قدم²" } },
-        { key: "bed2", w: 25, h: 25, x: 43, y: 5, label: { en: "Bedroom 2\n320 sq ft", ar: "غرفة ٢\n٣٢٠ قدم²" } },
-        { key: "bed3", w: 25, h: 25, x: 72, y: 5, label: { en: "Bedroom 3\n280 sq ft", ar: "غرفة ٣\n٢٨٠ قدم²" } },
-        { key: "living", w: 45, h: 28, x: 5, y: 40, label: { en: "Living & Dining\n860 sq ft", ar: "معيشة وطعام\n٨٦٠ قدم²" } },
-        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Kitchen\n340 sq ft", ar: "مطبخ\n٣٤٠ قدم²" } },
-        { key: "maid", w: 18, h: 22, x: 80, y: 40, label: { en: "Maid's Room", ar: "غرفة الخدم" } },
-        { key: "balcony", w: 92, h: 16, x: 5, y: 72, label: { en: "Marina Terrace\n680 sq ft", ar: "تراس المارينا\n٦٨٠ قدم²" } },
+        { key: "master",  w: 35, h: 32, x:  5, y:  5, label: { en: "Master Suite\n480 sq ft",       ar: "الجناح الرئيسي\n٤٨٠ قدم²" } },
+        { key: "bed2",    w: 25, h: 25, x: 43, y:  5, label: { en: "Bedroom 2\n320 sq ft",          ar: "غرفة ٢\n٣٢٠ قدم²" } },
+        { key: "bed3",    w: 25, h: 25, x: 72, y:  5, label: { en: "Bedroom 3\n280 sq ft",          ar: "غرفة ٣\n٢٨٠ قدم²" } },
+        { key: "living",  w: 45, h: 28, x:  5, y: 40, label: { en: "Living & Dining\n860 sq ft",    ar: "معيشة وطعام\n٨٦٠ قدم²" } },
+        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Kitchen\n340 sq ft",            ar: "مطبخ\n٣٤٠ قدم²" } },
+        { key: "maid",    w: 18, h: 22, x: 80, y: 40, label: { en: "Maid's Room",                   ar: "غرفة الخدم" } },
+        { key: "balcony", w: 92, h: 16, x:  5, y: 72, label: { en: "Marina Terrace\n680 sq ft",     ar: "تراس المارينا\n٦٨٠ قدم²" } },
       ],
       specs: { bathrooms: "3+1", balconySize: "680 sq ft", totalArea: "4,100 sq ft" },
     },
     payment: { base: 7800000, plans: ["60/40", "70/30"] },
   },
-  {
-    id: "EX-25-01",
-    name: { en: "Executive Suite", ar: "الجناح التنفيذي" },
-    floor: { en: "Floor 25–30", ar: "الطابق ٢٥-٣٠" },
-    beds: { en: "2 Bedrooms", ar: "غرفتا نوم" }, bedNum: 2,
-    baths: { en: "3 Bathrooms", ar: "٣ حمامات" },
-    size: { en: "2,800 sq ft", ar: "٢,٨٠٠ قدم²" }, sizeNum: 2800,
-    price: 4200000,
-    priceDisplay: { en: "AED 4,200,000", ar: "٤,٢٠٠,٠٠٠ درهم" },
-    priceShort: { en: "AED 4.2M", ar: "٤.٢ مليون درهم" },
-    perSqft: { en: "AED 1,500/sq ft", ar: "١,٥٠٠ درهم/قدم²" },
-    feature: { en: "City skyline view", ar: "إطلالة على أفق المدينة" },
-    status: { en: "Last 3 Units", ar: "آخر ٣ وحدات" }, statusColor: "#C1121F",
-    category: { en: "Executive Suite", ar: "جناح تنفيذي" },
-    view: { en: "City Skyline", ar: "أفق المدينة" },
-    desc: {
-      en: "Refined elegance for the modern executive. Featuring a dedicated home office, walk-in wardrobe, chef's kitchen with Bosch appliances, and floor-to-ceiling windows framing the city skyline.",
-      ar: "أناقة راقية للتنفيذي العصري. يتميز بمكتب منزلي مخصص، غرفة ملابس، مطبخ الشيف بأجهزة بوش، ونوافذ من الأرض إلى السقف تؤطر أفق المدينة.",
-    },
-    features: {
-      en: ["City View", "Home Office", "Gym Access", "Concierge", "Smart Lock"],
-      ar: ["إطلالة المدينة", "مكتب منزلي", "صالة رياضة", "كونسيرج", "قفل ذكي"],
-    },
+  "lux-exec": {
     img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
     floorPlan: {
       rooms: [
-        { key: "master", w: 35, h: 35, x: 5, y: 5, label: { en: "Master Suite\n420 sq ft", ar: "الجناح الرئيسي\n٤٢٠ قدم²" } },
-        { key: "bed2", w: 28, h: 28, x: 44, y: 5, label: { en: "Bedroom 2\n300 sq ft", ar: "غرفة ٢\n٣٠٠ قدم²" } },
-        { key: "office", w: 22, h: 25, x: 76, y: 5, label: { en: "Home Office\n180 sq ft", ar: "مكتب منزلي\n١٨٠ قدم²" } },
-        { key: "living", w: 42, h: 28, x: 5, y: 44, label: { en: "Living Room\n620 sq ft", ar: "غرفة المعيشة\n٦٢٠ قدم²" } },
-        { key: "kitchen", w: 28, h: 22, x: 50, y: 44, label: { en: "Chef's Kitchen\n280 sq ft", ar: "مطبخ الشيف\n٢٨٠ قدم²" } },
-        { key: "balcony", w: 70, h: 14, x: 5, y: 76, label: { en: "Sky Balcony\n380 sq ft", ar: "شرفة سماوية\n٣٨٠ قدم²" } },
+        { key: "master",  w: 35, h: 35, x:  5, y:  5, label: { en: "Master Suite\n420 sq ft",       ar: "الجناح الرئيسي\n٤٢٠ قدم²" } },
+        { key: "bed2",    w: 28, h: 28, x: 44, y:  5, label: { en: "Bedroom 2\n300 sq ft",          ar: "غرفة ٢\n٣٠٠ قدم²" } },
+        { key: "office",  w: 22, h: 25, x: 76, y:  5, label: { en: "Home Office\n180 sq ft",        ar: "مكتب منزلي\n١٨٠ قدم²" } },
+        { key: "living",  w: 42, h: 28, x:  5, y: 44, label: { en: "Living Room\n620 sq ft",        ar: "غرفة المعيشة\n٦٢٠ قدم²" } },
+        { key: "kitchen", w: 28, h: 22, x: 50, y: 44, label: { en: "Chef's Kitchen\n280 sq ft",     ar: "مطبخ الشيف\n٢٨٠ قدم²" } },
+        { key: "balcony", w: 70, h: 14, x:  5, y: 76, label: { en: "Sky Balcony\n380 sq ft",        ar: "شرفة سماوية\n٣٨٠ قدم²" } },
       ],
       specs: { bathrooms: "2+1", balconySize: "380 sq ft", totalArea: "2,800 sq ft" },
     },
     payment: { base: 4200000, plans: ["60/40", "70/30"] },
   },
-];
-
-const AMENITIES = {
-  en: [
-    { icon: "ti-pool", name: "Infinity Edge Pool", desc: "60m rooftop pool with panoramic Gulf views" },
-    { icon: "ti-flower", name: "Spa & Wellness", desc: "Full-service spa with hammam & cryo chamber" },
-    { icon: "ti-tools-kitchen-2", name: "Private Dining", desc: "Michelin-standard resident-only restaurant" },
-    { icon: "ti-barbell", name: "Fitness Atelier", desc: "Technogym-equipped with personal trainers" },
-    { icon: "ti-sailboat", name: "Marina Access", desc: "Private berths for yachts up to 60ft" },
-    { icon: "ti-plant-2", name: "Sky Gardens", desc: "Landscaped terraces on every 10th floor" },
-    { icon: "ti-mood-kid", name: "Kids Club", desc: "Supervised play areas & learning center" },
-    { icon: "ti-charging-pile", name: "Valet & EV", desc: "24/7 valet with EV charging stations" },
-  ],
-  ar: [
-    { icon: "ti-pool", name: "مسبح إنفينيتي", desc: "مسبح على السطح بطول ٦٠ متر مع إطلالات بانورامية" },
-    { icon: "ti-flower", name: "سبا وعافية", desc: "سبا متكامل مع حمام تركي وغرفة تبريد" },
-    { icon: "ti-tools-kitchen-2", name: "مطعم خاص", desc: "مطعم حصري للسكان بمعايير ميشلان" },
-    { icon: "ti-barbell", name: "صالة لياقة", desc: "مجهزة بأحدث أجهزة تكنوجيم مع مدربين شخصيين" },
-    { icon: "ti-sailboat", name: "مرسى خاص", desc: "أرصفة خاصة لليخوت حتى ٦٠ قدم" },
-    { icon: "ti-plant-2", name: "حدائق سماوية", desc: "شرفات منسقة كل ١٠ طوابق" },
-    { icon: "ti-mood-kid", name: "نادي الأطفال", desc: "مناطق لعب مراقبة ومركز تعليمي" },
-    { icon: "ti-charging-pile", name: "خدمة صف السيارات", desc: "خدمة صف ٢٤/٧ مع محطات شحن كهربائية" },
-  ],
-};
-
-const INVEST = {
-  en: [
-    { label: "Rental yield", value: "8.2%", note: "Above market average" },
-    { label: "Capital growth", value: "23%", note: "Projected 3-year appreciation" },
-    { label: "Payment plan", value: "60/40", note: "Flexible construction-linked" },
-    { label: "Handover", value: "Q4 2027", note: "On schedule" },
-  ],
-  ar: [
-    { label: "عائد الإيجار", value: "٨.٢٪", note: "أعلى من متوسط السوق" },
-    { label: "نمو رأس المال", value: "٢٣٪", note: "ارتفاع متوقع خلال ٣ سنوات" },
-    { label: "خطة الدفع", value: "٦٠/٤٠", note: "مرنة مرتبطة بالبناء" },
-    { label: "التسليم", value: "Q4 2027", note: "في الموعد المحدد" },
-  ],
 };
 
 const IMAGES = {
@@ -657,7 +555,7 @@ const ROOM_COLORS = {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function VIPPortal() {
   const [lang, setLang] = useState("en");
-  const { projectName, fmtCurrency, vipPersona, region } = usePortalRegion("real_estate", lang);
+  const { projectName, fmtCurrency, vipPersona, region, luxuryUnits, amenities, investStats } = usePortalRegion("real_estate", lang);
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
   const [modalUnit, setModalUnit] = useState(null);
@@ -675,6 +573,9 @@ export default function VIPPortal() {
   const bookRef = useRef(null);
   const t = LANG[lang];
   const tr = (obj) => (obj && (obj[lang] ?? obj.en)) ?? "";
+
+  const withExtras = (unit) => ({ ...unit, ...UNIT_EXTRAS[unit.id] });
+  const units = luxuryUnits.map(withExtras);
 
   // Scroll
   useEffect(() => {
@@ -738,10 +639,10 @@ export default function VIPPortal() {
     setSelectedUnit(unit);
     trackEvent("view_unit", {
       unitId: unit.id,
-      unitName: unit.name.en,
-      price: unit.price,
+      unitName: unit.nameEn,
+      price: unit.priceBase,
       tower: unit.tower || "Al Qamar",
-      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+      unitType: unit.type || "penthouse",
     });
   };
   const openFloor = (unit) => {
@@ -749,9 +650,9 @@ export default function VIPPortal() {
     setModal("floorplan");
     trackEvent("view_floorplan", {
       unitId: unit.id,
-      unitName: unit.name.en,
+      unitName: unit.nameEn,
       tower: unit.tower || "Al Qamar",
-      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+      unitType: unit.type || "penthouse",
     });
     showToast(t.toast.floorPlan, "📐");
   };
@@ -760,9 +661,9 @@ export default function VIPPortal() {
     setModal("brochure");
     trackEvent("download_brochure", {
       unitId: unit.id,
-      unitName: unit.name.en,
+      unitName: unit.nameEn,
       tower: unit.tower || "Al Qamar",
-      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+      unitType: unit.type || "penthouse",
     });
     showToast(t.toast.brochure, "📄");
   };
@@ -772,19 +673,19 @@ export default function VIPPortal() {
     setPayPlan("60/40");
     trackEvent("explore_payment_plan", {
       unitId: unit.id,
-      unitName: unit.name.en,
+      unitName: unit.nameEn,
       tower: unit.tower || "Al Qamar",
-      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+      unitType: unit.type || "penthouse",
     });
   };
   const openCompare = () => { setModal("compare"); };
   const reqPricing = (unit) => {
     trackEvent("request_pricing", {
       unitId: unit.id,
-      unitName: unit.name.en,
-      price: unit.price,
+      unitName: unit.nameEn,
+      price: unit.priceBase,
       tower: unit.tower || "Al Qamar",
-      unitType: unit.category?.en?.toLowerCase() || "penthouse",
+      unitType: unit.type || "penthouse",
     });
     showToast(t.toast.pricing, "💰");
   };
@@ -910,22 +811,22 @@ export default function VIPPortal() {
           <p className="vp-ss">{t.sections.residencesHint}</p>
         </div>
         <div className="vp-units">
-          {UNITS.map((unit) => (
+          {units.map((unit) => (
             <div className="vp-card vp-rv" key={unit.id} onClick={() => openDetail(unit)}>
               <div className="vp-card-img">
-                <img src={unit.img} alt={tr(unit.name)} loading="lazy" />
-                <div className="vp-card-fbadge">{tr(unit.feature)}</div>
-                <div className="vp-card-status" style={{ background: unit.statusColor }}>{tr(unit.status)}</div>
+                <img src={unit.img} alt={unit.name} loading="lazy" />
+                <div className="vp-card-fbadge">{unit.feature}</div>
+                <div className="vp-card-status" style={{ background: unit.statusColor }}>{unit.status}</div>
               </div>
               <div className="vp-card-body">
-                <h3 className="vp-card-name">{tr(unit.name)}</h3>
-                <p className="vp-card-floor">{tr(unit.floor)}</p>
+                <h3 className="vp-card-name">{unit.name}</h3>
+                <p className="vp-card-floor">{unit.floor}</p>
                 <div className="vp-card-meta">
-                  <span>🛏 {tr(unit.beds)}</span>
-                  <span>📐 {tr(unit.size)}</span>
+                  <span>🛏 {unit.beds}</span>
+                  <span>📐 {unit.size}</span>
                 </div>
-                <div className="vp-card-price">{fmtCurrency(unit.price)}</div>
-                <div className="vp-card-sqft">{fmtCurrency(Math.round(unit.price / unit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div>
+                <div className="vp-card-price">{fmtCurrency(unit.priceBase)}</div>
+                <div className="vp-card-sqft">{fmtCurrency(Math.round(unit.priceBase / unit.sqftBase))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div>
               </div>
               <div className="vp-card-acts" onClick={(e) => e.stopPropagation()}>
                 <button className="vp-btn-o vp-btn-sm" onClick={() => openFloor(unit)}>📐 {t.unitActions.floorPlan}</button>
@@ -951,12 +852,12 @@ export default function VIPPortal() {
           <h2 className="vp-st">{t.sections.amenitiesSub}</h2>
         </div>
         <div className="vp-am-grid">
-          {tr(AMENITIES).map((a, i) => (
+          {amenities.map((a, i) => (
             <div className="vp-am vp-rv" key={i}>
               <div className="vp-am-icon">
                 <i className={`ti ${a.icon}`} aria-hidden="true" />
               </div>
-              <div className="vp-am-name">{a.name}</div>
+              <div className="vp-am-name">{a.title}</div>
               <div className="vp-am-desc">{a.desc}</div>
             </div>
           ))}
@@ -973,11 +874,11 @@ export default function VIPPortal() {
           <h2 className="vp-st">{t.sections.investmentSub}</h2>
         </div>
         <div className="vp-inv-grid">
-          {tr(INVEST).map((item, i) => (
+          {investStats.map((item, i) => (
             <div className="vp-inv vp-rv" key={i}>
-              <div className="vp-inv-v">{item.value}</div>
+              <div className="vp-inv-v">{item.stat}</div>
               <div className="vp-inv-l">{item.label}</div>
-              <div className="vp-inv-n">{item.note}</div>
+              <div className="vp-inv-n">{item.desc}</div>
             </div>
           ))}
         </div>
@@ -1037,7 +938,7 @@ export default function VIPPortal() {
               <label className="vp-flabel">{t.booking.preferred}</label>
               <select className="vp-fsel" onChange={(e) => setForm({ ...form, unit: e.target.value })}>
                 <option value="">—</option>
-                {UNITS.map((u) => (<option key={u.id} value={u.id}>{tr(u.name)} — {fmtCurrency(u.price)}</option>))}
+                {units.map((u) => (<option key={u.id} value={u.id}>{u.name} — {fmtCurrency(u.priceBase)}</option>))}
               </select>
             </div>
             <div className="vp-frow">
@@ -1083,35 +984,35 @@ export default function VIPPortal() {
           <div className="vp-modal" onClick={(e) => e.stopPropagation()}>
             <button className="vp-modal-x" onClick={closeAll}>✕</button>
             <div className="vp-md-gallery">
-              <img src={selectedUnit.img} alt={tr(selectedUnit.name)} />
+              <img src={selectedUnit.img} alt={selectedUnit.name} />
               <img src={IMAGES.hero} alt="View 2" />
               <img src={IMAGES.pool} alt="View 3" />
             </div>
             <div className="vp-modal-body">
               <div className="vp-md-top">
                 <div>
-                  <h2 className="vp-md-title">{tr(selectedUnit.name)}</h2>
-                  <p className="vp-md-floor">{tr(selectedUnit.floor)}</p>
+                  <h2 className="vp-md-title">{selectedUnit.name}</h2>
+                  <p className="vp-md-floor">{selectedUnit.floor}</p>
                 </div>
                 <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
-                  <div className="vp-md-price">{fmtCurrency(selectedUnit.price)}</div>
-                  <div className="vp-md-sqft">{fmtCurrency(Math.round(selectedUnit.price / selectedUnit.sizeNum))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div>
+                  <div className="vp-md-price">{fmtCurrency(selectedUnit.priceBase)}</div>
+                  <div className="vp-md-sqft">{fmtCurrency(Math.round(selectedUnit.priceBase / selectedUnit.sqftBase))}{lang === "ar" ? "/قدم²" : "/sq ft"}</div>
                 </div>
               </div>
-              <p className="vp-md-desc">{tr(selectedUnit.desc)}</p>
+              <p className="vp-md-desc">{selectedUnit.desc}</p>
               <div className="vp-md-grid">
-                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.bedrooms}</div><div className="vp-md-gi-v">{tr(selectedUnit.beds)}</div></div>
-                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.bathrooms}</div><div className="vp-md-gi-v">{tr(selectedUnit.baths)}</div></div>
-                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.living}</div><div className="vp-md-gi-v">{tr(selectedUnit.size)}</div></div>
+                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.bedrooms}</div><div className="vp-md-gi-v">{selectedUnit.beds}</div></div>
+                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.bathrooms}</div><div className="vp-md-gi-v">{selectedUnit.baths}</div></div>
+                <div className="vp-md-gi"><div className="vp-md-gi-l">{t.floorPlanModal.living}</div><div className="vp-md-gi-v">{selectedUnit.size}</div></div>
                 <div className="vp-md-gi">
                   <div className="vp-md-gi-l">{t.compareModal.category}</div>
                   <div className="vp-md-gi-v" style={{ background: selectedUnit.statusColor, color: "#fff", display: "inline-block", padding: ".2rem .6rem", borderRadius: "4px", fontSize: ".9rem" }}>
-                    {tr(selectedUnit.status)}
+                    {selectedUnit.status}
                   </div>
                 </div>
               </div>
               <div className="vp-md-feats">
-                {tr(selectedUnit.features).map((f, i) => (<span className="vp-md-feat" key={i}>{f}</span>))}
+                {selectedUnit.features.map((f, i) => (<span className="vp-md-feat" key={i}>{f}</span>))}
               </div>
 
               {/* Inline Payment Preview */}
@@ -1123,9 +1024,9 @@ export default function VIPPortal() {
                   <div className="vp-pay-seg" style={{ flex: 40, background: "rgba(197,164,103,.35)" }} />
                 </div>
                 <div className="vp-pay-legend">
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m1} (10%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.1)}</div></div></div>
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold-lt)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m3} (50%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.5)}</div></div></div>
-                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "rgba(197,164,103,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m5} (40%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.price * 0.4)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m1} (10%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.priceBase * 0.1)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "var(--vp-gold-lt)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m3} (50%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.priceBase * 0.5)}</div></div></div>
+                  <div className="vp-pay-item"><div className="vp-pay-dot" style={{ background: "rgba(197,164,103,.35)" }} /><div><div style={{ fontSize: ".72rem", color: "var(--vp-t3)" }}>{t.paymentModal.m5} (40%)</div><div className="vp-pay-amt">{fmtCurrency(selectedUnit.priceBase * 0.4)}</div></div></div>
                 </div>
               </div>
 
@@ -1149,8 +1050,8 @@ export default function VIPPortal() {
           <div className="vp-modal" style={{ maxWidth: "800px" }} onClick={(e) => e.stopPropagation()}>
             <button className="vp-modal-x" onClick={closeAll}>✕</button>
             <div className="vp-modal-body">
-              <h2 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {tr(modalUnit.name)}</h2>
-              <p style={{ color: "var(--vp-gold)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{tr(modalUnit.floor)}</p>
+              <h2 style={{ fontFamily: "var(--vp-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {modalUnit.name}</h2>
+              <p style={{ color: "var(--vp-gold)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{modalUnit.floor}</p>
               <svg className="vp-fp-svg" viewBox="0 0 100 65" style={{ background: "var(--vp-ch)" }}>
                 {modalUnit.floorPlan.rooms.map((room, i) => (
                   <g key={i}>
@@ -1266,15 +1167,15 @@ export default function VIPPortal() {
               {compareList.length === 0 ? (
                 <div className="vp-cmp-empty">{t.compareModal.empty}</div>
               ) : (() => {
-                const units = compareList.map((id) => UNITS.find((u) => u.id === id)).filter(Boolean);
+                const units = compareList.map((id) => units.find((u) => u.id === id)).filter(Boolean);
                 const cols = `180px repeat(${units.length}, 1fr)`;
                 const rows = [
-                  { label: t.compareModal.price, get: (u) => fmtCurrency(u.price) },
-                  { label: t.compareModal.floor, get: (u) => tr(u.floor) },
-                  { label: t.compareModal.bedrooms, get: (u) => tr(u.beds) },
-                  { label: t.compareModal.size, get: (u) => tr(u.size) },
-                  { label: t.compareModal.view, get: (u) => tr(u.feature) },
-                  { label: t.compareModal.category, get: (u) => tr(u.category) },
+                  { label: t.compareModal.price, get: (u) => fmtCurrency(u.priceBase) },
+                  { label: t.compareModal.floor, get: (u) => u.floor },
+                  { label: t.compareModal.bedrooms, get: (u) => u.beds },
+                  { label: t.compareModal.size, get: (u) => u.size },
+                  { label: t.compareModal.view, get: (u) => u.feature },
+                  { label: t.compareModal.category, get: (u) => u.category },
                 ];
                 return (
                   <div className="vp-cmp-grid">
@@ -1282,7 +1183,7 @@ export default function VIPPortal() {
                       <div>{t.compareModal.feature}</div>
                       {units.map((u) => (
                         <div key={u.id} style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "var(--vp-serif)", fontSize: "1rem", color: "var(--vp-t1)", fontWeight: 400, marginBottom: ".3rem" }}>{tr(u.name)}</div>
+                          <div style={{ fontFamily: "var(--vp-serif)", fontSize: "1rem", color: "var(--vp-t1)", fontWeight: 400, marginBottom: ".3rem" }}>{u.name}</div>
                           <button className="vp-cmp-rm" onClick={() => toggleCompare(u.id)}>{t.compareModal.remove}</button>
                         </div>
                       ))}
