@@ -1,12 +1,145 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-05-31 EOD (America/Vancouver) — Cowork session: Phase 2b.RE shipped → 3 portal 4-language parity (ES + FR added to VIP + Ahmed + Marketplace, ~820 strings) + persona gender field + AR floorPlan disclaimer bug fix + region-aware lang cycle button → ES/FR ErrorBoundary crash (UNITS bilingual data undefined) → `tr()` helper hotfix + Cursor proaktif scope extension (AMENITIES + INVEST + hero ternary) → atomic squash commit + push + production deploy. **Phase 2c.RE Data Architecture next session — canonical+overlay pattern, per-region unit names, 4-language overlay.**
-**Session:** Cowork — handoff read → Phase 2b kararları (translation provider = Claude inline; data shape = hibrit canonical+overlay RE / region-prefixed Auto) → sample ES onay → 3 portal × ES+FR translation bundles → Phase 2b.RE directive + Cursor execute → ES/FR sahnelerinde Marketplace+VIP+Ahmed ErrorBoundary crash → root cause: UNITS array bilingual `{en, ar}` data shape, `unit.X[lang]` ES/FR'de undefined → hotfix directive (`tr()` helper + mekanik replace ~75 site) → Cursor execute, proaktif AMENITIES/INVEST/hero ternary genişletmesi → crash gitti → karar: deploy şimdi + Phase 2c'yi başlat (in-place 4-dil eklemek Phase 2c canonical refactor'ünde silinecekti, boşa enerji).
+**Last updated:** 2026-05-31 EOD #2 (America/Vancouver) — Cowork session: Phase 2b.RE shipped + Phase 2c.RE shipped, aynı oturumda. **Phase 2b.RE:** 3 portal 4-language parity (ES + FR added, ~820 strings) + persona gender field + AR floorPlan disclaimer bug fix + region-aware lang cycle button → ES/FR ErrorBoundary crash → `tr()` helper hotfix → atomic squash commit + push + deploy. **Phase 2c.RE:** canonical+overlay data architecture (`realEstateUnitData.js` — ~1115 satır, 1632 string) + per-region unit names (Suite Cielo Real / Skyline Penthouse / Harbour Penthouse / etc.) + AMENITIES + INVEST region overlays + portalRegion helper genişletme + 3 portal data layer swap → IMAGES regression yakalama + restore + Python script fix → build PASS + 4 region screenshot QA → atomic commit + push + deploy. **Phase 2b.Auto next session — region-prefixed VEHICLES + ES/FR + nameAr schema fix.**
+**Session:** Cowork — handoff read → Phase 2b decision tree → ES+FR translation bundles → Phase 2b.RE directive + Cursor execute → ES/FR crash → hotfix → deploy → karar: Phase 2c'yi hemen başlat → per-region unit naming önerileri (36 isim + towers + views) + onay → 3 paralel sub-agent veri üretimi (LUXURY 768 + FAMILY 480 + AMENITIES_INVEST 384 = 1632 string) → Phase 2c.RE directive + 4 dosya `frontend/directives/` altına kopya → Cursor execute (IMAGES regression yakalama + Python script fix proaktif) → build PASS + 4 region QA (Gulf AR + Mexico ES + USA EN + Canada FR Ahmed persona swap teyit) → deploy yeşil.
 **Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — 2026-05-31 EOD (Phase 2c.RE Data Architecture başlat)
+## ▶︎ RESUME HERE — 2026-06-01 (Phase 2b.Auto başlat)
+
+**Status:** Phase 2b.RE + Phase 2c.RE production'a deploy edildi (`https://dynamicnfc.ca`). 3 RE portal (VIPPortal + AhmedPortal + MarketplacePortal) 4 region × 4 dil full parity. Mexico ES'de "Suite Cielo Real / Hacienda Mayor / Suite Patio Real", USA EN'de "Skyline Penthouse / Park Avenue Residence / Hudson Executive Loft", Canada FR'de "Penthouse Harbour / Vista Nord Tour", Gulf AR'de "بنتهاوس السماء / إقامة كبرى". AMENITIES region-spesifik (Gulf hammam, Mexico hacienda pool, Canada Pacific waterfront, USA Manhattan skyline). INVEST stats region-spesifik (Gulf 8.2%, USA 6.5%, Mexico 9.0%, Canada 5.0%). **Sıra Auto sektöre — VEHICLES region-prefixed + ES/FR.**
+
+### Tomorrow's first move
+
+1. **Auto portal scope audit** — AutomotivePortal + SultanPortal + PublicShowroom mevcut yapı:
+   - VEHICLES bilingual `{en, ar}` array (per portal: 9/5/9 vehicles)
+   - `nameAr` field separate (schema inconsistency — RE pattern'inden farklı)
+   - 4 region: Gulf Mercedes-anchored, USA Cadillac, Mexico likely BMW/Audi, Canada Lexus/Tesla
+   - Phase 2b'de "hibrit" pattern kararı: Auto **region-prefixed full duplicate** (NOT canonical+overlay)
+     - Sebep: Realism — Manhattan VIP'ye Cadillac Escalade, Vancouver VIP'ye Tesla, Riyadh VIP'ye Mercedes G63 gösterilmeli. Aynı isim listesi 4 region'a kötü demo.
+
+2. **Per-region vehicle inventory** branding kararı:
+   - **Gulf:** Mercedes G63 / GLS 600 / GLE 53 (current, korunur); S 580 / Maybach S680 / EQS 580; AMG GT63 / C63 / SL63 (luxury performance)
+   - **USA (Manhattan):** Cadillac Escalade / CT5-V Blackwing / Lyriq; Tesla Model S Plaid / Model X / Cybertruck; Lincoln Navigator / Aviator
+   - **Mexico (CDMX/Riviera):** BMW X7 / 7 Series / i7; Audi Q8 e-tron / RS6 / R8; Mercedes Maybach S680 (luxury sedan)
+   - **Canada (Vancouver):** Tesla Model X / Plaid / Cybertruck; Lexus LX 600 / LS 500 / RZ; Range Rover Sport / Defender 130
+
+3. **Directive yazımı** (Claude scope):
+   - `frontend/src/config/automotiveVehicleData.js` (yeni)
+   - Pattern: `VEHICLES_GULF = [...9 vehicles...]`, `VEHICLES_USA = [...]`, `VEHICLES_MEXICO = [...]`, `VEHICLES_CANADA = [...]`
+   - `usePortalRegion('automotive')` helper genişletme: `vehicles: VEHICLES_BY_REGION[regionId]`
+   - 3 portal data layer swap
+
+4. **3 paralel sub-agent** vehicle data üretimi (her sub-agent 1 portal: AutomotivePortal/SultanPortal/PublicShowroom — toplam ~36 vehicle entries × ~10 field × 4 dil ≈ 1440 string)
+
+5. **Cursor execute** → build PASS + 4 region QA + commit + deploy.
+
+6. **Phase 2b.Auto sonrası:** Phase 2d.RE (floorPlan.rooms[].label + payment.plans + UNIT_EXTRAS canonical migrate) → Yacht demo portals → FAZ 5 legacy dashboard retire.
+
+### What shipped today (chronological)
+
+| Order | Sprint | Item | State |
+|---|---|---|---|
+| 1 | Phase 2b.RE | `regionConfig.personas[].gender` + 3 portal welcomeMale/welcomeFemale + ES + FR LANG blokları (~820 string) + AR floorPlan disclaimer bug fix + nav.lang region-aware cycle + Marketplace flat AR keys cleanup | ✅ Live |
+| 2 | Phase 2b.RE Hotfix | `tr(obj) = obj?.[lang] ?? obj.en` helper 3 portal'a, ~75 mekanik unit.X[lang] swap + Cursor proaktif AMENITIES/INVEST/hero ternary fix | ✅ Live |
+| 3 | Phase 2c.RE | `realEstateUnitData.js` (~1115 satır, 1632 string) — canonical UNITS_LUXURY + UNITS_FAMILY + UNIT_REGION_OVERLAY_* + AMENITIES_REGION_OVERLAY + INVEST_REGION_OVERLAY + 4 helper. portalRegion helper genişletme (luxuryUnits/familyUnits/amenities/investStats accessors). 3 portal data layer swap (local UNITS/AMENITIES/INVEST silindi → helper'dan tüketim). UNIT_EXTRAS pattern (img/gallery/floorPlan local kalır, Phase 2d'ye bırakıldı). | ✅ Live |
+
+### Per-region unit naming final list (Phase 2c'de onaylanmış)
+
+**LUXURY tier (VIP + Marketplace shared):**
+
+| Unit ID | Gulf | USA | Mexico | Canada |
+|---|---|---|---|---|
+| `lux-ph` | Sky Penthouse / Al Qamar Tower | Skyline Penthouse / Manhattan Tower | Suite Cielo Real / Torre Sol | Harbour Penthouse / Vista North Tower |
+| `lux-grand` | Grand Residence / Al Safwa Tower | Park Avenue Residence / Hudson Tower | Hacienda Mayor / Torre Luna | Waterfront Grand / Vista South Tower |
+| `lux-exec` | Executive Suite / Al Rawda Tower | Hudson Executive Loft / Central Tower | Suite Patio Real / Torre Estrella | Pacific Executive Loft / Vista Marina |
+
+**FAMILY tier (Ahmed):**
+
+| Unit ID | Gulf | USA | Mexico | Canada |
+|---|---|---|---|---|
+| `fam-3br` | Family Garden Suite / Al Safwa | Park Family Residence / Hudson | Casa Familiar Patio / Torre Luna | Family Harbour Residence / Vista South |
+| `fam-4br` | Grand Family Residence / Al Rawda | Brownstone Family Loft / Central | Casa Mayor Familiar / Torre Sol | Mountain View Family / Vista North |
+| `fam-2br` | Garden Family Suite / Al Qamar | Family Loft / Hudson | Casa Patio Familiar / Torre Estrella | Harbour Family Suite / Vista Marina |
+
+**INVEST stats per region (Phase 2c data):**
+
+| Region | Yield | Growth | Plan | Handover |
+|---|---|---|---|---|
+| Gulf | 8.2% | 23% | 60/40 | Q4 2027 |
+| USA | 6.5% | 18% | 70/30 | Q2 2027 |
+| Mexico | 9.0% | 25% | 50/50 | Q1 2028 |
+| Canada | 5.0% | 15% | 65/35 | Q3 2027 |
+
+### Files modified today
+
+| File | Phase | Change |
+|---|---|---|
+| `config/regionConfig.js` | 2b | `gender: 'male'\|'female'` 30 persona (11 female, 19 male) |
+| `config/realEstateUnitData.js` | 2c | **YENİ** ~1115 satır — canonical + overlay + helpers (1632 localized string) |
+| `services/portalRegion.js` | 2c | `luxuryUnits` / `familyUnits` / `amenities` / `investStats` accessors |
+| `pages/VIPPortal/VIPPortal_Definitive.jsx` | 2b + 2c | 4 dil LANG, `welcomeMale/Female`, AR disclaimer fix, `tr()` helper (hotfix), `LANG_LABEL+nextLang`, local UNITS/AMENITIES/INVEST silindi, IMAGES (UNIT_EXTRAS) kalır |
+| `pages/AhmedPortal/AhmedPortal.jsx` | 2b + 2c | Aynı pattern (familyUnits accessor) |
+| `pages/MarketplacePortal/MarketplacePortal.jsx` | 2b + 2c | 4 dil LANG, flat AR keys cleanup, hero `projectName(lang)`, `documentElement.lang` ES/FR respect, compare modal `units` shadowing → `compareUnits`, AMENITIES desc parity |
+
+### Open threads
+
+1. **Phase 2b.Auto** (next session — Claude scope, ana iş):
+   - Pattern: region-prefixed full duplicate (`VEHICLES_GULF/USA/MEXICO/CANADA`)
+   - Per-region vehicle naming kararı (yukarıdaki branding önerisi onayı)
+   - 3 paralel sub-agent veri üretimi
+   - Plus `nameAr` field → `name{en/ar}` schema unification
+
+2. **Phase 2d.RE cleanup** (Auto sonrası, küçük scope):
+   - `floorPlan.rooms[].label` bilingual → canonical migrate
+   - `payment.plans` milestone localization
+   - `UNIT_EXTRAS` pattern kaldırma (img/gallery/floorPlan canonical'a entegre)
+   - `tr()` helper tamamen kalkar
+
+3. **Marketplace `hero.title` dead key cleanup** — `"Vista\nResidences"` artık render edilmiyor (`projectName(lang)` çağrılıyor). Ayrı chore PR.
+
+4. **Pitch deck refresh** — 4 region parity + Phase 2b/2c sonuçları + Mexico ES + Canada FR screenshot'lar + AMENITIES region-spesifik narrative + INVEST market data parity. Mevcut PDF outdated.
+
+5. **Carry-over:** Phase 2d sonrası → Phase 3 Yacht demo portals → FAZ 5 legacy dashboard retire → Apple Dev / Sentry.
+
+### Lessons added today (high-value, candidate for CLAUDE.md)
+
+- **Canonical + region overlay pattern RE için doğru tercih.** Tek `realEstateUnitData.js` dosyası 1632 localized string içerir ama her biri tek yerde — bilingual flat array'lere göre 4× veri yoğunluğu, ama 0 duplication, 0 schema drift, 0 inconsistency riski. Region başına farklı unit isimleri olabilir (Sky Penthouse Gulf'ta, Skyline Penthouse USA'da, Suite Cielo Real Mexico'da, Harbour Penthouse Canada'da) — overlay pattern bunu doğal olarak destekler.
+- **Helper API tek (`usePortalRegion`) — Code Simplicity Mandate.** Tier-spesifik hook (`useLuxuryUnits`/`useFamilyUnits`) açma riskti, tek helper destructure çok daha temiz oldu (4 accessor: luxuryUnits, familyUnits, amenities, investStats).
+- **UNIT_EXTRAS geçici pattern OK ama scope creep'i izle.** Phase 2c'de img/gallery/floorPlan canonical'a taşımak scope'u 2× büyütürdü. UNIT_EXTRAS local dict pattern'i geçici, Phase 2d'de kapsanır. Lesson: refactor sprint scope'u tek bir temaya bağla (Phase 2c = "data localization" — extras layout kontamine etmesin).
+- **3 paralel sub-agent veri üretimi etkili oldu.** Toplam 1632 string ~10 dakikada üretildi (3 sub-agent paralel). Tek bir batch context limit'i aşardı. Lesson: büyük translation/data üretimi gerektiğinde domain-bazlı paralel sub-agent split — Claude'un her sub-agent'inde dedicated context, daha kaliteli + hızlı.
+- **Cursor proaktif IMAGES regression yakalama + Python script fix.** Cursor bu sprintte (a) UNITS sil komutu kazasıyla IMAGES const'ı sildi, (b) 3 portal'da geri ekledi, (c) script'i de düzeltti. Phase 2b'deki "AMENITIES/INVEST/hero ternary" proaktif yakalama trendine devamı. Trust building — gelecek directive'lerde mekanik kapsama Cursor'a daha esnek bırakılabilir, ama proaktif kazanımları post-mortem audit etmek hala mandatory.
+- **Per-region branding kararı demo'da göze çarpan ilk şey.** Phase 2c'nin kendisi "per-region unit naming" kararıyla başladı — Suite Cielo Real (Mexico hacienda) vs Skyline Penthouse (USA Manhattan) vs Harbour Penthouse (Canada waterfront). Generic isimler (Penthouse, 3BR) demoda inandırıcılığı düşürür. Lesson: region-aware product içerik sadece çeviri değil, branding kalibrasyonu da gerekiyor — bunu data architecture sprint'inin başına koy.
+- **AMENITIES desc parity decision (Marketplace 2A).** Marketplace anonymous public portal olsa da, AMENITIES desc'i region-spesifik narrative taşıyor (Mexico "Hacienda Pool & Patio — 60m pool surrounded by hacienda gardens"). Title tek başına generic kalır. Demo'da "premium lifestyle" mesajı için desc mandatory. Lesson: UX yoğunluk endişesi vs branding mesajı dengesi — public portal'da desc'i tutmak yoksa "ucuz" hisseder.
+
+### Working-tree state (when this handoff was written)
+
+```
+On branch main
+Your branch is up to date with 'origin/main' (Phase 2b.RE + Phase 2c.RE merged + deployed).
+
+Pending uncommitted:
+        modified:   CLAUDE_HANDOFF.md ← bu update
+Untracked (Cowork session outputs — referans için):
+        outputs/PHASE_2B_RE_TRANSLATION_DIRECTIVE.md
+        outputs/PHASE_2B_RE_HOTFIX_UNITS_LANG_FALLBACK.md
+        outputs/PHASE_2C_RE_DATA_ARCHITECTURE_DIRECTIVE.md
+        outputs/Phase2b_RE_translations_{VIPPortal,AhmedPortal,MarketplacePortal}.md
+        outputs/Phase2c_{LUXURY,FAMILY,AMENITIES_INVEST}_data.md
+
+Committed to repo (Cursor için reference):
+        frontend/directives/PHASE_2C_RE_DATA_ARCHITECTURE_DIRECTIVE.md
+        frontend/directives/Phase2c_{LUXURY,FAMILY,AMENITIES_INVEST}_data.md
+```
+
+### Tone for resume
+
+Marathon gün — 2 büyük sprint aynı oturumda shipped. RE sektörü 4 region × 4 dil full parity, demo'da Mexico ES Marketplace "Suite Cielo Real / Desde MX$12,500,000" gibi region-spesifik branding gözüküyor. Phase 2b'deki crash lesson Phase 2c'de internalize edildi — bu sefer build PASS sonrası 4 region screenshot QA, crash yok, deploy temiz. Cursor proaktif kalibrasyonu (AMENITIES, IMAGES regression) trust katmanını sağlamlaştırdı. Yarın Auto sektörüne girişte momentum güçlü. Open next session with: *"Auto vehicle inventory per region onayı → Phase 2b.Auto directive → 3 paralel sub-agent → Cursor execute."*
+
+---
+
+## ✅ CLOSED — 2026-05-31 EOD #1 (Phase 2c.RE Data Architecture başlat — superseded by ship aynı session)
 
 **Status:** Phase 2b.RE production'a deploy edildi (`https://dynamicnfc.ca`). ES/FR sahnelerinde UI copy + buton + form + modal'lar 100% lokalize; UNITS data layer (unit name/floor/beds/desc/features) + AMENITIES (8 amenity × 2 field) + INVEST (4 stat × 2 field) hala `{en, ar}` bilingual shape'inde — `tr()` helper EN fallback yapıyor. Demo'da Mexico ES + Canada FR'de "Sky Penthouse / FLOOR 42-44 / 4 Bedrooms / Infinity Edge Pool / Rental yield" gibi field'lar İngilizce kalıyor. **Phase 2c.RE Data Architecture sprint'i bu boşluğu kalıcı yapıyla kapatıyor — canonical+overlay pattern, per-region unit names.**
 
