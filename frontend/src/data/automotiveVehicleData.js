@@ -4,7 +4,6 @@ import collectionPerformanceImg from "../pages/AutomotiveDemo/assets/collection-
 import collectionSuvImg from "../pages/AutomotiveDemo/assets/collection-suv.jpg";
 import collectionSedanImg from "../pages/AutomotiveDemo/assets/collection-sedan.jpg";
 
-// Existing assets
 import amgGt63Img from "../pages/AutomotiveDemo/assets/amg-gt63.jpg";
 import amgSl63Img from "../pages/AutomotiveDemo/assets/amg-sl63.jpg";
 import g63Img from "../pages/AutomotiveDemo/assets/g63.jpg";
@@ -12,27 +11,25 @@ import gls600Img from "../pages/AutomotiveDemo/assets/gls600.jpg";
 import s580Img from "../pages/AutomotiveDemo/assets/s580.jpg";
 import maybachS680Img from "../pages/AutomotiveDemo/assets/maybach-s680.jpg";
 import eqs580Img from "../pages/AutomotiveDemo/assets/eqs580.jpg";
-
-// TODO(asset) — placeholder imports until Oguzhan adds 19 new jpg files
-import rangeRoverAutobiographyImg from "../pages/AutomotiveDemo/assets/g63.jpg"; // TODO(asset): range-rover-autobiography.jpg
-import lexusLx600Img from "../pages/AutomotiveDemo/assets/g63.jpg"; // TODO(asset): lexus-lx600.jpg
-import escaladeVImg from "../pages/AutomotiveDemo/assets/g63.jpg"; // TODO(asset): cadillac-escalade-v.jpg
-import rangeRoverSvImg from "../pages/AutomotiveDemo/assets/g63.jpg"; // TODO(asset): range-rover-sv.jpg
-import porscheTaycanTurboSImg from "../pages/AutomotiveDemo/assets/eqs580.jpg"; // TODO(asset): porsche-taycan-turbo-s.jpg
-import teslaModelSPlaidImg from "../pages/AutomotiveDemo/assets/eqs580.jpg"; // TODO(asset): tesla-model-s-plaid.jpg
-import bmw760iImg from "../pages/AutomotiveDemo/assets/s580.jpg"; // TODO(asset): bmw-760i.jpg
-import rollsRoyceGhostImg from "../pages/AutomotiveDemo/assets/maybach-s680.jpg"; // TODO(asset): rolls-royce-ghost.jpg
-import lucidAirSapphireImg from "../pages/AutomotiveDemo/assets/eqs580.jpg"; // TODO(asset): lucid-air-sapphire.jpg
-import porscheCayenneTurboGtImg from "../pages/AutomotiveDemo/assets/g63.jpg"; // TODO(asset): porsche-cayenne-turbo-gt.jpg
-import bmwX7M60iImg from "../pages/AutomotiveDemo/assets/gls600.jpg"; // TODO(asset): bmw-x7-m60i.jpg
-import audiQ8EtronImg from "../pages/AutomotiveDemo/assets/eqs580.jpg"; // TODO(asset): audi-q8-etron.jpg
-import porscheCayenneTurboEhybridImg from "../pages/AutomotiveDemo/assets/g63.jpg"; // TODO(asset): porsche-cayenne-turbo-ehybrid.jpg
-import bentleyBentaygaEwbImg from "../pages/AutomotiveDemo/assets/gls600.jpg"; // TODO(asset): bentley-bentayga-ewb.jpg
-import porscheTaycanTurboGtImg from "../pages/AutomotiveDemo/assets/eqs580.jpg"; // TODO(asset): porsche-taycan-turbo-gt.jpg
-import audiRsEtronGtImg from "../pages/AutomotiveDemo/assets/eqs580.jpg"; // TODO(asset): audi-rs-etron-gt.jpg
-import bmwI7M70Img from "../pages/AutomotiveDemo/assets/s580.jpg"; // TODO(asset): bmw-i7-m70.jpg
-import lucidAirGrandTouringImg from "../pages/AutomotiveDemo/assets/eqs580.jpg"; // TODO(asset): lucid-air-grand-touring.jpg
-import genesisG90Img from "../pages/AutomotiveDemo/assets/s580.jpg"; // TODO(asset): genesis-g90.jpg
+import rangeRoverAutobiographyImg from "../pages/AutomotiveDemo/assets/range-rover-autobiography.jpg";
+import lexusLx600Img from "../pages/AutomotiveDemo/assets/lexus-lx600.jpg";
+import escaladeVImg from "../pages/AutomotiveDemo/assets/cadillac-escalade-v.jpg";
+import rangeRoverSvImg from "../pages/AutomotiveDemo/assets/range-rover-sv.jpg";
+import porscheTaycanTurboSImg from "../pages/AutomotiveDemo/assets/porsche-taycan-turbo-s.jpg";
+import teslaModelSPlaidImg from "../pages/AutomotiveDemo/assets/tesla-model-s-plaid.jpg";
+import bmw760iImg from "../pages/AutomotiveDemo/assets/bmw-760i.jpg";
+import rollsRoyceGhostImg from "../pages/AutomotiveDemo/assets/rolls-royce-ghost.jpg";
+import lucidAirSapphireImg from "../pages/AutomotiveDemo/assets/lucid-air-sapphire.jpg";
+import porscheCayenneTurboGtImg from "../pages/AutomotiveDemo/assets/porsche-cayenne-turbo-gt.jpg";
+import bmwX7M60iImg from "../pages/AutomotiveDemo/assets/bmw-x7-m60i.jpg";
+import audiQ8EtronImg from "../pages/AutomotiveDemo/assets/audi-q8-etron.jpg";
+import porscheCayenneTurboEhybridImg from "../pages/AutomotiveDemo/assets/porsche-cayenne-turbo-ehybrid.jpg";
+import bentleyBentaygaEwbImg from "../pages/AutomotiveDemo/assets/bentley-bentayga-ewb.jpg";
+import porscheTaycanTurboGtImg from "../pages/AutomotiveDemo/assets/porsche-taycan-turbo-gt.jpg";
+import audiRsEtronGtImg from "../pages/AutomotiveDemo/assets/audi-rs-etron-gt.jpg";
+import bmwI7M70Img from "../pages/AutomotiveDemo/assets/bmw-i7-m70.jpg";
+import lucidAirGrandTouringImg from "../pages/AutomotiveDemo/assets/lucid-air-grand-touring.jpg";
+import genesisG90Img from "../pages/AutomotiveDemo/assets/genesis-g90.jpg";
 
 const IMG = {
   "g63": g63Img,
