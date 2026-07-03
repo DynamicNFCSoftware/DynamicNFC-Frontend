@@ -16,6 +16,7 @@ import {
   getFamilyUnits,
   getAmenities,
   getInvestStats,
+  UNIT_MEDIA,
 } from "../config/realEstateUnitData";
 
 /**
@@ -38,6 +39,7 @@ import {
  *   familyUnits: Array<object>,
  *   amenities: Array<{icon, title, desc}>,
  *   investStats: Array<{stat, label, desc}>,
+ *   unitMedia: Object,  // region-independent img/gallery/floorPlan/payment by unit id
  * }}
  *
  * `luxuryUnits` / `familyUnits` / `amenities` / `investStats` are RE-specific.
@@ -63,6 +65,7 @@ export function usePortalRegion(sectorId, lang) {
       familyUnits: getFamilyUnits(regionId, lang),
       amenities: getAmenities(regionId, lang),
       investStats: getInvestStats(regionId, lang),
+      unitMedia: UNIT_MEDIA,
     };
   }, [sectorId, regionId, region, currency, currencySymbol, lang]);
 }

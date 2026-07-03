@@ -671,6 +671,129 @@ export const UNIT_REGION_OVERLAY_FAMILY = {
   },
 };
 
+// ─── UNIT_MEDIA (Phase 2d.RE) ──────────────────────────────────────────────
+// Canonical, region-INDEPENDENT unit extras keyed by unit id: image, gallery,
+// floor-plan geometry + room labels (4-lang), specs and payment base.
+// Consumed by all 3 RE portals via `usePortalRegion().unitMedia`, merged over
+// the localized unit through `withExtras`. Floor plans are the superset per
+// unit (VIPPortal detail); Marketplace renders the same rooms. Room labels
+// carry { en, ar, es, fr }; render picks `label[lang] ?? label.en`.
+
+export const UNIT_MEDIA = {
+  "lux-ph": {
+    img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80",
+    ],
+    floorPlan: {
+      rooms: [
+        { key: "master",  w: 42, h: 30, x:  5, y:  5, label: { en: "Master Suite\n580 sq ft",        ar: "الجناح الرئيسي\n٥٨٠ قدم²",   es: "Suite Principal\n580 sq ft",    fr: "Suite Principale\n580 sq ft" } },
+        { key: "bed2",    w: 22, h: 20, x: 50, y:  5, label: { en: "Bedroom 2\n320 sq ft",           ar: "غرفة ٢\n٣٢٠ قدم²",           es: "Recámara 2\n320 sq ft",         fr: "Chambre 2\n320 sq ft" } },
+        { key: "bed3",    w: 22, h: 20, x: 75, y:  5, label: { en: "Bedroom 3\n280 sq ft",           ar: "غرفة ٣\n٢٨٠ قدم²",           es: "Recámara 3\n280 sq ft",         fr: "Chambre 3\n280 sq ft" } },
+        { key: "bed4",    w: 22, h: 20, x: 75, y: 28, label: { en: "Bedroom 4\n260 sq ft",           ar: "غرفة ٤\n٢٦٠ قدم²",           es: "Recámara 4\n260 sq ft",         fr: "Chambre 4\n260 sq ft" } },
+        { key: "living",  w: 42, h: 30, x:  5, y: 38, label: { en: "Grand Living\n980 sq ft",        ar: "صالة كبرى\n٩٨٠ قدم²",        es: "Salón Principal\n980 sq ft",    fr: "Grand Salon\n980 sq ft" } },
+        { key: "kitchen", w: 25, h: 20, x: 50, y: 38, label: { en: "Chef's Kitchen\n420 sq ft",      ar: "مطبخ الشيف\n٤٢٠ قدم²",       es: "Cocina de Chef\n420 sq ft",     fr: "Cuisine de Chef\n420 sq ft" } },
+        { key: "dining",  w: 25, h: 18, x: 50, y: 60, label: { en: "Dining\n380 sq ft",              ar: "طعام\n٣٨٠ قدم²",             es: "Comedor\n380 sq ft",            fr: "Salle à Manger\n380 sq ft" } },
+        { key: "balcony", w: 92, h: 14, x:  5, y: 72, label: { en: "Wraparound Terrace\n1,200 sq ft", ar: "تراس محيطي\n١,٢٠٠ قدم²",     es: "Terraza Envolvente\n1,200 sq ft", fr: "Terrasse Enveloppante\n1,200 sq ft" } },
+        { key: "pool",    w: 30, h: 10, x: 35, y: 88, label: { en: "Private Pool",                   ar: "مسبح خاص",                  es: "Piscina Privada",               fr: "Piscine Privée" } },
+      ],
+      specs: { bathrooms: "5+1", balconySize: "1,200 sq ft", totalArea: "6,200 sq ft" },
+    },
+    payment: { base: 12500000, plans: ["60/40", "70/30"] },
+  },
+  "lux-grand": {
+    img: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80",
+    ],
+    floorPlan: {
+      rooms: [
+        { key: "master",  w: 35, h: 32, x:  5, y:  5, label: { en: "Master Suite\n480 sq ft",       ar: "الجناح الرئيسي\n٤٨٠ قدم²",   es: "Suite Principal\n480 sq ft",    fr: "Suite Principale\n480 sq ft" } },
+        { key: "bed2",    w: 25, h: 25, x: 43, y:  5, label: { en: "Bedroom 2\n320 sq ft",           ar: "غرفة ٢\n٣٢٠ قدم²",           es: "Recámara 2\n320 sq ft",         fr: "Chambre 2\n320 sq ft" } },
+        { key: "bed3",    w: 25, h: 25, x: 72, y:  5, label: { en: "Bedroom 3\n280 sq ft",           ar: "غرفة ٣\n٢٨٠ قدم²",           es: "Recámara 3\n280 sq ft",         fr: "Chambre 3\n280 sq ft" } },
+        { key: "living",  w: 45, h: 28, x:  5, y: 40, label: { en: "Living & Dining\n860 sq ft",     ar: "معيشة وطعام\n٨٦٠ قدم²",      es: "Sala y Comedor\n860 sq ft",     fr: "Salon et Salle à Manger\n860 sq ft" } },
+        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Kitchen\n340 sq ft",             ar: "مطبخ\n٣٤٠ قدم²",             es: "Cocina\n340 sq ft",             fr: "Cuisine\n340 sq ft" } },
+        { key: "maid",    w: 18, h: 22, x: 80, y: 40, label: { en: "Maid's Room",                    ar: "غرفة الخدم",                es: "Cuarto de Servicio",            fr: "Chambre de Bonne" } },
+        { key: "balcony", w: 92, h: 16, x:  5, y: 72, label: { en: "Marina Terrace\n680 sq ft",      ar: "تراس المارينا\n٦٨٠ قدم²",    es: "Terraza Marina\n680 sq ft",     fr: "Terrasse Marina\n680 sq ft" } },
+      ],
+      specs: { bathrooms: "3+1", balconySize: "680 sq ft", totalArea: "4,100 sq ft" },
+    },
+    payment: { base: 7800000, plans: ["60/40", "70/30"] },
+  },
+  "lux-exec": {
+    img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80",
+    ],
+    floorPlan: {
+      rooms: [
+        { key: "master",  w: 35, h: 35, x:  5, y:  5, label: { en: "Master Suite\n420 sq ft",       ar: "الجناح الرئيسي\n٤٢٠ قدم²",   es: "Suite Principal\n420 sq ft",    fr: "Suite Principale\n420 sq ft" } },
+        { key: "bed2",    w: 28, h: 28, x: 44, y:  5, label: { en: "Bedroom 2\n300 sq ft",           ar: "غرفة ٢\n٣٠٠ قدم²",           es: "Recámara 2\n300 sq ft",         fr: "Chambre 2\n300 sq ft" } },
+        { key: "office",  w: 22, h: 25, x: 76, y:  5, label: { en: "Home Office\n180 sq ft",         ar: "مكتب منزلي\n١٨٠ قدم²",       es: "Oficina en Casa\n180 sq ft",    fr: "Bureau à Domicile\n180 sq ft" } },
+        { key: "living",  w: 42, h: 28, x:  5, y: 44, label: { en: "Living Room\n620 sq ft",         ar: "غرفة المعيشة\n٦٢٠ قدم²",     es: "Sala de Estar\n620 sq ft",      fr: "Salon\n620 sq ft" } },
+        { key: "kitchen", w: 28, h: 22, x: 50, y: 44, label: { en: "Chef's Kitchen\n280 sq ft",      ar: "مطبخ الشيف\n٢٨٠ قدم²",       es: "Cocina de Chef\n280 sq ft",     fr: "Cuisine de Chef\n280 sq ft" } },
+        { key: "balcony", w: 70, h: 14, x:  5, y: 76, label: { en: "Sky Balcony\n380 sq ft",         ar: "شرفة سماوية\n٣٨٠ قدم²",      es: "Balcón Panorámico\n380 sq ft",  fr: "Balcon Panoramique\n380 sq ft" } },
+      ],
+      specs: { bathrooms: "2+1", balconySize: "380 sq ft", totalArea: "2,800 sq ft" },
+    },
+    payment: { base: 4200000, plans: ["60/40", "70/30"] },
+  },
+  "fam-3br": {
+    img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+    floorPlan: {
+      rooms: [
+        { key: "master",  w: 35, h: 30, x:  5, y:  5, label: { en: "Master Suite\n450 sq ft",       ar: "الجناح الرئيسي\n٤٥٠ قدم²",   es: "Suite Principal\n450 sq ft",    fr: "Suite Principale\n450 sq ft" } },
+        { key: "bed2",    w: 22, h: 22, x: 43, y:  5, label: { en: "Bedroom 2\n280 sq ft",           ar: "غرفة ٢\n٢٨٠ قدم²",           es: "Recámara 2\n280 sq ft",         fr: "Chambre 2\n280 sq ft" } },
+        { key: "bed3",    w: 22, h: 22, x: 68, y:  5, label: { en: "Bedroom 3\n260 sq ft",           ar: "غرفة ٣\n٢٦٠ قدم²",           es: "Recámara 3\n260 sq ft",         fr: "Chambre 3\n260 sq ft" } },
+        { key: "living",  w: 45, h: 28, x:  5, y: 38, label: { en: "Family Living\n780 sq ft",       ar: "صالة عائلية\n٧٨٠ قدم²",      es: "Sala Familiar\n780 sq ft",      fr: "Salon Familial\n780 sq ft" } },
+        { key: "kitchen", w: 25, h: 22, x: 53, y: 38, label: { en: "Chef's Kitchen\n320 sq ft",      ar: "مطبخ الشيف\n٣٢٠ قدم²",       es: "Cocina de Chef\n320 sq ft",     fr: "Cuisine de Chef\n320 sq ft" } },
+        { key: "office",  w: 18, h: 22, x: 80, y: 38, label: { en: "Kids Room\n180 sq ft",           ar: "غرفة أطفال\n١٨٠ قدم²",       es: "Cuarto de Niños\n180 sq ft",    fr: "Chambre d'Enfants\n180 sq ft" } },
+        { key: "balcony", w: 92, h: 16, x:  5, y: 72, label: { en: "Garden Terrace\n560 sq ft",      ar: "تراس الحديقة\n٥٦٠ قدم²",     es: "Terraza Jardín\n560 sq ft",     fr: "Terrasse Jardin\n560 sq ft" } },
+      ],
+      specs: { bathrooms: "3+1", balconySize: "560 sq ft", totalArea: "3,200 sq ft" },
+    },
+    payment: { base: 4500000, plans: ["60/40", "70/30"] },
+  },
+  "fam-4br": {
+    img: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
+    floorPlan: {
+      rooms: [
+        { key: "master",  w: 35, h: 28, x:  5, y:  5, label: { en: "Master Suite\n520 sq ft",       ar: "الجناح الرئيسي\n٥٢٠ قدم²",   es: "Suite Principal\n520 sq ft",    fr: "Suite Principale\n520 sq ft" } },
+        { key: "bed2",    w: 20, h: 20, x: 43, y:  5, label: { en: "Bedroom 2\n300 sq ft",           ar: "غرفة ٢\n٣٠٠ قدم²",           es: "Recámara 2\n300 sq ft",         fr: "Chambre 2\n300 sq ft" } },
+        { key: "bed3",    w: 18, h: 20, x: 65, y:  5, label: { en: "Kids Room 1\n260 sq ft",         ar: "غرفة أطفال ١\n٢٦٠ قدم²",     es: "Cuarto de Niños 1\n260 sq ft",  fr: "Chambre d'Enfants 1\n260 sq ft" } },
+        { key: "bed4",    w: 15, h: 20, x: 85, y:  5, label: { en: "Kids Room 2\n240 sq ft",         ar: "غرفة أطفال ٢\n٢٤٠ قدم²",     es: "Cuarto de Niños 2\n240 sq ft",  fr: "Chambre d'Enfants 2\n240 sq ft" } },
+        { key: "living",  w: 40, h: 26, x:  5, y: 36, label: { en: "Family Living\n920 sq ft",       ar: "صالة عائلية\n٩٢٠ قدم²",      es: "Sala Familiar\n920 sq ft",      fr: "Salon Familial\n920 sq ft" } },
+        { key: "kitchen", w: 22, h: 20, x: 48, y: 36, label: { en: "Kitchen\n380 sq ft",             ar: "مطبخ\n٣٨٠ قدم²",             es: "Cocina\n380 sq ft",             fr: "Cuisine\n380 sq ft" } },
+        { key: "dining",  w: 22, h: 18, x: 48, y: 58, label: { en: "Dining\n340 sq ft",              ar: "طعام\n٣٤٠ قدم²",             es: "Comedor\n340 sq ft",            fr: "Salle à Manger\n340 sq ft" } },
+        { key: "maid",    w: 15, h: 20, x: 73, y: 36, label: { en: "Maid",                           ar: "خادمة",                     es: "Servicio",                      fr: "Bonne" } },
+        { key: "balcony", w: 92, h: 14, x:  5, y: 78, label: { en: "Sea & Park Terrace\n880 sq ft",  ar: "تراس البحر والحديقة\n٨٨٠ قدم²", es: "Terraza Mar y Parque\n880 sq ft", fr: "Terrasse Mer et Parc\n880 sq ft" } },
+      ],
+      specs: { bathrooms: "4+1", balconySize: "880 sq ft", totalArea: "4,500 sq ft" },
+    },
+    payment: { base: 6500000, plans: ["60/40", "70/30"] },
+  },
+  "fam-2br": {
+    img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
+    floorPlan: {
+      rooms: [
+        { key: "master",  w: 35, h: 32, x:  5, y:  5, label: { en: "Master Suite\n350 sq ft",       ar: "الجناح الرئيسي\n٣٥٠ قدم²",   es: "Suite Principal\n350 sq ft",    fr: "Suite Principale\n350 sq ft" } },
+        { key: "bed2",    w: 28, h: 28, x: 44, y:  5, label: { en: "Kids Room\n280 sq ft",           ar: "غرفة الأطفال\n٢٨٠ قدم²",     es: "Cuarto de Niños\n280 sq ft",    fr: "Chambre d'Enfants\n280 sq ft" } },
+        { key: "living",  w: 45, h: 28, x:  5, y: 40, label: { en: "Living & Dining\n520 sq ft",     ar: "معيشة وطعام\n٥٢٠ قدم²",      es: "Sala y Comedor\n520 sq ft",     fr: "Salon et Salle à Manger\n520 sq ft" } },
+        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Open Kitchen\n220 sq ft",        ar: "مطبخ مفتوح\n٢٢٠ قدم²",       es: "Cocina Abierta\n220 sq ft",     fr: "Cuisine Ouverte\n220 sq ft" } },
+        { key: "balcony", w: 65, h: 14, x:  5, y: 72, label: { en: "Park Balcony\n280 sq ft",        ar: "شرفة الحديقة\n٢٨٠ قدم²",     es: "Balcón al Parque\n280 sq ft",   fr: "Balcon sur Parc\n280 sq ft" } },
+      ],
+      specs: { bathrooms: "2+1", balconySize: "280 sq ft", totalArea: "1,800 sq ft" },
+    },
+    payment: { base: 2800000, plans: ["60/40", "70/30"] },
+  },
+};
+
 // ─── AMENITIES_REGION_OVERLAY (3 portal shared) ────────────────────────────
 // Semantic icon keys (pool, spa, dining, ...) resolve to Tabler classes via
 // AMENITY_ICON_MAP at render-time.

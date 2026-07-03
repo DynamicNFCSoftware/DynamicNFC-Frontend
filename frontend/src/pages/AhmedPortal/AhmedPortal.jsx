@@ -335,58 +335,6 @@ const LANG = {
   },
 };
 
-// ─── FAMILY PROPERTY DATA — extras keyed by canonical unit id (fam-3br/fam-4br/fam-2br)
-const UNIT_EXTRAS = {
-  "fam-3br": {
-    img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-    floorPlan: {
-      rooms: [
-        { key: "master",  w: 35, h: 30, x:  5, y:  5, label: { en: "Master Suite\n450 sq ft",       ar: "الجناح الرئيسي\n٤٥٠ قدم²" } },
-        { key: "bed2",    w: 22, h: 22, x: 43, y:  5, label: { en: "Bedroom 2\n280 sq ft",          ar: "غرفة ٢\n٢٨٠ قدم²" } },
-        { key: "bed3",    w: 22, h: 22, x: 68, y:  5, label: { en: "Bedroom 3\n260 sq ft",          ar: "غرفة ٣\n٢٦٠ قدم²" } },
-        { key: "living",  w: 45, h: 28, x:  5, y: 38, label: { en: "Family Living\n780 sq ft",      ar: "صالة عائلية\n٧٨٠ قدم²" } },
-        { key: "kitchen", w: 25, h: 22, x: 53, y: 38, label: { en: "Chef's Kitchen\n320 sq ft",     ar: "مطبخ الشيف\n٣٢٠ قدم²" } },
-        { key: "office",  w: 18, h: 22, x: 80, y: 38, label: { en: "Kids Room\n180 sq ft",         ar: "غرفة أطفال\n١٨٠ قدم²" } },
-        { key: "balcony", w: 92, h: 16, x:  5, y: 72, label: { en: "Garden Terrace\n560 sq ft",    ar: "تراس الحديقة\n٥٦٠ قدم²" } },
-      ],
-      specs: { bathrooms: "3+1", balconySize: "560 sq ft", totalArea: "3,200 sq ft" },
-    },
-    payment: { base: 4500000, plans: ["60/40", "70/30"] },
-  },
-  "fam-4br": {
-    img: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
-    floorPlan: {
-      rooms: [
-        { key: "master",  w: 35, h: 28, x:  5, y:  5, label: { en: "Master Suite\n520 sq ft",       ar: "الجناح الرئيسي\n٥٢٠ قدم²" } },
-        { key: "bed2",    w: 20, h: 20, x: 43, y:  5, label: { en: "Bedroom 2\n300 sq ft",          ar: "غرفة ٢\n٣٠٠ قدم²" } },
-        { key: "bed3",    w: 18, h: 20, x: 65, y:  5, label: { en: "Kids Room 1\n260 sq ft",        ar: "غرفة أطفال ١\n٢٦٠ قدم²" } },
-        { key: "bed4",    w: 15, h: 20, x: 85, y:  5, label: { en: "Kids Room 2\n240 sq ft",        ar: "غرفة أطفال ٢\n٢٤٠ قدم²" } },
-        { key: "living",  w: 40, h: 26, x:  5, y: 36, label: { en: "Family Living\n920 sq ft",      ar: "صالة عائلية\n٩٢٠ قدم²" } },
-        { key: "kitchen", w: 22, h: 20, x: 48, y: 36, label: { en: "Kitchen\n380 sq ft",            ar: "مطبخ\n٣٨٠ قدم²" } },
-        { key: "dining",  w: 22, h: 18, x: 48, y: 58, label: { en: "Dining\n340 sq ft",            ar: "طعام\n٣٤٠ قدم²" } },
-        { key: "maid",    w: 15, h: 20, x: 73, y: 36, label: { en: "Maid",                          ar: "خادمة" } },
-        { key: "balcony", w: 92, h: 14, x:  5, y: 78, label: { en: "Sea & Park Terrace\n880 sq ft", ar: "تراس البحر والحديقة\n٨٨٠ قدم²" } },
-      ],
-      specs: { bathrooms: "4+1", balconySize: "880 sq ft", totalArea: "4,500 sq ft" },
-    },
-    payment: { base: 6500000, plans: ["60/40", "70/30"] },
-  },
-  "fam-2br": {
-    img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-    floorPlan: {
-      rooms: [
-        { key: "master",  w: 35, h: 32, x:  5, y:  5, label: { en: "Master Suite\n350 sq ft",       ar: "الجناح الرئيسي\n٣٥٠ قدم²" } },
-        { key: "bed2",    w: 28, h: 28, x: 44, y:  5, label: { en: "Kids Room\n280 sq ft",          ar: "غرفة الأطفال\n٢٨٠ قدم²" } },
-        { key: "living",  w: 45, h: 28, x:  5, y: 40, label: { en: "Living & Dining\n520 sq ft",   ar: "معيشة وطعام\n٥٢٠ قدم²" } },
-        { key: "kitchen", w: 25, h: 22, x: 53, y: 40, label: { en: "Open Kitchen\n220 sq ft",      ar: "مطبخ مفتوح\n٢٢٠ قدم²" } },
-        { key: "balcony", w: 65, h: 14, x:  5, y: 72, label: { en: "Park Balcony\n280 sq ft",       ar: "شرفة الحديقة\n٢٨٠ قدم²" } },
-      ],
-      specs: { bathrooms: "2+1", balconySize: "280 sq ft", totalArea: "1,800 sq ft" },
-    },
-    payment: { base: 2800000, plans: ["60/40", "70/30"] },
-  },
-};
-
 const IMAGES = {
   hero: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=85",
   community: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80",
@@ -403,7 +351,7 @@ const ROOM_COLORS = {
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function AhmedPortal() {
   const [lang, setLang] = useState("en");
-  const { projectName, fmtCurrency, familyPersona, region, familyUnits, amenities, investStats } = usePortalRegion("real_estate", lang);
+  const { projectName, fmtCurrency, familyPersona, region, familyUnits, amenities, investStats, unitMedia } = usePortalRegion("real_estate", lang);
   const trackEvent = useCallback(
     (event, data) => trackPortalEvent("vip", familyPersona, event, data),
     [familyPersona]
@@ -424,9 +372,8 @@ export default function AhmedPortal() {
   const resRef = useRef(null);
   const bookRef = useRef(null);
   const t = LANG[lang];
-  const tr = (obj) => (obj && (obj[lang] ?? obj.en)) ?? "";
 
-  const withExtras = (unit) => ({ ...unit, ...UNIT_EXTRAS[unit.id] });
+  const withExtras = (unit) => ({ ...unit, ...unitMedia[unit.id] });
   const units = familyUnits.map(withExtras);
 
   useEffect(() => { const fn = () => setScrolled(window.scrollY > 60); window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn); }, []);
@@ -644,7 +591,7 @@ export default function AhmedPortal() {
             <h2 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.8rem", marginBottom: ".3rem" }}>{t.floorPlanModal.title} — {modalUnit.name}</h2>
             <p style={{ color: "var(--ap-teal)", fontSize: ".8rem", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: "2rem" }}>{modalUnit.floor}</p>
             <svg className="ap-fp-svg" viewBox="0 0 100 65" style={{ background: "var(--ap-ch)" }}>
-              {modalUnit.floorPlan.rooms.map((room, i) => (<g key={i}><rect x={room.x} y={room.y} width={room.w} height={room.h} fill={ROOM_COLORS[room.key] || "#666"} fillOpacity="0.2" stroke={ROOM_COLORS[room.key] || "#666"} strokeWidth="0.3" rx="0.5" />{tr(room.label).split("\n").map((line, li) => (<text key={li} x={room.x + room.w / 2} y={room.y + room.h / 2 + (li - 0.3) * 3.5} textAnchor="middle" fill={ROOM_COLORS[room.key] || "#aaa"} fontSize="2.2" fontFamily="Outfit, sans-serif" fontWeight={li === 0 ? "500" : "300"}>{line}</text>))}</g>))}
+              {modalUnit.floorPlan.rooms.map((room, i) => (<g key={i}><rect x={room.x} y={room.y} width={room.w} height={room.h} fill={ROOM_COLORS[room.key] || "#666"} fillOpacity="0.2" stroke={ROOM_COLORS[room.key] || "#666"} strokeWidth="0.3" rx="0.5" />{(room.label[lang] ?? room.label.en).split("\n").map((line, li) => (<text key={li} x={room.x + room.w / 2} y={room.y + room.h / 2 + (li - 0.3) * 3.5} textAnchor="middle" fill={ROOM_COLORS[room.key] || "#aaa"} fontSize="2.2" fontFamily="Outfit, sans-serif" fontWeight={li === 0 ? "500" : "300"}>{line}</text>))}</g>))}
             </svg>
             <div className="ap-fp-specs">
               <div className="ap-fp-spec"><div className="ap-fp-spec-l">{t.floorPlanModal.bathrooms}</div><div className="ap-fp-spec-v">{modalUnit.floorPlan.specs.bathrooms}</div></div>
