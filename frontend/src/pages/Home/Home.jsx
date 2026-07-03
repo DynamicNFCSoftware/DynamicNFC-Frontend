@@ -6,8 +6,8 @@ import './Home.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/home';
 
-import cardFrontImg from '../NFCCards/Assets/card-front.jpg';
-import cardBackImg  from '../NFCCards/Assets/card-back.jpg';
+import cardFrontImg from '../NFCCards/assets/card-front.jpg';
+import cardBackImg  from '../NFCCards/assets/card-back.jpg';
 
 /* ═══════════════════════════════════════════
    TRANSLATIONS (EN + AR) — Trimmed to 8 sections
