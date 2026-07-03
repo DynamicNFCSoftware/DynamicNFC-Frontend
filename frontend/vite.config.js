@@ -33,9 +33,8 @@ export default defineConfig({
     port: 3000, // zorla 3000'de çalıştır
     proxy: {
       '/api': {
-        target: 'https://3.128.244.219', // canlı backend
+        target: 'https://dynamicnfc.ca',
         changeOrigin: true,
-        secure: false,
       }
     }
   }

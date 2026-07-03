@@ -231,7 +231,7 @@ EmailCapture:     300s (5 minutes) — hidden on demo URLs
 
 ### Deprecated
 - Spring Boot backend on AWS — fully removed from active paths; `backend/` folder present but never modified.
-- Legacy jQuery / Paper.js from old card builder — dependencies still in root `package.json`, pending cleanup.
+- Legacy jQuery / Paper.js from old card builder — dependencies live in `backend/package.json` (deprecated folder), pending cleanup.
 
 ### Repository Layout
 
@@ -404,7 +404,7 @@ await seedSector(...);
 
 ## 9. CLOUD FUNCTIONS
 
-### Currently Deployed (7 functions, Node 22 runtime, us-central1)
+### Currently Deployed (9 functions, Node 22 runtime, us-central1)
 | Function | Trigger | Purpose |
 |----------|---------|---------|
 | `api` | HTTPS Express | Smartcards CRUD, taps/stats, campaigns, seed-demo (Bearer token auth) |
@@ -414,6 +414,8 @@ await seedSector(...);
 | `aggregateCampaignTaps` | Scheduled every 15 min | Recomputes tapsTotal/taps7d/dealCount/conversionPct across all tenants |
 | `cleanupInactiveTenants` | Scheduled daily 03:00 Toronto | 15d + 7d grace tenant soft-delete (dry-run default) |
 | `seedDemoData` | Callable | Idempotent demo seed trigger (sector+region aware, auth-required) |
+| `aggregateVelocityMetrics` | Scheduled every 15 min | Recomputes per-tenant velocity metrics + writes 4-language template daily brief to `aggregates/dailyBrief` (no LLM cost — templates only) |
+| `refreshDailyBriefAi` | Callable (auth-required) | On-demand LLM daily brief via Anthropic API for a single requested language |
 
 ### Removed (2026-04-20)
 - `cardRedirect` — deleted via `firebase functions:delete cardRedirect --region us-central1 --force`. Client-side `CardRedirect` component now handles `/c/:cardId` routing via Firestore lookup (GCP org policy blocks public function access).
@@ -425,7 +427,7 @@ await seedSector(...);
 **Orphan deploy blocker:** If old functions exist in the cloud that are no longer in `index.js`, run `firebase functions:delete <orphan> --region us-central1 --force` before full deploy.
 
 ### Composite Indexes (`firestore.indexes.json`)
-Currently deployed: `taps` x2, `behaviors` x2 (see file). Additional indexes for `campaigns`, `deals`, `audit`, and per-sector collection-group queries need to be added to the file before the queries are deployed — do not assume they exist.
+13 composite indexes deployed: `taps`×2, `behaviors`×2, `campaigns`×3, `deals`×2, `cards`, `leads`, `events`, `audit` (see `firestore.indexes.json`). Add new indexes to the file before deploying queries that need them — do not assume beyond these exist.
 
 
 ## 10. SHARED SYSTEMS
@@ -443,12 +445,28 @@ Currently deployed: `taps` x2, `behaviors` x2 (see file). Additional indexes for
 - **All form labels, selects, user-facing strings must go through `t()`** — never hardcode
 - **Legacy duplicate `src/translations/*.json`** — never import, pending deletion
 
-### Tracking (3 systems, needs unification — technical debt)
-| System | File | Method | Used By |
-|--------|------|--------|---------|
-| localStorage | `shared/tracking.js` | localStorage polling | Legacy demo |
-| BroadcastChannel | `hooks/useTracking.js` | In-memory + channel | CRM Demo portals + legacy Dashboard |
-| Firestore | `services/firestoreTracking.js` | Firestore writes | Production + Unified Dashboard + Demo recording (primary) |
+### Tracking — real architecture (corrected 2026-05-25)
+
+Earlier handoff/CLAUDE notes claimed "3 separate tracking systems." Reality after 2026-05-25 audit:
+
+**One service file, one bridge file, inline per-portal layer:**
+
+| Layer | File(s) | Method | Used By |
+|-------|---------|--------|---------|
+| Core service | `services/firestoreTracking.js` | `track()` → top-level `behaviors`; `trackDashboardEvent()` → `tenants/{uid}/events`; plus EVENT_SCHEMA + scoring + describeEvent | Unified Dashboard surfaces (`SalesTriggerPanel`, etc.), legacy admin reads |
+| Portal bridge | `services/portalFirestoreBridge.js` | `bridgeEventToFirestore(ev)` — **dual-write**: always to `behaviors`, additionally to `tenants/{uid}/events` if admin logged in | Called from each portal's inline `trackEvent` |
+| Inline per-portal | `pages/{VIPPortal,AhmedPortal,MarketplacePortal,AutomotiveDemo/*}/*.jsx` | Each portal has own `_bc = new BroadcastChannel("dnfc_tracking")` + own `_sessionId` + own `trackEvent(event, data)` that writes to localStorage, posts to BroadcastChannel, then calls `bridgeEventToFirestore(ev)` | Demo portal user interactions (13/13/13/18/18/10 events each) |
+| Cross-tab listener | `pages/Dashboard/Dashboard.jsx`, `AutoDashboard.jsx`, `NotificationSystem.jsx` | `new BroadcastChannel("dnfc_tracking")` + onmessage handler | Legacy dashboards + Unified Dashboard live notifications |
+
+**~~Deprecated paths that no longer exist:~~** `shared/tracking.js` and `hooks/useTracking.js` were removed in earlier sprints; the "3 systems" claim was stale documentation.
+
+**Bridge contract (key behavior):**
+- `behaviors` collection: `allow create: if true` per Firestore rules → public anonymous portal traffic CAN write here. Bridge always writes. Legacy `/admin/*` reads from here.
+- `tenants/{uid}/events`: auth-required. Bridge writes here ONLY when `auth.currentUser` exists (i.e., admin opened a demo portal in another tab while logged in — pilot/cross-tab demo path). Unified Dashboard reads from here.
+- Anonymous public portal traffic → writes only to `behaviors`. NOT visible in Unified Dashboard.
+- Logged-in admin opens portal → writes to both. Visible in both legacy admin and Unified Dashboard live.
+
+**Known limitation / future work:** `behaviors` has no composite index for region/sector filtering. Fine at pilot scale; needs `aggregateBehaviors` cloud function + composite index before scaling beyond ~1k events/day.
 
 ### Authentication
 - `AuthContext`: localStorage hydration for instant render + `onAuthStateChanged` for verification
@@ -637,7 +655,7 @@ Real Estate, Automotive, and Yacht all must work in all four regions. Same route
 - **Yacht public page + Yacht demo portals** — build `/yacht` landing and `/yacht/demo/*` routes with region-awareness from day one
 - **Canada deploy** — region testing, French translation validation
 - **Apple Developer Account** enrollment for Apple Wallet / Apple OAuth
-- **Sentry** setup for production error monitoring
+- ✅ **Sentry** — DONE. Initialized in `frontend/src/main.jsx` (confirmed 2026-07-03; no-op until DSN set).
 
 ### Pending Directive
 - **Tenant Mode implementation** — `TENANT_MODE_DIRECTIVE.md` ready for Cursor execution (Firestore rules, `useTenantData` hook, `TenantContext`, `tenantCleanup` Cloud Function for 22-day retention)
@@ -648,11 +666,11 @@ Real Estate, Automotive, and Yacht all must work in all four regions. Same route
 - Plan Functions region migration to `northamerica-northeast1` to eliminate cross-region latency + egress
 
 ### Technical Debt (prioritized)
-1. **3 tracking systems → unify to Firestore as primary** (BroadcastChannel demo-only fallback)
-2. **Legacy CSS audit** — `blinq-app.shared.423b915ad.min.css` (35K lines, 195 of 2807 classes used)
+1. ~~3 tracking systems → unify to Firestore as primary~~ **CLOSED 2026-05-25** — myth (see §10). One system + bridge. Bridge made dual-write via `PORTAL_BRIDGE_DUAL_WRITE_DIRECTIVE.md`. **Remaining tracking work:** consolidate the 6 portals' inline `trackEvent` functions (~6 near-identical copies) into a shared helper imported from `services/portalTrack.js` — Code Simplicity Mandate target. Defer until pilot traffic data validates current pipeline.
+2. **CSS weight** — `blinq-app.shared.*.min.css` is down to ~4KB (audit effectively complete). Real weight is now `ordercard.css` (~388KB) imported globally in `App.jsx` — should move to a route-level import (bundle with FAZ 5).
 3. **Oversized components** — AutoDashboard (1571L), CreatePhysicalCard (1119L), VIPPortal (1001L) split
 4. **Dead files** — `Home - Copy.jsx` (x2), `App.jsx.bak`, `AIDemo.jsx.bak-original`
-5. **Root `package.json`** — jQuery + Paper.js legacy deps, likely unused
+5. **Legacy deps** — no `package.json` at repo root; the jQuery + Paper.js remnants live in `backend/package.json` (deprecated folder, not touched).
 6. **26 pages missing SEO component** — progressive rollout
 7. **Error Boundaries** — none implemented yet
 8. **`FormSubmit.co` → Cloud Functions migration** for contact forms
