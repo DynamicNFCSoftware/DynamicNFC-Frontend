@@ -6,7 +6,26 @@
 
 ---
 
-## ▶︎ RESUME HERE — Phase 2b.Auto kapandı (2026-07-03)
+## ▶︎ RESUME HERE — Sprint A + B kapandı (2026-07-03 EOD)
+
+**Bugün 3 iş bitti:**
+
+1. **Yapı Raporu** — `docs/YAPI_RAPORU_2026-07-03.md`. Full codebase audit (3 paralel keşif ajanı + manuel doğrulama). Sağlık 7.5/10. Yol haritası: A (pitch deck) → B (hardening) → C (Phase 2d + tracking konsolidasyonu) → D (Yacht) → E (FAZ 5).
+
+2. **Sprint B — Hardening SHIPPED + AUDITED.** PR #10 `05a5fd07`. `functions/functions/` duplicate + 2 ölü dosya silindi (-812L), `.github/workflows/ci.yml` kuruldu (build+test on PR/main), vite proxy `dynamicnfc.ca`'ya döndü, CLAUDE.md drift düzeltmeleri. **CI ilk gününde gerçek bug yakaladı:** `NFCCards/Assets→assets` case-sensitivity (Linux runner). Oguzhan manuel: **Firestore Delete Protection + PITR AÇIK** (Console teyitli). Audit origin/main üzerinde PASS — grep proofs 4/4.
+
+3. **Sprint A — Pitch deck SHIPPED.** `DynamicNFC_Pitch_2026_USA.pptx` (11 slayt, EN, çok sektörlü). Tüm görseller canlı siteden headless Chromium ile çekildi (playwright, sandbox). **USA-first revizyon:** Gulf jeopolitik nedenle arka plana alındı — S4 James Mitchell / Skyline Towers, S6 Premier Auto Group (Marcus Sterling) + Vancouver, S7 bölge sırası USA·Canada·Mexico·Gulf, S11 persona-nötr kapanış. Dashboard screenshot'ı nötr crop'landı (legacy dashboard region-aware değil — FAZ 5 gerekçesi +1).
+
+**Not:** Legacy CRM dashboard (`/enterprise/crmdemo/dashboard`) region-aware DEĞİL — hangi region seçilirse seçilsin Al Noor markalı render ediyor. FAZ 5'te `/unified`'a redirect bunu da çözer; o zamana dek deck'te crop'lu versiyon kullanılıyor.
+
+### Next session first move
+1. Local sync: `git pull` + (hâlâ duruyorsa) `git checkout -- frontend/src/pages/AutomotiveDemo/AutomotivePortal.jsx` (NUL-tail fix)
+2. **Sprint C directive yazımı** — Phase 2d.RE cleanup (`tr()` + `UNIT_EXTRAS` + floorPlan/payment canonical) + 6 portal inline `trackEvent` → `services/portalTrack.js` konsolidasyonu. Yacht'tan ÖNCE (temiz pattern'le doğsun).
+3. Sonrası: Sprint D Yacht portalları → Sprint E FAZ 5 → pilot outreach (deck hazır).
+
+---
+
+## ✅ CLOSED — Phase 2b.Auto kapandı (2026-07-03)
 
 **Audit sonucu (Claude, repo-level doğrulama, 2026-07-03):**
 - `data/automotiveVehicleData.js` (259L) — `v()` factory + `COLORS_STD`/`INTERIORS_STD` ortak palet + `IMG` map fallback'li. **36 araç (4×9) doğrulandı**, 4 dil. Code Simplicity Mandate'e örnek dosya.
