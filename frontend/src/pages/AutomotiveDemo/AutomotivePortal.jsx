@@ -1,24 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useLanguage } from '../../i18n';
 import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
 import { usePortalRegion } from "../../services/portalRegion";
+import { usePortalVehicles } from "../../hooks/usePortalVehicles";
+import { COLLECTIONS, vName, vColorName } from "../../data/automotiveVehicleData";
+import { getAutoPersona, getPersonaName } from "../../data/automotivePersonas";
 import './AutomotivePortal.css';
 import SEO from '../../components/SEO/SEO';
-// ─── LOCAL IMAGE IMPORTS ────────────────────────────────────────────
 import heroImg from "./assets/hero.jpg";
-import collectionPerformanceImg from "./assets/collection-amg.jpg";
-import collectionSuvImg from "./assets/collection-suv.jpg";
-import collectionSedanImg from "./assets/collection-sedan.jpg";
-import amgGt63Img from "./assets/amg-gt63.jpg";
-import amgC63Img from "./assets/amg-c63.jpg";
-import amgSl63Img from "./assets/amg-sl63.jpg";
-import g63Img from "./assets/g63.jpg";
-import gls600Img from "./assets/gls600.jpg";
-import gle53Img from "./assets/gle53.jpg";
-import s580Img from "./assets/s580.jpg";
-import maybachS680Img from "./assets/maybach-s680.jpg";
-import eqs580Img from "./assets/eqs580.jpg";
 
 // ═══════════════════════════════════════════════════════════════════
 // AUTOMOTIVE VIP PORTAL — Luxury Showroom Experience
@@ -59,14 +48,17 @@ const trackEvent = (event, data = {}) => {
   return ev;
 };
 
-// ─── BILINGUAL CONTENT ───────────────────────────────────────────
+// ─── i18n (inline — en/ar/es/fr) ─────────────────────────────────
+const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
 const LANG = {
   en: {
     dir: "ltr",
     nav: { vip: "VIP Access", lang: "العربية", compare: "Compare", favorites: "Favorites" },
+    crossnav: { hub: "Demo Hub", vipPerf: "VIP Performance", vipFamily: "VIP Family", showroom: "Public Showroom", dashboard: "Dashboard", ai: "AI Pipeline" },
     hero: {
       badge: "Private Showroom",
       greeting: "Welcome,",
+      titleLine1: "Your Private", titleEm: "Showroom", titleLine2: "Awaits",
       tagline: "Your Private Showroom Awaits",
       subtitle: "A curated selection of premium vehicles, handpicked for discerning collectors who demand nothing less than extraordinary performance and luxury.",
       cta: "Explore Vehicles",
@@ -83,7 +75,8 @@ const LANG = {
       contactSub: "Your Personal Experience",
       contactHint: "Your dedicated advisor will prepare the vehicle and meet you at the showroom",
     },
-    filters: { all: "All Models", performance: "AMG Performance", suv: "Luxury SUV", sedan: "Executive Sedan" },
+    filters: { all: "All Models", performance: "AMG Performance", suv: "Luxury SUV", sedan: "Executive Sedan", ev: "Electric" },
+    models: "Models",
     card: {
       from: "From",
       perMonth: "/mo",
@@ -169,9 +162,11 @@ const LANG = {
   ar: {
     dir: "ltr",
     nav: { vip: "وصول VIP", lang: "English", compare: "مقارنة", favorites: "المفضلة" },
+    crossnav: { hub: "مركز العرض", vipPerf: "VIP أداء", vipFamily: "VIP عائلي", showroom: "صالة العرض", dashboard: "لوحة التحكم", ai: "خط أنابيب الذكاء" },
     hero: {
       badge: "صالة عرض خاصة",
       greeting: "مرحبًا،",
+      titleLine1: "صالة عرضك", titleEm: "الخاصة", titleLine2: "بانتظارك",
       tagline: "صالة عرضك الخاصة بانتظارك",
       subtitle: "مجموعة مختارة من السيارات الفاخرة، مختارة بعناية لهواة التميز الذين لا يقبلون بأقل من الأداء الاستثنائي والفخامة.",
       cta: "استكشف السيارات",
@@ -188,7 +183,8 @@ const LANG = {
       contactSub: "تجربتك الشخصية",
       contactHint: "سيقوم مستشارك المخصص بإعداد السيارة واستقبالك في صالة العرض",
     },
-    filters: { all: "جميع الموديلات", performance: "AMG الأداء", suv: "SUV الفاخرة", sedan: "سيدان التنفيذية" },
+    filters: { all: "جميع الموديلات", performance: "AMG الأداء", suv: "SUV الفاخرة", sedan: "سيدان التنفيذية", ev: "كهربائية" },
+    models: "موديلات",
     card: {
       from: "من",
       perMonth: "/شهريًا",
@@ -271,141 +267,54 @@ const LANG = {
     footer: "هذه صالة عرض VIP خاصة. المحتوى مخصص لوصولك الحصري.",
     poweredBy: "مشغل بواسطة",
   },
+  es: {
+    dir: "ltr",
+    nav: { vip: "Acceso VIP", lang: "English", compare: "Comparar", favorites: "Favoritos" },
+    crossnav: { hub: "Centro Demo", vipPerf: "VIP Rendimiento", vipFamily: "VIP Familiar", showroom: "Sala Pública", dashboard: "Panel", ai: "Pipeline IA" },
+    hero: { badge: "Sala Privada", greeting: "Bienvenido,", titleLine1: "Su Sala", titleEm: "Privada", titleLine2: "Le Espera", tagline: "Su sala privada le espera", subtitle: "Una selección curada de vehículos premium, elegidos para coleccionistas exigentes.", cta: "Explorar Vehículos", ctaSecondary: "Reservar Prueba" },
+    stats: { models: "Modelos Curados", collections: "Colecciones", access: "Acceso VIP", advisor: "Asesor Personal" },
+    sections: { collections: "Colecciones", collectionsSub: "Seleccione una Colección", vehicles: "Los Vehículos", vehiclesSub: "Curados para Sus Preferencias", vehiclesHint: "Seleccione cualquier vehículo para ver detalles", contact: "Reservar Prueba Privada", contactSub: "Su Experiencia Personal", contactHint: "Su asesor preparará el vehículo y le recibirá en la sala" },
+    filters: { all: "Todos", performance: "AMG Performance", suv: "SUV de Lujo", sedan: "Sedán Ejecutivo", ev: "Eléctrico" },
+    models: "Modelos",
+    card: { from: "Desde", perMonth: "/mes", explore: "Explorar", compare: "Comparar", favorite: "Favorito" },
+    detail: { overview: "Resumen", configure: "Configurar", finance: "Calculadora", engine: "Motor", hp: "Potencia", torque: "Par", accel: "0-100 km/h", topSpeed: "Vel. Máxima", drivetrain: "Tracción", features: "Equipamiento", bookTestDrive: "Reservar Prueba", requestPricing: "Precio VIP", downloadBrochure: "Descargar Folleto", callAdvisor: "Llamar Asesor" },
+    configure: { exterior: "Color Exterior", interior: "Interior", yourConfig: "Su Configuración", exterior_label: "exterior", interior_label: "interior", saveConfig: "Guardar", configSaved: "¡Configuración guardada!" },
+    finance: { vehiclePrice: "Precio", downPayment: "Anticipo", term: "Plazo (Meses)", monthlyPayment: "Pago Mensual Est.", lease: "Arrendamiento", financeBtn: "Financiar", rate: "Tasa", requestQuote: "Solicitar Cotización" },
+    compare: { title: "Comparación", feature: "Característica", remove: "Quitar", price: "Precio", engine: "Motor", hp: "Potencia", torque: "Par", accel: "0-100", topSpeed: "Vel. Máx.", drivetrain: "Tracción", lease: "Arrendamiento Mensual", empty: "Añada vehículos con el icono ⚖️ en las tarjetas." },
+    booking: { name: "Nombre", email: "Email", phone: "Teléfono", vehicle: "Vehículo", date: "Fecha", time: "Hora", notes: "Solicitudes", submit: "Solicitar Prueba", note: "Su información está protegida. Contactaremos en 24 horas.", morning: "Mañana (9-12)", afternoon: "Tarde (12-16)", evening: "Noche (16-19)", success: "Solicitud Enviada", successDesc: "Su asesor le contactará en 24 horas.", successRef: "Referencia" },
+    toast: { brochure: "Folleto descargado", pricing: "Solicitud de precio enviada", booking: "Prueba solicitada", compare: "Añadido a comparación", compareRemove: "Eliminado de comparación", favorite: "Añadido a favoritos", favoriteRemove: "Eliminado de favoritos", configSaved: "Configuración guardada", quoteRequested: "Cotización solicitada", advisorNotified: "Asesor notificado" },
+    status: { available: "Disponible", reserved: "Reservado", sold: "Vendido" },
+    footer: "Sala VIP privada. Contenido personalizado para su acceso exclusivo.",
+    poweredBy: "Desarrollado por",
+  },
+  fr: {
+    dir: "ltr",
+    nav: { vip: "Accès VIP", lang: "English", compare: "Comparer", favorites: "Favoris" },
+    crossnav: { hub: "Hub Démo", vipPerf: "VIP Performance", vipFamily: "VIP Famille", showroom: "Salle Publique", dashboard: "Tableau de bord", ai: "Pipeline IA" },
+    hero: { badge: "Salle Privée", greeting: "Bienvenue,", titleLine1: "Votre Salle", titleEm: "Privée", titleLine2: "Vous Attend", tagline: "Votre salle privée vous attend", subtitle: "Une sélection de véhicules premium, choisis pour les collectionneurs exigeants.", cta: "Explorer", ctaSecondary: "Réserver un Essai" },
+    stats: { models: "Modèles", collections: "Collections", access: "Accès VIP", advisor: "Conseiller" },
+    sections: { collections: "Collections", collectionsSub: "Choisissez une Collection", vehicles: "Les Véhicules", vehiclesSub: "Sélectionnés pour Vous", vehiclesHint: "Sélectionnez un véhicule pour les détails", contact: "Réserver un Essai Privé", contactSub: "Votre Expérience", contactHint: "Votre conseiller préparera le véhicule et vous accueillera" },
+    filters: { all: "Tous", performance: "AMG Performance", suv: "SUV de Luxe", sedan: "Berline Exécutive", ev: "Électrique" },
+    models: "Modèles",
+    card: { from: "À partir de", perMonth: "/mois", explore: "Explorer", compare: "Comparer", favorite: "Favori" },
+    detail: { overview: "Aperçu", configure: "Configurer", finance: "Calculateur", engine: "Moteur", hp: "Puissance", torque: "Couple", accel: "0-100 km/h", topSpeed: "Vitesse Max", drivetrain: "Transmission", features: "Équipements", bookTestDrive: "Réserver Essai", requestPricing: "Prix VIP", downloadBrochure: "Télécharger Brochure", callAdvisor: "Appeler Conseiller" },
+    configure: { exterior: "Couleur Extérieure", interior: "Intérieur", yourConfig: "Votre Configuration", exterior_label: "extérieur", interior_label: "intérieur", saveConfig: "Enregistrer", configSaved: "Configuration enregistrée !" },
+    finance: { vehiclePrice: "Prix", downPayment: "Acompte", term: "Durée (Mois)", monthlyPayment: "Mensualité Est.", lease: "Location", financeBtn: "Financer", rate: "Taux", requestQuote: "Demander un Devis" },
+    compare: { title: "Comparaison", feature: "Caractéristique", remove: "Retirer", price: "Prix", engine: "Moteur", hp: "Puissance", torque: "Couple", accel: "0-100", topSpeed: "V. Max", drivetrain: "Transmission", lease: "Location Mensuelle", empty: "Ajoutez des véhicules via l'icône ⚖️." },
+    booking: { name: "Nom", email: "Email", phone: "Téléphone", vehicle: "Véhicule", date: "Date", time: "Heure", notes: "Demandes", submit: "Demander Essai", note: "Vos informations sont protégées. Contact sous 24 h.", morning: "Matin (9h-12h)", afternoon: "Après-midi (12h-16h)", evening: "Soir (16h-19h)", success: "Demande Envoyée", successDesc: "Votre conseiller vous contactera sous 24 h.", successRef: "Référence" },
+    toast: { brochure: "Brochure téléchargée", pricing: "Demande de prix envoyée", booking: "Essai demandé", compare: "Ajouté à la comparaison", compareRemove: "Retiré de la comparaison", favorite: "Ajouté aux favoris", favoriteRemove: "Retiré des favoris", configSaved: "Configuration enregistrée", quoteRequested: "Devis demandé", advisorNotified: "Conseiller notifié" },
+    status: { available: "Disponible", reserved: "Réservé", sold: "Vendu" },
+    footer: "Salle VIP privée. Contenu personnalisé pour votre accès exclusif.",
+    poweredBy: "Propulsé par",
+  },
 };
-
-// ─── VEHICLE DATA ─────────────────────────────────────────────────
-const COLLECTIONS = {
-  performance: {
-    id: "performance",
-    name: { en: "AMG Performance", ar: "AMG الأداء" },
-    desc: { en: "Handcrafted engines. Pure driving emotion.", ar: "محركات مصنوعة يدويًا. شغف القيادة الخالصة." },
-    image: collectionPerformanceImg,
-    accent: "#e63946",
-  },
-  suv: {
-    id: "suv",
-    name: { en: "Luxury SUV", ar: "SUV الفاخرة" },
-    desc: { en: "Command every road. Conquer every terrain.", ar: "تحكم بكل طريق. اغزُ كل تضاريس." },
-    image: collectionSuvImg,
-    accent: "#457b9d",
-  },
-  sedan: {
-    id: "sedan",
-    name: { en: "Executive Sedan", ar: "سيدان التنفيذية" },
-    desc: { en: "Where luxury meets intelligence.", ar: "حيث يلتقي الفخامة بالذكاء." },
-    image: collectionSedanImg,
-    accent: "#b8860b",
-  },
-};
-
-const VEHICLES = [
-  {
-    id: "amg-gt63", collection: "performance",
-    name: "AMG GT 63 S E Performance", nameAr: "AMG GT 63 S E بيرفورمانس",
-    image: amgGt63Img,
-    price: 245000,
-    specs: { engine: { en: "4.0L V8 Biturbo + Electric", ar: "4.0 لتر V8 بايتوربو + كهربائي" }, hp: "831 HP", torque: "1,033 lb-ft", acceleration: "2.9s", topSpeed: "316 km/h", drivetrain: { en: "4MATIC+", ar: "4MATIC+" } },
-    features: { en: ["AMG Active Ride Control", "Carbon Fiber Roof", "Burmester 3D Sound", "AMG Performance Seats", "Night Package", "Head-Up Display"], ar: ["التحكم النشط في القيادة AMG", "سقف ألياف الكربون", "نظام صوت Burmester ثلاثي الأبعاد", "مقاعد أداء AMG", "حزمة Night", "شاشة عرض أمامية"] },
-    colors: [ { name: "Obsidian Black", nameAr: "أسود أوبسيديان", hex: "#0a0a0a" }, { name: "Selenite Grey", nameAr: "رمادي سيلينايت", hex: "#6b6e70" }, { name: "Jupiter Red", nameAr: "أحمر جوبيتر", hex: "#c41e3a" }, { name: "Alpine Grey", nameAr: "رمادي ألباين", hex: "#8a8d8f" } ],
-    interiors: [ { name: "Black Nappa Leather", nameAr: "جلد نابا أسود", hex: "#1a1a1a" }, { name: "Macchiato Beige", nameAr: "بيج ماكياتو", hex: "#c8b89a" }, { name: "Red Pepper / Black", nameAr: "فلفل أحمر / أسود", hex: "#8b1a1a" } ],
-    status: "available", monthlyLease: 3200,
-  },
-  {
-    id: "amg-c63", collection: "performance",
-    name: "AMG C 63 S E Performance", nameAr: "AMG C 63 S E بيرفورمانس",
-    image: amgC63Img,
-    price: 125000,
-    specs: { engine: { en: "2.0L Turbo + Electric", ar: "2.0 لتر توربو + كهربائي" }, hp: "671 HP", torque: "752 lb-ft", acceleration: "3.4s", topSpeed: "280 km/h", drivetrain: { en: "4MATIC+", ar: "4MATIC+" } },
-    features: { en: ["AMG Track Pace", "Carbon Fiber Trim", "Burmester Sound", "AMG Seats", "Night Package", "Active Aero"], ar: ["AMG Track Pace", "تزيين ألياف الكربون", "نظام Burmester", "مقاعد AMG", "حزمة Night", "ديناميكا هوائية نشطة"] },
-    colors: [ { name: "Spectral Blue", nameAr: "أزرق سبكترال", hex: "#1a3a5c" }, { name: "Obsidian Black", nameAr: "أسود أوبسيديان", hex: "#0a0a0a" }, { name: "Polar White", nameAr: "أبيض بولار", hex: "#f5f5f0" } ],
-    interiors: [ { name: "Black Nappa", nameAr: "نابا أسود", hex: "#1a1a1a" }, { name: "Titanium Grey", nameAr: "تيتانيوم رمادي", hex: "#5a5a5a" } ],
-    status: "available", monthlyLease: 1850,
-  },
-  {
-    id: "amg-sl63", collection: "performance",
-    name: "AMG SL 63 4MATIC+", nameAr: "AMG SL 63 4MATIC+",
-    image: amgSl63Img,
-    price: 198000,
-    specs: { engine: { en: "4.0L V8 Biturbo", ar: "4.0 لتر V8 بايتوربو" }, hp: "577 HP", torque: "590 lb-ft", acceleration: "3.6s", topSpeed: "315 km/h", drivetrain: { en: "4MATIC+", ar: "4MATIC+" } },
-    features: { en: ["Soft Top Convertible", "AMG Active Body Control", "MBUX Hyperscreen", "Burmester 3D", "Digital Light", "360 Camera"], ar: ["سقف ناعم قابل للطي", "تحكم نشط في الهيكل AMG", "MBUX هايبرسكرين", "Burmester ثلاثي الأبعاد", "إضاءة رقمية", "كاميرا 360"] },
-    colors: [ { name: "Patagonia Red", nameAr: "أحمر باتاغونيا", hex: "#8b2500" }, { name: "Selenite Grey", nameAr: "رمادي سيلينايت", hex: "#6b6e70" }, { name: "MANUFAKTUR Olive", nameAr: "أخضر زيتوني MANUFAKTUR", hex: "#4a5028" } ],
-    interiors: [ { name: "Neva Grey / Black", nameAr: "نيفا رمادي / أسود", hex: "#4a4a4a" }, { name: "Sienna Brown", nameAr: "بني سيينا", hex: "#6b4226" } ],
-    status: "available", monthlyLease: 2900,
-  },
-  {
-    id: "g63", collection: "suv",
-    name: "Mercedes-AMG G 63", nameAr: "مرسيدس-AMG G 63",
-    image: g63Img,
-    price: 225000,
-    specs: { engine: { en: "4.0L V8 Biturbo", ar: "4.0 لتر V8 بايتوربو" }, hp: "577 HP", torque: "627 lb-ft", acceleration: "4.5s", topSpeed: "220 km/h", drivetrain: { en: "4MATIC", ar: "4MATIC" } },
-    features: { en: ["Three Differential Locks", "MANUFAKTUR Interior", "Burmester 3D", "Night Package", "Off-Road Cockpit", "Transparent Hood"], ar: ["ثلاثة أقفال تفاضلية", "داخلية MANUFAKTUR", "Burmester ثلاثي الأبعاد", "حزمة Night", "قمرة الطرق الوعرة", "غطاء محرك شفاف"] },
-    colors: [ { name: "MANUFAKTUR Olive", nameAr: "أخضر زيتوني MANUFAKTUR", hex: "#4a5028" }, { name: "Obsidian Black", nameAr: "أسود أوبسيديان", hex: "#0a0a0a" }, { name: "Polar White", nameAr: "أبيض بولار", hex: "#f5f5f0" }, { name: "Sunset Beam", nameAr: "شعاع الغروب", hex: "#e87f3f" } ],
-    interiors: [ { name: "Macchiato Beige / Black", nameAr: "بيج ماكياتو / أسود", hex: "#c8b89a" }, { name: "Classic Red / Black", nameAr: "أحمر كلاسيكي / أسود", hex: "#8b1a1a" }, { name: "Neva Grey / Black", nameAr: "نيفا رمادي / أسود", hex: "#4a4a4a" } ],
-    status: "available", monthlyLease: 3100,
-  },
-  {
-    id: "gls600", collection: "suv",
-    name: "Mercedes-Maybach GLS 600", nameAr: "مرسيدس-مايباخ GLS 600",
-    image: gls600Img,
-    price: 285000,
-    specs: { engine: { en: "4.0L V8 Biturbo", ar: "4.0 لتر V8 بايتوربو" }, hp: "550 HP", torque: "538 lb-ft", acceleration: "4.9s", topSpeed: "250 km/h", drivetrain: { en: "4MATIC", ar: "4MATIC" } },
-    features: { en: ["Maybach Executive Rear Seats", "Champagne Flutes", "Refrigerator", "Burmester 4D", "AIRMATIC", "Night Vision Assist"], ar: ["مقاعد مايباخ التنفيذية الخلفية", "كؤوس شامبانيا", "ثلاجة", "Burmester رباعي الأبعاد", "AIRMATIC", "مساعد الرؤية الليلية"] },
-    colors: [ { name: "Two-Tone Obsidian/Mojave", nameAr: "لونين أوبسيديان / موجاف", hex: "#0a0a0a" }, { name: "Nautical Blue", nameAr: "أزرق بحري", hex: "#1a2f4a" }, { name: "Rubellite Red", nameAr: "أحمر روبيللايت", hex: "#6b1a2a" } ],
-    interiors: [ { name: "Maybach Macchiato / Yacht Blue", nameAr: "مايباخ ماكياتو / أزرق يخت", hex: "#c8b89a" }, { name: "Maybach Armagnac / Black", nameAr: "مايباخ أرمانياك / أسود", hex: "#6b3a1a" } ],
-    status: "reserved", monthlyLease: 4200,
-  },
-  {
-    id: "gle53", collection: "suv",
-    name: "AMG GLE 53 4MATIC+ Coupé", nameAr: "AMG GLE 53 4MATIC+ كوبيه",
-    image: gle53Img,
-    price: 135000,
-    specs: { engine: { en: "3.0L I6 Turbo + EQ Boost", ar: "3.0 لتر 6 سلندر توربو + EQ Boost" }, hp: "429 HP", torque: "384 lb-ft", acceleration: "5.3s", topSpeed: "250 km/h", drivetrain: { en: "4MATIC+", ar: "4MATIC+" } },
-    features: { en: ["AMG Body Styling", "Active Ride Control", "Burmester Sound", "MBUX", "AMG Night Package", "Panoramic Roof"], ar: ["تصميم هيكل AMG", "التحكم النشط في القيادة", "نظام Burmester", "MBUX", "حزمة AMG Night", "سقف بانورامي"] },
-    colors: [ { name: "Polar White", nameAr: "أبيض بولار", hex: "#f5f5f0" }, { name: "Obsidian Black", nameAr: "أسود أوبسيديان", hex: "#0a0a0a" } ],
-    interiors: [ { name: "Black AMG Leather", nameAr: "جلد AMG أسود", hex: "#1a1a1a" } ],
-    status: "available", monthlyLease: 1750,
-  },
-  {
-    id: "s580", collection: "sedan",
-    name: "Mercedes-Benz S 580 4MATIC", nameAr: "مرسيدس-بنز S 580 4MATIC",
-    image: s580Img,
-    price: 175000,
-    specs: { engine: { en: "4.0L V8 Biturbo", ar: "4.0 لتر V8 بايتوربو" }, hp: "496 HP", torque: "516 lb-ft", acceleration: "4.4s", topSpeed: "250 km/h", drivetrain: { en: "4MATIC", ar: "4MATIC" } },
-    features: { en: ["MBUX Rear Tablet", "Executive Rear Seats", "Burmester 4D", "E-Active Body Control", "Head-Up Display", "Digital Light"], ar: ["جهاز MBUX اللوحي الخلفي", "مقاعد تنفيذية خلفية", "Burmester رباعي الأبعاد", "E-Active تحكم الهيكل", "شاشة عرض أمامية", "إضاءة رقمية"] },
-    colors: [ { name: "Onyx Black", nameAr: "أسود أونيكس", hex: "#0f0f0f" }, { name: "Emerald Green", nameAr: "أخضر زمردي", hex: "#2a4a3a" }, { name: "Nautic Blue", nameAr: "أزرق بحري", hex: "#1a2a4a" } ],
-    interiors: [ { name: "Macchiato Beige / Espresso", nameAr: "بيج ماكياتو / إسبريسو", hex: "#c8b89a" }, { name: "Black Exclusive Nappa", nameAr: "نابا أسود حصري", hex: "#1a1a1a" } ],
-    status: "available", monthlyLease: 2400,
-  },
-  {
-    id: "maybach-s680", collection: "sedan",
-    name: "Mercedes-Maybach S 680", nameAr: "مرسيدس-مايباخ S 680",
-    image: maybachS680Img,
-    price: 380000,
-    specs: { engine: { en: "6.0L V12 Biturbo", ar: "6.0 لتر V12 بايتوربو" }, hp: "621 HP", torque: "738 lb-ft", acceleration: "4.5s", topSpeed: "250 km/h", drivetrain: { en: "4MATIC", ar: "4MATIC" } },
-    features: { en: ["Maybach Executive Seats", "Champagne Flutes", "Burmester 4D High-End", "Chauffeur Package", "MANUFAKTUR Programme", "Rear Entertainment"], ar: ["مقاعد مايباخ التنفيذية", "كؤوس شامبانيا", "Burmester 4D هاي-إند", "حزمة السائق الخاص", "برنامج MANUFAKTUR", "ترفيه خلفي"] },
-    colors: [ { name: "Two-Tone Obsidian/Kalahari", nameAr: "لونين أوبسيديان / كالاهاري", hex: "#0a0a0a" }, { name: "Rubellite Red / Obsidian", nameAr: "روبيللايت أحمر / أوبسيديان", hex: "#6b1a2a" }, { name: "Nautical Blue / Obsidian", nameAr: "أزرق بحري / أوبسيديان", hex: "#1a2a4a" } ],
-    interiors: [ { name: "MANUFAKTUR Crystal White / Silver Grey", nameAr: "MANUFAKTUR أبيض كريستال / رمادي فضي", hex: "#e8e0d8" }, { name: "Maybach Macchiato / Truffle Brown", nameAr: "مايباخ ماكياتو / بني الكمأة", hex: "#5a3a2a" } ],
-    status: "available", monthlyLease: 5500,
-  },
-  {
-    id: "eqs580", collection: "sedan",
-    name: "Mercedes-Benz EQS 580 4MATIC", nameAr: "مرسيدس-بنز EQS 580 4MATIC",
-    image: eqs580Img,
-    price: 165000,
-    specs: { engine: { en: "Dual Electric Motors", ar: "محركان كهربائيان" }, hp: "516 HP", torque: "631 lb-ft", acceleration: "4.1s", topSpeed: "210 km/h", drivetrain: { en: "4MATIC", ar: "4MATIC" } },
-    features: { en: ["MBUX Hyperscreen", "108.4 kWh Battery", "350 kW Fast Charge", "Burmester 4D", "Rear Axle Steering", "Fragrance System"], ar: ["MBUX هايبرسكرين", "بطارية 108.4 كيلوواط ساعة", "شحن سريع 350 كيلوواط", "Burmester رباعي الأبعاد", "توجيه المحور الخلفي", "نظام العطور"] },
-    colors: [ { name: "High-Tech Silver", nameAr: "فضي هاي-تك", hex: "#8a8d8f" }, { name: "Graphite Grey", nameAr: "رمادي غرافيت", hex: "#3a3a3a" }, { name: "Sodalite Blue", nameAr: "أزرق سودالايت", hex: "#1a2a4a" } ],
-    interiors: [ { name: "Neva Grey / Biscay Blue", nameAr: "نيفا رمادي / أزرق بيسكاي", hex: "#4a5a6a" }, { name: "Macchiato / Space Grey", nameAr: "ماكياتو / رمادي فضائي", hex: "#c8b89a" } ],
-    status: "available", monthlyLease: 2200,
-  },
-];
-
-const HERO_IMG = heroImg;
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function AutomotivePortal() {
-  const { lang } = useLanguage();
-  const { projectName, fmtCurrency, vipPersona } = usePortalRegion("automotive", lang);
+  const [lang, setLang] = useState("en");
+  const { projectName, fmtCurrency, regionId, region } = usePortalRegion("automotive", lang);
+  const vehicles = usePortalVehicles("vip");
+  const vipPersona = getAutoPersona(regionId, "vip");
   const [scrolled, setScrolled] = useState(false);
   const [filter, setFilter] = useState("all");
   const [selectedVehicle, setSelectedVehicle] = useState(null);
@@ -417,7 +326,7 @@ export default function AutomotivePortal() {
   const [toastHiding, setToastHiding] = useState(false);
   const [bookingOk, setBookingOk] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
-  const [form, setForm] = useState({ name: vipPersona?.name || "", email: "", phone: "", vehicle: "", date: "", time: "", notes: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", vehicle: "", date: "", time: "", notes: "" });
   const [formErr, setFormErr] = useState({});
   // Configure state
   const [selColor, setSelColor] = useState(0);
@@ -429,7 +338,16 @@ export default function AutomotivePortal() {
 
   const vehRef = useRef(null);
   const bookRef = useRef(null);
-  const t = LANG[lang];
+  const t = LANG[lang] || LANG.en;
+
+  const nextLang = region.languages.find((l) => l !== lang) || region.languages[0];
+  const toggleLang = () => {
+    const n = region.languages.find((l) => l !== lang) || region.languages[0];
+    setLang(n);
+    document.documentElement.lang = n;
+    document.documentElement.dir = n === "ar" ? "rtl" : "ltr";
+    trackEvent("language_switch", { to: n });
+  };
 
   // Scroll
   useEffect(() => {
@@ -451,7 +369,7 @@ export default function AutomotivePortal() {
   // Track entry
   useEffect(() => { trackEvent("auto_portal_entry", { language: lang }); }, []);
 
-  const vipName = vipPersona?.name || "VIP Guest";
+  const vipName = getPersonaName(vipPersona, lang) || "VIP Guest";
 
   const showToast = useCallback((msg, icon = "✓") => {
     setToastHiding(false);
@@ -460,7 +378,12 @@ export default function AutomotivePortal() {
   }, []);
 
   // Filter vehicles
-  const filtered = filter === "all" ? VEHICLES : VEHICLES.filter(v => v.collection === filter);
+  const filtered = filter === "all" ? vehicles : vehicles.filter(v => v.collection === filter);
+  const activeCollections = [...new Set(vehicles.map((v) => v.collection))];
+  const filterTabs = [
+    { key: "all", label: t.filters.all },
+    ...activeCollections.map((key) => ({ key, label: t.filters[key] || COLLECTIONS[key]?.name?.[lang] || key })),
+  ];
 
   // Compare
   const toggleCompare = (id) => {
@@ -488,11 +411,11 @@ export default function AutomotivePortal() {
     setSelectedVehicle(v); setDetailTab("overview"); setSelColor(0); setSelInterior(0); setDownPct(20); setFinTerm(48); setFinMode("lease");
     trackEvent("vehicle_view", {
       vehicleId: v.id,
-      vehicleName: v.name,
-      unitName: v.name,
+      vehicleName: vName(v, lang),
+      unitName: vName(v, lang),
       tower: v.collection,
-      unitType: v.type || v.collection,
-      price: v.price,
+      unitType: v.collection,
+      price: v.priceLocal,
     });
   };
   const closeAll = () => { setSelectedVehicle(null); setModal(null); };
@@ -539,12 +462,12 @@ export default function AutomotivePortal() {
       <SEO title="Automotive" description="NFC-powered VIP showroom experiences for luxury automotive dealers. Test drive bookings, configurations, and real-time analytics." path="/automotive" />
       {/* Cross-Nav */}
       <div className={`ap-crossnav ${scrolled ? "show" : ""}`}>
-        <Link to="/automotive/demo" style={{ color: "var(--ap-t3)" }}>← {lang === "ar" ? "مركز العرض" : "Demo Hub"}</Link>
-        <span className="active">{lang === "ar" ? "VIP أداء" : "VIP Performance"}</span>
-        <Link to="/automotive/demo/sultan">{lang === "ar" ? "VIP عائلي" : "VIP Family"}</Link>
-        <Link to="/automotive/demo/showroom">{lang === "ar" ? "صالة العرض" : "Public Showroom"}</Link>
-        <Link to="/automotive/dashboard">{lang === "ar" ? "لوحة التحكم" : "Dashboard"}</Link>
-        <Link to="/automotive/demo/ai">{lang === "ar" ? "خط أنابيب الذكاء" : "AI Pipeline"}</Link>
+        <Link to="/automotive/demo" style={{ color: "var(--ap-t3)" }}>← {t.crossnav.hub}</Link>
+        <span className="active">{t.crossnav.vipPerf}</span>
+        <Link to="/automotive/demo/sultan">{t.crossnav.vipFamily}</Link>
+        <Link to="/automotive/demo/showroom">{t.crossnav.showroom}</Link>
+        <Link to="/automotive/dashboard">{t.crossnav.dashboard}</Link>
+        <Link to="/automotive/demo/ai">{t.crossnav.ai}</Link>
         <span className="crossnav-persona">👤 {vipName}</span>
       </div>
       {/* ── HEADER ── */}
@@ -557,18 +480,19 @@ export default function AutomotivePortal() {
               {t.nav.compare}<span className="ap-cmp-count">{compareList.length}</span>
             </button>
           )}
+          <button className="ap-navbtn" onClick={toggleLang}>{LANG_LABEL[nextLang]}</button>
         </div>
       </header>
 
       {/* ── HERO ── */}
       <section className="ap-hero">
-        <div className="ap-hero-bg" style={{ backgroundImage: `url(${HERO_IMG})` }} />
+        <div className="ap-hero-bg" style={{ backgroundImage: `url(${heroImg})` }} />
         <div className="ap-hero-ov" />
         <div className="ap-hero-ct">
           <div className="ap-pvt">{t.hero.badge}</div>
           <p className="ap-greet">{t.hero.greeting} <span>{vipName}</span></p>
           <h1 className="ap-htitle">
-            {lang === "en" ? (<>Your Private<br /><em>Showroom</em> Awaits</>) : (<>صالة عرضك<br /><em>الخاصة</em> بانتظارك</>)}
+            {t.hero.titleLine1}<br /><em>{t.hero.titleEm}</em> {t.hero.titleLine2}
           </h1>
           <p className="ap-hdesc">{t.hero.subtitle}</p>
           <div className="ap-hacts">
@@ -581,8 +505,8 @@ export default function AutomotivePortal() {
       {/* ── STATS ── */}
       <div className="ap-stats">
         {[
-          { v: "9", l: t.stats.models },
-          { v: "3", l: t.stats.collections },
+          { v: String(vehicles.length), l: t.stats.models },
+          { v: String(activeCollections.length), l: t.stats.collections },
           { v: "VIP", l: t.stats.access },
           { v: "24/7", l: t.stats.advisor },
         ].map((s, i) => (
@@ -600,17 +524,17 @@ export default function AutomotivePortal() {
           <h2 className="ap-st">{t.sections.collectionsSub}</h2>
         </div>
         <div className="ap-colls">
-          {Object.values(COLLECTIONS).map((c) => {
-            const count = VEHICLES.filter(v => v.collection === c.id).length;
+          {Object.values(COLLECTIONS).filter((c) => activeCollections.includes(c.id)).map((c) => {
+            const count = vehicles.filter(v => v.collection === c.id).length;
             return (
               <div className="ap-coll ap-rv" key={c.id} onClick={() => { setFilter(c.id); trackEvent("collection_view", { collection: c.id }); vehRef.current?.scrollIntoView({ behavior: "smooth" }); }}>
                 <div className="ap-coll-accent" style={{ background: c.accent }} />
-                <img src={c.image} alt={c.name[lang]} loading="lazy" />
+                <img src={c.image} alt={c.name[lang] || c.name.en} loading="lazy" />
                 <div className="ap-coll-ov" />
                 <div className="ap-coll-ct">
-                  <div className="ap-coll-name">{c.name[lang]}</div>
-                  <div className="ap-coll-desc">{c.desc[lang]}</div>
-                  <div className="ap-coll-count">{count} {lang === "en" ? "Models" : "موديلات"}</div>
+                  <div className="ap-coll-name">{c.name[lang] || c.name.en}</div>
+                  <div className="ap-coll-desc">{c.desc[lang] || c.desc.en}</div>
+                  <div className="ap-coll-count">{count} {t.models}</div>
                 </div>
               </div>
             );
@@ -630,12 +554,7 @@ export default function AutomotivePortal() {
 
         {/* Filter Tabs */}
         <div className="ap-filters">
-          {[
-            { key: "all", label: t.filters.all },
-            { key: "performance", label: t.filters.performance },
-            { key: "suv", label: t.filters.suv },
-            { key: "sedan", label: t.filters.sedan },
-          ].map(f => (
+          {filterTabs.map(f => (
             <button key={f.key} className={`ap-filter ${filter === f.key ? "active" : ""}`} onClick={() => setFilter(f.key)}>{f.label}</button>
           ))}
         </div>
@@ -645,18 +564,18 @@ export default function AutomotivePortal() {
           {filtered.map((v) => (
             <div className="ap-vcard ap-rv" key={v.id} onClick={() => openDetail(v)}>
               <div className="ap-vcard-img">
-                <img src={v.image} alt={lang === "ar" ? v.nameAr : v.name} loading="lazy" />
-                <div className="ap-vcard-collection">{COLLECTIONS[v.collection]?.name[lang]}</div>
+                <img src={v.image} alt={vName(v, lang)} loading="lazy" />
+                <div className="ap-vcard-collection">{COLLECTIONS[v.collection]?.name[lang] || COLLECTIONS[v.collection]?.name.en}</div>
                 <div className="ap-vcard-status" style={{ background: getStatusColor(v.status) }}>{getStatusLabel(v.status)}</div>
               </div>
               <div className="ap-vcard-body">
-                <h3 className="ap-vcard-name">{lang === "ar" ? v.nameAr : v.name}</h3>
+                <h3 className="ap-vcard-name">{vName(v, lang)}</h3>
                 <div className="ap-vcard-specs">
                   <span className="ap-vcard-spec">{v.specs.hp}</span>
                   <span className="ap-vcard-spec">{v.specs.acceleration}</span>
-                  <span className="ap-vcard-spec">{v.specs.drivetrain[lang]}</span>
+                  <span className="ap-vcard-spec">{v.specs.drivetrain[lang] || v.specs.drivetrain.en}</span>
                 </div>
-                <div className="ap-vcard-price">{t.card.from} {fmtCurrency(v.price)}</div>
+                <div className="ap-vcard-price">{t.card.from} {fmtCurrency(v.priceLocal)}</div>
                 <div className="ap-vcard-lease">{fmtCurrency(v.monthlyLease)}{t.card.perMonth}</div>
               </div>
               <div className="ap-vcard-acts" onClick={(e) => e.stopPropagation()}>
@@ -710,7 +629,7 @@ export default function AutomotivePortal() {
               <label className="ap-flabel">{t.booking.vehicle}</label>
               <select className="ap-fsel" onChange={(e) => setForm({ ...form, vehicle: e.target.value })}>
                 <option value="">—</option>
-                {VEHICLES.map(v => <option key={v.id} value={v.id}>{lang === "ar" ? v.nameAr : v.name} — {fmtCurrency(v.price)}</option>)}
+                {vehicles.map(v => <option key={v.id} value={v.id}>{vName(v, lang)} — {fmtCurrency(v.priceLocal)}</option>)}
               </select>
             </div>
             <div className="ap-frow">
@@ -753,15 +672,15 @@ export default function AutomotivePortal() {
         <div className="ap-modal-ov" onClick={closeAll}>
           <div className="ap-modal" onClick={(e) => e.stopPropagation()}>
             <button className="ap-modal-x" onClick={closeAll}>✕</button>
-            <img className="ap-md-img" src={selectedVehicle.image} alt={lang === "ar" ? selectedVehicle.nameAr : selectedVehicle.name} />
+            <img className="ap-md-img" src={selectedVehicle.image} alt={vName(selectedVehicle, lang)} />
             <div className="ap-modal-body">
               <div className="ap-md-top">
                 <div>
-                  <h2 className="ap-md-title">{lang === "ar" ? selectedVehicle.nameAr : selectedVehicle.name}</h2>
-                  <p className="ap-md-coll">{COLLECTIONS[selectedVehicle.collection]?.name[lang]}</p>
+                  <h2 className="ap-md-title">{vName(selectedVehicle, lang)}</h2>
+                  <p className="ap-md-coll">{COLLECTIONS[selectedVehicle.collection]?.name[lang] || COLLECTIONS[selectedVehicle.collection]?.name.en}</p>
                 </div>
                 <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
-                  <div className="ap-md-price">{fmtCurrency(selectedVehicle.price)}</div>
+                  <div className="ap-md-price">{fmtCurrency(selectedVehicle.priceLocal)}</div>
                   <div className="ap-md-lease">{fmtCurrency(selectedVehicle.monthlyLease)}{t.card.perMonth} {t.finance.lease}</div>
                 </div>
               </div>
@@ -779,21 +698,21 @@ export default function AutomotivePortal() {
               {detailTab === "overview" && (
                 <>
                   <div className="ap-specs-grid">
-                    <div className="ap-spec-item"><div className="ap-spec-label">{t.detail.engine}</div><div className="ap-spec-val">{selectedVehicle.specs.engine[lang]}</div></div>
+                    <div className="ap-spec-item"><div className="ap-spec-label">{t.detail.engine}</div><div className="ap-spec-val">{selectedVehicle.specs.engine[lang] || selectedVehicle.specs.engine.en}</div></div>
                     <div className="ap-spec-item"><div className="ap-spec-label">{t.detail.hp}</div><div className="ap-spec-val">{selectedVehicle.specs.hp}</div></div>
                     <div className="ap-spec-item"><div className="ap-spec-label">{t.detail.torque}</div><div className="ap-spec-val">{selectedVehicle.specs.torque}</div></div>
                     <div className="ap-spec-item"><div className="ap-spec-label">{t.detail.accel}</div><div className="ap-spec-val">{selectedVehicle.specs.acceleration}</div></div>
                     <div className="ap-spec-item"><div className="ap-spec-label">{t.detail.topSpeed}</div><div className="ap-spec-val">{selectedVehicle.specs.topSpeed}</div></div>
-                    <div className="ap-spec-item"><div className="ap-spec-label">{t.detail.drivetrain}</div><div className="ap-spec-val">{selectedVehicle.specs.drivetrain[lang]}</div></div>
+                    <div className="ap-spec-item"><div className="ap-spec-label">{t.detail.drivetrain}</div><div className="ap-spec-val">{selectedVehicle.specs.drivetrain[lang] || selectedVehicle.specs.drivetrain.en}</div></div>
                   </div>
                   <h4 style={{ fontFamily: "var(--ap-serif)", fontSize: "1.2rem", marginBottom: "1rem" }}>{t.detail.features}</h4>
                   <div className="ap-md-feats">
-                    {selectedVehicle.features[lang].map((f, i) => <span className="ap-md-feat" key={i}>{f}</span>)}
+                    {(selectedVehicle.features[lang] || selectedVehicle.features.en).map((f, i) => <span className="ap-md-feat" key={i}>{f}</span>)}
                   </div>
                   <div className="ap-md-acts">
                     <button className="ap-btn-g ap-btn-sm" onClick={() => { closeAll(); bookRef.current?.scrollIntoView({ behavior: "smooth" }); }}>🏎️ {t.detail.bookTestDrive}</button>
-                    <button className="ap-btn-g ap-btn-sm" onClick={() => { trackEvent("pricing_request", { vehicleId: selectedVehicle.id, vehicleName: selectedVehicle.name }); showToast(t.toast.pricing, "💰"); }}>💰 {t.detail.requestPricing}</button>
-                    <button className="ap-btn-o ap-btn-sm" onClick={() => { trackEvent("brochure_download", { vehicleId: selectedVehicle.id, vehicleName: selectedVehicle.name }); showToast(t.toast.brochure, "📄"); }}>📄 {t.detail.downloadBrochure}</button>
+                    <button className="ap-btn-g ap-btn-sm" onClick={() => { trackEvent("pricing_request", { vehicleId: selectedVehicle.id, vehicleName: vName(selectedVehicle, lang) }); showToast(t.toast.pricing, "💰"); }}>💰 {t.detail.requestPricing}</button>
+                    <button className="ap-btn-o ap-btn-sm" onClick={() => { trackEvent("brochure_download", { vehicleId: selectedVehicle.id, vehicleName: vName(selectedVehicle, lang) }); showToast(t.toast.brochure, "📄"); }}>📄 {t.detail.downloadBrochure}</button>
                     <button className="ap-btn-o ap-btn-sm" onClick={() => { trackEvent("contact_advisor"); showToast(t.toast.advisorNotified, "📞"); }}>📞 {t.detail.callAdvisor}</button>
                   </div>
                 </>
@@ -806,33 +725,33 @@ export default function AutomotivePortal() {
                     <div className="ap-config-label">{t.configure.exterior}</div>
                     <div className="ap-swatches">
                       {selectedVehicle.colors.map((c, i) => (
-                        <div key={i} className={`ap-swatch ${selColor === i ? "selected" : ""}`} style={{ background: c.hex }} onClick={() => { setSelColor(i); trackEvent("color_select", { vehicleId: selectedVehicle.id, color: c.name }); }} title={lang === "ar" ? c.nameAr : c.name} />
+                        <div key={i} className={`ap-swatch ${selColor === i ? "selected" : ""}`} style={{ background: c.hex }} onClick={() => { setSelColor(i); trackEvent("color_select", { vehicleId: selectedVehicle.id, color: vColorName(c, lang) }); }} title={vColorName(c, lang)} />
                       ))}
                     </div>
                     <p style={{ fontSize: ".85rem", color: "var(--ap-t2)", marginTop: "1rem" }}>
-                      {lang === "ar" ? selectedVehicle.colors[selColor]?.nameAr : selectedVehicle.colors[selColor]?.name}
+                      {vColorName(selectedVehicle.colors[selColor], lang)}
                     </p>
                   </div>
                   <div className="ap-config-section">
                     <div className="ap-config-label">{t.configure.interior}</div>
                     <div className="ap-swatches">
                       {selectedVehicle.interiors.map((c, i) => (
-                        <div key={i} className={`ap-swatch ${selInterior === i ? "selected" : ""}`} style={{ background: c.hex }} onClick={() => { setSelInterior(i); trackEvent("interior_select", { vehicleId: selectedVehicle.id, interior: c.name }); }} title={lang === "ar" ? c.nameAr : c.name} />
+                        <div key={i} className={`ap-swatch ${selInterior === i ? "selected" : ""}`} style={{ background: c.hex }} onClick={() => { setSelInterior(i); trackEvent("interior_select", { vehicleId: selectedVehicle.id, interior: vColorName(c, lang) }); }} title={vColorName(c, lang)} />
                       ))}
                     </div>
                     <p style={{ fontSize: ".85rem", color: "var(--ap-t2)", marginTop: "1rem" }}>
-                      {lang === "ar" ? selectedVehicle.interiors[selInterior]?.nameAr : selectedVehicle.interiors[selInterior]?.name}
+                      {vColorName(selectedVehicle.interiors[selInterior], lang)}
                     </p>
                   </div>
                   <div className="ap-config-summary">
                     <h4>{t.configure.yourConfig}</h4>
                     <p>
-                      {lang === "ar" ? selectedVehicle.colors[selColor]?.nameAr : selectedVehicle.colors[selColor]?.name} {t.configure.exterior_label} ·{" "}
-                      {lang === "ar" ? selectedVehicle.interiors[selInterior]?.nameAr : selectedVehicle.interiors[selInterior]?.name} {t.configure.interior_label}
+                      {vColorName(selectedVehicle.colors[selColor], lang)} {t.configure.exterior_label} ·{" "}
+                      {vColorName(selectedVehicle.interiors[selInterior], lang)} {t.configure.interior_label}
                     </p>
                   </div>
                   <button className="ap-btn-g" style={{ width: "100%", justifyContent: "center", marginTop: "1.5rem" }} onClick={() => {
-                    trackEvent("config_save", { vehicleId: selectedVehicle.id, color: selectedVehicle.colors[selColor]?.name, interior: selectedVehicle.interiors[selInterior]?.name });
+                    trackEvent("config_save", { vehicleId: selectedVehicle.id, color: vColorName(selectedVehicle.colors[selColor], lang), interior: vColorName(selectedVehicle.interiors[selInterior], lang) });
                     try { localStorage.setItem(`ap_config_${selectedVehicle.id}`, JSON.stringify({ color: selColor, interior: selInterior })); } catch(e){}
                     showToast(t.toast.configSaved, "✓");
                   }}>
@@ -843,7 +762,7 @@ export default function AutomotivePortal() {
 
               {/* ── TAB: FINANCE ── */}
               {detailTab === "finance" && (() => {
-                const monthly = calcMonthly(selectedVehicle.price, downPct, finTerm, finMode);
+                const monthly = calcMonthly(selectedVehicle.priceLocal, downPct, finTerm, finMode);
                 return (
                   <>
                     <div className="ap-fin-toggle">
@@ -851,10 +770,10 @@ export default function AutomotivePortal() {
                       <button className={`ap-fin-tog-btn ${finMode === "finance" ? "active" : ""}`} onClick={() => setFinMode("finance")}>{t.finance.financeBtn}</button>
                     </div>
                     <div className="ap-fin-field">
-                      <div className="ap-fin-label"><span>{t.finance.vehiclePrice}</span><span style={{ color: "var(--ap-gold)" }}>{fmtCurrency(selectedVehicle.price)}</span></div>
+                      <div className="ap-fin-label"><span>{t.finance.vehiclePrice}</span><span style={{ color: "var(--ap-gold)" }}>{fmtCurrency(selectedVehicle.priceLocal)}</span></div>
                     </div>
                     <div className="ap-fin-field">
-                      <div className="ap-fin-label"><span>{t.finance.downPayment}</span><span style={{ color: "var(--ap-gold)" }}>{downPct}% — {fmtCurrency(Math.round(selectedVehicle.price * downPct / 100))}</span></div>
+                      <div className="ap-fin-label"><span>{t.finance.downPayment}</span><span style={{ color: "var(--ap-gold)" }}>{downPct}% — {fmtCurrency(Math.round(selectedVehicle.priceLocal * downPct / 100))}</span></div>
                       <input type="range" className="ap-fin-slider" min="10" max="50" step="5" value={downPct} onChange={(e) => { setDownPct(Number(e.target.value)); trackEvent("finance_calc", { vehicleId: selectedVehicle.id, downPct: e.target.value }); }} />
                     </div>
                     <div className="ap-fin-field">
@@ -873,7 +792,7 @@ export default function AutomotivePortal() {
                       <div className="ap-fin-result-val">{fmtCurrency(Math.round(monthly))}</div>
                     </div>
                     <button className="ap-btn-g" style={{ width: "100%", justifyContent: "center" }} onClick={() => {
-                      trackEvent("quote_request", { vehicleId: selectedVehicle.id, vehicleName: selectedVehicle.name, mode: finMode, downPct, term: finTerm, monthly: Math.round(monthly) });
+                      trackEvent("quote_request", { vehicleId: selectedVehicle.id, vehicleName: vName(selectedVehicle, lang), mode: finMode, downPct, term: finTerm, monthly: Math.round(monthly) });
                       showToast(t.toast.quoteRequested, "📋");
                     }}>
                       {t.finance.requestQuote} →
@@ -898,16 +817,16 @@ export default function AutomotivePortal() {
               {compareList.length === 0 ? (
                 <div className="ap-cmp-empty">{t.compare.empty}</div>
               ) : (() => {
-                const units = compareList.map(id => VEHICLES.find(v => v.id === id)).filter(Boolean);
+                const units = compareList.map(id => vehicles.find(v => v.id === id)).filter(Boolean);
                 const cols = `180px repeat(${units.length}, 1fr)`;
                 const rows = [
-                  { label: t.compare.price, get: (v) => fmtCurrency(v.price) },
-                  { label: t.compare.engine, get: (v) => v.specs.engine[lang] },
+                  { label: t.compare.price, get: (v) => fmtCurrency(v.priceLocal) },
+                  { label: t.compare.engine, get: (v) => v.specs.engine[lang] || v.specs.engine.en },
                   { label: t.compare.hp, get: (v) => v.specs.hp },
                   { label: t.compare.torque, get: (v) => v.specs.torque },
                   { label: t.compare.accel, get: (v) => v.specs.acceleration },
                   { label: t.compare.topSpeed, get: (v) => v.specs.topSpeed },
-                  { label: t.compare.drivetrain, get: (v) => v.specs.drivetrain[lang] },
+                  { label: t.compare.drivetrain, get: (v) => v.specs.drivetrain[lang] || v.specs.drivetrain.en },
                   { label: t.compare.lease, get: (v) => `${fmtCurrency(v.monthlyLease)}${t.card.perMonth}` },
                 ];
                 return (
@@ -916,7 +835,7 @@ export default function AutomotivePortal() {
                       <div>{t.compare.feature}</div>
                       {units.map(v => (
                         <div key={v.id} style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "var(--ap-serif)", fontSize: "1rem", color: "var(--ap-t1)", fontWeight: 400, marginBottom: ".3rem" }}>{lang === "ar" ? v.nameAr : v.name}</div>
+                          <div style={{ fontFamily: "var(--ap-serif)", fontSize: "1rem", color: "var(--ap-t1)", fontWeight: 400, marginBottom: ".3rem" }}>{vName(v, lang)}</div>
                           <button className="ap-cmp-rm" onClick={() => toggleCompare(v.id)}>{t.compare.remove}</button>
                         </div>
                       ))}

@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useLanguage } from '../../i18n';
 import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
 import { usePortalRegion } from "../../services/portalRegion";
+import { usePortalVehicles } from "../../hooks/usePortalVehicles";
+import { COLLECTION_LABELS, STATUS_LABELS, vName } from "../../data/automotiveVehicleData";
 import './PublicShowroom.css';
 import SEO from '../../components/SEO/SEO';
 // ═══════════════════════════════════════════════════════════════════
@@ -10,20 +11,10 @@ import SEO from '../../components/SEO/SEO';
 // ═══════════════════════════════════════════════════════════════════
 // Theme: Light Cream (#FAFAF8) + Red accent (#e63946) + Charcoal (#1A1A1F)
 // Identity: Anonymous → Lead capture gate → Tracked lead
-// Mirrors MarketplacePortal pattern with automotive adaptations
-// Self-contained — zero external imports beyond react / react-router-dom
+// Region-aware via usePortalRegion + usePortalVehicles (4-region parity)
 // ═══════════════════════════════════════════════════════════════════
 
 import heroImg from "./assets/hero.jpg";
-import amgGt63Img from "./assets/amg-gt63.jpg";
-import amgC63Img from "./assets/amg-c63.jpg";
-import amgSl63Img from "./assets/amg-sl63.jpg";
-import g63Img from "./assets/g63.jpg";
-import gls600Img from "./assets/gls600.jpg";
-import gle53Img from "./assets/gle53.jpg";
-import s580Img from "./assets/s580.jpg";
-import maybachS680Img from "./assets/maybach-s680.jpg";
-import eqs580Img from "./assets/eqs580.jpg";
 
 // ─── SESSION & TRACKING ──────────────────────────────────────────
 const _sessionId = (() => {
@@ -59,11 +50,13 @@ const trackEvent = (event, data = {}) => {
   bridgeEventToFirestore(ev);
 };
 
-// ─── BILINGUAL ───────────────────────────────────────────────────
+// ─── i18n (inline — en/ar/es/fr) ─────────────────────────────────
+const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
 const LANG = {
   en: {
     dir: "ltr",
     nav: { brand: "Prestige Motors", lang: "العربية", register: "Register / Login", account: "My Account" },
+    crossnav: { hub: "Back to Demo Hub", vipPerf: "VIP Performance", vipFamily: "VIP Family", showroom: "Public Showroom", dashboard: "Dashboard", ai: "AI Pipeline", visitor: "Public Visitor" },
     hero: {
       badge: "Now Showing — 2025 Collection",
       title: "Prestige\nMotors",
@@ -83,8 +76,8 @@ const LANG = {
       cta: "Ready to Find Your Perfect Vehicle?",
       ctaSub: "Register for exclusive pricing, detailed specs, brochures, and VIP test drive appointments.",
     },
-    filters: { all: "All", performance: "AMG Performance", suv: "Luxury SUV", sedan: "Executive Sedan" },
-    card: { registerPrice: "Register for exact pricing", details: "View Details", getPricing: "Get Pricing" },
+    filters: { all: "All", performance: "AMG Performance", suv: "Luxury SUV", sedan: "Executive Sedan", ev: "Electric" },
+    card: { registerPrice: "Register for exact pricing", details: "View Details", getPricing: "Get Pricing", from: "From" },
     vehicleActions: { brochure: "Brochure", pricing: "Get Pricing", book: "Test Drive", compare: "Compare" },
     compareModal: {
       title: "Compare Vehicles", feature: "Feature", remove: "Remove",
@@ -96,6 +89,7 @@ const LANG = {
       title: "Get Full Access",
       subtitle: "Register to unlock exact pricing, detailed specs, brochures, and VIP test drive appointments.",
       name: "Full Name", email: "Email", phone: "Phone",
+      namePh: "e.g. Ahmed Al-Rashid", emailPh: "your@email.com", phonePh: "+971 XX XXX XXXX",
       submit: "Register & Continue",
       note: "Your information is protected. No spam, ever.",
     },
@@ -120,6 +114,7 @@ const LANG = {
   ar: {
     dir: "rtl",
     nav: { brand: "بريستيج موتورز", lang: "English", register: "تسجيل / دخول", account: "حسابي" },
+    crossnav: { hub: "العودة لمركز العرض", vipPerf: "VIP أداء", vipFamily: "VIP عائلي", showroom: "صالة العرض", dashboard: "لوحة التحكم", ai: "خط أنابيب الذكاء", visitor: "زائر عام" },
     hero: {
       badge: "معرض حالي — مجموعة ٢٠٢٥",
       title: "بريستيج\nموتورز",
@@ -139,8 +134,8 @@ const LANG = {
       cta: "مستعد لإيجاد سيارتك المثالية؟",
       ctaSub: "سجّل للحصول على أسعار حصرية ومواصفات تفصيلية وكتيبات ومواعيد تجربة قيادة VIP.",
     },
-    filters: { all: "الكل", performance: "AMG أداء", suv: "SUV فاخر", sedan: "سيدان تنفيذية" },
-    card: { registerPrice: "سجّل للحصول على السعر", details: "التفاصيل", getPricing: "احصل على السعر" },
+    filters: { all: "الكل", performance: "AMG أداء", suv: "SUV فاخر", sedan: "سيدان تنفيذية", ev: "كهربائية" },
+    card: { registerPrice: "سجّل للحصول على السعر", details: "التفاصيل", getPricing: "احصل على السعر", from: "من" },
     vehicleActions: { brochure: "الكتيب", pricing: "السعر الدقيق", book: "تجربة قيادة", compare: "مقارنة" },
     compareModal: {
       title: "مقارنة السيارات", feature: "الميزة", remove: "إزالة",
@@ -152,6 +147,7 @@ const LANG = {
       title: "احصل على وصول كامل",
       subtitle: "سجّل لفتح الأسعار الدقيقة والمواصفات والكتيبات ومواعيد تجربة القيادة.",
       name: "الاسم الكامل", email: "البريد", phone: "الهاتف",
+      namePh: "مثال: أحمد الراشد", emailPh: "بريدك@مثال.com", phonePh: "+٩٧١ XX XXX XXXX",
       submit: "سجّل واستمر",
       note: "معلوماتك محمية. لا رسائل مزعجة.",
     },
@@ -173,33 +169,129 @@ const LANG = {
     poweredBy: "مشغل بواسطة", registerNow: "سجل الآن", registerDone: "مسجل",
     detailCta: "سجّل للحصول على التفاصيل الكاملة",
   },
+  es: {
+    dir: "ltr",
+    nav: { brand: "Prestige Motors", lang: "English", register: "Registrarse / Entrar", account: "Mi Cuenta" },
+    crossnav: { hub: "Volver al Centro Demo", vipPerf: "VIP Rendimiento", vipFamily: "VIP Familiar", showroom: "Sala Pública", dashboard: "Panel", ai: "Pipeline IA", visitor: "Visitante Público" },
+    hero: {
+      badge: "En Exhibición — Colección 2025",
+      title: "Prestige\nMotors",
+      subtitle: "Explore nuestra colección curada de vehículos de alto rendimiento. Desde máquinas AMG hasta sedanes ejecutivos y SUV premium.",
+      cta: "Ver Colección",
+      ctaSecondary: "Reservar Prueba",
+    },
+    stats: [
+      { value: "9", label: "Modelos Premium" },
+      { value: "3", label: "Colecciones" },
+      { value: "24/7", label: "Navegación Online" },
+      { value: "VIP", label: "Pruebas de Manejo" },
+    ],
+    sections: {
+      vehicles: "Vehículos Disponibles", vehiclesSub: "Encuentre Su Máquina Perfecta",
+      why: "La Experiencia", whySub: "Por Qué Elegir Prestige Motors",
+      cta: "¿Listo para Encontrar Su Vehículo Perfecto?",
+      ctaSub: "Regístrese para precios exclusivos, especificaciones detalladas, folletos y citas VIP de prueba de manejo.",
+    },
+    filters: { all: "Todos", performance: "AMG Performance", suv: "SUV de Lujo", sedan: "Sedán Ejecutivo", ev: "Eléctrico" },
+    card: { registerPrice: "Regístrese para el precio exacto", details: "Ver Detalles", getPricing: "Obtener Precio", from: "Desde" },
+    vehicleActions: { brochure: "Folleto", pricing: "Obtener Precio", book: "Prueba", compare: "Comparar" },
+    compareModal: {
+      title: "Comparar Vehículos", feature: "Característica", remove: "Quitar",
+      price: "Precio", hp: "Potencia", accel: "0-100 km/h",
+      topSpeed: "Vel. Máxima", collection: "Colección", status: "Estado",
+      empty: "Añada vehículos para comparar con el botón comparar en las tarjetas.",
+    },
+    leadForm: {
+      title: "Obtenga Acceso Completo",
+      subtitle: "Regístrese para desbloquear precios exactos, especificaciones, folletos y citas VIP de prueba de manejo.",
+      name: "Nombre Completo", email: "Email", phone: "Teléfono",
+      namePh: "ej. Ahmed Al-Rashid", emailPh: "tu@email.com", phonePh: "+52 XX XXXX XXXX",
+      submit: "Registrarse y Continuar",
+      note: "Su información está protegida. Sin spam, nunca.",
+    },
+    whyCards: [
+      { icon: "🏆", title: "Asesores Expertos", desc: "Especialistas certificados Mercedes-AMG con décadas de experiencia." },
+      { icon: "✅", title: "Certificado Pre-Owned", desc: "Cada vehículo pasa una inspección de más de 200 puntos." },
+      { icon: "💳", title: "Financiación Flexible", desc: "Planes de pago a medida y opciones de financiación competitivas." },
+      { icon: "⭐", title: "Servicio VIP", desc: "Conserje dedicado, entrega a domicilio y soporte de por vida." },
+    ],
+    toast: {
+      brochure: "Folleto descargado",
+      pricing: "Detalles de precio enviados a su email",
+      booking: "Solicitud de prueba enviada — le contactaremos en 24 horas",
+      compare: "Añadido a comparación", compareRemove: "Eliminado de comparación",
+      registered: "¡Ya está registrado!",
+      leadCaptured: "¡Gracias! Procesando su solicitud...",
+    },
+    footer: "Listado público. Los precios mostrados son rangos iniciales. Regístrese para precios detallados y disponibilidad.",
+    poweredBy: "Desarrollado por", registerNow: "Registrarse", registerDone: "Registrado",
+    detailCta: "Regístrese para Detalles Completos",
+  },
+  fr: {
+    dir: "ltr",
+    nav: { brand: "Prestige Motors", lang: "English", register: "S'inscrire / Connexion", account: "Mon Compte" },
+    crossnav: { hub: "Retour au Hub Démo", vipPerf: "VIP Performance", vipFamily: "VIP Famille", showroom: "Salle Publique", dashboard: "Tableau de bord", ai: "Pipeline IA", visitor: "Visiteur Public" },
+    hero: {
+      badge: "À l'Affiche — Collection 2025",
+      title: "Prestige\nMotors",
+      subtitle: "Découvrez notre collection de véhicules de performance de luxe. Des machines AMG aux berlines exécutives et SUV premium.",
+      cta: "Voir la Collection",
+      ctaSecondary: "Réserver un Essai",
+    },
+    stats: [
+      { value: "9", label: "Modèles Premium" },
+      { value: "3", label: "Collections" },
+      { value: "24/7", label: "Navigation En Ligne" },
+      { value: "VIP", label: "Essais Routiers" },
+    ],
+    sections: {
+      vehicles: "Véhicules Disponibles", vehiclesSub: "Trouvez Votre Machine Parfaite",
+      why: "L'Expérience", whySub: "Pourquoi Choisir Prestige Motors",
+      cta: "Prêt à Trouver Votre Véhicule Parfait ?",
+      ctaSub: "Inscrivez-vous pour des prix exclusifs, des specs détaillées, des brochures et des rendez-vous d'essai VIP.",
+    },
+    filters: { all: "Tous", performance: "AMG Performance", suv: "SUV de Luxe", sedan: "Berline Exécutive", ev: "Électrique" },
+    card: { registerPrice: "Inscrivez-vous pour le prix exact", details: "Voir Détails", getPricing: "Obtenir le Prix", from: "À partir de" },
+    vehicleActions: { brochure: "Brochure", pricing: "Obtenir le Prix", book: "Essai", compare: "Comparer" },
+    compareModal: {
+      title: "Comparer les Véhicules", feature: "Caractéristique", remove: "Retirer",
+      price: "Prix", hp: "Puissance", accel: "0-100 km/h",
+      topSpeed: "Vitesse Max", collection: "Collection", status: "Statut",
+      empty: "Ajoutez des véhicules à comparer via le bouton comparer sur les cartes.",
+    },
+    leadForm: {
+      title: "Obtenez un Accès Complet",
+      subtitle: "Inscrivez-vous pour débloquer les prix exacts, les specs, les brochures et les rendez-vous d'essai VIP.",
+      name: "Nom Complet", email: "Email", phone: "Téléphone",
+      namePh: "ex. Ahmed Al-Rashid", emailPh: "votre@email.com", phonePh: "+1 XXX XXX XXXX",
+      submit: "S'inscrire et Continuer",
+      note: "Vos informations sont protégées. Jamais de spam.",
+    },
+    whyCards: [
+      { icon: "🏆", title: "Conseillers Experts", desc: "Spécialistes Mercedes-AMG certifiés avec des décennies d'expérience." },
+      { icon: "✅", title: "Certifié Pre-Owned", desc: "Chaque véhicule subit une inspection de plus de 200 points." },
+      { icon: "💳", title: "Financement Flexible", desc: "Plans de paiement sur mesure et options de financement compétitives." },
+      { icon: "⭐", title: "Service VIP", desc: "Conciergerie dédiée, livraison à domicile et support à vie." },
+    ],
+    toast: {
+      brochure: "Brochure téléchargée",
+      pricing: "Détails du prix envoyés à votre email",
+      booking: "Demande d'essai envoyée — nous vous contacterons sous 24 heures",
+      compare: "Ajouté à la comparaison", compareRemove: "Retiré de la comparaison",
+      registered: "Vous êtes déjà inscrit !",
+      leadCaptured: "Merci ! Traitement de votre demande...",
+    },
+    footer: "Annonce publique. Les prix affichés sont des fourchettes de départ. Inscrivez-vous pour les prix détaillés et la disponibilité.",
+    poweredBy: "Propulsé par", registerNow: "S'inscrire", registerDone: "Inscrit",
+    detailCta: "Inscrivez-vous pour les Détails Complets",
+  },
 };
-
-// ─── VEHICLE DATA ────────────────────────────────────────────────
-const VEHICLES = [
-  { id: "amg-gt63", name: { en: "AMG GT 63 S E Performance", ar: "AMG GT 63 S E بيرفورمانس" }, collection: "performance", image: amgGt63Img, priceRange: { en: "From $240K", ar: "من ٢٤٠ ألف$" }, specs: { hp: "831 HP", accel: "2.9s", topSpeed: "316 km/h" }, status: "available", statusColor: "#2A9D5C" },
-  { id: "amg-c63", name: { en: "AMG C 63 S E Performance", ar: "AMG C 63 S E بيرفورمانس" }, collection: "performance", image: amgC63Img, priceRange: { en: "From $120K", ar: "من ١٢٠ ألف$" }, specs: { hp: "671 HP", accel: "3.4s", topSpeed: "280 km/h" }, status: "available", statusColor: "#2A9D5C" },
-  { id: "amg-sl63", name: { en: "AMG SL 63 4MATIC+", ar: "AMG SL 63 4MATIC+" }, collection: "performance", image: amgSl63Img, priceRange: { en: "From $195K", ar: "من ١٩٥ ألف$" }, specs: { hp: "577 HP", accel: "3.6s", topSpeed: "315 km/h" }, status: "available", statusColor: "#2A9D5C" },
-  { id: "g63", name: { en: "Mercedes-AMG G 63", ar: "مرسيدس-AMG G 63" }, collection: "suv", image: g63Img, priceRange: { en: "From $220K", ar: "من ٢٢٠ ألف$" }, specs: { hp: "577 HP", accel: "4.5s", topSpeed: "220 km/h" }, status: "available", statusColor: "#2A9D5C" },
-  { id: "gls600", name: { en: "Mercedes-Maybach GLS 600", ar: "مرسيدس-مايباخ GLS 600" }, collection: "suv", image: gls600Img, priceRange: { en: "From $280K", ar: "من ٢٨٠ ألف$" }, specs: { hp: "550 HP", accel: "4.9s", topSpeed: "250 km/h" }, status: "reserved", statusColor: "#C1121F" },
-  { id: "gle53", name: { en: "AMG GLE 53 Coupe", ar: "AMG GLE 53 كوبيه" }, collection: "suv", image: gle53Img, priceRange: { en: "From $130K", ar: "من ١٣٠ ألف$" }, specs: { hp: "429 HP", accel: "5.3s", topSpeed: "250 km/h" }, status: "available", statusColor: "#2A9D5C" },
-  { id: "s580", name: { en: "Mercedes-Benz S 580", ar: "مرسيدس-بنز S 580" }, collection: "sedan", image: s580Img, priceRange: { en: "From $170K", ar: "من ١٧٠ ألف$" }, specs: { hp: "496 HP", accel: "4.4s", topSpeed: "250 km/h" }, status: "available", statusColor: "#2A9D5C" },
-  { id: "maybach-s680", name: { en: "Mercedes-Maybach S 680", ar: "مرسيدس-مايباخ S 680" }, collection: "sedan", image: maybachS680Img, priceRange: { en: "From $375K", ar: "من ٣٧٥ ألف$" }, specs: { hp: "621 HP", accel: "4.5s", topSpeed: "250 km/h" }, status: "available", statusColor: "#2A9D5C" },
-  { id: "eqs580", name: { en: "EQS 580 4MATIC", ar: "EQS 580 4MATIC" }, collection: "sedan", image: eqs580Img, priceRange: { en: "From $160K", ar: "من ١٦٠ ألف$" }, specs: { hp: "516 HP", accel: "4.1s", topSpeed: "210 km/h" }, status: "available", statusColor: "#2A9D5C" },
-];
-
-const COLLECTION_LABELS = {
-  performance: { en: "AMG Performance", ar: "AMG أداء" },
-  suv: { en: "Luxury SUV", ar: "SUV فاخر" },
-  sedan: { en: "Executive Sedan", ar: "سيدان تنفيذية" },
-};
-
-const STATUS_LABELS = { available: { en: "Available", ar: "متاح" }, reserved: { en: "Reserved", ar: "محجوز" } };
 
 // ─── COMPONENT ───────────────────────────────────────────────────
 export default function PublicShowroom() {
-  const { lang } = useLanguage();
-  const { projectName } = usePortalRegion("automotive", lang);
+  const [lang, setLang] = useState("en");
+  const { projectName, fmtCurrency, region } = usePortalRegion("automotive", lang);
+  const vehicles = usePortalVehicles("showroom");
   const [scrolled, setScrolled] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [compareList, setCompareList] = useState([]);
@@ -212,7 +304,15 @@ export default function PublicShowroom() {
   const [filter, setFilter] = useState("all");
 
   const vehRef = useRef(null);
-  const t = LANG[lang];
+  const t = LANG[lang] || LANG.en;
+
+  const nextLang = region.languages.find((l) => l !== lang) || region.languages[0];
+  const toggleLang = () => {
+    setLang(nextLang);
+    document.documentElement.lang = nextLang;
+    document.documentElement.dir = nextLang === "ar" ? "rtl" : "ltr";
+    trackEvent("language_switch", { to: nextLang });
+  };
 
   // Scroll listener
   useEffect(() => { const fn = () => setScrolled(window.scrollY > 60); window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn); }, []);
@@ -267,19 +367,24 @@ export default function PublicShowroom() {
     setSelectedVehicle(v);
     trackEvent("vehicle_view", {
       vehicleId: v.id,
-      vehicleName: v.name.en,
-      unitName: v.name.en,
+      vehicleName: vName(v, lang),
+      unitName: vName(v, lang),
       tower: v.collection,
       unitType: v.collection,
     });
   };
-  const reqPricing = (v) => requireLead(() => { trackEvent("pricing_request", { vehicleId: v.id, vehicleName: v.name.en }); showToastMsg(t.toast.pricing); });
-  const openBrochure = (v) => requireLead(() => { trackEvent("brochure_download", { vehicleId: v.id, vehicleName: v.name.en }); showToastMsg(t.toast.brochure); });
-  const handleBooking = (v) => requireLead(() => { trackEvent("test_drive_request", { vehicleId: v?.id || "general", name: v?.name?.en || "General Test Drive" }); showToastMsg(t.toast.booking); });
+  const reqPricing = (v) => requireLead(() => { trackEvent("pricing_request", { vehicleId: v.id, vehicleName: vName(v, lang) }); showToastMsg(t.toast.pricing); });
+  const openBrochure = (v) => requireLead(() => { trackEvent("brochure_download", { vehicleId: v.id, vehicleName: vName(v, lang) }); showToastMsg(t.toast.brochure); });
+  const handleBooking = (v) => requireLead(() => { trackEvent("test_drive_request", { vehicleId: v?.id || "general", name: v ? vName(v, lang) : "General Test Drive" }); showToastMsg(t.toast.booking); });
   const openCompareModal = () => requireLead(() => { setShowCompare(true); });
   const closeAll = () => { setSelectedVehicle(null); setShowCompare(false); };
 
-  const filteredVehicles = filter === "all" ? VEHICLES : VEHICLES.filter(v => v.collection === filter);
+  const filteredVehicles = filter === "all" ? vehicles : vehicles.filter(v => v.collection === filter);
+  const activeCollections = [...new Set(vehicles.map((v) => v.collection))];
+  const filterTabs = [
+    { key: "all", label: t.filters.all },
+    ...activeCollections.map((key) => ({ key, label: t.filters[key] || COLLECTION_LABELS[key]?.[lang] || key })),
+  ];
 
   // ═══════════════════════════════════════════════════════════════
   return (
@@ -295,6 +400,7 @@ export default function PublicShowroom() {
               {t.vehicleActions.compare}<span className="ps-cmp-count">{compareList.length}</span>
             </button>
           )}
+          <button className="ps-navbtn" onClick={toggleLang}>{LANG_LABEL[nextLang]}</button>
           <button className="ps-navbtn-dark" onClick={() => { if (!lead) setShowLeadForm(true); else showToastMsg(t.toast.registered); }}>
             {lead ? t.nav.account : t.nav.register}
           </button>
@@ -303,13 +409,13 @@ export default function PublicShowroom() {
 
       {/* CROSS-NAV */}
       <div className="ps-crossnav" style={{ top: scrolled ? "52px" : "-40px" }}>
-        <Link to="/automotive/demo">&#8592; Back to Demo Hub</Link>
-        <Link to="/automotive/demo/khalid">VIP Performance</Link>
-        <Link to="/automotive/demo/sultan">VIP Family</Link>
-        <span className="active">Public Showroom</span>
-        <Link to="/automotive/dashboard">Dashboard</Link>
-        <Link to="/automotive/demo/ai">AI Pipeline</Link>
-        <span className="crossnav-persona">🌐 Public Visitor</span>
+        <Link to="/automotive/demo">&#8592; {t.crossnav.hub}</Link>
+        <Link to="/automotive/demo/khalid">{t.crossnav.vipPerf}</Link>
+        <Link to="/automotive/demo/sultan">{t.crossnav.vipFamily}</Link>
+        <span className="active">{t.crossnav.showroom}</span>
+        <Link to="/automotive/dashboard">{t.crossnav.dashboard}</Link>
+        <Link to="/automotive/demo/ai">{t.crossnav.ai}</Link>
+        <span className="crossnav-persona">🌐 {t.crossnav.visitor}</span>
       </div>
 
       {/* HERO */}
@@ -331,7 +437,7 @@ export default function PublicShowroom() {
       <div className="ps-stats">
         {t.stats.map((s, i) => (
           <div className="ps-stat" key={i}>
-            <div className="ps-stat-v">{s.value}</div>
+            <div className="ps-stat-v">{i === 0 ? String(vehicles.length) : i === 1 ? String(activeCollections.length) : s.value}</div>
             <div className="ps-stat-l">{s.label}</div>
           </div>
         ))}
@@ -343,13 +449,8 @@ export default function PublicShowroom() {
           <span className="ps-sl">{t.sections.vehicles}</span>
           <h2 className="ps-st">{t.sections.vehiclesSub}</h2>
           <div className="ps-filters">
-            {[
-              { key: "all", l: t.filters.all },
-              { key: "performance", l: t.filters.performance },
-              { key: "suv", l: t.filters.suv },
-              { key: "sedan", l: t.filters.sedan },
-            ].map(f => (
-              <button key={f.key} className={`ps-ftab ${filter === f.key ? "on" : "off"}`} onClick={() => { setFilter(f.key); trackEvent("filter_vehicles", { filter: f.key }); }}>{f.l}</button>
+            {filterTabs.map(f => (
+              <button key={f.key} className={`ps-ftab ${filter === f.key ? "on" : "off"}`} onClick={() => { setFilter(f.key); trackEvent("filter_vehicles", { filter: f.key }); }}>{f.label}</button>
             ))}
           </div>
         </div>
@@ -357,18 +458,18 @@ export default function PublicShowroom() {
           {filteredVehicles.map((v) => (
             <div className="ps-card ps-rv" key={v.id} onClick={() => openDetail(v)}>
               <div className="ps-card-img">
-                <img src={v.image} alt={v.name[lang]} loading="lazy" />
+                <img src={v.image} alt={vName(v, lang)} loading="lazy" />
                 <div className="ps-card-fbadge">{COLLECTION_LABELS[v.collection]?.[lang]}</div>
                 <div className="ps-card-status" style={{ background: v.statusColor }}>{STATUS_LABELS[v.status]?.[lang]}</div>
               </div>
               <div className="ps-card-body">
-                <h3 className="ps-card-name">{v.name[lang]}</h3>
+                <h3 className="ps-card-name">{vName(v, lang)}</h3>
                 <div className="ps-card-specs">
                   <span>{v.specs.hp}</span>
                   <span>0-100: {v.specs.accel}</span>
                   <span>{v.specs.topSpeed}</span>
                 </div>
-                <div className="ps-card-price">{v.priceRange[lang]}</div>
+                <div className="ps-card-price">{t.card.from} {fmtCurrency(v.priceLocal)}</div>
                 <div className="ps-card-hint">{t.card.registerPrice}</div>
               </div>
               <div className="ps-card-acts" onClick={(e) => e.stopPropagation()}>
@@ -433,16 +534,16 @@ export default function PublicShowroom() {
           <div className="ps-modal" onClick={(e) => e.stopPropagation()}>
             <button className="ps-modal-x" onClick={closeAll}>&#10005;</button>
             <div style={{ height: 300, overflow: "hidden" }}>
-              <img src={selectedVehicle.image} alt={selectedVehicle.name[lang]} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src={selectedVehicle.image} alt={vName(selectedVehicle, lang)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
             <div className="ps-modal-body">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "2rem", marginBottom: "2rem", flexWrap: "wrap" }}>
                 <div>
-                  <h2 style={{ fontFamily: "var(--ps-serif)", fontSize: "2.2rem", fontWeight: 500, color: "var(--ps-t1)" }}>{selectedVehicle.name[lang]}</h2>
+                  <h2 style={{ fontFamily: "var(--ps-serif)", fontSize: "2.2rem", fontWeight: 500, color: "var(--ps-t1)" }}>{vName(selectedVehicle, lang)}</h2>
                   <p style={{ color: "var(--ps-t3)", fontSize: ".82rem", letterSpacing: ".1em", textTransform: "uppercase" }}>{COLLECTION_LABELS[selectedVehicle.collection]?.[lang]}</p>
                 </div>
                 <div style={{ textAlign: lang === "ar" ? "start" : "end" }}>
-                  <div style={{ fontFamily: "var(--ps-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--ps-t1)" }}>{selectedVehicle.priceRange[lang]}</div>
+                  <div style={{ fontFamily: "var(--ps-serif)", fontSize: "1.8rem", fontWeight: 500, color: "var(--ps-t1)" }}>{t.card.from} {fmtCurrency(selectedVehicle.priceLocal)}</div>
                   <div style={{ fontSize: ".78rem", color: "var(--ps-t3)" }}>{t.card.registerPrice}</div>
                 </div>
               </div>
@@ -450,10 +551,10 @@ export default function PublicShowroom() {
               {/* Specs Grid */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.5rem", marginBottom: "2rem" }}>
                 {[
-                  { l: lang === "en" ? "Horsepower" : "القوة الحصانية", v: selectedVehicle.specs.hp },
-                  { l: lang === "en" ? "0-100 km/h" : "٠-١٠٠ كم/س", v: selectedVehicle.specs.accel },
-                  { l: lang === "en" ? "Top Speed" : "السرعة القصوى", v: selectedVehicle.specs.topSpeed },
-                  { l: lang === "en" ? "Status" : "الحالة", v: STATUS_LABELS[selectedVehicle.status]?.[lang], isSt: true },
+                  { l: t.compareModal.hp, v: selectedVehicle.specs.hp },
+                  { l: t.compareModal.accel, v: selectedVehicle.specs.accel },
+                  { l: t.compareModal.topSpeed, v: selectedVehicle.specs.topSpeed },
+                  { l: t.compareModal.status, v: STATUS_LABELS[selectedVehicle.status]?.[lang], isSt: true },
                 ].map((item, i) => (
                   <div key={i} style={{ padding: "1rem", border: "1px solid var(--ps-bdr)", borderRadius: "6px", textAlign: "center" }}>
                     <div style={{ fontSize: ".65rem", letterSpacing: ".12em", textTransform: "uppercase", color: "var(--ps-t3)", marginBottom: ".3rem" }}>{item.l}</div>
@@ -487,10 +588,10 @@ export default function PublicShowroom() {
               {compareList.length === 0 ? (
                 <div className="ps-cmp-empty">{t.compareModal.empty}</div>
               ) : (() => {
-                const vehicles = compareList.map((id) => VEHICLES.find((v) => v.id === id)).filter(Boolean);
-                const cols = `180px repeat(${vehicles.length}, 1fr)`;
+                const cmpVehicles = compareList.map((id) => vehicles.find((v) => v.id === id)).filter(Boolean);
+                const cols = `180px repeat(${cmpVehicles.length}, 1fr)`;
                 const rows = [
-                  { label: t.compareModal.price, get: (v) => v.priceRange[lang] },
+                  { label: t.compareModal.price, get: (v) => `${t.card.from} ${fmtCurrency(v.priceLocal)}` },
                   { label: t.compareModal.hp, get: (v) => v.specs.hp },
                   { label: t.compareModal.accel, get: (v) => v.specs.accel },
                   { label: t.compareModal.topSpeed, get: (v) => v.specs.topSpeed },
@@ -502,9 +603,9 @@ export default function PublicShowroom() {
                     {/* Header row */}
                     <div className="ps-cmp-row hdr" style={{ gridTemplateColumns: cols }}>
                       <div>{t.compareModal.feature}</div>
-                      {vehicles.map((v) => (
+                      {cmpVehicles.map((v) => (
                         <div key={v.id} style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "var(--ps-serif)", fontSize: ".95rem", fontWeight: 500, color: "var(--ps-t1)", marginBottom: ".3rem" }}>{v.name[lang]}</div>
+                          <div style={{ fontFamily: "var(--ps-serif)", fontSize: ".95rem", fontWeight: 500, color: "var(--ps-t1)", marginBottom: ".3rem" }}>{vName(v, lang)}</div>
                           <button className="ps-cmp-rm" onClick={() => toggleCompare(v.id)}>{t.compareModal.remove}</button>
                         </div>
                       ))}
@@ -512,9 +613,9 @@ export default function PublicShowroom() {
                     {/* Image row */}
                     <div className="ps-cmp-row" style={{ gridTemplateColumns: cols }}>
                       <div />
-                      {vehicles.map((v) => (
+                      {cmpVehicles.map((v) => (
                         <div key={v.id} style={{ textAlign: "center", padding: ".5rem" }}>
-                          <img src={v.image} alt={v.name[lang]} style={{ width: "100%", maxHeight: "120px", objectFit: "cover", borderRadius: "6px" }} />
+                          <img src={v.image} alt={vName(v, lang)} style={{ width: "100%", maxHeight: "120px", objectFit: "cover", borderRadius: "6px" }} />
                         </div>
                       ))}
                     </div>
@@ -522,7 +623,7 @@ export default function PublicShowroom() {
                     {rows.map((row, i) => (
                       <div className="ps-cmp-row" key={i} style={{ gridTemplateColumns: cols }}>
                         <div className="ps-cmp-label">{row.label}</div>
-                        {vehicles.map((v) => <div className="ps-cmp-val" key={v.id}>{row.get(v)}</div>)}
+                        {cmpVehicles.map((v) => <div className="ps-cmp-val" key={v.id}>{row.get(v)}</div>)}
                       </div>
                     ))}
                   </>
@@ -542,15 +643,15 @@ export default function PublicShowroom() {
             <form onSubmit={handleLeadSubmit}>
               <div style={{ marginBottom: "1.2rem" }}>
                 <label className="ps-lead-label">{t.leadForm.name}</label>
-                <input className="ps-lead-input" name="leadName" required placeholder={lang === "en" ? "e.g. Ahmed Al-Rashid" : "مثال: أحمد الراشد"} />
+                <input className="ps-lead-input" name="leadName" required placeholder={t.leadForm.namePh} />
               </div>
               <div style={{ marginBottom: "1.2rem" }}>
                 <label className="ps-lead-label">{t.leadForm.email}</label>
-                <input className="ps-lead-input" name="leadEmail" type="email" required placeholder={lang === "en" ? "your@email.com" : "بريدك@مثال.com"} />
+                <input className="ps-lead-input" name="leadEmail" type="email" required placeholder={t.leadForm.emailPh} />
               </div>
               <div style={{ marginBottom: "2rem" }}>
                 <label className="ps-lead-label">{t.leadForm.phone}</label>
-                <input className="ps-lead-input" name="leadPhone" type="tel" placeholder={lang === "en" ? "+971 XX XXX XXXX" : "+٩٧١ XX XXX XXXX"} />
+                <input className="ps-lead-input" name="leadPhone" type="tel" placeholder={t.leadForm.phonePh} />
               </div>
               <button className="ps-btn-accent" type="submit" style={{ width: "100%", justifyContent: "center" }}>{t.leadForm.submit}</button>
               <p style={{ textAlign: "center", fontSize: ".72rem", color: "var(--ps-t3)", marginTop: "1rem" }}>{t.leadForm.note}</p>
