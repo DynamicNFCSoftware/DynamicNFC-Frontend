@@ -1,27 +1,29 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-07-03 — **Phase 2b.Auto SHIPPED + MERGED + DEPLOYED + AUDITED.** PR #9 squash merge `e582112c` → main → deploy. 3 automotive portal 4 region × 4 dil parity — `automotiveVehicleData.js` (region-keyed VEHICLES × 36) + `automotivePersonas.js` + `usePortalVehicles` hook + inline LANG ES/FR + region-aware lang cycle + `fmtCurrency`. **19 asset jpg EKLENDİ** (assets klasörü 34 jpg — önceki "placeholder TODO" notu superseded). Claude repo-audit PASSED. 3 sektörden 2'si (RE + Auto) artık 4 region × 4 dil full parity.
-**Session:** Cowork (2026-07-02/03) — 1 aylık aradan dönüş → handoff + repo full re-audit → Phase 2b.Auto directive'inde 4 stale hata bulundu + düzeltildi (var olmayan `contexts/RegionContext` import → `hooks/useRegion`; var olmayan `i18n/portals/*.i18n.js` dosyaları → inline LANG blokları; gereksiz yeni `formatPrice` helper → mevcut `fmtCurrency` reuse; region-aware dil cycle butonu scope'a eklendi) → Cursor Cloud Agent execute (PR #9) → Oguzhan 19 araç görseli ekledi → squash merge `e582112c` + deploy → Claude repo-level audit (grep proofs + 36 araç sayımı + git blob doğrulama) → sign-off. Tek local bulgu: AutomotivePortal.jsx working-tree NUL-byte tail corruption (git blob temiz, `git checkout --` ile restore edilecek).
-**Author of this update:** Claude (Cowork)
+**Last updated:** 2026-07-03 — **Sprint C SHIPPED + MERGED.** PR #11 squash merge `bc35d56b` → main. (A) 6 portal inline `trackEvent` → `services/portalTrack.js`; tracking persona region-aware (USA VIP → "James Mitchell", Gulf → "Khalid Al-Rashid"). (B) Phase 2d.RE — `UNIT_EXTRAS` → canonical `UNIT_MEDIA` (4 dil floorPlan etiketleri), `tr()` emekli. Grep proofs 5/5 + Playwright runtime QA 9/9. CI PASS.
+**Session:** Cursor (2026-07-03) — Sprint C execute → 2 atomik commit → PR #11 → Oguzhan merge `bc35d56b`.
+**Author of this update:** Cursor
 
 ---
 
-## ▶︎ RESUME HERE — Sprint A + B kapandı (2026-07-03 EOD)
+## ▶︎ RESUME HERE — Sprint C kapandı (2026-07-03)
 
-**Bugün 3 iş bitti:**
-
-1. **Yapı Raporu** — `docs/YAPI_RAPORU_2026-07-03.md`. Full codebase audit (3 paralel keşif ajanı + manuel doğrulama). Sağlık 7.5/10. Yol haritası: A (pitch deck) → B (hardening) → C (Phase 2d + tracking konsolidasyonu) → D (Yacht) → E (FAZ 5).
-
-2. **Sprint B — Hardening SHIPPED + AUDITED.** PR #10 `05a5fd07`. `functions/functions/` duplicate + 2 ölü dosya silindi (-812L), `.github/workflows/ci.yml` kuruldu (build+test on PR/main), vite proxy `dynamicnfc.ca`'ya döndü, CLAUDE.md drift düzeltmeleri. **CI ilk gününde gerçek bug yakaladı:** `NFCCards/Assets→assets` case-sensitivity (Linux runner). Oguzhan manuel: **Firestore Delete Protection + PITR AÇIK** (Console teyitli). Audit origin/main üzerinde PASS — grep proofs 4/4.
-
-3. **Sprint A — Pitch deck SHIPPED.** `DynamicNFC_Pitch_2026_USA.pptx` (11 slayt, EN, çok sektörlü). Tüm görseller canlı siteden headless Chromium ile çekildi (playwright, sandbox). **USA-first revizyon:** Gulf jeopolitik nedenle arka plana alındı — S4 James Mitchell / Skyline Towers, S6 Premier Auto Group (Marcus Sterling) + Vancouver, S7 bölge sırası USA·Canada·Mexico·Gulf, S11 persona-nötr kapanış. Dashboard screenshot'ı nötr crop'landı (legacy dashboard region-aware değil — FAZ 5 gerekçesi +1).
-
-**Not:** Legacy CRM dashboard (`/enterprise/crmdemo/dashboard`) region-aware DEĞİL — hangi region seçilirse seçilsin Al Noor markalı render ediyor. FAZ 5'te `/unified`'a redirect bunu da çözer; o zamana dek deck'te crop'lu versiyon kullanılıyor.
+**Sprint C — Phase 2d.RE + portalTrack SHIPPED + MERGED.** PR #11 `bc35d56b`. `portalTrack.js` helper (6 portal), region-aware tracking persona fix, `UNIT_MEDIA` canonical (3 RE portal), `tr()` emekli. -128L net. Grep 5/5 + runtime QA 9/9 + CI PASS.
 
 ### Next session first move
-1. Local sync: `git pull` + (hâlâ duruyorsa) `git checkout -- frontend/src/pages/AutomotiveDemo/AutomotivePortal.jsx` (NUL-tail fix)
-2. **Sprint C directive yazımı** — Phase 2d.RE cleanup (`tr()` + `UNIT_EXTRAS` + floorPlan/payment canonical) + 6 portal inline `trackEvent` → `services/portalTrack.js` konsolidasyonu. Yacht'tan ÖNCE (temiz pattern'le doğsun).
-3. Sonrası: Sprint D Yacht portalları → Sprint E FAZ 5 → pilot outreach (deck hazır).
+1. **Deploy** — `cd frontend && npm run build` → `firebase deploy --only hosting` (root'tan). Bundle hash diff prod'a karşı.
+2. **Sprint D — Yacht demo portalları** — `/yacht/demo/*` routes, region-aware day-one (`YachtGateway`, VIP, Showroom, AI).
+3. **Sprint E — FAZ 5** — legacy dashboard retire (`/enterprise/crmdemo/dashboard`, `/automotive/dashboard` → `/unified` redirect); AutoDashboard `nameAr` kalıntısı gider.
+4. Pilot outreach (deck hazır, tracking artık doğru region persona raporluyor).
+5. (Duruyorsa) local NUL-tail fix: `git checkout -- frontend/src/pages/AutomotiveDemo/AutomotivePortal.jsx`
+
+---
+
+## ✅ CLOSED — Sprint A + B (2026-07-03, aynı gün)
+
+1. **Yapı Raporu** — `docs/YAPI_RAPORU_2026-07-03.md`: full codebase audit (3 paralel keşif ajanı), sağlık 7.5/10, yol haritası A→E. Bulgular: blinq CSS efsanesi ölü (4KB), gerçek ağırlık `ordercard.css` 388KB global import; Sentry zaten init'li; 9 function (7 değil); legacy CRM dashboard region-aware DEĞİL (hep Al Noor render eder — FAZ 5 gerekçesi).
+2. **Sprint B — Hardening** — PR #10 `05a5fd07`: `functions/functions/` duplicate + ölü dosyalar silindi (-812L), `.github/workflows/ci.yml` kuruldu (ilk gün `NFCCards/Assets→assets` case bug'ı yakaladı), vite proxy `dynamicnfc.ca`. Oguzhan manuel: **Firestore Delete Protection + PITR AÇIK.** Audit PASS.
+3. **Sprint A — Pitch deck** — `DynamicNFC_Pitch_2026_USA.pptx` (11 slayt EN, çok sektörlü). Görseller canlı siteden playwright/headless-chromium ile (sandbox pipeline: `ud-region` + consent localStorage inject). **Karar: USA-first — Gulf jeopolitik nedenle arka planda** (S4 James Mitchell/Skyline Towers, S6 Premier Auto + Vancouver, bölge sırası USA·Canada·Mexico·Gulf). Bu öncelik gelecek satış malzemelerinde de geçerli.
 
 ---
 
