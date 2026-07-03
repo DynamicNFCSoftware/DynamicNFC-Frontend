@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import { trackPortalEvent } from "../../services/portalTrack";
 import { usePortalRegion } from "../../services/portalRegion";
 import { usePortalVehicles } from "../../hooks/usePortalVehicles";
 import { COLLECTION_LABELS, STATUS_LABELS, vName } from "../../data/automotiveVehicleData";
@@ -22,34 +22,6 @@ const _sessionId = (() => {
   if (!sid) { sid = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`; try { sessionStorage.setItem("dnfc_session", sid); } catch(e) {} }
   return sid;
 })();
-const _bc = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("dnfc_tracking") : null;
-const _source = "direct";
-let _leadInfo = null;
-
-const trackEvent = (event, data = {}) => {
-  const _deviceType = /Mobi|Android/i.test(navigator.userAgent) ? "mobile"
-    : /Tablet|iPad/i.test(navigator.userAgent) ? "tablet"
-    : "desktop";
-  const ev = {
-    id: `evt_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-    timestamp: new Date().toISOString(),
-    sessionId: _sessionId,
-    portal: "automotive",
-    portalType: _leadInfo ? "lead" : "anonymous",
-    source: _source,
-    deviceType: _deviceType,
-    ...(_leadInfo ? { leadName: _leadInfo.name, leadEmail: _leadInfo.email } : {}),
-    event, ...data,
-  };
-  try {
-    const events = JSON.parse(localStorage.getItem("dnfc_events") || "[]");
-    events.push(ev);
-    localStorage.setItem("dnfc_events", JSON.stringify(events));
-  } catch(e) {}
-  _bc?.postMessage(ev);
-  bridgeEventToFirestore(ev);
-};
-
 // ─── i18n (inline — en/ar/es/fr) ─────────────────────────────────
 const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
 const LANG = {
@@ -303,6 +275,22 @@ export default function PublicShowroom() {
   const [pendingAction, setPendingAction] = useState(null);
   const [filter, setFilter] = useState("all");
 
+  const trackEvent = useCallback(
+    (event, data = {}) => trackPortalEvent(
+      lead ? "lead" : "anonymous",
+      null,
+      event,
+      {
+        sessionId: _sessionId,
+        portal: "automotive",
+        source: "direct",
+        ...(lead ? { leadName: lead.name, leadEmail: lead.email } : {}),
+        ...data,
+      }
+    ),
+    [lead]
+  );
+
   const vehRef = useRef(null);
   const t = LANG[lang] || LANG.en;
 
@@ -344,7 +332,6 @@ export default function PublicShowroom() {
     const phone = e.target.leadPhone.value;
     const newLead = { name, email, phone };
     setLead(newLead);
-    _leadInfo = newLead;
     setShowLeadForm(false);
     trackEvent("lead_captured", { portalType: "lead", leadName: name, leadEmail: email });
     showToastMsg(t.toast.leadCaptured);

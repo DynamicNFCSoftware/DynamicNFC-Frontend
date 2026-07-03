@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import { trackPortalEvent } from "../../services/portalTrack";
 import { usePortalRegion } from "../../services/portalRegion";
 import { usePortalVehicles } from "../../hooks/usePortalVehicles";
 import { COLLECTIONS, vName, vColorName } from "../../data/automotiveVehicleData";
@@ -17,37 +17,6 @@ import heroImg from "./assets/hero.jpg";
 //           Finance Calculator, Comparison, Test Drive Booking, Toasts
 //           Family Features badges, Cross-nav bar
 // ═══════════════════════════════════════════════════════════════════
-
-// ─── TRACKING ENGINE ──────────────────────────────────────────────
-const _bc = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("dnfc_tracking") : null;
-const _source = "nfc";
-
-const trackEvent = (event, data = {}) => {
-  const _deviceType = /Mobi|Android/i.test(navigator.userAgent) ? "mobile"
-    : /Tablet|iPad/i.test(navigator.userAgent) ? "tablet"
-    : "desktop";
-  const ev = {
-    id: `evt_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-    timestamp: new Date().toISOString(),
-    portalType: "vip",
-    vipId: "SD-002",
-    vipName: "Sultan Al-Dhaheri",
-    portal: "automotive",
-    source: _source,
-    deviceType: _deviceType,
-    event,
-    ...data,
-  };
-  try {
-    let events = JSON.parse(localStorage.getItem("dnfc_events") || "[]");
-    events.push(ev);
-    if (events.length > 200) events = events.slice(-200);
-    localStorage.setItem("dnfc_events", JSON.stringify(events));
-  } catch (e) {}
-  _bc?.postMessage(ev);
-  bridgeEventToFirestore(ev);
-  return ev;
-};
 
 // ─── i18n (inline — en/ar/es/fr) ─────────────────────────────────
 const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
@@ -356,6 +325,15 @@ export default function SultanPortal() {
   const { projectName, fmtCurrency, regionId, region } = usePortalRegion("automotive", lang);
   const vehicles = usePortalVehicles("sultan");
   const secondaryPersona = getAutoPersona(regionId, "secondary");
+  const trackEvent = useCallback(
+    (event, data) => trackPortalEvent(
+      "vip",
+      { id: `${regionId}-auto-sultan`, name: getPersonaName(secondaryPersona, lang) },
+      event,
+      { portal: "automotive", ...data }
+    ),
+    [regionId, secondaryPersona, lang]
+  );
   const [scrolled, setScrolled] = useState(false);
   const [filter, setFilter] = useState("all");
   const [selectedVehicle, setSelectedVehicle] = useState(null);
