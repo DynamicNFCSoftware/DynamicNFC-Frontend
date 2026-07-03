@@ -1,12 +1,35 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-07-03 — Cursor session: **Phase 2b.Auto shipped** (branch `cursor/phase-2b-auto-4region-parity`). 3 automotive portal (AutomotivePortal / SultanPortal / PublicShowroom) 4 region × 4 dil parity — `automotiveVehicleData.js` (region-keyed VEHICLES × 36) + `automotivePersonas.js` + `usePortalVehicles` hook + inline LANG ES/FR + region-aware lang cycle + `priceLocal`/`fmtCurrency` (showroom). Build PASS. Runtime QA: ES Mexico showroom + FR Canada VIP — no ErrorBoundary. **19 asset jpg placeholders (TODO(asset)) — Oguzhan ekleyecek.**
-**Session:** Cowork — handoff read → Phase 2b decision tree → ES+FR translation bundles → Phase 2b.RE directive + Cursor execute → ES/FR crash → hotfix → deploy → karar: Phase 2c'yi hemen başlat → per-region unit naming önerileri (36 isim + towers + views) + onay → 3 paralel sub-agent veri üretimi (LUXURY 768 + FAMILY 480 + AMENITIES_INVEST 384 = 1632 string) → Phase 2c.RE directive + 4 dosya `frontend/directives/` altına kopya → Cursor execute (IMAGES regression yakalama + Python script fix proaktif) → build PASS + 4 region QA (Gulf AR + Mexico ES + USA EN + Canada FR Ahmed persona swap teyit) → deploy yeşil.
+**Last updated:** 2026-07-03 — **Phase 2b.Auto SHIPPED + MERGED + DEPLOYED + AUDITED.** PR #9 squash merge `e582112c` → main → deploy. 3 automotive portal 4 region × 4 dil parity — `automotiveVehicleData.js` (region-keyed VEHICLES × 36) + `automotivePersonas.js` + `usePortalVehicles` hook + inline LANG ES/FR + region-aware lang cycle + `fmtCurrency`. **19 asset jpg EKLENDİ** (assets klasörü 34 jpg — önceki "placeholder TODO" notu superseded). Claude repo-audit PASSED. 3 sektörden 2'si (RE + Auto) artık 4 region × 4 dil full parity.
+**Session:** Cowork (2026-07-02/03) — 1 aylık aradan dönüş → handoff + repo full re-audit → Phase 2b.Auto directive'inde 4 stale hata bulundu + düzeltildi (var olmayan `contexts/RegionContext` import → `hooks/useRegion`; var olmayan `i18n/portals/*.i18n.js` dosyaları → inline LANG blokları; gereksiz yeni `formatPrice` helper → mevcut `fmtCurrency` reuse; region-aware dil cycle butonu scope'a eklendi) → Cursor Cloud Agent execute (PR #9) → Oguzhan 19 araç görseli ekledi → squash merge `e582112c` + deploy → Claude repo-level audit (grep proofs + 36 araç sayımı + git blob doğrulama) → sign-off. Tek local bulgu: AutomotivePortal.jsx working-tree NUL-byte tail corruption (git blob temiz, `git checkout --` ile restore edilecek).
 **Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — 2026-06-01 (Phase 2b.Auto başlat)
+## ▶︎ RESUME HERE — Phase 2b.Auto kapandı (2026-07-03)
+
+**Audit sonucu (Claude, repo-level doğrulama, 2026-07-03):**
+- `data/automotiveVehicleData.js` (259L) — `v()` factory + `COLORS_STD`/`INTERIORS_STD` ortak palet + `IMG` map fallback'li. **36 araç (4×9) doğrulandı**, 4 dil. Code Simplicity Mandate'e örnek dosya.
+- `data/automotivePersonas.js` (56L) + `hooks/usePortalVehicles.js` (20L), `SULTAN_IDS` 4×5.
+- Grep proof: inline `VEHICLES` 0 sonuç, `priceRange` 0 sonuç. Hook 3 portal'da (AutomotivePortal L316 / Sultan L357 / Showroom L294). ES+FR inline LANG 3/3.
+
+**Bilinen kalıntılar (kabul edildi):**
+1. `nameAr` 19 kullanım — HEPSİ `AutoDashboard.jsx` (legacy, FAZ 5'te retire, sprint scope dışı). Dosya emekli olunca kendiliğinden gider.
+2. ⚠️ **Local working tree:** `AutomotivePortal.jsx` dosya sonu NUL byte'larla bozuk (sync/editor artifact). **Git blob + deploy TEMİZ** — sadece local kopya. Fix: `git checkout -- frontend/src/pages/AutomotiveDemo/AutomotivePortal.jsx`
+
+### Next session first move
+1. Local restore (yukarıdaki checkout komutu) + `cursor/phase-2b-auto-4region-parity` branch sil (PR sayfası "Delete branch")
+2. Canlı spot QA (hard refresh Ctrl+Shift+R): `/automotive/demo/khalid` Gulf→G63 / Canada→Tesla Plaid; `/automotive/demo/sultan` 5 araç + persona swap; showroom fiyatları MX$/CA$; Mexico ES + Canada FR dil cycle
+3. **Phase 2d.RE cleanup** (küçük scope): `floorPlan.rooms[].label` + `payment.plans` canonical migrate, `UNIT_EXTRAS` kaldır, `tr()` helper emekli
+4. Sonrası: **Yacht demo portalları** (region-aware day-one) → **FAZ 5** legacy dashboard retire (AutoDashboard nameAr kalıntısı burada gider) → **pitch deck refresh** (artık 2 sektör × 4 region parity anlatılabilir — sales-critical)
+
+### Lessons added (2026-07-02/03)
+- **1 ay eski directive = stale varsayım riski.** Phase 2b.Auto directive'inde 4 gerçek hata vardı (var olmayan `contexts/RegionContext` import'u, var olmayan `i18n/portals/*.i18n.js` dosyaları, gereksiz yeni `formatPrice` helper, eksik dil-cycle scope'u). Execute öncesi güncel koda karşı 10 dk re-audit, yarım günlük Cursor debug'ı önledi. Kural: directive yazımı ile execute arasında sprint/zaman geçtiyse, execute öncesi re-audit mandatory.
+- **Mount/sync stale okumaları:** Sandbox mount bazen dosyanın eski/kısmi halini gösterir. Bozulma şüphesinde önce `git show HEAD:<file>` ile blob'u doğrula — working tree ≠ commit gerçeği.
+
+---
+
+## ✅ CLOSED — 2026-06-01 (Phase 2b.Auto başlat — superseded by ship 2026-07-03)
 
 **Status:** Phase 2b.RE + Phase 2c.RE production'a deploy edildi (`https://dynamicnfc.ca`). 3 RE portal (VIPPortal + AhmedPortal + MarketplacePortal) 4 region × 4 dil full parity. Mexico ES'de "Suite Cielo Real / Hacienda Mayor / Suite Patio Real", USA EN'de "Skyline Penthouse / Park Avenue Residence / Hudson Executive Loft", Canada FR'de "Penthouse Harbour / Vista Nord Tour", Gulf AR'de "بنتهاوس السماء / إقامة كبرى". AMENITIES region-spesifik (Gulf hammam, Mexico hacienda pool, Canada Pacific waterfront, USA Manhattan skyline). INVEST stats region-spesifik (Gulf 8.2%, USA 6.5%, Mexico 9.0%, Canada 5.0%). **Sıra Auto sektöre — VEHICLES region-prefixed + ES/FR.**
 
