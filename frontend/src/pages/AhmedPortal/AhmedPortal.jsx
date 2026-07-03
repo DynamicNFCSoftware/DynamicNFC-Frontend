@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { bridgeEventToFirestore } from "../../services/portalFirestoreBridge";
+import { trackPortalEvent } from "../../services/portalTrack";
 import { usePortalRegion } from "../../services/portalRegion";
 import './AhmedPortal.css';
 import SEO from '../../components/SEO/SEO';
@@ -15,33 +15,6 @@ import '../../i18n/portals/ahmedPortal';
 //           Booking with Validation, CRM Tracking, Toast System
 // Self-contained — zero external shared imports
 // ═══════════════════════════════════════════════════════════════════
-
-// ─── TRACKING (localStorage + BroadcastChannel) ─────────────────
-const _bc = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("dnfc_tracking") : null;
-const _source = "nfc";
-const trackEvent = (event, data = {}) => {
-  const _deviceType = /Mobi|Android/i.test(navigator.userAgent) ? "mobile"
-    : /Tablet|iPad/i.test(navigator.userAgent) ? "tablet"
-    : "desktop";
-  const ev = {
-    id: `evt_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-    timestamp: new Date().toISOString(),
-    portalType: "vip",
-    vipId: "AF-002",
-    vipName: "Ahmed Al-Fahad",
-    source: _source,
-    deviceType: _deviceType,
-    event,
-    ...data
-  };
-  try {
-    const events = JSON.parse(localStorage.getItem("dnfc_events") || "[]");
-    events.push(ev);
-    localStorage.setItem("dnfc_events", JSON.stringify(events));
-  } catch (e) {}
-  _bc?.postMessage(ev);
-  bridgeEventToFirestore(ev);
-};
 
 // ─── BILINGUAL ───────────────────────────────────────────────────
 const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
@@ -431,6 +404,10 @@ const ROOM_COLORS = {
 export default function AhmedPortal() {
   const [lang, setLang] = useState("en");
   const { projectName, fmtCurrency, familyPersona, region, familyUnits, amenities, investStats } = usePortalRegion("real_estate", lang);
+  const trackEvent = useCallback(
+    (event, data) => trackPortalEvent("vip", familyPersona, event, data),
+    [familyPersona]
+  );
   const [scrolled, setScrolled] = useState(false);
   const [modal, setModal] = useState(null);
   const [modalUnit, setModalUnit] = useState(null);
