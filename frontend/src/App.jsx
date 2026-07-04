@@ -81,6 +81,10 @@ const SultanPortal = lazy(() => import("./pages/AutomotiveDemo/SultanPortal"));
 const PublicShowroom = lazy(() => import("./pages/AutomotiveDemo/PublicShowroom"));
 const AutoDashboard = lazy(() => import("./pages/AutomotiveDemo/AutoDashboard"));
 const AutoAIDemo = lazy(() => import("./pages/AutomotiveDemo/AutoAIDemo"));
+const YachtGateway = lazy(() => import("./pages/YachtDemo/YachtGateway"));
+const YachtVIPPortal = lazy(() => import("./pages/YachtDemo/YachtVIPPortal"));
+const YachtShowroom = lazy(() => import("./pages/YachtDemo/YachtShowroom"));
+const YachtAIDemo = lazy(() => import("./pages/YachtDemo/YachtAIDemo"));
 const NFCWriteGuide = lazy(() => import("./pages/NFCWriteGuide/NFCWriteGuide"));
 const CardRedirect = lazy(() => import("./pages/CardRedirect/CardRedirect"));
 const AdminLayout = lazy(() => import("./pages/Admin/AdminLayout"));
@@ -195,6 +199,10 @@ function AnimatedRoutes() {
           <Route path="/automotive/demo/showroom" element={<P><PublicShowroom /></P>} />
           <Route path="/automotive/demo/ai" element={<P><AutoAIDemo /></P>} />
           <Route path="/automotive/dashboard" element={<P><AutoDashboard /></P>} />
+          <Route path="/yacht/demo" element={<P><YachtGateway /></P>} />
+          <Route path="/yacht/demo/vip" element={<P><YachtVIPPortal /></P>} />
+          <Route path="/yacht/demo/showroom" element={<P><YachtShowroom /></P>} />
+          <Route path="/yacht/demo/ai" element={<P><YachtAIDemo /></P>} />
           <Route path="/card" element={<P><Card /></P>} />
           <Route path="/enterprise/crmdemo/registered" element={<P><LoginPortal /></P>} />
 

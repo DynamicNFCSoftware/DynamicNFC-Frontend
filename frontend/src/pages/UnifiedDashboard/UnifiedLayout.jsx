@@ -388,7 +388,13 @@ function getPortalLinks(sectorId, tx, regionId, lang) {
       { id: "auto-anon", label: tx.portalAutoShowroom, kind: tx.portalAnonymous, href: "/automotive/demo/showroom" },
     ];
   }
-  // Yacht portal routes don't exist yet — hide links until yacht portals ship
+  if (sectorId === "yacht") {
+    const personas = getPersonas("yacht", regionId);
+    return [
+      { id: "yacht-vip", label: personaLabel(personas.find((p) => p.id === "vip1")) || tx.portalYachtVip, kind: tx.portalVip, href: "/yacht/demo/vip" },
+      { id: "yacht-anon", label: tx.portalYachtShowroom, kind: tx.portalAnonymous, href: "/yacht/demo/showroom" },
+    ];
+  }
   return [];
 }
 

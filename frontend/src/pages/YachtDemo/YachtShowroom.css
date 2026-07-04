@@ -1,0 +1,98 @@
+/* ═══ YACHT SHOWROOM — ysh- prefix · light marina luxury ═══ */
+.ysh {
+  --ysh-accent: #457b9d;
+  --ysh-bg: #f7fafb;
+  --ysh-panel: #ffffff;
+  --ysh-border: #e3ebef;
+  --ysh-text: #16242e;
+  --ysh-text2: #5c7280;
+  --ysh-gold: #b8860b;
+  min-block-size: 100vh;
+  background: var(--ysh-bg);
+  color: var(--ysh-text);
+  font-family: 'Outfit', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+.ysh-nav { position: sticky; inset-block-start: 0; z-index: 20; padding: 0.9rem 1.5rem; background: rgba(247, 250, 251, 0.9); backdrop-filter: blur(10px); border-block-end: 1px solid transparent; transition: border-color 0.3s; }
+.ysh-nav.scrolled { border-block-end-color: var(--ysh-border); }
+.ysh-nav-inner { max-inline-size: 1180px; margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.ysh-back { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--ysh-text2); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+.ysh-back:hover { color: var(--ysh-text); }
+.ysh-brand { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--ysh-accent); }
+.ysh-nav-right { display: flex; align-items: center; gap: 0.6rem; }
+.ysh-lang { background: none; border: 1px solid var(--ysh-border); color: var(--ysh-text); padding: 0.4rem 0.85rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem; }
+.ysh-register { background: var(--ysh-accent); color: #fff; border: none; padding: 0.5rem 1.1rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem; }
+
+.ysh-hero { position: relative; text-align: center; padding: 4rem 1.5rem 3rem; overflow: hidden; }
+.ysh-hero-bg { position: absolute; inset: 0; background: radial-gradient(800px 360px at 50% -20%, color-mix(in srgb, var(--ysh-accent) 16%, transparent), transparent 60%); z-index: 0; }
+.ysh-hero-inner { position: relative; z-index: 1; max-inline-size: 680px; margin-inline: auto; }
+.ysh-hero-badge { display: inline-block; font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ysh-accent); padding: 0.35rem 0.9rem; border: 1px solid color-mix(in srgb, var(--ysh-accent) 35%, transparent); border-radius: 999px; margin-block-end: 1.25rem; }
+.ysh-hero h1 { font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 1rem; }
+.ysh-hero p { color: var(--ysh-text2); line-height: 1.7; margin: 0 0 1.75rem; }
+.ysh-hero-cta { background: var(--ysh-accent); color: #fff; border: none; padding: 0.85rem 2rem; border-radius: 10px; font-size: 0.95rem; cursor: pointer; transition: transform 0.2s; }
+.ysh-hero-cta:hover { transform: translateY(-2px); }
+
+.ysh-fleet { max-inline-size: 1180px; margin-inline: auto; padding: 1rem 1.5rem 4rem; }
+.ysh-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-block-end: 2rem; }
+.ysh-chip { background: var(--ysh-panel); border: 1px solid var(--ysh-border); color: var(--ysh-text2); padding: 0.5rem 1.1rem; border-radius: 999px; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
+.ysh-chip.active { background: var(--ysh-accent); border-color: var(--ysh-accent); color: #fff; }
+
+.ysh-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+.ysh-card { display: flex; flex-direction: column; text-align: start; background: var(--ysh-panel); border: 1px solid var(--ysh-border); border-radius: 16px; overflow: hidden; cursor: pointer; color: var(--ysh-text); padding: 0; transition: transform 0.25s, box-shadow 0.25s; }
+.ysh-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(22, 36, 46, 0.1); }
+.ysh-card-media { position: relative; block-size: 160px; display: grid; place-items: center; background: linear-gradient(135deg, #dfeaf0, #eef4f7); color: var(--ysh-accent); }
+.ysh-card-media.type-superyacht { background: linear-gradient(135deg, #d5e4ec, #e8f0f4); }
+.ysh-card-media.type-sport { background: linear-gradient(135deg, #dde9ef, #eef5f8); }
+.ysh-silhouette { inline-size: 60%; opacity: 0.75; }
+.ysh-type-badge { position: absolute; inset-block-start: 0.75rem; inset-inline-start: 0.75rem; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.6px; padding: 0.25rem 0.6rem; border-radius: 6px; background: rgba(255, 255, 255, 0.85); color: var(--ysh-text); }
+.ysh-card-body { padding: 1.1rem 1.25rem 1.35rem; display: flex; flex-direction: column; gap: 0.45rem; }
+.ysh-card-body h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin: 0; }
+.ysh-card-marina { color: var(--ysh-text2); font-size: 0.82rem; margin: 0; }
+.ysh-card-price { display: flex; align-items: baseline; gap: 0.5rem; }
+.ysh-card-from { color: var(--ysh-text2); font-size: 0.72rem; text-transform: uppercase; }
+.ysh-card-amt { font-family: 'Playfair Display', serif; color: var(--ysh-accent); font-size: 1.1rem; }
+.ysh-card-charter { color: var(--ysh-text2); font-size: 0.8rem; margin: 0; }
+.ysh-card-charter strong { color: var(--ysh-gold); }
+.ysh-card-charter em { font-style: normal; margin-inline-start: 0.15rem; }
+.ysh-card-specs { display: flex; flex-wrap: wrap; gap: 0.4rem 0.75rem; color: var(--ysh-text2); font-size: 0.8rem; }
+.ysh-card-specs span + span::before { content: "\00b7"; margin-inline-end: 0.75rem; }
+.ysh-card-view { color: var(--ysh-accent); font-size: 0.82rem; margin-block-start: 0.3rem; }
+
+.ysh-modal-overlay { position: fixed; inset: 0; z-index: 50; background: rgba(22, 36, 46, 0.5); backdrop-filter: blur(5px); display: grid; place-items: center; padding: 1.25rem; }
+.ysh-modal, .ysh-lead { position: relative; inline-size: min(620px, 100%); max-block-size: 90vh; overflow-y: auto; background: var(--ysh-panel); border-radius: 18px; }
+.ysh-lead { inline-size: min(440px, 100%); padding: 2rem; }
+.ysh-modal-close { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.9rem; z-index: 2; inline-size: 34px; block-size: 34px; border-radius: 50%; border: none; background: rgba(22, 36, 46, 0.08); color: var(--ysh-text); font-size: 1.3rem; cursor: pointer; }
+.ysh-modal-media { position: relative; block-size: 190px; display: grid; place-items: center; background: linear-gradient(135deg, #dfeaf0, #eef4f7); color: var(--ysh-accent); }
+.ysh-modal-silhouette { inline-size: 52%; opacity: 0.78; }
+.ysh-modal-body { padding: 1.35rem 1.5rem 1.5rem; }
+.ysh-modal-body h3 { font-family: 'Playfair Display', serif; font-size: 1.45rem; margin: 0; }
+.ysh-modal-marina { color: var(--ysh-text2); margin: 0.25rem 0 0.75rem; font-size: 0.88rem; }
+.ysh-modal-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1rem; margin-block-end: 1.25rem; }
+.ysh-modal-price > span:first-child { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--ysh-accent); }
+.ysh-modal-charter { color: var(--ysh-gold); font-size: 0.9rem; }
+.ysh-modal-body h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--ysh-accent); margin: 1rem 0 0.6rem; }
+.ysh-modal-desc { color: var(--ysh-text2); line-height: 1.7; margin: 0; }
+.ysh-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+.ysh-features li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; line-height: 1.5; }
+.ysh-features svg { color: var(--ysh-accent); flex-shrink: 0; margin-block-start: 0.15rem; }
+.ysh-modal-cta { inline-size: 100%; margin-block-start: 1.5rem; background: var(--ysh-accent); color: #fff; border: none; padding: 0.8rem; border-radius: 10px; font-size: 0.9rem; cursor: pointer; }
+
+.ysh-lead h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin: 0 0 0.4rem; }
+.ysh-lead-sub { color: var(--ysh-text2); font-size: 0.88rem; line-height: 1.55; margin: 0 0 1.25rem; }
+.ysh-lead input { inline-size: 100%; box-sizing: border-box; background: var(--ysh-bg); border: 1px solid var(--ysh-border); border-radius: 9px; padding: 0.7rem 0.9rem; color: var(--ysh-text); font-size: 0.9rem; margin-block-end: 0.75rem; font-family: inherit; }
+.ysh-lead input:focus { outline: none; border-color: var(--ysh-accent); }
+.ysh-lead-submit { inline-size: 100%; background: var(--ysh-accent); color: #fff; border: none; padding: 0.8rem; border-radius: 10px; font-size: 0.9rem; cursor: pointer; margin-block-start: 0.25rem; }
+.ysh-lead-note { color: var(--ysh-text2); font-size: 0.75rem; margin: 0.75rem 0 0; }
+.ysh-lead-ok { text-align: center; padding: 1rem 0; }
+.ysh-lead-check { inline-size: 64px; block-size: 64px; border-radius: 50%; display: grid; place-items: center; margin-inline: auto; margin-block-end: 1rem; color: #fff; background: var(--ysh-accent); }
+.ysh-lead-ok h3 { margin: 0 0 0.5rem; }
+.ysh-lead-ok p { color: var(--ysh-text2); margin: 0; }
+
+.ysh-footer { text-align: center; padding: 2.5rem 1.5rem; border-block-start: 1px solid var(--ysh-border); color: var(--ysh-text2); }
+.ysh-footer p { margin: 0 0 0.4rem; font-size: 0.85rem; }
+.ysh-footer-brand strong { color: var(--ysh-accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ysh-card, .ysh-hero-cta { transition: none; }
+}
