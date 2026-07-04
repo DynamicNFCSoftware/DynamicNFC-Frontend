@@ -1,11 +1,11 @@
 /* ═══ YACHT VIP PORTAL — yvp- prefix · dark editorial luxury ═══ */
 .yvp {
   --yvp-accent: #457b9d;
-  --yvp-bg: #05141f;
-  --yvp-panel: rgba(255, 255, 255, 0.04);
-  --yvp-border: rgba(255, 255, 255, 0.08);
-  --yvp-text: #eef3f6;
-  --yvp-text2: #9fb3c0;
+  --yvp-bg: #0c2130;
+  --yvp-panel: rgba(255, 255, 255, 0.07);
+  --yvp-border: rgba(255, 255, 255, 0.14);
+  --yvp-text: #f2f6f9;
+  --yvp-text2: #b7c9d4;
   --yvp-gold: #c5a467;
   min-block-size: 100vh;
   background: var(--yvp-bg);

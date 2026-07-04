@@ -46,10 +46,24 @@
 }
 .ygw-badge span {
   font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase;
-  color: var(--ygw-accent);
+  color: color-mix(in srgb, var(--ygw-accent) 45%, #ffffff);
   padding: 0.35rem 0.8rem; border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--ygw-accent) 40%, transparent);
-  background: color-mix(in srgb, var(--ygw-accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ygw-accent) 70%, transparent);
+  background: color-mix(in srgb, var(--ygw-accent) 18%, transparent);
+}
+.ygw-region { display: inline-flex; gap: 0.3rem; margin-inline-end: 0.75rem; }
+.ygw-region-btn {
+  font-size: 1rem; line-height: 1;
+  padding: 0.4rem 0.55rem; border-radius: 8px;
+  border: 1px solid var(--ygw-border); background: transparent;
+  cursor: pointer; opacity: 0.55;
+  transition: opacity 0.2s, border-color 0.2s, background 0.2s;
+}
+.ygw-region-btn:hover { opacity: 1; border-color: var(--ygw-accent); }
+.ygw-region-btn.act {
+  opacity: 1;
+  border-color: var(--ygw-accent);
+  background: color-mix(in srgb, var(--ygw-accent) 25%, transparent);
 }
 .ygw-home {
   display: inline-flex; align-items: center; gap: 0.4rem;
@@ -65,13 +79,13 @@
 .ygw-nfc { position: relative; inline-size: 110px; block-size: 110px; margin-inline: auto; margin-block-end: 1.5rem; display: grid; place-items: center; }
 .ygw-nfc-card {
   inline-size: 88px; block-size: 88px; border-radius: 22px;
-  background: var(--ygw-panel); border: 1px solid var(--ygw-border);
+  background: rgba(255, 255, 255, 0.10); border: 1px solid rgba(255, 255, 255, 0.24);
   display: grid; place-items: center; position: relative; z-index: 2;
 }
 .ygw-nfc-waves { position: absolute; inset: 0; }
 .ygw-nfc-wave {
   position: absolute; inset: 0; border-radius: 26px;
-  border: 1px solid color-mix(in srgb, var(--ygw-accent) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ygw-accent) 75%, transparent);
   animation: ygw-pulse 2.6s ease-out infinite;
 }
 .ygw-nfc-wave:nth-child(2) { animation-delay: 0.9s; }
@@ -80,7 +94,7 @@
 
 .ygw-tagline {
   display: inline-flex; align-items: center; gap: 0.5rem;
-  color: var(--ygw-accent); font-size: 0.8rem; letter-spacing: 0.5px;
+  color: color-mix(in srgb, var(--ygw-accent) 45%, #ffffff); font-size: 0.8rem; letter-spacing: 0.5px;
   text-transform: uppercase; margin-block-end: 1rem;
 }
 .ygw-hero h1 {

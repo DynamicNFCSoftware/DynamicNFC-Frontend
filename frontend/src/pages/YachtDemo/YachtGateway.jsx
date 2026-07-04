@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useLanguage } from "../../i18n";
 import { useRegion } from "../../hooks/useRegion";
-import { getPersonas } from "../../config/regionConfig";
+import { getPersonas, REGION_LIST } from "../../config/regionConfig";
 import "./YachtGateway.css";
 import SEO from "../../components/SEO/SEO";
 
@@ -139,7 +139,7 @@ const T = {
 
 export default function YachtGateway() {
   const { lang } = useLanguage();
-  const { regionId, sidebarAccent } = useRegion();
+  const { regionId, sidebarAccent, switchRegion } = useRegion();
   const t = T[lang] || T.en;
   const particlesRef = useRef(null);
 
@@ -174,9 +174,22 @@ export default function YachtGateway() {
       <div className="ygw-particles" ref={particlesRef} />
 
       <header className="ygw-hd">
-        <div className="ygw-logo"><img src="/assets/images/logo.png" alt="DynamicNFC" style={{ height: "52px", width: "auto" }} /></div>
+        <div className="ygw-logo"><img src="/assets/images/dynamicnfc-logo-red.png" alt="DynamicNFC" style={{ height: "38px", width: "auto" }} /></div>
         <div className="ygw-badge"><span>{t.badge}</span></div>
         <div className="ygw-hd-right">
+          <div className="ygw-region" role="group" aria-label="Region">
+            {REGION_LIST.map((r) => (
+              <button
+                key={r.id}
+                className={`ygw-region-btn${regionId === r.id ? " act" : ""}`}
+                onClick={() => switchRegion(r.id)}
+                aria-pressed={regionId === r.id}
+                title={r.label[lang] || r.label.en}
+              >
+                {r.flag}
+              </button>
+            ))}
+          </div>
           <a href="/" className="ygw-home">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
             {t.homeBtn}
