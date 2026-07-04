@@ -16,6 +16,7 @@ export function shouldHideNavbar(pathname) {
     pathname.startsWith('/unified') ||
     pathname.startsWith('/enterprise/crmdemo') ||
     pathname.startsWith('/automotive/demo') ||
+    pathname.startsWith('/yacht/demo') ||
     pathname === '/automotive/dashboard' ||
     pathname === '/card'
   );
