@@ -10,6 +10,9 @@ import SEO from "../../components/SEO/SEO";
 // Dark editorial luxury. Qualitative stats only — NO fake metrics.
 // ═══════════════════════════════════════════════════════════════════
 
+const REGION_CODE = { gulf: "KSA", usa: "USA", mexico: "MEX", canada: "CAN" };
+const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
+
 const T = {
   en: {
     badge: "Live Demo Environment",
@@ -138,8 +141,10 @@ const T = {
 };
 
 export default function YachtGateway() {
-  const { lang } = useLanguage();
-  const { regionId, sidebarAccent, switchRegion } = useRegion();
+  const { lang, setLang } = useLanguage();
+  const { regionId, sidebarAccent, switchRegion, languages } = useRegion();
+  const langs = languages?.length ? languages : ["en"];
+  const nextL = langs[(langs.indexOf(lang) + 1) % langs.length] || "en";
   const t = T[lang] || T.en;
   const particlesRef = useRef(null);
 
@@ -174,7 +179,13 @@ export default function YachtGateway() {
       <div className="ygw-particles" ref={particlesRef} />
 
       <header className="ygw-hd">
-        <div className="ygw-logo"><img src="/assets/images/dynamicnfc-logo-red.png" alt="DynamicNFC" style={{ height: "38px", width: "auto" }} /></div>
+        <div className="ygw-logo" aria-label="DynamicNFC">
+          <span className="ygw-logo-dyn">Dynamic</span>
+          <span className="ygw-logo-nfc">NFC</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6ba3c7" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
+            <path d="M8 9a6 6 0 0 1 0 6" /><path d="M12 6.5a10 10 0 0 1 0 11" /><path d="M16 4a14 14 0 0 1 0 16" />
+          </svg>
+        </div>
         <div className="ygw-badge"><span>{t.badge}</span></div>
         <div className="ygw-hd-right">
           <div className="ygw-region" role="group" aria-label="Region">
@@ -186,10 +197,13 @@ export default function YachtGateway() {
                 aria-pressed={regionId === r.id}
                 title={r.label[lang] || r.label.en}
               >
-                {r.flag}
+                {REGION_CODE[r.id]}
               </button>
             ))}
           </div>
+          <button className="ygw-lang" onClick={() => setLang(nextL)} aria-label={`Language — ${LANG_LABEL[nextL]}`}>
+            {LANG_LABEL[nextL]}
+          </button>
           <a href="/" className="ygw-home">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
             {t.homeBtn}

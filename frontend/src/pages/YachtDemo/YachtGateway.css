@@ -18,8 +18,8 @@
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(1200px 600px at 80% -10%, color-mix(in srgb, var(--ygw-accent) 22%, transparent), transparent 60%),
-    radial-gradient(900px 500px at 0% 100%, rgba(197, 164, 103, 0.12), transparent 55%);
+    radial-gradient(1200px 600px at 80% -10%, rgba(69, 123, 157, 0.22), transparent 60%),
+    radial-gradient(900px 500px at 0% 100%, color-mix(in srgb, var(--ygw-accent) 10%, transparent), transparent 55%);
   z-index: 0;
 }
 .ygw-particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
@@ -53,18 +53,31 @@
 }
 .ygw-region { display: inline-flex; gap: 0.3rem; margin-inline-end: 0.75rem; }
 .ygw-region-btn {
-  font-size: 1rem; line-height: 1;
-  padding: 0.4rem 0.55rem; border-radius: 8px;
-  border: 1px solid var(--ygw-border); background: transparent;
-  cursor: pointer; opacity: 0.55;
+  font-family: inherit; font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.5px; line-height: 1;
+  color: var(--ygw-text); opacity: 0.75;
+  padding: 0.45rem 0.6rem; border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.22); background: transparent;
+  cursor: pointer;
   transition: opacity 0.2s, border-color 0.2s, background 0.2s;
 }
 .ygw-region-btn:hover { opacity: 1; border-color: var(--ygw-accent); }
 .ygw-region-btn.act {
-  opacity: 1;
+  opacity: 1; color: #ffffff;
   border-color: var(--ygw-accent);
-  background: color-mix(in srgb, var(--ygw-accent) 25%, transparent);
+  background: color-mix(in srgb, var(--ygw-accent) 40%, transparent);
 }
+.ygw-lang {
+  font-family: inherit; font-size: 0.8rem; color: var(--ygw-text);
+  padding: 0.45rem 0.9rem; border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.22); background: transparent;
+  cursor: pointer; margin-inline-end: 0.5rem;
+  transition: border-color 0.2s;
+}
+.ygw-lang:hover { border-color: var(--ygw-accent); }
+.ygw-logo { display: inline-flex; align-items: center; gap: 0.35rem; }
+.ygw-logo-dyn { font-weight: 700; font-size: 1.15rem; color: #ffffff; letter-spacing: 0.2px; }
+.ygw-logo-nfc { font-weight: 700; font-size: 1.15rem; color: #e63946; }
 .ygw-home {
   display: inline-flex; align-items: center; gap: 0.4rem;
   color: var(--ygw-text2); text-decoration: none; font-size: 0.85rem;
