@@ -1,21 +1,32 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-07-03 — **Sprint C SHIPPED + MERGED.** PR #11 squash merge `bc35d56b` → main. (A) 6 portal inline `trackEvent` → `services/portalTrack.js`; tracking persona region-aware (USA VIP → "James Mitchell", Gulf → "Khalid Al-Rashid"). (B) Phase 2d.RE — `UNIT_EXTRAS` → canonical `UNIT_MEDIA` (4 dil floorPlan etiketleri), `tr()` emekli. Grep proofs 5/5 + Playwright runtime QA 9/9. CI PASS.
-**Session:** Cursor (2026-07-03) — Sprint C execute → 2 atomik commit → PR #11 → Oguzhan merge `bc35d56b`.
-**Author of this update:** Cursor
+**Last updated:** 2026-07-03 EOD — **Sprint D SHIPPED + MERGED + DEPLOYED.** PR #12 squash merge → main → hosting deploy (Sprint C + D birlikte canlıda). Yacht demo portalları 4 region × 4 dil day-one: `/yacht/demo` (Gateway) + `/vip` + `/showroom` + `/ai`. `yachtVesselData.js` (32 vessel, seed 1:1, 4-dil companion bundle) + `usePortalYachts` + `YachtSilhouette` fallback. Unified sidebar yacht linkleri açıldı. Claude repo-level audit PASS.
+**Session:** Cowork (Claude, 2026-07-03) — Sprint D directive + 2 paralel sub-agent data bundle → Cursor execute (PR #12) → Claude audit → Oguzhan QA + polish turu (son commit `bf6977b8`) → merge + deploy.
+**Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — Sprint C kapandı (2026-07-03)
+## ▶︎ RESUME HERE — Sprint D kapandı (2026-07-03 EOD)
 
-**Sprint C — Phase 2d.RE + portalTrack SHIPPED + MERGED.** PR #11 `bc35d56b`. `portalTrack.js` helper (6 portal), region-aware tracking persona fix, `UNIT_MEDIA` canonical (3 RE portal), `tr()` emekli. -128L net. Grep 5/5 + runtime QA 9/9 + CI PASS.
+**Yacht sektörü canlıda — 3 sektör × 4 region parity tamam.** Gateway'e region switcher (KSA/USA/MEX/CAN text kodları) + Unified-tarzı dil cycle butonu eklendi; portallarda ilk kez sayfa-üstü region değişimi var. Tipografik logo (beyaz Dynamic + kırmızı NFC + mavi dalga) koyu zemin sorununu kapattı.
 
 ### Next session first move
-1. **Deploy** — `cd frontend && npm run build` → `firebase deploy --only hosting` (root'tan). Bundle hash diff prod'a karşı.
-2. **Sprint D — Yacht demo portalları** — `/yacht/demo/*` routes, region-aware day-one (`YachtGateway`, VIP, Showroom, AI).
-3. **Sprint E — FAZ 5** — legacy dashboard retire (`/enterprise/crmdemo/dashboard`, `/automotive/dashboard` → `/unified` redirect); AutoDashboard `nameAr` kalıntısı gider.
-4. Pilot outreach (deck hazır, tracking artık doğru region persona raporluyor).
-5. (Duruyorsa) local NUL-tail fix: `git checkout -- frontend/src/pages/AutomotiveDemo/AutomotivePortal.jsx`
+1. **Chore PR (10 dk, canlıda duran marka ihlali):** (a) `index.html` meta description + Twitter card'daki "3.2× higher conversion rate" fake metriğini temizle — ŞU AN prod'da ve Google'da görünüyor; (b) `AutoGateway.jsx` 47% / 3.2× stat bloğu → qualitative (Named / Real-Time / Zero Guesswork); (c) AutoGateway'e YachtGateway'deki dil cycle + region switcher pattern'ini uygula.
+2. **Yat görselleri** — `frontend/directives/YACHT_IMAGE_BRIEF.md`: 32 vessel için dosya adı + Artistly prompt hazır. Görseller `pages/YachtDemo/assets/`e düştükçe IMG map bağlama 15 dk'lık Cursor işi (silhouette fallback boşlukları örter, batch OK).
+3. **Sprint E — FAZ 5** — legacy dashboard retire (`/enterprise/crmdemo/dashboard`, `/automotive/dashboard` → `/unified` redirect); AutoDashboard `nameAr` + AutoAIDemo `Asia/Dubai` timezone kalıntıları burada gider.
+4. **Pilot outreach** — Canada RE one-pager v1 hazır (`DynamicNFC_Canada_RE_OnePager.pdf`); Claude Design'da premium v2 için brief (`CANADA_ONEPAGER_DESIGN_BRIEF.md`) + design system kurulumu başladı.
+5. **Docs commit (main'de):** eski Phase2c / SPRINT2_3 / SPRINT_B directive'leri + `scripts/phase2c_refactor_portals.py` hâlâ untracked — tek `docs(directives): historical trail` commit'i. `shareholders/` klasörü hâlâ tanımsız, Oguzhan'a sor.
+
+### Lessons added (2026-07-03 EOD)
+- **Yeni route sprint'lerinde `navigation/shellVisibility.js` zorunlu checklist maddesi.** Sprint D directive'i navbar/breadcrumb gizleme registry'sini atladı → yacht portalları ana site menüsüyle render oldu. Route ekleyen her directive cross-cutting registry'leri (shellVisibility, SEO listesi vb.) explicit dosya olarak saymalı.
+- **Windows Chrome bayrak emojisi çizemez** — 🇸🇦 soluk "SA" harf koduna düşer. Region seçicilerde text kodu kullan (KSA/USA/MEX/CAN). Unified topbar'daki ülke seçici de aynı sorun için kontrol edilmeli.
+- **Sandbox mount stale/truncated okuma → hayalet build hatası + hayalet git state.** Cowork sandbox'ı App.jsx'i 294 satır (kesik) ve HEAD'i commitsiz `curso` branch'i olarak gösterdi; host'ta dosya 321 satır tamdı, branch doğruydu. Kural: sandbox'tan bozulma görünce destructive git ops YASAK — önce host Read / kullanıcı terminaliyle doğrula (Nisan NUL-tail dersinin genişletilmiş hali).
+
+---
+
+## ✅ CLOSED — Sprint C kapandı (2026-07-03)
+
+**Sprint C — Phase 2d.RE + portalTrack SHIPPED + MERGED.** PR #11 `bc35d56b`. `portalTrack.js` helper (6 portal), region-aware tracking persona fix (USA VIP → "James Mitchell"), `UNIT_MEDIA` canonical (3 RE portal), `tr()` emekli. -128L net. Grep 5/5 + runtime QA 9/9 + CI PASS. Deploy Sprint D ile birlikte 2026-07-03 EOD'de yapıldı.
 
 ---
 
