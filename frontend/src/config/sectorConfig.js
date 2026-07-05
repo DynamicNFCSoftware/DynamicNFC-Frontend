@@ -435,10 +435,10 @@ const AUTOMOTIVE = {
 
 // ─── YACHT SECTOR ────────────────────────────────────────────
 const YACHT = {
-  ...AUTOMOTIVE,
+  ...REAL_ESTATE,
   id: "yacht",
   identity: {
-    ...AUTOMOTIVE.identity,
+    ...REAL_ESTATE.identity,
     sectorLabel: { en: "Yacht", ar: "اليخوت", es: "Yate", fr: "Yacht" },
     defaultProject: {
       name: { en: "Gulf Marina Yachts", ar: "يخوت مارينا الخليج", es: "Yates Marina del Golfo", fr: "Yachts Marina du Golfe" },
@@ -460,11 +460,64 @@ const YACHT = {
     },
   },
   inventory: {
-    ...AUTOMOTIVE.inventory,
     itemLabel: { en: "Yacht", ar: "يخت", es: "Yate", fr: "Yacht" },
     itemLabelPlural: { en: "Yachts", ar: "يخوت", es: "Yates", fr: "Yachts" },
     categoryLabel: { en: "Class", ar: "الفئة", es: "Clase", fr: "Classe" },
     categoryLabelPlural: { en: "Classes", ar: "الفئات", es: "Clases", fr: "Classes" },
+    categories: [
+      { id: "motor", name: { en: "Motor", ar: "موتور", es: "Motor", fr: "Motor" } },
+      { id: "sport", name: { en: "Sport", ar: "رياضي", es: "Deportivo", fr: "Sport" } },
+      { id: "explorer", name: { en: "Explorer", ar: "استكشافي", es: "Explorador", fr: "Explorer" } },
+      { id: "sportfish", name: { en: "Sportfish", ar: "صيد رياضي", es: "Pesca Deportiva", fr: "Pêche Sportive" } },
+      { id: "superyacht", name: { en: "Superyacht", ar: "سوبر يخت", es: "Superyate", fr: "Superyacht" } },
+    ],
+    typeFilters: [
+      { id: "all", label: { en: "All", ar: "الكل", es: "Todos", fr: "Tous" } },
+      { id: "motor", label: { en: "Motor", ar: "موتور", es: "Motor", fr: "Motor" } },
+      { id: "sport", label: { en: "Sport", ar: "رياضي", es: "Deportivo", fr: "Sport" } },
+      { id: "explorer", label: { en: "Explorer", ar: "استكشافي", es: "Explorador", fr: "Explorer" } },
+      { id: "superyacht", label: { en: "Superyacht", ar: "سوبر يخت", es: "Superyate", fr: "Superyacht" } },
+    ],
+    statusOptions: [
+      { id: "available", label: { en: "Available", ar: "متاح", es: "Disponible", fr: "Disponible" }, color: "#22c55e" },
+      { id: "charter", label: { en: "Charter", ar: "تأجير", es: "Charter", fr: "Charter" }, color: "#457b9d" },
+      { id: "reserved", label: { en: "Reserved", ar: "محجوز", es: "Reservado", fr: "Réservé" }, color: "#eab308" },
+      { id: "sold", label: { en: "Sold", ar: "مُباع", es: "Vendido", fr: "Vendu" }, color: "#ef4444" },
+    ],
+  },
+  funnel: [
+    { id: "visit", label: { en: "Marina Visit", ar: "زيارة المرسى", es: "Visita a la Marina", fr: "Visite du port" }, color: "#457b9d" },
+    { id: "browse", label: { en: "Yacht Explored", ar: "استكشاف اليخت", es: "Yate Explorado", fr: "Yacht exploré" }, color: "#6ba3c7" },
+    { id: "engage", label: { en: "Pricing / Charter", ar: "التسعير / التأجير", es: "Precio / Charter", fr: "Prix / Charter" }, color: "#eab308" },
+    { id: "intent", label: { en: "Sea Trial Request", ar: "طلب تجربة بحرية", es: "Solicitud de Prueba en Mar", fr: "Demande d'essai en mer" }, color: "#f97316" },
+    { id: "convert", label: { en: "Purchase / Charter", ar: "شراء / تأجير", es: "Compra / Charter", fr: "Achat / Charter" }, color: "#22c55e" },
+  ],
+  kpis: [
+    {
+      id: "vip_sessions",
+      label: { en: "VIP Sessions", ar: "جلسات VIP", es: "Sesiones VIP", fr: "Sessions VIP" },
+      subtitle: { en: "Owner known via NFC", ar: "مالك معروف عبر NFC", es: "Propietario identificado por NFC", fr: "Propriétaire identifié via NFC" },
+      icon: "user-check",
+      color: "#e63946",
+    },
+    {
+      id: "website_visitors",
+      label: { en: "Showroom Visitors", ar: "زوار المعرض", es: "Visitantes del Showroom", fr: "Visiteurs du showroom" },
+      subtitle: { en: "Anonymous fleet browse", ar: "تصفح الأسطول المجهول", es: "Navegación anónima de flota", fr: "Navigation anonyme de la flotte" },
+      icon: "globe",
+      color: "#457b9d",
+    },
+    {
+      id: "bookings",
+      label: { en: "Sea Trials Booked", ar: "تجارب بحرية محجوزة", es: "Pruebas en Mar Reservadas", fr: "Essais en mer réservés" },
+      subtitle: { en: "This month", ar: "هذا الشهر", es: "Este mes", fr: "Ce mois-ci" },
+      icon: "calendar",
+      color: "#22c55e",
+    },
+  ],
+  vipProfile: {
+    ...REAL_ESTATE.vipProfile,
+    topItem: { en: "Top Yacht", ar: "اليخت المفضل", es: "Yate Principal", fr: "Yacht principal" },
   },
   i18nNamespace: "yachtDashboard",
 };

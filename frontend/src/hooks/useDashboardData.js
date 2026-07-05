@@ -9,6 +9,7 @@ import { getPersonas } from "../config/regionConfig";
 import { calculateDecayedScore, calculateVelocity, detectSalesTriggers, getSectorConfig } from "../config/sectorConfig";
 import { checkTenantExists, seedTenantData, updateLastActivity } from "../services/tenantService";
 import { normalizeSectorId } from "../utils/sectorId";
+import { resolveEventRegion, resolveEventSector } from "../utils/portalTracking";
 
 const HEARTBEAT_MS = 12 * 60 * 60 * 1000;
 const CAMPAIGNS_PAGE_SIZE = 20;
@@ -135,10 +136,9 @@ export default function useDashboardData() {
   const filterBySectorAndRegion = useCallback(
     (rows = []) =>
       rows.filter((row) => {
-        const sectorMatch = normalizeSectorId(row?.sector) === sectorId;
+        const sectorMatch = resolveEventSector(row) === sectorId;
         if (!sectorMatch) return false;
-        const rowRegion = String(row?.region || "").toLowerCase().trim();
-        if (!rowRegion) return false;
+        const rowRegion = resolveEventRegion(row);
         return rowRegion === String(regionId || "").toLowerCase().trim();
       }),
     [sectorId, regionId]
@@ -791,10 +791,15 @@ export default function useDashboardData() {
       en: (c.name?.en || "").toLowerCase(),
     }));
     normalizedEvents.forEach((e) => {
-      const raw = (e.tower || e.category || e.collection || "").toLowerCase();
-      if (!raw) return;
+      const raw = (
+        sectorId === "yacht"
+          ? (e.unitType || e.tower || e.category || e.collection)
+          : (e.tower || e.category || e.collection)
+      );
+      const normalized = String(raw || "").toLowerCase();
+      if (!normalized) return;
       const matched = catNames.find(
-        (c) => c.id === raw || c.id === raw.replace(/\s+/g, "_") || c.en === raw || raw.includes(c.en) || c.en.includes(raw)
+        (c) => c.id === normalized || c.id === normalized.replace(/\s+/g, "_") || c.en === normalized || normalized.includes(c.en) || c.en.includes(normalized) || normalized.includes(c.id) || c.id.includes(normalized)
       );
       if (matched) categoryInterest[matched.id] = (categoryInterest[matched.id] || 0) + 1;
     });

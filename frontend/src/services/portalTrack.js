@@ -8,6 +8,7 @@
 // ═══════════════════════════════════════════════════════
 
 import { bridgeEventToFirestore } from "./portalFirestoreBridge";
+import { enrichPortalEvent } from "../utils/portalTracking";
 
 const _bc = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("dnfc_tracking") : null;
 
@@ -17,7 +18,7 @@ const deviceType = () =>
   : "desktop";
 
 export function trackPortalEvent(portalType, persona, event, data = {}) {
-  const ev = {
+  const ev = enrichPortalEvent({
     id: `evt_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     timestamp: new Date().toISOString(),
     portalType,
@@ -27,7 +28,7 @@ export function trackPortalEvent(portalType, persona, event, data = {}) {
     deviceType: deviceType(),
     event,
     ...data,
-  };
+  });
   try {
     const events = JSON.parse(localStorage.getItem("dnfc_events") || "[]");
     events.push(ev);
