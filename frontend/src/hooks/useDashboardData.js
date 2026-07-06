@@ -9,7 +9,7 @@ import { getPersonas } from "../config/regionConfig";
 import { calculateDecayedScore, calculateVelocity, detectSalesTriggers, getSectorConfig } from "../config/sectorConfig";
 import { checkTenantExists, seedTenantData, updateLastActivity } from "../services/tenantService";
 import { normalizeSectorId } from "../utils/sectorId";
-import { resolveEventRegion, resolveEventSector } from "../utils/portalTracking";
+import { resolveEventRegionStrict, resolveEventSector } from "../utils/portalTracking";
 
 const HEARTBEAT_MS = 12 * 60 * 60 * 1000;
 const CAMPAIGNS_PAGE_SIZE = 20;
@@ -136,9 +136,10 @@ export default function useDashboardData() {
   const filterBySectorAndRegion = useCallback(
     (rows = []) =>
       rows.filter((row) => {
-        const sectorMatch = resolveEventSector(row) === sectorId;
-        if (!sectorMatch) return false;
-        const rowRegion = resolveEventRegion(row);
+        if (!row?.sector && !row?.portal) return false;
+        if (resolveEventSector(row) !== sectorId) return false;
+        const rowRegion = resolveEventRegionStrict(row);
+        if (!rowRegion) return false;
         return rowRegion === String(regionId || "").toLowerCase().trim();
       }),
     [sectorId, regionId]
@@ -423,6 +424,17 @@ export default function useDashboardData() {
   // Alias for backward compat
   const events = normalizedEvents || [];
 
+  const regionalVipNames = useMemo(
+    () =>
+      new Set(
+        (getPersonas(sectorId, regionId) || [])
+          .filter((persona) => persona?.type === "vip")
+          .map((persona) => String(persona?.name || "").toLowerCase())
+          .filter(Boolean)
+      ),
+    [sectorId, regionId]
+  );
+
   const scoredVips = useMemo(() => {
     const vipEvents = normalizedEvents.filter((e) => e.portalType === "vip" && !!e.vipName);
     const byVip = {};
@@ -432,6 +444,7 @@ export default function useDashboardData() {
       byVip[key].push(evt);
     });
     return Object.entries(byVip)
+      .filter(([name]) => regionalVipNames.has(String(name || "").toLowerCase()))
       .map(([name, rows]) => {
         const sorted = [...rows].sort((a, b) => b.timestamp - a.timestamp);
         const lead = sectorRawLeads.find((l) => (l.name || "").toLowerCase() === name.toLowerCase());
@@ -470,7 +483,7 @@ export default function useDashboardData() {
         };
       })
       .sort((a, b) => b.score - a.score);
-  }, [normalizedEvents, sectorRawLeads, sectorId]);
+  }, [normalizedEvents, sectorRawLeads, sectorId, regionalVipNames]);
 
   const familyPersonas = useMemo(
     () => (getPersonas(sectorId, regionId) || []).filter((persona) => persona?.type === "family"),
