@@ -1,26 +1,30 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-07-03 EOD — **Sprint D SHIPPED + MERGED + DEPLOYED.** PR #12 squash merge → main → hosting deploy (Sprint C + D birlikte canlıda). Yacht demo portalları 4 region × 4 dil day-one: `/yacht/demo` (Gateway) + `/vip` + `/showroom` + `/ai`. `yachtVesselData.js` (32 vessel, seed 1:1, 4-dil companion bundle) + `usePortalYachts` + `YachtSilhouette` fallback. Unified sidebar yacht linkleri açıldı. Claude repo-level audit PASS.
-**Session:** Cowork (Claude, 2026-07-03) — Sprint D directive + 2 paralel sub-agent data bundle → Cursor execute (PR #12) → Claude audit → Oguzhan QA + polish turu (son commit `bf6977b8`) → merge + deploy.
+**Last updated:** 2026-07-04 — **Sprint D + Chore #13 + Analytics fix dalgası CANLIDA.** Bugün deploy edilen zincir: PR #12 (yacht portalları) → PR #13 (fake-metrik temizliği + AutoGateway header parity) → main'e direkt analytics fix commit'leri (sector+region event tagging, strict read filter + vipId region recovery, yacht funnel/heatmap taksonomisi, VIP persona allowlist). Build'li hosting deploy tamamlandı.
+**Session:** Cowork (Claude) + Cursor paralel, 2026-07-03/04 — Sprint D directive → Cursor PR #12 → Claude audit → UI polish (Claude direkt edit: kontrast, tipografik logo, KSA/USA/MEX/CAN region switcher, dil cycle) → tracking pipeline debug (Claude teşhis + Cursor fix, aynı dosyada temiz hibrit) → deploy.
 **Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — Sprint D kapandı (2026-07-03 EOD)
+## ▶︎ RESUME HERE — Sprint D + tracking pipeline kapandı (2026-07-04)
 
-**Yacht sektörü canlıda — 3 sektör × 4 region parity tamam.** Gateway'e region switcher (KSA/USA/MEX/CAN text kodları) + Unified-tarzı dil cycle butonu eklendi; portallarda ilk kez sayfa-üstü region değişimi var. Tipografik logo (beyaz Dynamic + kırmızı NFC + mavi dalga) koyu zemin sorununu kapattı.
+**Yacht sektörü canlıda, 3 sektör × 4 region parity + canlı demo tracking artık gerçekten çalışıyor.** Bugünün ikinci dalgası kritik bir ürün bug'ını kapattı: portal event'leri `sector`/`region` alanı olmadan yazılıyordu → Unified analytics HİÇBİR canlı portal aksiyonunu göstermiyordu (tüm sektörlerde; Sprint C QA'i yakalamamıştı çünkü toast'lar BroadcastChannel'dan gelir). Fix zinciri: write-time tagging (`enrichPortalEvent`), read-time strict filter (`resolveEventRegionStrict` — explicit region veya vipId'den kurtarma; etiketsizler düşer, aktif region'a SIZMAZ), yacht funnel/heatmap taksonomisi (AUTOMOTIVE mirasını override), VIP CRM persona allowlist.
 
 ### Next session first move
-1. **Chore PR (10 dk, canlıda duran marka ihlali):** (a) `index.html` meta description + Twitter card'daki "3.2× higher conversion rate" fake metriğini temizle — ŞU AN prod'da ve Google'da görünüyor; (b) `AutoGateway.jsx` 47% / 3.2× stat bloğu → qualitative (Named / Real-Time / Zero Guesswork); (c) AutoGateway'e YachtGateway'deki dil cycle + region switcher pattern'ini uygula.
-2. **Yat görselleri** — `frontend/directives/YACHT_IMAGE_BRIEF.md`: 32 vessel için dosya adı + Artistly prompt hazır. Görseller `pages/YachtDemo/assets/`e düştükçe IMG map bağlama 15 dk'lık Cursor işi (silhouette fallback boşlukları örter, batch OK).
-3. **Sprint E — FAZ 5** — legacy dashboard retire (`/enterprise/crmdemo/dashboard`, `/automotive/dashboard` → `/unified` redirect); AutoDashboard `nameAr` + AutoAIDemo `Asia/Dubai` timezone kalıntıları burada gider.
+1. **Prod doğrulama (5 dk):** Gulf VIP CRM'de sadece Prince Nasser + Sheikh Omar; Robert MacKenzie sadece Canada'da; Gulf'ta yeni tıklama Canada'ya sızmıyor; yacht Analytics'te "Marina Visit → Sea Trial Request" funnel'ı. Metada "3.2×" yok.
+2. **Yat görselleri** — `frontend/directives/YACHT_IMAGE_BRIEF.md`: 32 vessel, dosya adı + Artistly prompt hazır. Görseller `pages/YachtDemo/assets/`e düştükçe IMG map bağlama 15 dk'lık Cursor işi (silhouette fallback boşlukları örter, batch OK).
+3. **Sprint E — FAZ 5** — legacy dashboard retire + AutoDashboard `nameAr` + AutoAIDemo/`autoGoogleLiveApi` `Asia/Dubai` timezone kalıntısı + **kalan fake metrikler** (`Enterprise.jsx`, `home.js`/`crmGateway.js` i18n — AutoDashboard'unkiler retire ile kendiliğinden gider).
 4. **Pilot outreach** — Canada RE one-pager v1 hazır (`DynamicNFC_Canada_RE_OnePager.pdf`); Claude Design'da premium v2 için brief (`CANADA_ONEPAGER_DESIGN_BRIEF.md`) + design system kurulumu başladı.
-5. **Docs commit (main'de):** eski Phase2c / SPRINT2_3 / SPRINT_B directive'leri + `scripts/phase2c_refactor_portals.py` hâlâ untracked — tek `docs(directives): historical trail` commit'i. `shareholders/` klasörü hâlâ tanımsız, Oguzhan'a sor.
+5. **Docs commit (main'de):** eski Phase2c / SPRINT2_3 / SPRINT_B directive'leri + `scripts/phase2c_refactor_portals.py` hâlâ untracked — tek `docs(directives): historical trail` commit'i. `shareholders/` klasörü hâlâ tanımsız, Oguzhan'a sor. Unified topbar ülke seçicisinde bayrak emoji kontrolü (Windows).
 
-### Lessons added (2026-07-03 EOD)
-- **Yeni route sprint'lerinde `navigation/shellVisibility.js` zorunlu checklist maddesi.** Sprint D directive'i navbar/breadcrumb gizleme registry'sini atladı → yacht portalları ana site menüsüyle render oldu. Route ekleyen her directive cross-cutting registry'leri (shellVisibility, SEO listesi vb.) explicit dosya olarak saymalı.
-- **Windows Chrome bayrak emojisi çizemez** — 🇸🇦 soluk "SA" harf koduna düşer. Region seçicilerde text kodu kullan (KSA/USA/MEX/CAN). Unified topbar'daki ülke seçici de aynı sorun için kontrol edilmeli.
-- **Sandbox mount stale/truncated okuma → hayalet build hatası + hayalet git state.** Cowork sandbox'ı App.jsx'i 294 satır (kesik) ve HEAD'i commitsiz `curso` branch'i olarak gösterdi; host'ta dosya 321 satır tamdı, branch doğruydu. Kural: sandbox'tan bozulma görünce destructive git ops YASAK — önce host Read / kullanıcı terminaliyle doğrula (Nisan NUL-tail dersinin genişletilmiş hali).
+### Lessons added (2026-07-03/04)
+- **Cursor "yapıldı/fixed" ≠ commit'lendi — İKİ KEZ yakalandı.** Tracking fix'i ve taxonomy fix'i working tree'de bırakılıp "deploy et" denildi. Yeni kural: Cursor raporu commit hash içermiyorsa, audit ilk adımı `git status` — QA Verification Protocol'e ekle.
+- **Build'siz `firebase deploy` = eski dist çıkar.** Bugün yaşandı (login sonrası direkt deploy). Deploy protokolündeki "önce build" adımı atlanamaz; şüphede bundle hash diff.
+- **Read-time fallback ≠ write-time fallback.** `ud-region` fallback'i yazarken doğru, filtrede felaket: etiketsiz event'ler aktif region'ı takip edip her görünümde belirdi (Robert MacKenzie her region'da). Filter'lar yalnızca kayıtlı alana (veya deterministik türetmeye — vipId prefix) güvenmeli.
+- **Yeni route sprint'lerinde `navigation/shellVisibility.js` zorunlu checklist maddesi.** Sprint D directive'i atladı → yacht portalları site menüsüyle render oldu. Route ekleyen her directive cross-cutting registry'leri explicit saymalı.
+- **Windows Chrome bayrak emojisi çizemez** — 🇸🇦 soluk "SA"ya düşer. Region seçicilerde text kodu (KSA/USA/MEX/CAN).
+- **Sandbox mount stale okuma → hayalet build hatası + hayalet git state.** App.jsx sandbox'ta 294 satır/kesik göründü, host'ta 321 tam; HEAD hayalet `curso` branch'i gösterdi. Kural: sandbox bozulma gösterirse destructive git ops YASAK — host Read / kullanıcı terminaliyle doğrula.
+- **Sektör config'lerinde spread-miras tuzağı.** `YACHT = { ...AUTOMOTIVE }` funnel/kategori override edilmeyince araba etiketleri yacht dashboard'una sızdı. Yeni sektör = her surface alanının (funnel, heatmap, intent kategorileri) explicit override kontrolü.
 
 ---
 
