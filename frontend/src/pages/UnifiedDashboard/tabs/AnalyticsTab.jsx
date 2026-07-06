@@ -403,9 +403,14 @@ export default function AnalyticsTab() {
       name: st(cat.name),
     }));
     const matchCategory = (event) => {
-      const raw = String(event.tower || event.category || event.collection || "").toLowerCase();
+      const categoryKey = config.id === "yacht"
+        ? (event.unitType || event.tower || event.category || event.collection)
+        : (event.tower || event.category || event.collection);
+      const raw = String(categoryKey || "").toLowerCase();
       if (!raw) return null;
-      return categoryRows.find((cat) => raw === cat.id || raw.includes(cat.id) || cat.id.includes(raw))?.id || null;
+      return categoryRows.find(
+        (cat) => raw === cat.id || raw.includes(cat.id) || cat.id.includes(raw)
+      )?.id || null;
     };
 
     const vipNames = Array.from(
