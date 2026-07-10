@@ -322,9 +322,9 @@ export default function Enterprise() {
         <h1>{t(isAuto ? 'heroTitle_auto' : isRE ? 'heroTitle_re' : 'heroTitle')}</h1>
         <p className="ent-hero-sub">{t(isAuto ? 'heroSub_auto' : isRE ? 'heroSub_re' : 'heroSub')}</p>
         <div className="ent-hero-stats">
-          <div className="ent-stat"><span className="ent-stat-val">3.2×</span><span className="ent-stat-lbl">{t('statConversion')}</span></div>
-          <div className="ent-stat"><span className="ent-stat-val">47%</span><span className="ent-stat-lbl">{t('statDecision')}</span></div>
-          <div className="ent-stat"><span className="ent-stat-val">100%</span><span className="ent-stat-lbl">{t('statIdentified')}</span></div>
+          <div className="ent-stat"><span className="ent-stat-val">{t('statValNamed')}</span><span className="ent-stat-lbl">{t('statConversion')}</span></div>
+          <div className="ent-stat"><span className="ent-stat-val">{t('statValIntent')}</span><span className="ent-stat-lbl">{t('statDecision')}</span></div>
+          <div className="ent-stat"><span className="ent-stat-val">{t('statValZero')}</span><span className="ent-stat-lbl">{t('statIdentified')}</span></div>
         </div>
         <div className="ent-hero-ctas">
           <button className="ent-btn-primary" onClick={openPilot}>{t('heroCtaPilot')}</button>
@@ -525,7 +525,7 @@ export default function Enterprise() {
 
             {/* ── DASHBOARDS (always visible) ── */}
             {(isOverview || isRE) && (
-              <a href="/enterprise/crmdemo/dashboard" target="_blank" rel="noreferrer" className="ent-demo-portal ent-demo-portal-featured" >
+              <a href="/unified" target="_blank" rel="noreferrer" className="ent-demo-portal ent-demo-portal-featured" >
                 <div className="ent-portal-badge gold">{t('demoBadge4')}</div>
                 <div className="ent-portal-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--gold)' }}>
@@ -540,7 +540,7 @@ export default function Enterprise() {
               </a>
             )}
             {(isOverview || isAuto) && (
-              <a href="/automotive/dashboard" className="ent-demo-portal ent-demo-portal-featured">
+              <a href="/unified" className="ent-demo-portal ent-demo-portal-featured">
                 <div className="ent-portal-badge gold">&#128202; Analytics</div>
                 <div className="ent-portal-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{color:'var(--gold)'}}>
@@ -589,9 +589,9 @@ export default function Enterprise() {
           ))}
         </div>
         <div className="ent-roi-metrics">
-          <div className="ent-roi-card"><div className="ent-roi-big red">3.2×</div><div className="ent-roi-label">{t('roiMetric1Label')}</div><div className="ent-roi-sub">{t('roiMetric1Sub')}</div></div>
-          <div className="ent-roi-card"><div className="ent-roi-big blue">47%</div><div className="ent-roi-label">{t('roiMetric2Label')}</div><div className="ent-roi-sub">{t('roiMetric2Sub')}</div></div>
-          <div className="ent-roi-card"><div className="ent-roi-big gold">100%</div><div className="ent-roi-label">{t('roiMetric3Label')}</div><div className="ent-roi-sub">{t('roiMetric3Sub')}</div></div>
+          <div className="ent-roi-card"><div className="ent-roi-big red">{t('statValNamed')}</div><div className="ent-roi-label">{t('roiMetric1Label')}</div><div className="ent-roi-sub">{t('roiMetric1Sub')}</div></div>
+          <div className="ent-roi-card"><div className="ent-roi-big blue">{t('statValIntent')}</div><div className="ent-roi-label">{t('roiMetric2Label')}</div><div className="ent-roi-sub">{t('roiMetric2Sub')}</div></div>
+          <div className="ent-roi-card"><div className="ent-roi-big gold">{t('statValZero')}</div><div className="ent-roi-label">{t('roiMetric3Label')}</div><div className="ent-roi-sub">{t('roiMetric3Sub')}</div></div>
         </div>
       </section>
 

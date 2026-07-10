@@ -400,7 +400,7 @@ export default function PublicShowroom() {
         <Link to="/automotive/demo/khalid">{t.crossnav.vipPerf}</Link>
         <Link to="/automotive/demo/sultan">{t.crossnav.vipFamily}</Link>
         <span className="active">{t.crossnav.showroom}</span>
-        <Link to="/automotive/dashboard">{t.crossnav.dashboard}</Link>
+        <Link to="/unified">{t.crossnav.dashboard}</Link>
         <Link to="/automotive/demo/ai">{t.crossnav.ai}</Link>
         <span className="crossnav-persona">🌐 {t.crossnav.visitor}</span>
       </div>

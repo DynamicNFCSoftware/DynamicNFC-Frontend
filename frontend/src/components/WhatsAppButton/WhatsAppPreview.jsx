@@ -7,7 +7,6 @@ const PAGES = [
   { path: "/enterprise/crmdemo/khalid", label: "Khalid VIP Portal", labelAr: "بوابة خالد VIP" },
   { path: "/enterprise/crmdemo/ahmed", label: "Ahmed Family Portal", labelAr: "بوابة أحمد العائلية" },
   { path: "/enterprise/crmdemo/marketplace", label: "Marketplace", labelAr: "السوق" },
-  { path: "/enterprise/crmdemo/dashboard", label: "Dashboard", labelAr: "لوحة التحكم" },
   { path: "/nfc-cards", label: "NFC Cards", labelAr: "بطاقات NFC" },
   { path: "/contact-sales", label: "Contact Sales", labelAr: "المبيعات" },
 ];
@@ -17,7 +16,6 @@ function getMessageContext(pathname, lang) {
   if (pathname.includes("/crmdemo/khalid")) return { message: isAr ? "مرحباً، أنا أتصفح بوابة خالد الراشد VIP — مهتم بمجموعة البنتهاوس في النور ريزيدنسز. أرغب في حجز معاينة خاصة." : "Hi, I'm browsing the Khalid Al-Rashid VIP Portal — interested in the Penthouse Collection at Al Noor Residences. I'd like to schedule a private viewing.", badge: isAr ? "VIP — خالد الراشد" : "VIP — Khalid Portal", intent: "vip" };
   if (pathname.includes("/crmdemo/ahmed")) return { message: isAr ? "مرحباً، أنا أتصفح بوابة أحمد الفهد العائلية — مهتم بشقق 3 غرف نوم في النور ريزيدنسز." : "Hi, I'm browsing the Ahmed Al-Fahad Family Portal — interested in 3BR family units at Al Noor Residences. Can I book a viewing?", badge: isAr ? "عائلي — أحمد الفهد" : "Family — Ahmed Portal", intent: "vip" };
   if (pathname.includes("/crmdemo/marketplace")) return { message: isAr ? "مرحباً، أتصفح سوق النور ريزيدنسز وأرغب في معرفة المزيد عن الوحدات المتاحة." : "Hi, I'm browsing the Al Noor Residences Marketplace and would like to learn more about available units.", badge: isAr ? "السوق" : "Marketplace", intent: "lead" };
-  if (pathname.includes("/crmdemo/dashboard")) return { message: isAr ? "مرحباً، أنا أراجع لوحة التحكم التحليلية — أريد مناقشة كيف يمكن لهذا النظام أن يعمل لمشروعي." : "Hi, I'm reviewing the DynamicNFC Analytics Dashboard — I'd like to discuss how this system could work for my project.", badge: isAr ? "لوحة التحكم" : "Dashboard", intent: "sales" };
   if (pathname.includes("/crmdemo")) return { message: isAr ? "مرحباً، أنا أتصفح عرض CRM التجريبي لـ DynamicNFC." : "Hi, I'm exploring the DynamicNFC CRM Demo — I'd like to learn more about the Sales Velocity Platform.", badge: isAr ? "عرض تجريبي" : "CRM Demo", intent: "sales" };
   if (pathname.includes("/enterprise")) return { message: isAr ? "مرحباً، أنا مهتم بمنصة DynamicNFC للمؤسسات — أرغب في مناقشة برنامج تجريبي." : "Hi, I'm interested in the DynamicNFC Enterprise platform — I'd like to discuss a pilot program for our real estate project.", badge: isAr ? "المؤسسات" : "Enterprise", intent: "sales" };
   if (pathname.includes("/developers")) return { message: isAr ? "مرحباً، أنا مطور عقاري مهتم بحلول DynamicNFC." : "Hi, I'm a real estate developer interested in DynamicNFC solutions — can we arrange a discovery call?", badge: isAr ? "المطورين" : "Developers", intent: "sales" };

@@ -664,7 +664,7 @@ export default function VIPPortal() {
         <span className="active">VIP Portal</span>
         <Link to="/enterprise/crmdemo/ahmed">Ahmed Portal</Link>
         <Link to="/enterprise/crmdemo/marketplace">Marketplace</Link>
-        <Link to="/enterprise/crmdemo/dashboard">Dashboard</Link>
+        <Link to="/unified">Dashboard</Link>
         <Link to="/enterprise/crmdemo/ai-demo">AI Pipeline</Link>
         <span className="crossnav-persona">👤 {vipName}</span>
       </div>

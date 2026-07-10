@@ -755,7 +755,7 @@ export default function Home() {
           <p>{t('demoSub')}</p>
         </div>
         <div className="hp-demo-grid hp-reveal-stagger">
-          <Link to="/enterprise/crmdemo/dashboard" className="hp-demo-sector-card hp-demo-sector-card--re">
+          <Link to="/enterprise/crmdemo" className="hp-demo-sector-card hp-demo-sector-card--re">
             <div className="hp-demo-sector-icon hp-demo-sector-icon--re">{ICONS.star}</div>
             <h3>{t('demoRe')}</h3>
             <p>{t('demoRed')}</p>
@@ -764,7 +764,7 @@ export default function Home() {
             </div>
             <span className="hp-demo-sector-cta">{t('demoCardCta')}</span>
           </Link>
-          <Link to="/automotive/dashboard" className="hp-demo-sector-card hp-demo-sector-card--auto">
+          <Link to="/automotive/demo" className="hp-demo-sector-card hp-demo-sector-card--auto">
             <div className="hp-demo-sector-icon hp-demo-sector-icon--auto">{ICONS.car}</div>
             <h3>{t('demoAuto')}</h3>
             <p>{t('demoAutod')}</p>
@@ -787,8 +787,8 @@ export default function Home() {
       </div>
       <div className="hp-ind-grid hp-reveal-stagger">
         {[
-          { k: 'ind1', icon: ICONS.building, c: 'blue', nav: '/developers', demo: '/enterprise/crmdemo/dashboard' },
-          { k: 'ind3', icon: ICONS.car, c: 'red', nav: '/automotive', demo: '/automotive/dashboard' },
+          { k: 'ind1', icon: ICONS.building, c: 'blue', nav: '/developers', demo: '/enterprise/crmdemo' },
+          { k: 'ind3', icon: ICONS.car, c: 'red', nav: '/automotive', demo: '/automotive/demo' },
           { k: 'ind2', icon: ICONS.card, c: 'gold', nav: '/nfc-cards', wide: true },
         ].map((ind, i) => (
           <div

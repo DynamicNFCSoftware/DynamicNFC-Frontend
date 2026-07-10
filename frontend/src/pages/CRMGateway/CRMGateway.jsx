@@ -35,7 +35,7 @@ const T = {
     b3: "Public Access", c3t: "Global Marketplace",
     c3d: "Anonymous and registered user browsing experience with adaptive content and lead capture based on engagement signals.",
     c3tags: ["Anonymous Browse", "Lead Capture", "Progressive Profile"],
-    b4: "Analytics Dashboard", c4t: "CRM Intelligence",
+    b4: "Analytics", c4t: "Unified Dashboard — CRM Intelligence",
     c4d: "Internal behavioral analytics and CRM dashboard showing real-time engagement metrics, lead scoring, content performance, and conversion funnels.",
     c4tags: ["Real-time Analytics", "Lead Scoring", "Behavior Tracking", "Conversion Funnels", "A/B Testing"],
     b5: "AI Automation", c5t: "AI Sales Pipeline",
@@ -54,7 +54,7 @@ const T = {
     ab4: "AI Pipeline", ac4t: "AI Sales Pipeline",
     ac4d: "Automated follow-up system generating personalized offers and test drive scheduling.",
     ac4tags: ["AI Follow-up", "Test Drive Booking", "Smart Offers"],
-    ab5: "Analytics", ac5t: "Dealership Dashboard",
+    ab5: "Analytics", ac5t: "Unified Dashboard — Dealer Intelligence",
     ac5d: "Real-time showroom analytics, lead scoring, vehicle interest tracking, and conversion funnels.",
     ac5tags: ["Showroom Analytics", "Lead Scoring", "Inventory Insights"],
 
@@ -99,7 +99,7 @@ const T = {
     b3: "الوصول العام", c3t: "السوق العالمي",
     c3d: "تجربة تصفح للمستخدمين المجهولين والمسجلين مع محتوى متكيف وجمع بيانات العملاء حسب إشارات التفاعل.",
     c3tags: ["تصفح مجهول", "التقاط العملاء", "ملف تدريجي"],
-    b4: "لوحة تحليلات", c4t: "ذكاء إدارة علاقات العملاء",
+    b4: "لوحة تحليلات", c4t: "لوحة التحكم الموحدة — ذكاء إدارة علاقات العملاء",
     c4d: "لوحة تحليلات داخلية وسجل إدارة علاقات العملاء تُظهر مؤشرات التفاعل في الوقت الفعلي، تقييم العملاء، أداء المحتوى، ومسارات التحويل.",
     c4tags: ["تحليلات فورية", "تقييم العملاء", "تتبع السلوك", "قمع التحويل", "اختبار A/B"],
     b5: "أتمتة الذكاء الاصطناعي", c5t: "مسار مبيعات الذكاء الاصطناعي",
@@ -118,7 +118,7 @@ const T = {
     ab4: "مسار AI", ac4t: "مسار مبيعات الذكاء الاصطناعي",
     ac4d: "نظام متابعة آلي يولّد عروضًا مخصصة وجدولة تجارب القيادة.",
     ac4tags: ["متابعة AI", "حجز تجربة قيادة", "عروض ذكية"],
-    ab5: "تحليلات", ac5t: "لوحة تحكم الوكالة",
+    ab5: "تحليلات", ac5t: "لوحة التحكم الموحدة — ذكاء الوكالة",
     ac5d: "تحليلات صالة العرض في الوقت الفعلي، تقييم العملاء، تتبع الاهتمام بالسيارات، ومسارات التحويل.",
     ac5tags: ["تحليلات صالة العرض", "تقييم العملاء", "رؤى المخزون"],
 
@@ -260,7 +260,7 @@ export default function CRMGateway() {
   }, []);
 
   const rePortals = [
-    { id: "dashboard", path: "/enterprise/crmdemo/dashboard", badge: t.b4, badgeCls: "red", cardIcon: "chart", title: t.c4t, desc: t.c4d, tags: t.c4tags, featured: true },
+    { id: "dashboard", path: "/unified", badge: t.b4, badgeCls: "red", cardIcon: "chart", title: t.c4t, desc: t.c4d, tags: t.c4tags, featured: true },
     { id: "khalid", path: "/enterprise/crmdemo/khalid", badge: t.b1, badgeCls: "red", avatar: "KR", avatarCls: "gold", title: t.c1t, desc: t.c1d, tags: t.c1tags },
     { id: "ahmed", path: "/enterprise/crmdemo/ahmed", badge: t.b2, badgeCls: "blue", avatar: "AF", avatarCls: "blue", title: t.c2t, desc: t.c2d, tags: t.c2tags },
     { id: "marketplace", path: "/enterprise/crmdemo/marketplace", badge: t.b3, badgeCls: "blue", cardIcon: "globe", title: t.c3t, desc: t.c3d, tags: t.c3tags },
@@ -268,7 +268,7 @@ export default function CRMGateway() {
   ];
 
   const autoPortals = [
-    { id: "auto-dashboard", path: "/automotive/dashboard", badge: t.ab5, badgeCls: "red", cardIcon: "chart", title: t.ac5t, desc: t.ac5d, tags: t.ac5tags, featured: true },
+    { id: "auto-dashboard", path: "/unified", badge: t.ab5, badgeCls: "red", cardIcon: "chart", title: t.ac5t, desc: t.ac5d, tags: t.ac5tags, featured: true },
     { id: "khalid-auto", path: "/automotive/demo/khalid", badge: t.ab1, badgeCls: "red", avatar: "KA", avatarCls: "gold", title: t.ac1t, desc: t.ac1d, tags: t.ac1tags },
     { id: "sultan", path: "/automotive/demo/sultan", badge: t.ab2, badgeCls: "red", avatar: "SA", avatarCls: "blue", title: t.ac2t, desc: t.ac2d, tags: t.ac2tags },
     { id: "showroom", path: "/automotive/demo/showroom", badge: t.ab3, badgeCls: "blue", cardIcon: "store", title: t.ac3t, desc: t.ac3d, tags: t.ac3tags },
@@ -340,7 +340,7 @@ export default function CRMGateway() {
               <button
                 type="button"
                 className="gw-ind-btn"
-                onClick={() => navigate('/enterprise/crmdemo/dashboard')}
+                onClick={() => setIndustry('re')}
                 aria-label={`${t.indReTitle}. ${t.indReSub}`}
               >
                 <div className="gw-ind-card gw-ind-re">
@@ -358,7 +358,7 @@ export default function CRMGateway() {
               <button
                 type="button"
                 className="gw-ind-btn"
-                onClick={() => navigate('/automotive/dashboard')}
+                onClick={() => navigate('/automotive/demo')}
                 aria-label={`${t.indAutoTitle}. ${t.indAutoSub}`}
               >
                 <div className="gw-ind-card gw-ind-auto">

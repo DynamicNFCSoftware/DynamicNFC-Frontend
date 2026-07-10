@@ -415,7 +415,7 @@ export default function RealEstate() {
         </div>
         <div className="ent-hero-ctas">
           <button className="ent-btn-primary" onClick={openPilot}>{t('heroCtaPilot')}</button>
-          <Link to="/enterprise/crmdemo/dashboard" className="ent-btn-secondary" style={{ textDecoration: 'none' }}>{t('heroCtaDemo')}</Link>
+          <Link to="/enterprise/crmdemo" className="ent-btn-secondary" style={{ textDecoration: 'none' }}>{t('heroCtaDemo')}</Link>
         </div>
       </section>
 
@@ -576,7 +576,7 @@ export default function RealEstate() {
               <p>{t('demoCard3Desc')}</p>
               <div className="ent-portal-arrow"><ArrowIcon /></div>
             </a>
-            <a href="/enterprise/crmdemo/dashboard" target="_blank" rel="noreferrer" className="ent-demo-portal ent-demo-portal-featured">
+            <a href="/enterprise/crmdemo" target="_blank" rel="noreferrer" className="ent-demo-portal ent-demo-portal-featured">
               <div className="ent-portal-badge gold">{t('demoBadge4')}</div>
               <div className="ent-portal-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--gold)' }}>
@@ -736,7 +736,7 @@ export default function RealEstate() {
           <p>{t('ctaDesc')}</p>
           <div className="dev-cta-btns">
             <button className="dev-cta-primary" onClick={openPilot}>{t('ctaPilot')}</button>
-            <Link to="/enterprise/crmdemo/dashboard" className="dev-cta-ghost" style={{ textDecoration: 'none' }}>
+            <Link to="/enterprise/crmdemo" className="dev-cta-ghost" style={{ textDecoration: 'none' }}>
               {t('ctaDemo')}
             </Link>
           </div>
@@ -898,7 +898,7 @@ export default function RealEstate() {
             </div>
             <div className="dev-ft-col">
               <h5>{isRTL ? 'الموارد' : 'Resources'}</h5>
-              <Link to="/enterprise/crmdemo/dashboard">{isRTL ? 'عرض مباشر' : 'Live Demo'}</Link>
+              <Link to="/enterprise/crmdemo">{isRTL ? 'عرض مباشر' : 'Live Demo'}</Link>
               <Link to="/contact-sales">{isRTL ? 'تواصل مع المبيعات' : 'Contact Sales'}</Link>
               <Link to="/login">{isRTL ? 'تسجيل الدخول' : 'Log in'}</Link>
             </div>
