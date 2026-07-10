@@ -10,7 +10,6 @@ import { RegionProvider } from "./hooks/useRegion";
 /* ── Global CSS ── */
 import './assets/css/blinq-app.shared.423b915ad.min.css';
 import './assets/css/swiper-bundle.min.css';
-import './assets/css/ordercard.css?ver=9';
 import './index.css';
 
 /* ── Components (always loaded) ── */

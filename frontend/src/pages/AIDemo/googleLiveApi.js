@@ -106,13 +106,13 @@ export async function createGmailDraft(token, { to, subject, htmlBody, senderNam
 }
 
 /* ── Create Calendar Event ── */
-export async function createCalendarEvent(token, { summary, location, description, startDateTime, endDateTime, attendeeEmail }) {
+export async function createCalendarEvent(token, { summary, location, description, startDateTime, endDateTime, attendeeEmail, timeZone = "Asia/Riyadh" }) {
   const event = {
     summary,
     location,
     description,
-    start: { dateTime: startDateTime, timeZone: "Asia/Dubai" },
-    end: { dateTime: endDateTime, timeZone: "Asia/Dubai" },
+    start: { dateTime: startDateTime, timeZone },
+    end: { dateTime: endDateTime, timeZone },
     reminders: { useDefault: false, overrides: [{ method: "email", minutes: 1440 }, { method: "popup", minutes: 60 }] },
   };
   if (attendeeEmail) {

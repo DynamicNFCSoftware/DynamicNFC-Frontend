@@ -2,8 +2,8 @@
    yachtGoogleLiveApi.js — yacht sea-trial email builder.
    Generic OAuth + Gmail + Calendar helpers are reused verbatim from
    autoGoogleLiveApi.js (single source — no API logic duplicated).
-   Only the email template is yacht-specific. Calendar timezone stays
-   Asia/Dubai in the shared helper (demo default) — noted as debt.
+   Only the email template is yacht-specific. Calendar timezone is
+   region-aware via createCalendarEvent({ timeZone }) from the caller.
    ═══════════════════════════════════════════════════════ */
 
 export {

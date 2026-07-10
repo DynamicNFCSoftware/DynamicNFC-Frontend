@@ -8,9 +8,9 @@ const crmGateway = {
     title2: "Powered by NFC",
     desc: "Experience how Dynamic NFC transforms luxury real estate sales with intelligent, personalized buyer portals. Each tap delivers a unique experience tailored to buyer preferences, interests, and stage in the journey.",
 
-    stat1v: "47%", stat1l: "Higher Engagement",
-    stat2v: "3.2×", stat2l: "Conversion Rate",
-    stat3v: "Real-time", stat3l: "Analytics",
+    stat1v: "Named", stat1l: "Every Prospect",
+    stat2v: "Real-Time", stat2l: "Intent Signals",
+    stat3v: "Zero", stat3l: "Guesswork",
 
     sectionPortals: "Demo Portals",
 
@@ -57,9 +57,9 @@ const crmGateway = {
     title2: "مدعومة بتقنية NFC",
     desc: "اكتشف كيف تُحوِّل Dynamic NFC مبيعات العقارات الفاخرة من خلال بوابات مشترين ذكية ومُخصَّصة. كل نقرة تُقدِّم تجربة فريدة مُصمَّمة وفقاً لتفضيلات المشتري واهتماماته ومرحلته في رحلة الشراء.",
 
-    stat1v: "٤٧٪", stat1l: "تفاعل أعلى",
-    stat2v: "٣.٢×", stat2l: "معدل التحويل",
-    stat3v: "لحظي", stat3l: "تحليلات",
+    stat1v: "مُعرَّف", stat1l: "كل عميل محتمل",
+    stat2v: "لحظي", stat2l: "إشارات النية",
+    stat3v: "صفر", stat3l: "تخمين",
 
     sectionPortals: "البوابات التجريبية",
 

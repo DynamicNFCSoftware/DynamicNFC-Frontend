@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Footer } from './components/Footer';
 import { TR } from './i18n';
+import '../../assets/css/ordercard.css?ver=9';
 import './styles/OrderCardPage.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/orderCard';

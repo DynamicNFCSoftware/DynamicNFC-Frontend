@@ -13,6 +13,7 @@ const GULF = {
   currency: 'SAR',
   currencySymbol: '﷼',
   locale: 'ar-SA',
+  timeZone: 'Asia/Riyadh',
   sidebarAccent: '#b8860b',
   projects: {
     real_estate: { en: 'Al Noor Residences', ar: 'مساكن النور', es: 'Residencias Al Noor' },
@@ -47,6 +48,7 @@ const USA = {
   currency: 'USD',
   currencySymbol: '$',
   locale: 'en-US',
+  timeZone: 'America/New_York',
   sidebarAccent: '#1a365d',
   projects: {
     real_estate: { en: 'Skyline Towers', ar: 'أبراج سكايلاين', es: 'Torres Skyline' },
@@ -81,6 +83,7 @@ const MEXICO = {
   currency: 'MXN',
   currencySymbol: '$',
   locale: 'es-MX',
+  timeZone: 'America/Mexico_City',
   sidebarAccent: '#c25e30',
   projects: {
     real_estate: { en: 'Residencias del Sol', ar: 'مساكن الشمس', es: 'Residencias del Sol' },
@@ -115,6 +118,7 @@ const CANADA = {
   currency: 'CAD',
   currencySymbol: 'C$',
   locale: 'en-CA',
+  timeZone: 'America/Vancouver',
   sidebarAccent: '#d52b1e',
   projects: {
     real_estate: { en: 'Vista Residences', ar: 'فيستا ريزيدنسز', es: 'Residencias Vista', fr: 'Résidences Vista' },

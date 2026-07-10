@@ -4,6 +4,16 @@ import './AutoAIDemo.css';
 import { loadGIS, requestToken, getUserInfo, createGmailDraft, createCalendarEvent, revokeToken, buildVipEmailHtml } from "./autoGoogleLiveApi";
 import canvaProposalCover from "../../assets/images/canva-proposal-cover.png";
 import SEO from '../../components/SEO/SEO';
+import { useRegion } from '../../hooks/useRegion';
+import { getRegion, DEFAULT_REGION } from '../../config/regionConfig';
+
+function regionTimeZone() {
+  try {
+    return getRegion(localStorage.getItem('ud-region') || DEFAULT_REGION).timeZone;
+  } catch {
+    return getRegion(DEFAULT_REGION).timeZone;
+  }
+}
 
 /* ═══ TRANSLATIONS ═══ */
 const TR = {
@@ -132,7 +142,7 @@ const REAL_RESULTS = {
   calendar: (() => {
     const d = new Date();
     d.setDate(d.getDate() + 5);
-    const day = d.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Dubai" });
+    const day = d.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: regionTimeZone() });
     return {
       title: "Private Test Drive — AMG GT 63 S — Khalid Al-Mansouri (VIP)",
       date: day,
@@ -194,7 +204,7 @@ const TERMINAL_LINES = {
   calendar: (() => {
     const d = new Date();
     d.setDate(d.getDate() + 5);
-    const short = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "Asia/Dubai" });
+    const short = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: regionTimeZone() });
     return [
       { type: "cmd", text: "mcp.gcal.find_free_time({calendar: 'vip-test-drives'})" },
       { type: "wait", text: "Checking VIP test drive availability..." },
@@ -236,6 +246,7 @@ const STEP_DESCS = {
 };
 
 export default function AutoAIDemo() {
+  const { region } = useRegion();
   const [lang, setLang] = useState("en");
   const t = useCallback((k) => TR[lang]?.[k] || TR.en[k] || k, [lang]);
   const [theme, setTheme] = useState("light");
@@ -379,6 +390,7 @@ export default function AutoAIDemo() {
         startDateTime: startDT.toISOString(),
         endDateTime: endDT.toISOString(),
         attendeeEmail: null,
+        timeZone: region.timeZone,
       })
         .then(result => setLiveResults(prev => ({ ...prev, calendar: result })))
         .catch(err => console.error("Live Calendar failed:", err));
@@ -404,7 +416,7 @@ export default function AutoAIDemo() {
       const el = stepRefs.current[stepIdx];
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 150);
-  }, [typeLines, googleToken]);
+  }, [typeLines, googleToken, region.timeZone]);
 
   const runAll = useCallback(async () => {
     setAllRunning(true);
