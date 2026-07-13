@@ -116,9 +116,11 @@ export default function AutoGateway() {
     }
   }, []);
 
+  const initials = (name) => (name || "").split(/\s+/).filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase() || "?";
+
   const portals = [
-    { id: "khalid", path: "/automotive/demo/khalid", badge: t.b1, badgeCls: "red", avatar: "KM", avatarCls: "gold", title: vip1?.name || t.c1t, desc: t.c1d, tags: t.c1tags },
-    { id: "sultan", path: "/automotive/demo/sultan", badge: t.b2, badgeCls: "blue", avatar: "SD", avatarCls: "blue", title: vip2?.name || t.c2t, desc: t.c2d, tags: t.c2tags },
+    { id: "khalid", path: "/automotive/demo/khalid", badge: t.b1, badgeCls: "red", avatar: initials(vip1?.name), avatarCls: "gold", title: vip1?.name || t.c1t, desc: t.c1d, tags: t.c1tags },
+    { id: "sultan", path: "/automotive/demo/sultan", badge: t.b2, badgeCls: "blue", avatar: initials(vip2?.name), avatarCls: "blue", title: vip2?.name || t.c2t, desc: t.c2d, tags: t.c2tags },
     { id: "showroom", path: "/automotive/demo/showroom", badge: t.b3, badgeCls: "blue", icon: "🏪", title: t.c3t, desc: t.c3d, tags: t.c3tags },
     { id: "dashboard", path: "/unified", badge: t.b4, badgeCls: "red", icon: "\uD83D\uDCCA", title: t.c4t, desc: t.c4d, tags: t.c4tags, featured: true },
     { id: "ai-pipeline", path: "/automotive/demo/ai", badge: t.b5, badgeCls: "purple", icon: "\u26A1", title: t.c5t, desc: t.c5d, tags: t.c5tags, featured: true },

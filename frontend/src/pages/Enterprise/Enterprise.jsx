@@ -22,17 +22,17 @@ const TR = {
     heroSub_auto:'DynamicNFC transforms premium NFC cards into private VIP showroom experiences — bridging the gap between anonymous walk-ins and named, high-intent buyers ready to configure, finance, and drive away.',
     heroSub_yacht:'DynamicNFC transforms premium NFC cards into private yacht experiences — connecting named buyers and charter guests with the vessels, itineraries, and sea trials that move a decision forward.',
     statValNamed:'Named', statValIntent:'Real-Time', statValZero:'Zero',
-    statConversion:'Conversion Rate', statDecision:'Faster Decision Cycle', statIdentified:'Identified Visitors',
+    statConversion:'Every Buyer', statDecision:'Intent Signals', statIdentified:'Guesswork',
     heroCtaPilot:'Request a Pilot →', heroCtaDemo:'See the Live Demo',
 
     probLabel:'The Blind Spot', probTitle:'Your Sales Team Is Operating Without Context',
     probQuote:'Your highest-intent buyers spend weeks exploring floor plans, pricing, and payment options online. Yet when sales teams engage, they lack the one critical thing that closes deals: ', probQuoteHighlight:'context.',
-    prob1Icon:'🏙️', prob1Title:'Anonymous Traffic', prob1Desc:'Nearly all of your website visitors leave without ever identifying themselves.',
-    prob2Icon:'⏳', prob2Title:'Delayed Follow-ups', prob2Desc:'Sales teams reach out too late, with no insight into which units, payment plans, or amenities prospects explored',
-    prob3Icon:'📋', prob3Title:'Generic Conversations', prob3Desc:'Every prospect gets the same pitch — whether they\'re an investor seeking ROI or a family seeking community',
+    prob1Icon:'', prob1Title:'Anonymous Traffic', prob1Desc:'Nearly all of your website visitors leave without ever identifying themselves.',
+    prob2Icon:'', prob2Title:'Delayed Follow-ups', prob2Desc:'Sales teams reach out too late, with no insight into which units, payment plans, or amenities prospects explored',
+    prob3Icon:'', prob3Title:'Generic Conversations', prob3Desc:'Every prospect gets the same pitch — whether they\'re an investor seeking ROI or a family seeking community',
 
-    shiftLabel:'The Shift', shiftTitle:'From Brochure Website to Private Invitation',
-    shiftDesc:'What if you stopped treating the website as a public brochure — and started treating it as a private experience for selected prospects?',
+    shiftLabel:'The Shift', shiftTitle:'From Public Website to Private Buyer Experience',
+    shiftDesc:'What if you stopped treating the website as a public listing — and started treating it as a Private Buyer Experience for selected prospects?',
     oldLabel:'The Old Way', oldTitle:'Generic Website', oldDesc:'Everyone sees the same thing. Anonymous visitors. Zero context for your sales team.',
     old1:'Anonymous traffic', old2:'One-size-fits-all content', old3:'No behavioral signals', old4:'Cold follow-ups',
     newLabel:'The Dynamic Way', newTitle:'Private VIP Experience', newDesc:'Each VIP Access Key unlocks a personalized portal. Identity precedes action.',
@@ -47,7 +47,7 @@ const TR = {
 
     idLabel:'The Key Difference', idTitle:'Same Website. Same Actions. Different Intelligence.', idTagline:'Identity is the multiplier.',
     idVipLabel:'VIP Access Key Holder', idVipTitle:'Named Prospect — Khalid Al-Rashid',
-    idVipDesc:'You know he returned to the Skyline Penthouse again and again, downloaded the ROI brochure, and spent long, focused minutes reviewing payment plans. Your sales team calls with context, timing, and the right offer.',
+    idVipDesc:'You know he returned to the Skyline Penthouse again and again, reviewed investment returns, and spent long, focused minutes on payment plans. Your sales team calls with context, timing, and the right offer.',
     idVip1:'Personal Follow-ups', idVip2:'Tailored Incentives', idVip3:'Concierge Sales', idVip4:'Named Intelligence',
     idAnonLabel:'Anonymous Website Visitor', idAnonTitle:'Unknown — Segment Data Only',
     idAnonDesc:"Someone visited the penthouse page. You don't know who, how many times, or what else they explored. The lead sits in a queue with hundreds of others.",
@@ -55,15 +55,15 @@ const TR = {
 
     demoLabel:'Live Demo', demoTitle:'See It In Action — Live Demo Environments',
     demoDesc:'Explore our fully functional demo environment. Four portals show how DynamicNFC transforms the same project into four distinct experiences — from VIP investors to anonymous browsers.',
-    demoBadge1:'★ VIP Investor', demoCard1Title:'Khalid Al-Rashid Portal',
+    demoBadge1:'VIP Investor', demoCard1Title:'Khalid Al-Rashid Portal',
     demoCard1Desc:'Elite investor experience with ROI-focused content, high-floor penthouse showcases, and investment analytics.',
-    demoBadge2:'🏠 Family Buyer', demoCard2Title:'Ahmed Al-Fahad Portal',
+    demoBadge2:'Family Buyer', demoCard2Title:'Ahmed Al-Fahad Portal',
     demoCard2Desc:'Premium homebuyer experience highlighting family-friendly 3BR units, school districts, and community amenities.',
-    demoBadge3:'🌐 Public Access', demoCard3Title:'Global Marketplace',
+    demoBadge3:'Public Access', demoCard3Title:'Global Marketplace',
     demoCard3Desc:'Anonymous and registered user browsing experience with adaptive content based on engagement signals.',
-    demoBadge4:'📊 Analytics', demoCard4Title:'Corporate Dashboard — Behavioral Intelligence',
+    demoBadge4:'Analytics', demoCard4Title:'Corporate Dashboard — Behavioral Intelligence',
     demoCard4Desc:'Real-time engagement metrics, lead scoring, conversion funnels, and A/B testing. See how every tap feeds your sales pipeline.',
-    demoBadge5:'🤖 AI Engine', demoCard5Title:'AI Sales Pipeline — Live MCP Demo',
+    demoBadge5:'AI Engine', demoCard5Title:'AI Sales Pipeline — Live MCP Demo',
     demoCard5Desc:'Watch AI orchestrate Gmail, Google Calendar, and DocuSign in real-time. Every action is verifiable — click to confirm in your own accounts.',
     demoCta:'Explore Full Demo →',
 
@@ -71,15 +71,15 @@ const TR = {
     roiDesc:'Success is measured by one thing: how fast prospects move from first tap to booked viewing to signed deal.',
     roiFlow1:'100 VIP Invitations', roiFlow2:'Private Digital Access', roiFlow3:'High-Intent Signals',
     roiFlow4:'Sales Prioritization', roiFlow5:'More Booked Viewings', roiFlow6:'Higher Close Rate',
-    roiMetric1Label:'Higher Conversion Rate', roiMetric1Sub:'VIP invitees vs. anonymous website traffic',
-    roiMetric2Label:'Faster Decision Cycle', roiMetric2Sub:'From first tap to booked viewing',
-    roiMetric3Label:'Identified Engagement', roiMetric3Sub:'Every tap is linked to a named prospect',
+    roiMetric1Label:'Named Prospects', roiMetric1Sub:'VIP invitees vs. anonymous website traffic',
+    roiMetric2Label:'Real-Time Intent', roiMetric2Sub:'From first tap to booked viewing',
+    roiMetric3Label:'Zero Guesswork', roiMetric3Sub:'Every tap is linked to a named prospect',
 
     trustLabel:'Built for Enterprise', trustTitle:'Privacy-First. CRM-Integrated. Zero Friction.',
-    trust1Icon:'🔒', trust1Title:'Consent by Design', trust1Desc:'The physical tap is the ultimate opt-in. Consent is explicit, invitations are intentional, access is controlled.',
-    trust2Icon:'📱', trust2Title:'NFC + QR Fallback', trust2Desc:'NFC for instant access. QR codes for universal compatibility. No app downloads required.',
-    trust3Icon:'🔗', trust3Title:'CRM Integration', trust3Desc:"Sits on top of your existing systems. Enhances your CRM with behavioral intelligence — doesn't replace it.",
-    trust4Icon:'🤖', trust4Title:'AI Personalization', trust4Desc:"Content adapts dynamically to each prospect's interests, stage, and engagement history.",
+    trust1Icon:'', trust1Title:'Consent by Design', trust1Desc:'The physical tap is the ultimate opt-in. Consent is explicit, invitations are intentional, access is controlled.',
+    trust2Icon:'', trust2Title:'NFC + QR Fallback', trust2Desc:'NFC for instant access. QR codes for universal compatibility. No app downloads required.',
+    trust3Icon:'', trust3Title:'CRM Integration', trust3Desc:"Sits on top of your existing systems. Enhances your CRM with behavioral intelligence — doesn't replace it.",
+    trust4Icon:'', trust4Title:'AI Personalization', trust4Desc:"Content adapts dynamically to each prospect's interests, stage, and engagement history.",
 
     faqLabel:'Questions Executives Ask', faqTitle:'Addressed Before You Ask Them',
     faq1Q:'Is this replacing our website or CRM?',
@@ -89,7 +89,7 @@ const TR = {
     faq3Q:'What about data privacy and compliance?',
     faq3A:"Consent is baked into the physical experience. When a prospect taps a card they intentionally received, that's explicit opt-in. No dark patterns, no hidden tracking. The tap is the consent.",
     faq4Q:'What does the prospect actually receive?',
-    faq4A:'A premium box with an NFC-enabled VIP Access Key and a personal message. Not a marketing flyer — a private invitation.',
+    faq4A:'A premium box with an NFC-enabled VIP Access Key and a personal message. Not a marketing piece — a Private Invitation.',
     faq5Q:'How fast can we deploy?',
     faq5A:'A pilot program can launch within 2–4 weeks. We configure your portals, design the premium box experience, program the NFC cards, and connect the analytics dashboard.',
     faq6Q:"What's the real ROI here?",
@@ -146,15 +146,15 @@ const TR = {
     heroSub_auto:"يحوّل DynamicNFC بطاقات NFC الفاخرة إلى تجارب صالة عرض VIP خاصة — جسر بين الزوار المجهولين والمشترين ذوي النية العالية الجاهزين للتكوين والتمويل والقيادة.",
     heroSub_yacht:"يحوّل DynamicNFC بطاقات NFC الفاخرة إلى تجارب يخوت خاصة — تربط المشترين والضيوف المعروفين باليخوت والرحلات وتجارب البحر التي تحرّك القرار.",
     statValNamed:"بالاسم", statValIntent:"فوري", statValZero:"صفر",
-    statConversion:"معدل التحويل", statDecision:"دورة اتخاذ القرار أسرع", statIdentified:"زوار محددون",
+    statConversion:"كل مشترٍ", statDecision:"إشارات النية", statIdentified:"تخمين",
     heroCtaPilot:"طلب تجربة تجريبية →", heroCtaDemo:"شاهد العرض التجريبي المباشر",
     probLabel:"النقطة العمياء", probTitle:"فريق المبيعات يعمل دون سياق",
     probQuote:"يقضي المشترون الأكثر جدية أسابيع في استكشاف مخططات الطوابق والأسعار وخيارات الدفع عبر الإنترنت. ومع ذلك، عندما تتواصل فرق المبيعات معهم، فإنها تفتقر إلى الشيء الأهم الذي يحسم الصفقات: ", probQuoteHighlight:"السياق.",
-    prob1Icon:"🏙️", prob1Title:"حركة مرور مجهولة", prob1Desc:"يغادر معظم زوّار موقعك دون أن يعرّفوا عن أنفسهم أبداً.",
-    prob2Icon:"⏳", prob2Title:"متابعات متأخرة", prob2Desc:"يتواصل فرق المبيعات متأخرًا، دون معرفة الوحدات، أو خطط الدفع، أو المرافق التي استكشفها العملاء المحتملون",
-    prob3Icon:"📋", prob3Title:"المحادثات العامة", prob3Desc:"كل عميل محتمل يحصل على نفس العرض — سواء كان مستثمرًا يبحث عن العائد أو عائلة تبحث عن المجتمع",
-    shiftLabel:"التحول", shiftTitle:"من موقع كتيب عام إلى دعوة خاصة",
-    shiftDesc:"ماذا لو توقفت عن اعتبار موقعك الإلكتروني مجرد كتيب عام، وبدأت اعتباره تجربة خاصة للعملاء المختارين؟",
+    prob1Icon:"", prob1Title:"حركة مرور مجهولة", prob1Desc:"يغادر معظم زوّار موقعك دون أن يعرّفوا عن أنفسهم أبداً.",
+    prob2Icon:"", prob2Title:"متابعات متأخرة", prob2Desc:"يتواصل فرق المبيعات متأخرًا، دون معرفة الوحدات، أو خطط الدفع، أو المرافق التي استكشفها العملاء المحتملون",
+    prob3Icon:"", prob3Title:"المحادثات العامة", prob3Desc:"كل عميل محتمل يحصل على نفس العرض — سواء كان مستثمرًا يبحث عن العائد أو عائلة تبحث عن المجتمع",
+    shiftLabel:"التحول", shiftTitle:"من موقع عام إلى تجربة مشترٍ خاصة",
+    shiftDesc:"ماذا لو توقفت عن اعتبار موقعك الإلكتروني مجرد قائمة عامة، وبدأت اعتباره تجربة مشترٍ خاصة للعملاء المختارين؟",
     oldLabel:"الطريقة القديمة", oldTitle:"موقع عام", oldDesc:"الجميع يرى نفس الشيء. زوار مجهولون. صفر سياق لفريق المبيعات.",
     old1:"حركة مرور مجهولة", old2:"محتوى واحد يناسب الجميع", old3:"لا إشارات سلوكية", old4:"متابعات باردة",
     newLabel:"الطريقة الديناميكية", newTitle:"تجربة خاصة لكبار الشخصيات", newDesc:"كل مفتاح وصول كبار الشخصيات يفتح بوابة شخصية. الهوية تسبق الفعل.",
@@ -167,7 +167,7 @@ const TR = {
     step4Title:"التحليلات السلوكية", step4Desc:"كل تفاعل — مشاهدة مخططات الطوابق، طلبات الأسعار، حجز الزيارات — يُغذي لوحة التحكم الخاصة بك في الوقت الفعلي.",
     idLabel:"الفرق الرئيسي", idTitle:"نفس الموقع. نفس الإجراءات. ذكاء مختلف.", idTagline:"الهوية هي المضاعف.",
     idVipLabel:"حامل مفتاح وصول كبار الشخصيات", idVipTitle:"عميل معروف بالاسم — خالد الرشيد",
-    idVipDesc:"تعرف أنه عاد إلى بنتهاوس Skyline مرارًا، وحمّل كتيب العائد على الاستثمار، وقضى وقتًا طويلًا ومركّزًا في مراجعة خطط الدفع. يتصل فريق المبيعات بالسياق والتوقيت والعرض المناسب.",
+    idVipDesc:"تعرف أنه عاد إلى بنتهاوس Skyline مرارًا، وراجع عوائد الاستثمار، وقضى وقتًا طويلًا ومركّزًا في خطط الدفع. يتصل فريق المبيعات بالسياق والتوقيت والعرض المناسب.",
     idVip1:"المتابعات الشخصية", idVip2:"الحوافز المخصصة", idVip3:"مبيعات بخدمة شخصية", idVip4:"الذكاء المعروف بالاسم",
     idAnonLabel:"زائر موقع مجهول", idAnonTitle:"مجهول — بيانات الشريحة فقط",
     idAnonDesc:"زار شخص صفحة البنتهاوس. لا تعرف من هو، كم مرة زار، أو ما الذي استكشفه أيضًا. العميل المحتمل في قائمة انتظار مع المئات غيره.",
@@ -185,19 +185,19 @@ const TR = {
     roiDesc:"يتم قياس النجاح من خلال شيء واحد: سرعة انتقال العملاء المحتملين من أول نقرة إلى حجز الزيارة إلى توقيع الصفقة.",
     roiFlow1:"100 دعوة لكبار الشخصيات", roiFlow2:"وصول رقمي خاص", roiFlow3:"إشارات نية عالية",
     roiFlow4:"أولوية المبيعات", roiFlow5:"زيارات محجوزة أكثر", roiFlow6:"معدل إغلاق أعلى",
-    roiMetric1Label:"معدل تحويل أعلى", roiMetric1Sub:"المدعوون من كبار الشخصيات مقابل حركة المرور المجهولة على الموقع",
-    roiMetric2Label:"دورة اتخاذ القرار أسرع", roiMetric2Sub:"من أول نقرة حتى حجز الزيارة",
-    roiMetric3Label:"تفاعل محدد بالهوية", roiMetric3Sub:"كل نقرة مرتبطة بعميل محتمل معروف",
+    roiMetric1Label:"عملاء معروفون بالاسم", roiMetric1Sub:"المدعوون من كبار الشخصيات مقابل حركة المرور المجهولة على الموقع",
+    roiMetric2Label:"نية في الوقت الفعلي", roiMetric2Sub:"من أول نقرة حتى حجز الزيارة",
+    roiMetric3Label:"بلا تخمين", roiMetric3Sub:"كل نقرة مرتبطة بعميل محتمل معروف",
     trustLabel:"مصمم للمؤسسات", trustTitle:"خصوصية أولاً، متكامل مع إدارة علاقات العملاء، بدون عوائق",
-    trust1Icon:"🔒", trust1Title:"الموافقة حسب التصميم", trust1Desc:"النقرة الفعلية هي الموافقة المطلقة. الموافقة صريحة، الدعوات مقصودة، والوصول مُتحكم فيه.",
-    trust2Icon:"📱", trust2Title:"الاتصال قريب المدى + QR احتياطي", trust2Desc:"الاتصال قريب المدى للوصول الفوري. رموز QR للتوافق الشامل. لا حاجة لتنزيل أي تطبيق.",
-    trust3Icon:"🔗", trust3Title:"تكامل إدارة علاقات العملاء", trust3Desc:"يعمل فوق أنظمتك الحالية. يعزز إدارة علاقات العملاء الخاص بك بالذكاء السلوكي — لا يحل محله.",
-    trust4Icon:"🤖", trust4Title:"التخصيص بالذكاء الاصطناعي", trust4Desc:"المحتوى يتكيف ديناميكيًا مع اهتمامات كل عميل، مرحلته، وتاريخ تفاعله.",
+    trust1Icon:"", trust1Title:"الموافقة حسب التصميم", trust1Desc:"النقرة الفعلية هي الموافقة المطلقة. الموافقة صريحة، الدعوات مقصودة، والوصول مُتحكم فيه.",
+    trust2Icon:"", trust2Title:"الاتصال قريب المدى + QR احتياطي", trust2Desc:"الاتصال قريب المدى للوصول الفوري. رموز QR للتوافق الشامل. لا حاجة لتنزيل أي تطبيق.",
+    trust3Icon:"", trust3Title:"تكامل إدارة علاقات العملاء", trust3Desc:"يعمل فوق أنظمتك الحالية. يعزز إدارة علاقات العملاء الخاص بك بالذكاء السلوكي — لا يحل محله.",
+    trust4Icon:"", trust4Title:"التخصيص بالذكاء الاصطناعي", trust4Desc:"المحتوى يتكيف ديناميكيًا مع اهتمامات كل عميل، مرحلته، وتاريخ تفاعله.",
     faqLabel:"الأسئلة التي يطرحها التنفيذيون", faqTitle:"تم الإجابة عليها قبل أن تسألها",
     faq1Q:"هل هذا يحل محل موقعنا الإلكتروني أو نظام إدارة العملاء؟", faq1A:"لا. DynamicNFC هو طبقة تعمل فوق أنظمتك الحالية. موقعك الإلكتروني يظل يعمل، ونظام إدارة العملاء الخاص بك يظل يعمل. نحن نحسّن كلاهما باستخدام تحليلات سلوكية مرتبطة بالهوية لا يمكن لأي منهما جمعها بمفرده.",
     faq2Q:"كيف نقيس نجاح التجربة التجريبية؟", faq2A:"مؤشر واحد: زيادة عدد الزيارات المحجوزة بين المدعوين من كبار الشخصيات مقارنة بالمجموعة الضابطة. ليست النقرات، ولا مشاهدات الصفحة — بل النشاط الفعلي للمبيعات.",
     faq3Q:"ماذا عن خصوصية البيانات والامتثال؟", faq3A:"يتم تضمين الموافقة ضمن التجربة المادية. عندما يقوم العميل المحتمل بالنقر على بطاقة تلقاها عن قصد، فهذا يعني موافقة صريحة. لا أنماط مظلمة، ولا تتبع خفي. النقر هو الموافقة.",
-    faq4Q:"ماذا يحصل عليه العميل المحتمل فعليًا؟", faq4A:"صندوق فاخر يحتوي على مفتاح وصول كبار الشخصيات مزود بتقنية الاتصال قريب المدى ورسالة شخصية. ليست نشرة تسويقية — بل دعوة خاصة.",
+    faq4Q:"ماذا يحصل عليه العميل المحتمل فعليًا؟", faq4A:"صندوق فاخر يحتوي على مفتاح وصول كبار الشخصيات مزود بتقنية الاتصال قريب المدى ورسالة شخصية. ليست مادة تسويقية — بل دعوة خاصة.",
     faq5Q:"ما مدى سرعة التنفيذ؟", faq5A:"يمكن إطلاق برنامج تجريبي خلال 2–4 أسابيع. نقوم بإعداد بواباتك، وتصميم تجربة الصندوق الفاخر، وبرمجة بطاقات الاتصال قريب المدى، وربط لوحة التحليلات.",
     faq6Q:"ما هو العائد الحقيقي هنا؟", faq6A:"الأمر يتعلق بتقليل الوقت من \"مهتم\" إلى \"زيارة\" للنصف. عندما يتواصل فريق المبيعات في الوقت المناسب ومع السياق الصحيح، تتسارع القرارات.",
     ctaLabel:"جاهز للتنفيذ", ctaTitle:"أنت لا توزع بطاقات الاتصال قريب المدى. أنت تصدر دعوات خاصة.",
@@ -237,6 +237,18 @@ const TR = {
     modalIndustry:"القطاع", modalIndustryPlaceholder:"اختر قطاعك",
   },
 };
+
+const PROB_ICONS = [
+  <svg key="p1" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.5-3.5 4-5 7-5s5.5 1.5 7 5"/><path d="M19 4l1.5 1.5M19 4l-1.5 1.5M19 4v3"/></svg>,
+  <svg key="p2" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>,
+  <svg key="p3" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden><path d="M8 6h11M8 12h11M8 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg>,
+];
+const TRUST_ICONS = [
+  <svg key="t1" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><path d="M12 15v2"/></svg>,
+  <svg key="t2" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 18h4"/><circle cx="12" cy="9" r="2.5"/></svg>,
+  <svg key="t3" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg>,
+  <svg key="t4" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden><path d="M12 3l2.2 4.5L19 8.5l-3.5 3.4.8 4.8L12 14.8 7.7 16.7l.8-4.8L5 8.5l4.8-1L12 3z"/></svg>,
+];
 
 /* ═══════════════════════════════════════════
    MAIN COMPONENT
@@ -375,7 +387,7 @@ export default function Enterprise() {
         <div className="ent-problem-cards">
           {[1, 2, 3].map(i => (
             <div className="ent-problem-card" key={i}>
-              <div className="ent-problem-card-icon">{t(`prob${i}Icon`)}</div>
+              <div className="ent-problem-card-icon">{PROB_ICONS[i - 1]}</div>
               <h4>{t(`prob${i}Title`)}</h4>
               <p>{t(isAuto || isYacht ? `prob${i}Desc_${ind}` : `prob${i}Desc`)}</p>
             </div>
@@ -649,7 +661,7 @@ export default function Enterprise() {
             { i: 1, c: 'red' }, { i: 2, c: 'blue' }, { i: 3, c: 'teal' }, { i: 4, c: 'gold' },
           ].map(({ i, c }) => (
             <div className="ent-trust-item" key={i}>
-              <div className={`ent-trust-icon ${c}`}>{t(`trust${i}Icon`)}</div>
+              <div className={`ent-trust-icon ${c}`}>{TRUST_ICONS[i - 1]}</div>
               <h4>{t(`trust${i}Title`)}</h4>
               <p>{t(`trust${i}Desc`)}</p>
             </div>

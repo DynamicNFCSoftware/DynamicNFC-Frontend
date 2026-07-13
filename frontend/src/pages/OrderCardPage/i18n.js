@@ -30,7 +30,7 @@ export const TR = {
     physicalFeat1: 'NFC chip + QR code on every card',
     physicalFeat2: 'PVC, Metal, or Eco materials',
     physicalFeat3: 'Custom name, logo & QR link',
-    physicalFeat4: 'Free worldwide shipping',
+    physicalFeat4: 'Shipping calculated at checkout',
     physicalFeat5: 'Minimum order: 25 cards',
     physicalCta: 'Design Physical Card',
     physicalNote: 'Bulk orders — no individual purchase',
@@ -47,7 +47,7 @@ export const TR = {
     metalDesc: 'Brushed metal in Gold, Silver, Black, Rose Gold, or luxurious 24K Gold.',
     ecoDesc: 'Sustainable bamboo or walnut wood — eco-friendly and unique.',
     pricingTitle: 'Physical Card Pricing',
-    pricingSub: 'All physical cards include NFC chip (NTAG 216), custom QR code, premium packaging, and free worldwide shipping. Minimum order: 25 cards.',
+    pricingSub: 'All physical cards include NFC chip (NTAG 216), custom QR code, and premium packaging. Shipping calculated at checkout. Minimum order: 25 cards.',
     minOrder: 'Min. 25 cards',
 
     /* Comparison */
@@ -111,7 +111,7 @@ export const TR = {
     physicalFeat1: 'شريحة NFC + رمز QR في كل بطاقة',
     physicalFeat2: 'خامات PVC أو معدن أو طبيعية',
     physicalFeat3: 'اسم وشعار ورابط QR مخصص',
-    physicalFeat4: 'شحن عالمي مجاني',
+    physicalFeat4: 'يُحسب الشحن عند الدفع',
     physicalFeat5: 'الحد الأدنى: ٢٥ بطاقة',
     physicalCta: 'صمّم بطاقة مادية',
     physicalNote: 'طلبات جماعية — بدون شراء فردي',
@@ -127,7 +127,7 @@ export const TR = {
     metalDesc: 'معدن مصقول بألوان ذهبي وفضي وأسود وذهبي وردي وذهب عيار ٢٤.',
     ecoDesc: 'خيزران أو خشب جوز مستدام — صديق للبيئة وفريد.',
     pricingTitle: 'أسعار البطاقات المادية',
-    pricingSub: 'جميع البطاقات تشمل شريحة NFC (NTAG 216)، رمز QR مخصص، تغليف فاخر، وشحن عالمي مجاني. الحد الأدنى: ٢٥ بطاقة.',
+    pricingSub: 'جميع البطاقات تشمل شريحة NFC (NTAG 216)، رمز QR مخصص، وتغليف فاخر. يُحسب الشحن عند الدفع. الحد الأدنى: ٢٥ بطاقة.',
     minOrder: 'الحد الأدنى ٢٥ بطاقة',
 
     compTitle: 'نظرة سريعة',

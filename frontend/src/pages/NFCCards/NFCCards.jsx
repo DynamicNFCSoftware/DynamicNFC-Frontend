@@ -41,7 +41,7 @@ const TR = {
     ben2t: 'Premium Materials', ben2d: 'Brushed metal with 24K gold accents, natural bamboo, walnut wood, and premium PVC in 5 finishes.',
     ben3t: 'Real-Time Analytics', ben3d: 'Track every tap, scan, and interaction. Know who viewed your profile, when, and what they clicked.',
     ben4t: 'No App Required', ben4d: 'Your recipients never need to download anything. One tap opens your profile directly in their browser.',
-    ben5t: 'Made in Canada', ben5d: 'Designed, engineered, and shipped from Canada. Premium quality with 40+ country shipping.',
+    ben5t: 'Made in Canada', ben5d: 'Designed, engineered, and shipped from Canada. Premium quality with worldwide fulfillment.',
     ben6t: 'CRM Integration', ben6d: 'Connect with Salesforce, HubSpot, or any CRM. Every contact captured flows into your pipeline automatically.',
     /* Materials */
     matTitle: 'Crafted Materials',
@@ -103,7 +103,7 @@ faq6a: 'All iPhones from iPhone 7 onward and virtually all modern Android device
     ben2t: "مواد فاخرة", ben2d: "معادن مصقولة مع لمسات ذهبية عيار 24 قيراط، خشب خيزران طبيعي، خشب الجوز، وPVC فاخر بخمسة تشطيبات.",
     ben3t: "تحليلات الوقت الحقيقي", ben3d: "تتبع كل نقرة، مسح، وتفاعل. اعرف من شاهد ملفك الشخصي، متى، وما الذي نقر عليه.",
     ben4t: "لا حاجة لتطبيق", ben4d: "المستلمون لا يحتاجون لتنزيل أي شيء. نقرة واحدة تفتح ملفك مباشرة في المتصفح.",
-    ben5t: "صنع في كندا", ben5d: "مصممة، ومهندسة، وشحنت من كندا. جودة فائقة وشحن لأكثر من 40 دولة.",
+    ben5t: "صنع في كندا", ben5d: "مصممة، ومهندسة، وشُحنت من كندا. جودة فائقة مع شحن عالمي.",
     ben6t: "تكامل إدارة علاقات العملاء", ben6d: "الاتصال بـ Salesforce أو HubSpot أو أي إدارة علاقات العملاء. كل جهة اتصال يتم التقاطها تتدفق تلقائيًا إلى خط أنابيب المبيعات الخاص بك.",
     matTitle: "المواد المصممة",
     matSub: "اختر التشطيب الذي يعكس حضورك",

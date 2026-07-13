@@ -19,7 +19,7 @@ const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "F
 
 const LANG = {
   en: {
-    nav: { back: "Demo Hub" },
+    nav: { back: "Demo Hub", dashboard: "Dashboard" },
     hero: { badge: "Private Marina", welcomeMale: "Welcome,", welcomeFemale: "Welcome,",
       title: "Your Private Fleet Awaits", sub: "A curated selection of exceptional vessels, reserved for owners who expect the extraordinary — at anchor and under way.", cta: "Explore Fleet" },
     fleet: { title: "The Fleet", sub: "Curated for You", hint: "Select any vessel to explore full details" },
@@ -33,7 +33,7 @@ const LANG = {
     footer: "Private marina experience. Curated for your exclusive access.", poweredBy: "Powered by",
   },
   ar: {
-    nav: { back: "مركز العرض" },
+    nav: { back: "مركز العرض", dashboard: "لوحة التحكم" },
     hero: { badge: "مارينا خاصة", welcomeMale: "مرحبًا،", welcomeFemale: "مرحبًا،",
       title: "أسطولك الخاص بانتظارك", sub: "مجموعة مختارة من اليخوت الاستثنائية، محجوزة لملاك يتوقعون ما هو استثنائي — عند الرسو وأثناء الإبحار.", cta: "استكشف الأسطول" },
     fleet: { title: "الأسطول", sub: "مختار لك", hint: "اختر أي يخت لاستكشاف كامل التفاصيل" },
@@ -47,7 +47,7 @@ const LANG = {
     footer: "تجربة مارينا خاصة. مصممة لوصولك الحصري.", poweredBy: "مدعوم من",
   },
   es: {
-    nav: { back: "Centro Demo" },
+    nav: { back: "Centro Demo", dashboard: "Panel" },
     hero: { badge: "Marina Privada", welcomeMale: "Bienvenido,", welcomeFemale: "Bienvenida,",
       title: "Su Flota Privada le Espera", sub: "Una selección curada de embarcaciones excepcionales, reservada para propietarios que esperan lo extraordinario — al ancla y en navegación.", cta: "Explorar Flota" },
     fleet: { title: "La Flota", sub: "Curada para Usted", hint: "Seleccione cualquier embarcación para ver todos los detalles" },
@@ -61,7 +61,7 @@ const LANG = {
     footer: "Experiencia de marina privada. Curada para su acceso exclusivo.", poweredBy: "Impulsado por",
   },
   fr: {
-    nav: { back: "Hub Démo" },
+    nav: { back: "Hub Démo", dashboard: "Tableau de bord" },
     hero: { badge: "Marina Privée", welcomeMale: "Bienvenue,", welcomeFemale: "Bienvenue,",
       title: "Votre Flotte Privée Vous Attend", sub: "Une sélection choisie de navires d'exception, réservée aux propriétaires qui attendent l'extraordinaire — au mouillage comme en navigation.", cta: "Explorer la Flotte" },
     fleet: { title: "La Flotte", sub: "Sélectionnée pour Vous", hint: "Sélectionnez un navire pour voir tous les détails" },
@@ -177,6 +177,7 @@ export default function YachtVIPPortal() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d={isRtl ? "M5 12h14M12 5l7 7-7 7" : "M19 12H5M12 19l-7-7 7-7"} /></svg>
             {t.nav.back}
           </Link>
+          <Link to="/unified" className="yvp-back" style={{ opacity: 0.85 }}>{t.nav.dashboard}</Link>
           <span className="yvp-brand">{projectName(lang)}</span>
           <button className="yvp-lang" onClick={toggleLang}>{LANG_LABEL[region?.languages?.find((l) => l !== lang) || "en"]}</button>
         </div>
@@ -344,7 +345,7 @@ export default function YachtVIPPortal() {
 
       <footer className="yvp-footer">
         <p>{t.footer}</p>
-        <p className="yvp-footer-brand">{t.poweredBy} <strong>Dynamic NFC</strong></p>
+        <p className="yvp-footer-brand">{t.poweredBy} <strong>DynamicNFC</strong></p>
       </footer>
     </div>
   );

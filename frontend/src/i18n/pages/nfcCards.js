@@ -12,10 +12,10 @@ const nfcCards = {
     flipHint: "Hover to flip · Tap on mobile",
 
     /* ── Stats ── */
-    stat1v: "12+",
-    stat1l: "Card Types",
-    stat2v: "40+",
-    stat2l: "Countries",
+    stat1v: "Metal",
+    stat1l: "Gold · PVC · Eco",
+    stat2v: "NFC+QR",
+    stat2l: "Dual Access",
     stat3v: "< 1s",
     stat3l: "Tap to Share",
     stat4v: "0",
@@ -51,7 +51,7 @@ const nfcCards = {
       "Your recipients never need to download anything. One tap opens your profile directly in their browser.",
     ben5t: "Made in Canada",
     ben5d:
-      "Designed, engineered, and shipped from Canada. Premium quality with 40+ country shipping.",
+      "Designed, engineered, and shipped from Canada. Premium quality with worldwide fulfillment.",
     ben6t: "CRM Integration",
     ben6d:
       "Connect with Salesforce, HubSpot, or any CRM. Every contact captured flows into your pipeline automatically.",
@@ -111,10 +111,10 @@ const nfcCards = {
     flipHint: "مرِّر للقلب · انقر على الهاتف",
 
     /* ── Stats ── */
-    stat1v: "‎+12",
-    stat1l: "نوع بطاقة",
-    stat2v: "‎+40",
-    stat2l: "دولة",
+    stat1v: "معدن",
+    stat1l: "ذهب · PVC · صديق للبيئة",
+    stat2v: "NFC+QR",
+    stat2l: "وصول مزدوج",
     stat3v: "أقل من ثانية",
     stat3l: "للمشاركة بلمسة",
     stat4v: "0",
@@ -150,7 +150,7 @@ const nfcCards = {
       "لا يحتاج المستلمون إلى تحميل أي شيء. نقرة واحدة تفتح ملفك مباشرةً في متصفّحهم.",
     ben5t: "صُنع في كندا",
     ben5d:
-      "صُمِّم وطُوِّر وشُحِن من كندا. جودة فائقة مع خدمة شحن إلى أكثر من 40 دولة.",
+      "صُمِّم وطُوِّر وشُحِن من كندا. جودة فائقة مع تنفيذ طلبات عالمي.",
     ben6t: "تكامل مع أنظمة CRM",
     ben6d:
       "اربط بطاقتك بـ Salesforce أو HubSpot أو أي نظام CRM. تتدفق كل جهة اتصال جديدة إلى خط المبيعات تلقائيًا.",

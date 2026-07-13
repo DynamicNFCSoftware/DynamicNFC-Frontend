@@ -18,7 +18,7 @@ const home = {
     blindDesc: "Today, your highest-intent buyers spend weeks exploring floor plans, pricing, and payment options online. Yet when sales teams engage, they lack context. They don't know who is ready, what they care about, or when to act. This leads to delayed follow-ups, generic conversations, and missed momentum.",
     shiftTitle: "The Shift",
     shiftSub: "From public website to private invitation.",
-    shiftDesc: "What if you stopped treating the website as a brochure, and instead treated it as a private experience for selected prospects? Not everyone — only those you intentionally invite. Selected prospects receive a premium box with an NFC card. When they tap, they access a private digital experience. This establishes consent, exclusivity, and trust before any tracking happens.",
+    shiftDesc: "What if you stopped treating the website as a public landing page, and instead treated it as a Private Buyer Experience for selected prospects? Not everyone — only those you intentionally invite. Selected prospects receive a premium box with an NFC card. When they tap, they access a private digital experience. This establishes consent, exclusivity, and trust before any tracking happens.",
 
     demoTitle: "See It In Action",
     demoSub: "Walk through a live demo of the VIP buyer experience, marketplace, and intelligence dashboard.",
@@ -57,7 +57,7 @@ const home = {
     proc4t: "90-Day Review", proc4d: "Measure booked viewings uplift, decision speed, and VIP engagement vs control group.",
 
     priceTitle: "Enterprise Pricing",
-    priceSub: "Pilot programs start from $4,800 for 25 VIP cards with full portal and dashboard access. Pricing scales with portfolio size.",
+    priceSub: "Pilot programs are scoped to your portfolio — contact sales for a custom quote.",
     priceCta: "Get a Custom Quote",
 
     faqTitle: "Frequently Asked Questions",
@@ -91,7 +91,7 @@ const home = {
     blindDesc: "اليوم، المشترون ذوو النية العالية يقضون أسابيع في استكشاف المخططات والأسعار وخيارات الدفع عبر الإنترنت. ومع ذلك، عندما تتواصل فِرَق المبيعات، تفتقر إلى السياق. لا يعرفون مَن المستعد، ما الذي يهمّه، أو متى يجب التصرف. هذا يؤدي إلى متابعات متأخرة، ومحادثات عامة، وزخم ضائع.",
     shiftTitle: "التحوّل",
     shiftSub: "من موقع إلكتروني عام إلى دعوة خاصة.",
-    shiftDesc: "ماذا لو توقفت عن التعامل مع الموقع كمنشور دعائي، وبدلاً من ذلك عاملته كتجربة خاصة لعملاء مُختارين؟ ليس الجميع — فقط مَن تدعوهم عمداً. يتلقى العملاء المختارون صندوقاً فاخراً مع بطاقة NFC. عند النقر، يصلون إلى تجربة رقمية خاصة تؤسّس الموافقة والحصرية والثقة قبل أي تتبّع.",
+    shiftDesc: "ماذا لو توقفت عن التعامل مع الموقع كصفحة هبوط عامة، وبدلاً من ذلك عاملته كتجربة مشتري خاصة لعملاء مُختارين؟ ليس الجميع — فقط مَن تدعوهم عمداً. يتلقى العملاء المختارون صندوقاً فاخراً مع بطاقة NFC. عند النقر، يصلون إلى تجربة رقمية خاصة تؤسّس الموافقة والحصرية والثقة قبل أي تتبّع.",
 
     demoTitle: "شاهد النظام مباشرةً",
     demoSub: "تجوّل في عرض حيّ لتجربة المشتري VIP والسوق ولوحة الذكاء التحليلي.",
@@ -130,7 +130,7 @@ const home = {
     proc4t: "مراجعة ٩٠ يوماً", proc4d: "قياس ارتفاع حجوزات المعاينة، سرعة اتخاذ القرار، وتفاعل VIP مقابل المجموعة الضابطة.",
 
     priceTitle: "تسعير المؤسسات",
-    priceSub: "تبدأ برامج التجربة من ٤,٨٠٠ دولار لـ ٢٥ بطاقة VIP مع بوابة كاملة ولوحة تحكم. يتوسّع التسعير مع حجم المحفظة.",
+    priceSub: "تُصمَّم برامج التجربة وفق محفظتك — تواصل مع المبيعات للحصول على عرض سعر مخصص.",
     priceCta: "احصل على عرض سعر مخصص",
 
     faqTitle: "الأسئلة الشائعة",
