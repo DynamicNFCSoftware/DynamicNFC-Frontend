@@ -6,6 +6,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { RegionProvider } from "../../hooks/useRegion";
 import AIDemo from "./AIDemo";
 
 // Mock googleLiveApi to avoid loading real GIS script
@@ -23,11 +24,14 @@ function renderDemo() {
   // HelmetProvider wraps the tree so <SEO>'s <Helmet> can register itself
   // in the helmet context — required for any test that renders a page
   // component that uses react-helmet-async.
+  // RegionProvider required since FAZ5 AIDemo uses useRegion() for timeZone.
   return render(
     <HelmetProvider>
-      <MemoryRouter>
-        <AIDemo />
-      </MemoryRouter>
+      <RegionProvider>
+        <MemoryRouter>
+          <AIDemo />
+        </MemoryRouter>
+      </RegionProvider>
     </HelmetProvider>
   );
 }
