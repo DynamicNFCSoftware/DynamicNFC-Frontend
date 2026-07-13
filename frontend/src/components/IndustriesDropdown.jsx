@@ -66,14 +66,30 @@ export default function IndustriesDropdown({ lang = "en", triggerClassName = "" 
     </svg>
   );
 
+  const BuildingIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M4 21V8l8-5 8 5v13" /><path d="M9 21v-6h6v6" /><path d="M9 10h.01M15 10h.01M9 14h.01M15 14h.01" />
+    </svg>
+  );
+  const CarIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M5 17h14v-5l-1.5-4.5A2 2 0 0 0 15.6 6H8.4a2 2 0 0 0-1.9 1.5L5 12v5z" /><circle cx="7.5" cy="17.5" r="1.5" /><circle cx="16.5" cy="17.5" r="1.5" />
+    </svg>
+  );
+  const OfficeIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <rect x="4" y="3" width="16" height="18" rx="1" /><path d="M9 21v-6h6v6M9 8h.01M15 8h.01M9 12h.01M15 12h.01" />
+    </svg>
+  );
+
   const items = [
     { type: "label", text: t("groupSales") },
-    { icon: "🏗", label: t("reDev"), to: "/developers" },
-    { icon: "🚗", label: t("auto"), to: "/automotive" },
+    { icon: BuildingIcon, label: t("reDev"), to: "/developers" },
+    { icon: CarIcon, label: t("auto"), to: "/automotive" },
     { icon: AnchorIcon, label: t("yacht"), to: "/yacht/demo", badge: t("yachtNew") },
     { type: "sep" },
     { type: "label", text: t("groupPlatform") },
-    { icon: "🏢", label: t("enterprise"), to: "/enterprise" },
+    { icon: OfficeIcon, label: t("enterprise"), to: "/enterprise" },
   ];
 
   return (

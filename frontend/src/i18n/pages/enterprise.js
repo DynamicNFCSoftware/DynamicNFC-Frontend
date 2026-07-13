@@ -43,9 +43,9 @@ const enterprise = {
 
     /* ── The Shift ── */
     shiftLabel: "The Shift",
-    shiftTitle: "From Brochure Website to Private Invitation",
+    shiftTitle: "From Public Website to Private Invitation",
     shiftDesc:
-      "What if you stopped treating the website as a public brochure — and started treating it as a private experience for selected prospects?",
+      "What if you stopped treating the website as a public landing page — and started treating it as a Private Buyer Experience for selected prospects?",
     oldLabel: "The Old Way",
     oldTitle: "Generic Website",
     oldDesc:
@@ -217,7 +217,7 @@ const enterprise = {
 
     /* ── Footer ── */
     footerText:
-      "© 2025 DynamicNFC — Sales Velocity Engine for Real Estate Developers",
+      "© 2026 DynamicNFC — Sales Velocity Engine for Real Estate Developers",
   },
 
   ar: {
@@ -264,7 +264,7 @@ const enterprise = {
     shiftLabel: "التحوّل",
     shiftTitle: "من موقع إلكتروني عام إلى دعوة خاصة",
     shiftDesc:
-      "ماذا لو توقفت عن التعامل مع الموقع الإلكتروني كمنشور دعائي عام — وبدأت بمعاملته كتجربة حصرية للعملاء المختارين؟",
+      "ماذا لو توقفت عن التعامل مع الموقع الإلكتروني كصفحة هبوط عامة — وبدأت بمعاملته كتجربة مشتري خاصة للعملاء المختارين؟",
     oldLabel: "الطريقة التقليدية",
     oldTitle: "موقع إلكتروني عام",
     oldDesc:
@@ -435,7 +435,7 @@ const enterprise = {
 
     /* ── Footer ── */
     footerText:
-      "© ٢٠٢٥ DynamicNFC — محرك تسريع المبيعات للمطورين العقاريين",
+      "© ٢٠٢٦ DynamicNFC — محرك تسريع المبيعات للمطورين العقاريين",
   },
 };
 
