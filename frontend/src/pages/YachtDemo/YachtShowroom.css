@@ -1,4 +1,5 @@
 /* ═══ YACHT SHOWROOM — ysh- prefix · light marina luxury ═══ */
+.ysh-photo { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; object-fit: cover; }
 .ysh {
   --ysh-accent: #457b9d;
   --ysh-bg: #f7fafb;
@@ -41,7 +42,7 @@
 .ysh-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
 .ysh-card { display: flex; flex-direction: column; text-align: start; background: var(--ysh-panel); border: 1px solid var(--ysh-border); border-radius: 16px; overflow: hidden; cursor: pointer; color: var(--ysh-text); padding: 0; transition: transform 0.25s, box-shadow 0.25s; }
 .ysh-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(22, 36, 46, 0.1); }
-.ysh-card-media { position: relative; block-size: 160px; display: grid; place-items: center; background: linear-gradient(135deg, #dfeaf0, #eef4f7); color: var(--ysh-accent); }
+.ysh-card-media { position: relative; overflow: hidden; block-size: 160px; display: grid; place-items: center; background: linear-gradient(135deg, #dfeaf0, #eef4f7); color: var(--ysh-accent); }
 .ysh-card-media.type-superyacht { background: linear-gradient(135deg, #d5e4ec, #e8f0f4); }
 .ysh-card-media.type-sport { background: linear-gradient(135deg, #dde9ef, #eef5f8); }
 .ysh-silhouette { inline-size: 60%; opacity: 0.75; }
@@ -63,7 +64,7 @@
 .ysh-modal, .ysh-lead { position: relative; inline-size: min(620px, 100%); max-block-size: 90vh; overflow-y: auto; background: var(--ysh-panel); border-radius: 18px; }
 .ysh-lead { inline-size: min(440px, 100%); padding: 2rem; }
 .ysh-modal-close { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.9rem; z-index: 2; inline-size: 34px; block-size: 34px; border-radius: 50%; border: none; background: rgba(22, 36, 46, 0.08); color: var(--ysh-text); font-size: 1.3rem; cursor: pointer; }
-.ysh-modal-media { position: relative; block-size: 190px; display: grid; place-items: center; background: linear-gradient(135deg, #dfeaf0, #eef4f7); color: var(--ysh-accent); }
+.ysh-modal-media { position: relative; overflow: hidden; block-size: 190px; display: grid; place-items: center; background: linear-gradient(135deg, #dfeaf0, #eef4f7); color: var(--ysh-accent); }
 .ysh-modal-silhouette { inline-size: 52%; opacity: 0.78; }
 .ysh-modal-body { padding: 1.35rem 1.5rem 1.5rem; }
 .ysh-modal-body h3 { font-family: 'Playfair Display', serif; font-size: 1.45rem; margin: 0; }
@@ -91,8 +92,4 @@
 
 .ysh-footer { text-align: center; padding: 2.5rem 1.5rem; border-block-start: 1px solid var(--ysh-border); color: var(--ysh-text2); }
 .ysh-footer p { margin: 0 0 0.4rem; font-size: 0.85rem; }
-.ysh-footer-brand strong { color: var(--ysh-accent); }
-
-@media (prefers-reduced-motion: reduce) {
-  .ysh-card, .ysh-hero-cta { transition: none; }
-}
+.ysh-footer-brand strong { color: var(--ysh-acce

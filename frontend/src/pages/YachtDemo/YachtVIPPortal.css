@@ -62,7 +62,9 @@
   position: relative; block-size: 170px; display: grid; place-items: center;
   background: linear-gradient(135deg, #0a2233, #051119);
   color: color-mix(in srgb, var(--yvp-accent) 70%, white);
+  overflow: hidden;
 }
+.yvp-photo { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; object-fit: cover; }
 .yvp-card-media.type-superyacht { background: linear-gradient(135deg, #10263a, #05121c); }
 .yvp-card-media.type-sport { background: linear-gradient(135deg, #0c2431, #08161f); }
 .yvp-card-media.type-explorer { background: linear-gradient(135deg, #0e2836, #071820); }
@@ -85,7 +87,7 @@
 .yvp-modal, .yvp-book { position: relative; inline-size: min(680px, 100%); max-block-size: 90vh; overflow-y: auto; background: #0a1c28; border: 1px solid var(--yvp-border); border-radius: 18px; }
 .yvp-book { inline-size: min(460px, 100%); padding: 2rem; }
 .yvp-modal-close { position: absolute; inset-block-start: 0.75rem; inset-inline-end: 0.9rem; z-index: 2; inline-size: 34px; block-size: 34px; border-radius: 50%; border: none; background: rgba(0, 0, 0, 0.4); color: var(--yvp-text); font-size: 1.3rem; cursor: pointer; }
-.yvp-modal-media { position: relative; block-size: 200px; display: grid; place-items: center; background: linear-gradient(135deg, #0a2233, #051119); color: color-mix(in srgb, var(--yvp-accent) 70%, white); }
+.yvp-modal-media { position: relative; overflow: hidden; block-size: 200px; display: grid; place-items: center; background: linear-gradient(135deg, #0a2233, #051119); color: color-mix(in srgb, var(--yvp-accent) 70%, white); }
 .yvp-modal-silhouette { inline-size: 55%; opacity: 0.85; }
 .yvp-modal-head { padding: 1.25rem 1.5rem 0.5rem; }
 .yvp-modal-head h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 0; }
@@ -138,7 +140,4 @@
 @media (max-width: 560px) {
   .yvp-cta-row .yvp-cta { flex: 1 1 100%; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .yvp-nfc-waves span { animation: none; }
-  .yvp-card, .yvp-hero-cta { transition: none; }
-}
+@media (prefers

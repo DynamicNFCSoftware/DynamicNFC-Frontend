@@ -204,7 +204,9 @@ export default function YachtVIPPortal() {
           {yachts.map((y) => (
             <button key={y.id} className="yvp-card" onClick={() => openDetail(y)}>
               <div className={`yvp-card-media type-${y.type}`}>
-                <YachtSilhouette type={y.type} className="yvp-silhouette" />
+                {y.image
+                  ? <img src={y.image} alt={y.name} className="yvp-photo" loading="lazy" />
+                  : <YachtSilhouette type={y.type} className="yvp-silhouette" />}
                 <span className="yvp-type-badge">{(TYPE_LABELS[y.type] || TYPE_LABELS.motor)[lang] || TYPE_LABELS[y.type]?.en}</span>
               </div>
               <div className="yvp-card-body">
@@ -234,7 +236,9 @@ export default function YachtVIPPortal() {
           <div className="yvp-modal" onClick={(e) => e.stopPropagation()}>
             <button className="yvp-modal-close" onClick={closeDetail} aria-label={t.book.close}>×</button>
             <div className={`yvp-modal-media type-${selected.type}`}>
-              <YachtSilhouette type={selected.type} className="yvp-modal-silhouette" />
+              {selected.image
+                ? <img src={selected.image} alt={selected.name} className="yvp-photo" />
+                : <YachtSilhouette type={selected.type} className="yvp-modal-silhouette" />}
               <span className="yvp-type-badge">{(TYPE_LABELS[selected.type] || TYPE_LABELS.motor)[lang] || TYPE_LABELS[selected.type]?.en}</span>
             </div>
             <div className="yvp-modal-head">

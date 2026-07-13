@@ -184,7 +184,9 @@ export default function YachtShowroom() {
           {shown.map((y) => (
             <button key={y.id} className="ysh-card" onClick={() => openDetail(y)}>
               <div className={`ysh-card-media type-${y.type}`}>
-                <YachtSilhouette type={y.type} className="ysh-silhouette" />
+                {y.image
+                  ? <img src={y.image} alt={y.name} className="ysh-photo" loading="lazy" />
+                  : <YachtSilhouette type={y.type} className="ysh-silhouette" />}
                 <span className="ysh-type-badge">{(TYPE_LABELS[y.type] || TYPE_LABELS.motor)[lang] || TYPE_LABELS[y.type]?.en}</span>
               </div>
               <div className="ysh-card-body">
@@ -214,7 +216,9 @@ export default function YachtShowroom() {
           <div className="ysh-modal" onClick={(e) => e.stopPropagation()}>
             <button className="ysh-modal-close" onClick={() => setSelected(null)} aria-label={t.detail.close}>×</button>
             <div className={`ysh-modal-media type-${selected.type}`}>
-              <YachtSilhouette type={selected.type} className="ysh-modal-silhouette" />
+              {selected.image
+                ? <img src={selected.image} alt={selected.name} className="ysh-photo" />
+                : <YachtSilhouette type={selected.type} className="ysh-modal-silhouette" />}
               <span className="ysh-type-badge">{(TYPE_LABELS[selected.type] || TYPE_LABELS.motor)[lang] || TYPE_LABELS[selected.type]?.en}</span>
             </div>
             <div className="ysh-modal-body">

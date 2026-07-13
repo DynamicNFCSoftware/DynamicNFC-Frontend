@@ -1,11 +1,76 @@
 // Sprint D — region-keyed yacht fleet (4 regions × 8 vessels)
 // Source of truth: yachtSeed.js (IDs, names, types, marinas, prices, charterWeekly 1:1).
 // Localized desc/features/specFeature from SPRINT_D_YACHT_DATA.md companion bundle.
-// No yacht image assets exist yet — IMG returns null; portals render a CSS+SVG
-// silhouette placeholder (YachtSilhouette) chosen by `type`. When assets arrive,
-// only the IMG map changes.
+// Image assets: pages/YachtDemo/assets (1600px, JPG q80). Missing key → null →
+// CSS+SVG silhouette placeholder (YachtSilhouette) chosen by `type`.
 
-const IMG = {}; // no assets yet — every lookup falls back to null → silhouette placeholder
+import azimutGrande35 from "../pages/YachtDemo/assets/azimut-grande-35.jpg";
+import princessX95 from "../pages/YachtDemo/assets/princess-x95.jpg";
+import sunseeker88 from "../pages/YachtDemo/assets/sunseeker-88.jpg";
+import benettiOasis40m from "../pages/YachtDemo/assets/benetti-oasis-40m.jpg";
+import pershing9x from "../pages/YachtDemo/assets/pershing-9x.jpg";
+import ferretti1000 from "../pages/YachtDemo/assets/ferretti-1000.jpg";
+import sanlorenzoSl90a from "../pages/YachtDemo/assets/sanlorenzo-sl90a.jpg";
+import lurssen85m from "../pages/YachtDemo/assets/lurssen-85m.jpg";
+import westport40m from "../pages/YachtDemo/assets/westport-40m.jpg";
+import viking80 from "../pages/YachtDemo/assets/viking-80.jpg";
+import hatterasM98 from "../pages/YachtDemo/assets/hatteras-m98.jpg";
+import nordhavn80 from "../pages/YachtDemo/assets/nordhavn-80.jpg";
+import bertram61 from "../pages/YachtDemo/assets/bertram-61.jpg";
+import oceanAlexander90r from "../pages/YachtDemo/assets/ocean-alexander-90r.jpg";
+import gradyWhite456 from "../pages/YachtDemo/assets/grady-white-456.jpg";
+import feadship80m from "../pages/YachtDemo/assets/feadship-80m.jpg";
+import ferrettiCl130 from "../pages/YachtDemo/assets/ferretti-cl130.jpg";
+import azimutMagellano66 from "../pages/YachtDemo/assets/azimut-magellano-66.jpg";
+import sunseekerPredator74 from "../pages/YachtDemo/assets/sunseeker-predator-74.jpg";
+import princessY85 from "../pages/YachtDemo/assets/princess-y85.jpg";
+import bostonWhaler420 from "../pages/YachtDemo/assets/boston-whaler-420.jpg";
+import azimutS7 from "../pages/YachtDemo/assets/azimut-s7.jpg";
+import intrepid477 from "../pages/YachtDemo/assets/intrepid-477.jpg";
+import benettiOasis34m from "../pages/YachtDemo/assets/benetti-oasis-34m.jpg";
+import nordhavn86 from "../pages/YachtDemo/assets/nordhavn-86.jpg";
+import grandBanks85 from "../pages/YachtDemo/assets/grand-banks-85.jpg";
+import oceanAlexander90rCan from "../pages/YachtDemo/assets/ocean-alexander-90r-can.jpg";
+import nordhavn68 from "../pages/YachtDemo/assets/nordhavn-68.jpg";
+import fleming65 from "../pages/YachtDemo/assets/fleming-65.jpg";
+import princessY80 from "../pages/YachtDemo/assets/princess-y80.jpg";
+import gradyWhite376 from "../pages/YachtDemo/assets/grady-white-376.jpg";
+import burger140 from "../pages/YachtDemo/assets/burger-140.jpg";
+
+const IMG = {
+  "YA-GULF-001": azimutGrande35,
+  "YA-GULF-002": princessX95,
+  "YA-GULF-003": sunseeker88,
+  "YA-GULF-004": benettiOasis40m,
+  "YA-GULF-005": pershing9x,
+  "YA-GULF-006": ferretti1000,
+  "YA-GULF-007": sanlorenzoSl90a,
+  "YA-GULF-008": lurssen85m,
+  "YA-USA-001": westport40m,
+  "YA-USA-002": viking80,
+  "YA-USA-003": hatterasM98,
+  "YA-USA-004": nordhavn80,
+  "YA-USA-005": bertram61,
+  "YA-USA-006": oceanAlexander90r,
+  "YA-USA-007": gradyWhite456,
+  "YA-USA-008": feadship80m,
+  "YA-MEX-001": ferrettiCl130,
+  "YA-MEX-002": azimutMagellano66,
+  "YA-MEX-003": sunseekerPredator74,
+  "YA-MEX-004": princessY85,
+  "YA-MEX-005": bostonWhaler420,
+  "YA-MEX-006": azimutS7,
+  "YA-MEX-007": intrepid477,
+  "YA-MEX-008": benettiOasis34m,
+  "YA-CAN-001": nordhavn86,
+  "YA-CAN-002": grandBanks85,
+  "YA-CAN-003": oceanAlexander90rCan,
+  "YA-CAN-004": nordhavn68,
+  "YA-CAN-005": fleming65,
+  "YA-CAN-006": princessY80,
+  "YA-CAN-007": gradyWhite376,
+  "YA-CAN-008": burger140,
+};
 
 // y(id, name, type, marina, price, charterWeekly, guests, cabins, desc, features, specFeature)
 function y(id, name, type, marina, price, charterWeekly, guests, cabins, desc, features, specFeature) {
