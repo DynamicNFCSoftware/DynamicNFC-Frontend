@@ -13,6 +13,7 @@ import '../../i18n/pages/contactSales';
 const IND_RE_DEV = 'real_estate_developer';
 const IND_RE_AGENT = 'real_estate_agent';
 const IND_AUTO = 'automotive';
+const IND_YACHT = 'yacht_brokerage';
 const IND_OTHER = 'other';
 
 const TR = {
@@ -51,6 +52,7 @@ const TR = {
       [IND_RE_DEV]: 'Real Estate Developer',
       [IND_RE_AGENT]: 'Real Estate Agent / Brokerage',
       [IND_AUTO]: 'Automotive',
+      [IND_YACHT]: 'Yacht Brokerage',
       [IND_OTHER]: 'Other',
     },
 
@@ -59,6 +61,7 @@ const TR = {
     roleOpts_re_dev:['VP of Sales','Director of Sales','Sales Manager','Marketing Director','CEO / Chairman','General Manager','Other'],
     roleOpts_re_agent:['Broker / Owner','Team Lead','Senior Agent','Marketing Manager','Operations Manager','Other'],
     roleOpts_auto:['Dealer Principal / Owner','General Manager','Sales Manager','Marketing Director','BDC Manager','F&I Manager','Other'],
+    roleOpts_yacht:['Broker / Owner','Sales Director','Charter Manager','Marina Manager','Marketing Director','Other'],
     roleOpts_other:['CEO / Founder','VP of Sales','Director of Sales','Sales Manager','Marketing Director','Operations Manager','Other'],
 
     /* Team size (shared) */
@@ -69,6 +72,7 @@ const TR = {
     lblProjectName_re_dev:'Project or Development Name',
     lblProjectName_re_agent:'Campaign or Listing Name',
     lblProjectName_auto:'Dealership or Campaign Name',
+    lblProjectName_yacht:'Brokerage, Fleet, or Marina Name',
     lblProjectName_other:'Project or Campaign Name',
 
     /* Project type per industry */
@@ -76,17 +80,20 @@ const TR = {
     projectOpts_re_dev:['Residential Tower','Master-Planned Community','Branded Residences','Mixed-Use Development','Commercial','Other'],
     projectOpts_re_agent:['Luxury Resale ($2M+)','Brokerage VIP Campaign','Team Lead Generation','Open House Enhancement','Portfolio Marketing','Other'],
     projectOpts_auto:['New Vehicle Sales','Pre-Owned / CPO','Service & Retention','VIP Customer Program','Multi-Rooftop Group','Other'],
+    projectOpts_yacht:['Charter fleet','Brokerage','Marina','New Yacht Sales','Pre-Owned Yacht Sales','Other'],
     projectOpts_other:['Product Launch','VIP Customer Experience','Sales Enablement','Lead Generation','Brand Activation','Other'],
 
     /* Units per industry */
     lblUnits_re_dev:'Total Units',
     lblUnits_re_agent:'Active Listings',
     lblUnits_auto:'Monthly Volume',
+    lblUnits_yacht:'Fleet / Listings',
     lblUnits_other:'Scale',
     unitsPlaceholder:'Select range',
     unitsOpts_re_dev:['Under 50','50 – 200','200 – 500','500 – 2,000','2,000+'],
     unitsOpts_re_agent:['1 – 10','11 – 50','50 – 100','100+','N/A'],
     unitsOpts_auto:['Under 50/mo','50 – 150/mo','150 – 500/mo','500+/mo','Multi-location'],
+    unitsOpts_yacht:['1 – 10','11 – 25','26 – 50','50+','N/A'],
     unitsOpts_other:['Small','Medium','Large','Enterprise','N/A'],
 
     /* Timeline (shared label, per-industry for auto) */
@@ -102,7 +109,7 @@ const TR = {
 
     /* Budget */
     budgetPlaceholder:'Select range',
-    budgetOpts:['Under $100,000','$100,000 – $250,000','$250,000 – $500,000','$500,000+','Need guidance'],
+    budgetOpts:['Under $5,000','$5,000 – $15,000','$15,000 – $50,000','$50,000+','Need guidance'],
 
     /* Submit */
     submit:'Submit Inquiry →', submitting:'Submitting...',
@@ -148,6 +155,7 @@ const TR = {
       [IND_RE_DEV]: 'مطور عقاري',
       [IND_RE_AGENT]: 'وكيل عقاري / وساطة',
       [IND_AUTO]: 'سيارات',
+      [IND_YACHT]: 'وساطة يخوت',
       [IND_OTHER]: 'أخرى',
     },
 
@@ -156,6 +164,7 @@ const TR = {
     roleOpts_re_dev:['نائب رئيس المبيعات','مدير المبيعات','مدير مبيعات','مدير التسويق','رئيس تنفيذي','مدير عام','أخرى'],
     roleOpts_re_agent:['وسيط / مالك','قائد فريق','وكيل أول','مدير التسويق','مدير العمليات','أخرى'],
     roleOpts_auto:['مالك الوكالة','مدير عام','مدير المبيعات','مدير التسويق','مدير تطوير الأعمال','مدير التمويل والتأمين','أخرى'],
+    roleOpts_yacht:['وسيط / مالك','مدير المبيعات','مدير التأجير','مدير المرسى','مدير التسويق','أخرى'],
     roleOpts_other:['رئيس تنفيذي / مؤسس','نائب رئيس المبيعات','مدير المبيعات','مدير مبيعات','مدير التسويق','مدير العمليات','أخرى'],
 
     teamPlaceholder:"اختر",
@@ -165,23 +174,27 @@ const TR = {
     lblProjectName_re_dev:'اسم المشروع أو التطوير',
     lblProjectName_re_agent:'اسم الحملة أو القائمة',
     lblProjectName_auto:'اسم الوكالة أو الحملة',
+    lblProjectName_yacht:'اسم الوساطة أو الأسطول أو المرسى',
     lblProjectName_other:'اسم المشروع أو الحملة',
 
     projectPlaceholder:"اختر النوع",
     projectOpts_re_dev:['برج سكني','مجتمع مخطط','مساكن ذات علامة','تطوير متعدد الاستخدامات','تجاري','أخرى'],
     projectOpts_re_agent:['إعادة بيع فاخر (2M+)','حملة VIP للوساطة','توليد العملاء للفريق','تحسين المنازل المفتوحة','تسويق المحفظة','أخرى'],
     projectOpts_auto:['مبيعات سيارات جديدة','مستعملة / معتمدة','خدمة واحتفاظ','برنامج عملاء VIP','مجموعة متعددة الفروع','أخرى'],
+    projectOpts_yacht:['أسطول تأجير','وساطة','مرسى','مبيعات يخوت جديدة','مبيعات يخوت مستعملة','أخرى'],
     projectOpts_other:['إطلاق منتج','تجربة عملاء VIP','تمكين المبيعات','توليد العملاء','تنشيط العلامة التجارية','أخرى'],
 
     /* Units per industry */
     lblUnits_re_dev:'إجمالي الوحدات',
     lblUnits_re_agent:'القوائم النشطة',
     lblUnits_auto:'الحجم الشهري',
+    lblUnits_yacht:'الأسطول / القوائم',
     lblUnits_other:'الحجم',
     unitsPlaceholder:"اختر النطاق",
     unitsOpts_re_dev:['أقل من 50','50 – 200','200 – 500','500 – 2,000','2,000+'],
     unitsOpts_re_agent:['1 – 10','11 – 50','50 – 100','100+','لا ينطبق'],
     unitsOpts_auto:['أقل من 50/شهر','50 – 150/شهر','150 – 500/شهر','500+/شهر','متعدد الفروع'],
+    unitsOpts_yacht:['1 – 10','11 – 25','26 – 50','50+','لا ينطبق'],
     unitsOpts_other:['صغير','متوسط','كبير','مؤسسة','لا ينطبق'],
 
     lblTimeline_auto:'موعد الإطلاق / الموسم المستهدف',
@@ -207,7 +220,7 @@ const TR = {
     side3Title:"مقترح مخصص", side3Desc:"خلال 48 ساعة، ستتلقى خطة تجريبية مخصصة — تصميم البوابة، وعدد مفاتيح الوصول لكبار الشخصيات، والجدول الزمني، والتسعير.",
     side4Title:"الإطلاق", side4Desc:"من أسبوعين إلى أربعة أسابيع من الموافقة حتى وصول أول البطاقات إلى أيدي العملاء المميزين.",
     sideQuote:"\"أنت لا توزع بطاقات الاتصال قريب المدى. أنت تصدر دعوات خاصة — وتحول الاهتمام الرقمي إلى زخم حقيقي في المبيعات.\"",
-    footerText:'© 2025 DynamicNFC — محرك تسريع المبيعات',
+    footerText:'© 2026 DynamicNFC — محرك تسريع المبيعات',
 },
 };
 
@@ -217,6 +230,7 @@ function indSuffix(industry) {
     case IND_RE_DEV: return 're_dev';
     case IND_RE_AGENT: return 're_agent';
     case IND_AUTO: return 'auto';
+    case IND_YACHT: return 'yacht';
     default: return 'other';
   }
 }
@@ -428,7 +442,7 @@ export default function ContactSales() {
 
       {/* FOOTER */}
       <footer className="cs-footer">
-        <p>© 2025 <a href="https://dynamicnfc.ca">DynamicNFC</a> — {lang === 'ar' ? 'محرك تسريع المبيعات' : 'Sales Velocity Engine'}</p>
+        <p>© 2026 <a href="https://dynamicnfc.ca">DynamicNFC</a> — {lang === 'ar' ? 'محرك تسريع المبيعات' : 'Sales Velocity Engine'}</p>
       </footer>
     </div>
   );

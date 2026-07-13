@@ -40,7 +40,8 @@ export default function IndustriesDropdown({ lang = "en", triggerClassName = "" 
       reDev: "Real Estate Developers & Agents",
       reAgent: "Real Estate Agents",
       auto: "Automotive",
-      autoNew: "NEW",
+      yacht: "Yacht Brokerage",
+      yachtNew: "NEW",
       enterprise: "Enterprise Overview",
       devHub: "Developer Hub",
     },
@@ -51,17 +52,25 @@ export default function IndustriesDropdown({ lang = "en", triggerClassName = "" 
       reDev: "مطوّرو ووكلاء العقارات",
       reAgent: "وكلاء العقارات",
       auto: "قطاع السيارات",
-      autoNew: "جديد",
+      yacht: "وساطة اليخوت",
+      yachtNew: "جديد",
       enterprise: "نظرة عامة للمؤسسات",
       devHub: "مركز المطوّرين",
     },
   };
   const t = (k) => (T[isAr ? "ar" : "en"] || T.en)[k] || k;
 
+  const AnchorIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <circle cx="12" cy="5" r="2.5" /><path d="M12 7.5v12.5" /><path d="M7 12h10" /><path d="M5 21c0-3.5 3-5.5 7-5.5s7 2 7 5.5" />
+    </svg>
+  );
+
   const items = [
     { type: "label", text: t("groupSales") },
     { icon: "🏗", label: t("reDev"), to: "/developers" },
-    { icon: "🚗", label: t("auto"), to: "/automotive", badge: t("autoNew") },
+    { icon: "🚗", label: t("auto"), to: "/automotive" },
+    { icon: AnchorIcon, label: t("yacht"), to: "/yacht/demo", badge: t("yachtNew") },
     { type: "sep" },
     { type: "label", text: t("groupPlatform") },
     { icon: "🏢", label: t("enterprise"), to: "/enterprise" },

@@ -459,7 +459,7 @@ export default function AutoAIDemo() {
 
   return (
     <div className={`ai-demo ${theme}`} dir={lang === "ar" ? "rtl" : "ltr"}>
-      <SEO title="AI Sales Demo" description="Interactive AI-orchestrated automotive sales pipeline demo." path="/auto-ai-demo" />
+      <SEO title="AI Sales Demo" description="Interactive AI-orchestrated automotive sales pipeline demo." path="/automotive/demo/ai" />
       <div className="ai-bg"><div className="ai-blob ai-blob-1" /><div className="ai-blob ai-blob-2" /><div className="ai-blob ai-blob-3" /></div>
 
       {/* Progress */}

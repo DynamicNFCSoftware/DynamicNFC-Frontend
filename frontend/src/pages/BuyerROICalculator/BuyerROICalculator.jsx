@@ -314,7 +314,7 @@ export default function ROICalculator() {
 
   return (
     <div className="roi-page" dir={isRTL ? "rtl" : "ltr"}>
-      <SEO title="ROI Calculator" description="Calculate real estate investment returns with adjustable parameters." path="/roi-calculator" />
+      <SEO title="ROI Calculator" description="Calculate real estate investment returns with adjustable parameters." path="/enterprise/crmdemo/roi-calculator" />
       <style>{CSS}</style>
 
       <nav className="roi-nav">

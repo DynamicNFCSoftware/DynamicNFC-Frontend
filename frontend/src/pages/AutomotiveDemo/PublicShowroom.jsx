@@ -376,7 +376,7 @@ export default function PublicShowroom() {
   // ═══════════════════════════════════════════════════════════════
   return (
     <div className="ps" dir={t.dir}>
-      <SEO title="Public Showroom" description="Browse luxury automotive inventory with specs and configurations." path="/showroom" />
+      <SEO title="Public Showroom" description="Browse luxury automotive inventory with specs and configurations." path="/automotive/demo/showroom" />
       {/* HEADER */}
       <header className={`ps-hd ${scrolled ? "sc" : ""}`}>
         <div className="ps-logo">{projectName(lang)}</div>

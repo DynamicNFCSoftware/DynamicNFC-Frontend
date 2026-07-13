@@ -31,7 +31,7 @@ const enterprise = {
     prob1Icon: "🏙️",
     prob1Title: "Anonymous Traffic",
     prob1Desc:
-      "97% of your website visitors leave without ever identifying themselves — across every project launch",
+      "Nearly all of your website visitors leave without ever identifying themselves — across every project launch",
     prob2Icon: "⏳",
     prob2Title: "Delayed Follow-ups",
     prob2Desc:
@@ -88,7 +88,7 @@ const enterprise = {
     idVipLabel: "VIP Access Key Holder",
     idVipTitle: "Named Prospect — Khalid Al-Rashid",
     idVipDesc:
-      "You know he viewed the Skyline Penthouse three times, downloaded the ROI brochure, and spent 8 minutes on payment plans. Your sales team calls with context, timing, and the right offer.",
+      "You know he returned to the Skyline Penthouse again and again, downloaded the ROI brochure, and spent long, focused minutes reviewing payment plans. Your sales team calls with context, timing, and the right offer.",
     idVip1: "Personal Follow-ups",
     idVip2: "Tailored Incentives",
     idVip3: "Concierge Sales",
@@ -250,7 +250,7 @@ const enterprise = {
     prob1Icon: "🏙️",
     prob1Title: "حركة مرور مجهولة",
     prob1Desc:
-      "٩٧٪ من زوار موقعك الإلكتروني يغادرون دون الكشف عن هويتهم — في كل عملية إطلاق مشروع",
+      "يغادر معظم زوّار موقعك دون أن يعرّفوا عن أنفسهم أبداً — في كل عملية إطلاق مشروع",
     prob2Icon: "⏳",
     prob2Title: "متابعات متأخرة",
     prob2Desc:
@@ -307,7 +307,7 @@ const enterprise = {
     idVipLabel: "حامل مفتاح وصول VIP",
     idVipTitle: "عميل محدّد الهوية — خالد الراشد",
     idVipDesc:
-      "تعلم أنه استعرض بنتهاوس سكاي لاين ثلاث مرات، وحمّل كتيّب العائد على الاستثمار، وأمضى ٨ دقائق في مراجعة خطط الدفع. يتواصل فريق مبيعاتك مزوّداً بالسياق والتوقيت والعرض الملائم.",
+      "تعلم أنه عاد إلى بنتهاوس سكاي لاين مراراً وتكراراً، وحمّل كتيّب العائد على الاستثمار، وأمضى دقائق مركّزة طويلة في مراجعة خطط الدفع. يتواصل فريق مبيعاتك مزوّداً بالسياق والتوقيت والعرض الملائم.",
     idVip1: "متابعات شخصية",
     idVip2: "حوافز مُصمّمة خصيصاً",
     idVip3: "مبيعات بأسلوب الكونسيرج",

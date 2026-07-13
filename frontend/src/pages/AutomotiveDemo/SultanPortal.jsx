@@ -478,7 +478,7 @@ export default function SultanPortal() {
 
   return (
     <div className="sp-page" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <SEO title="VIP Automotive Portal" description="Personalized VIP automotive portal for family buyers." path="/sultan-portal" />
+      <SEO title="VIP Automotive Portal" description="Personalized VIP automotive portal for family buyers." path="/automotive/demo/sultan" />
       {/* ── HEADER ── */}
       <header className={`sp-hd ${scrolled ? "sc" : ""}`}>
         <Link to="/automotive" className="sp-logo">{projectName(lang)}</Link>

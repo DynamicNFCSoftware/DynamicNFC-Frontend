@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 const DEFAULT = {
   title: 'DynamicNFC — Sales Velocity Engine',
-  description: 'Transform NFC cards into private buyer portals with behavioral intelligence for real estate & automotive.',
+  description: 'Transform NFC cards into private buyer portals with behavioral intelligence for real estate, automotive & yacht.',
   image: 'https://dynamicnfc.ca/og-image.png',
 };
 
