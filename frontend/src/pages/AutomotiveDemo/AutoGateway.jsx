@@ -1,8 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useLanguage } from '../../i18n';
+import { useRegion } from "../../hooks/useRegion";
+import { getPersonas, REGION_LIST } from "../../config/regionConfig";
 import './AutoGateway.css';
 import SEO from '../../components/SEO/SEO';
 
+const REGION_CODE = { gulf: "KSA", usa: "USA", mexico: "MEX", canada: "CAN" };
+const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
 
 const T = {
   en: {
@@ -11,7 +15,7 @@ const T = {
     title: "Personalized Buyer Experiences",
     title2: "Powered by NFC",
     desc: "Experience how Dynamic NFC transforms automotive sales with intelligent, personalized showroom portals. Each tap delivers a unique experience tailored to buyer preferences, interests, and stage in the journey.",
-    stat1v: "Named", stat1l: "Every Prospect",
+    stat1v: "Named", stat1l: "Every Buyer",
     stat2v: "Real-Time", stat2l: "Intent Signals",
     stat3v: "Zero", stat3l: "Guesswork",
     sectionPortals: "Demo Portals",
@@ -49,8 +53,8 @@ const T = {
     title: "تجارب مشترٍ مخصصة",
     title2: "مدعوم بـ الاتصال قريب المدى",
     desc: "اختبر كيف تحول Dynamic NFC مبيعات السيارات عبر بوابات صالة عرض ذكية ومخصصة. كل نقرة تقدّم تجربة فريدة حسب تفضيلات المشتري واهتماماته ومرحلة رحلته.",
-    stat1v: "مُعرَّف", stat1l: "كل عميل",
-    stat2v: "لحظي", stat2l: "إشارات النية",
+    stat1v: "بالاسم", stat1l: "كل مشترٍ",
+    stat2v: "فوري", stat2l: "إشارات النية",
     stat3v: "صفر", stat3l: "تخمين",
     sectionPortals: "بوابات العرض التجريبي",
     b1: "VIP أداء", c1t: "بوابة خالد المنصوري",
@@ -85,9 +89,17 @@ const T = {
 
 
 export default function AutoGateway() {
-  const { lang } = useLanguage();
-  const t = T[lang];
+  const { lang, setLang } = useLanguage();
+  const { regionId, sidebarAccent, switchRegion, languages } = useRegion();
+  const langs = languages?.length ? languages : ["en"];
+  const nextL = langs[(langs.indexOf(lang) + 1) % langs.length] || "en";
+  const t = T[lang] || T.en;
   const particlesRef = useRef(null);
+  const accent = sidebarAccent || "#457b9d";
+  const isRtl = lang === "ar";
+
+  const vip1 = getPersonas("automotive", regionId).find((p) => p.id === "vip1");
+  const vip2 = getPersonas("automotive", regionId).find((p) => p.id === "vip2");
 
 
   useEffect(() => {
@@ -105,25 +117,41 @@ export default function AutoGateway() {
   }, []);
 
   const portals = [
-    { id: "khalid", path: "/automotive/demo/khalid", badge: t.b1, badgeCls: "red", avatar: "KM", avatarCls: "gold", title: t.c1t, desc: t.c1d, tags: t.c1tags },
-    { id: "sultan", path: "/automotive/demo/sultan", badge: t.b2, badgeCls: "blue", avatar: "SD", avatarCls: "blue", title: t.c2t, desc: t.c2d, tags: t.c2tags },
+    { id: "khalid", path: "/automotive/demo/khalid", badge: t.b1, badgeCls: "red", avatar: "KM", avatarCls: "gold", title: vip1?.name || t.c1t, desc: t.c1d, tags: t.c1tags },
+    { id: "sultan", path: "/automotive/demo/sultan", badge: t.b2, badgeCls: "blue", avatar: "SD", avatarCls: "blue", title: vip2?.name || t.c2t, desc: t.c2d, tags: t.c2tags },
     { id: "showroom", path: "/automotive/demo/showroom", badge: t.b3, badgeCls: "blue", icon: "🏪", title: t.c3t, desc: t.c3d, tags: t.c3tags },
     { id: "dashboard", path: "/unified", badge: t.b4, badgeCls: "red", icon: "\uD83D\uDCCA", title: t.c4t, desc: t.c4d, tags: t.c4tags, featured: true },
     { id: "ai-pipeline", path: "/automotive/demo/ai", badge: t.b5, badgeCls: "purple", icon: "\u26A1", title: t.c5t, desc: t.c5d, tags: t.c5tags, featured: true },
   ];
 
   return (
-    <div className="ag" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <SEO title="Automotive Demo Gateway" description="Explore personalized automotive buyer experiences powered by NFC technology." path="/auto-gateway" />
+    <div className="ag" dir={isRtl ? "rtl" : "ltr"} style={{ "--ag-accent": accent }}>
+      <SEO title="Automotive Demo Gateway" description="Explore personalized automotive buyer experiences powered by NFC technology." path="/automotive/demo" />
       <div className="ag-bg" />
       <div className="ag-particles" ref={particlesRef} />
 
       <header className="ag-hd">
-        <div className="ag-logo"><img src="/assets/images/logo.png" alt="DynamicNFC" style={{height:'52px',width:'auto'}} /></div>
+        <div className="ag-logo"><img src="/assets/images/logo.png" alt="DynamicNFC" style={{ height: '52px', width: 'auto' }} /></div>
         <div className="ag-badge"><span>{t.badge}</span></div>
-        <div className="ag-hd-right" style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
+        <div className="ag-hd-right">
+          <div className="ag-region" role="group" aria-label="Region">
+            {REGION_LIST.map((r) => (
+              <button
+                key={r.id}
+                className={`ag-region-btn${regionId === r.id ? " act" : ""}`}
+                onClick={() => switchRegion(r.id)}
+                aria-pressed={regionId === r.id}
+                title={r.label[lang] || r.label.en}
+              >
+                {REGION_CODE[r.id]}
+              </button>
+            ))}
+          </div>
+          <button className="ag-lang" onClick={() => setLang(nextL)} aria-label={`Language — ${LANG_LABEL[nextL]}`}>
+            {LANG_LABEL[nextL]}
+          </button>
           <a href="/automotive" className="ag-home">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
             {t.homeBtn}
           </a>
         </div>
@@ -167,7 +195,7 @@ export default function AutoGateway() {
               <div className="ag-card-tags">{p.tags.map((tag, i) => (
                 <span className="ag-tag" key={i}>{tag}</span>
               ))}</div>
-              <div className="ag-card-arrow">→</div>
+              <div className="ag-card-arrow">{isRtl ? "\u2190" : "\u2192"}</div>
             </a>
           ))}
         </div>
