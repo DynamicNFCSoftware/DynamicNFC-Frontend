@@ -499,7 +499,7 @@ export default function SultanPortal() {
         <Link to="/automotive/demo/khalid">{t.crossnav.vipPerf}</Link>
         <span style={{ color: "var(--sp-teal)", fontWeight: 500 }}>{t.crossnav.vipFamily}</span>
         <Link to="/automotive/demo/showroom">{t.crossnav.showroom}</Link>
-        <Link to="/automotive/dashboard">{t.crossnav.dashboard}</Link>
+        <Link to="/unified">{t.crossnav.dashboard}</Link>
         <Link to="/automotive/demo/ai">{t.crossnav.ai}</Link>
         <span className="crossnav-persona">👤 {vipName}</span>
       </div>

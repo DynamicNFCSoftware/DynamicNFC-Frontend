@@ -9,9 +9,9 @@ const home = {
     heroSub: "DynamicNFC transforms how luxury real estate developers sell — replacing anonymous website traffic with identified, high-intent VIP buyer experiences powered by NFC technology.",
     heroNote: "Also available for enterprise NFC business cards & team solutions",
 
-    stat1v: "47%", stat1l: "Higher Engagement",
-    stat2v: "3.2×", stat2l: "Conversion Rate",
-    stat3v: "< 48h", stat3l: "Decision Speed",
+    stat1v: "Named", stat1l: "Every Prospect",
+    stat2v: "Real-Time", stat2l: "Intent Signals",
+    stat3v: "Zero", stat3l: "Guesswork",
 
     blindTitle: "The Blind Spot",
     blindSub: "Your buyers are already exploring. You just can't see them.",
@@ -82,9 +82,9 @@ const home = {
     heroSub: "DynamicNFC تُحوّل طريقة بيع المطورين العقاريين الفاخرين — من زوّار مجهولين إلى تجارب مشتري VIP مُحدّدة الهوية مدعومة بتقنية NFC.",
     heroNote: "متاح أيضاً لبطاقات NFC المؤسسية وحلول الفِرَق",
 
-    stat1v: "٤٧٪", stat1l: "تفاعل أعلى",
-    stat2v: "٣.٢×", stat2l: "معدل التحويل",
-    stat3v: "< ٤٨ س", stat3l: "سرعة اتخاذ القرار",
+    stat1v: "مُعرَّف", stat1l: "كل عميل محتمل",
+    stat2v: "لحظي", stat2l: "إشارات النية",
+    stat3v: "صفر", stat3l: "تخمين",
 
     blindTitle: "النقطة العمياء",
     blindSub: "المشترون يستكشفون بالفعل، لكنك لا تراهم.",

@@ -442,7 +442,7 @@ export default function AhmedPortal() {
         <Link to="/enterprise/crmdemo/khalid">VIP Portal</Link>
         <span className="active">Ahmed Portal</span>
         <Link to="/enterprise/crmdemo/marketplace">Marketplace</Link>
-        <Link to="/enterprise/crmdemo/dashboard">Dashboard</Link>
+        <Link to="/unified">Dashboard</Link>
         <Link to="/enterprise/crmdemo/ai-demo">AI Pipeline</Link>
         <span className="crossnav-persona">👤 {vipName}</span>
       </div>

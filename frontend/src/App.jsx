@@ -10,7 +10,6 @@ import { RegionProvider } from "./hooks/useRegion";
 /* ── Global CSS ── */
 import './assets/css/blinq-app.shared.423b915ad.min.css';
 import './assets/css/swiper-bundle.min.css';
-import './assets/css/ordercard.css?ver=9';
 import './index.css';
 
 /* ── Components (always loaded) ── */
@@ -71,7 +70,6 @@ const CRMGateway = lazy(() => import("./pages/CRMGateway/CRMGateway"));
 const VIPPortal = lazy(() => import("./pages/VIPPortal/VIPPortal_Definitive"));
 const AhmedPortal = lazy(() => import("./pages/AhmedPortal/AhmedPortal"));
 const MarketplacePortal = lazy(() => import("./pages/MarketplacePortal/MarketplacePortal"));
-const CRMDashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
 const AIDemo = lazy(() => import("./pages/AIDemo/AIDemo"));
 const ROICalculator = lazy(() => import("./pages/ROICalculator/ROICalculator"));
 const BuyerROICalculator = lazy(() => import("./pages/BuyerROICalculator/BuyerROICalculator"));
@@ -79,7 +77,6 @@ const AutoGateway = lazy(() => import("./pages/AutomotiveDemo/AutoGateway"));
 const AutomotivePortal = lazy(() => import("./pages/AutomotiveDemo/AutomotivePortal"));
 const SultanPortal = lazy(() => import("./pages/AutomotiveDemo/SultanPortal"));
 const PublicShowroom = lazy(() => import("./pages/AutomotiveDemo/PublicShowroom"));
-const AutoDashboard = lazy(() => import("./pages/AutomotiveDemo/AutoDashboard"));
 const AutoAIDemo = lazy(() => import("./pages/AutomotiveDemo/AutoAIDemo"));
 const YachtGateway = lazy(() => import("./pages/YachtDemo/YachtGateway"));
 const YachtVIPPortal = lazy(() => import("./pages/YachtDemo/YachtVIPPortal"));
@@ -198,7 +195,7 @@ function AnimatedRoutes() {
           <Route path="/automotive/demo/sultan" element={<P><SultanPortal /></P>} />
           <Route path="/automotive/demo/showroom" element={<P><PublicShowroom /></P>} />
           <Route path="/automotive/demo/ai" element={<P><AutoAIDemo /></P>} />
-          <Route path="/automotive/dashboard" element={<P><AutoDashboard /></P>} />
+          <Route path="/automotive/dashboard" element={<Navigate to="/unified" replace />} />
           <Route path="/yacht/demo" element={<P><YachtGateway /></P>} />
           <Route path="/yacht/demo/vip" element={<P><YachtVIPPortal /></P>} />
           <Route path="/yacht/demo/showroom" element={<P><YachtShowroom /></P>} />
@@ -236,7 +233,7 @@ function AnimatedRoutes() {
           <Route path="/enterprise/crmdemo/khalid" element={<P><VIPPortal /></P>} />
           <Route path="/enterprise/crmdemo/ahmed" element={<P><AhmedPortal /></P>} />
           <Route path="/enterprise/crmdemo/marketplace" element={<P><MarketplacePortal /></P>} />
-          <Route path="/enterprise/crmdemo/dashboard" element={<P><CRMDashboard /></P>} />
+          <Route path="/enterprise/crmdemo/dashboard" element={<Navigate to="/unified" replace />} />
           <Route path="/enterprise/crmdemo/ai-demo" element={<P><AIDemo /></P>} />
           <Route path="/enterprise/crmdemo/roi-calculator" element={<P><BuyerROICalculator /></P>} />
 

@@ -441,7 +441,7 @@ export default function Developers() {
         </div>
         <div className="ent-hero-ctas dev-scroll-target" id="live-demo">
           <button className="ent-btn-primary" onClick={openPilot}>{t('heroCtaPilot')}</button>
-          <Link to="/enterprise/crmdemo/dashboard" className="ent-btn-secondary" style={{ textDecoration: 'none' }}>{t('heroCtaDemo')}</Link>
+          <Link to="/enterprise/crmdemo" className="ent-btn-secondary" style={{ textDecoration: 'none' }}>{t('heroCtaDemo')}</Link>
         </div>
       </section>
 
@@ -724,7 +724,7 @@ export default function Developers() {
           <p>{t('ctaDesc')}</p>
           <div className="dev-cta-btns">
             <button className="dev-cta-primary" onClick={openPilot}>{t('ctaPilot')}</button>
-            <Link to="/enterprise/crmdemo/dashboard" className="dev-cta-ghost" style={{ textDecoration: 'none' }}>
+            <Link to="/enterprise/crmdemo" className="dev-cta-ghost" style={{ textDecoration: 'none' }}>
               {t('ctaDemo')}
             </Link>
           </div>
@@ -901,7 +901,7 @@ export default function Developers() {
             </div>
             <div className="dev-ft-col">
               <h5>{isRTL ? 'الموارد' : 'Resources'}</h5>
-              <Link to="/enterprise/crmdemo/dashboard">{isRTL ? 'عرض مباشر' : 'Live Demo'}</Link>
+              <Link to="/enterprise/crmdemo">{isRTL ? 'عرض مباشر' : 'Live Demo'}</Link>
               <Link to="/contact-sales">{isRTL ? 'تواصل مع المبيعات' : 'Contact Sales'}</Link>
               <Link to="/login">{isRTL ? 'تسجيل الدخول' : 'Log in'}</Link>
             </div>

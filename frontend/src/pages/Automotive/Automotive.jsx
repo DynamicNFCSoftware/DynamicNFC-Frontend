@@ -531,7 +531,7 @@ export default function Automotive() {
             <p>{lang === 'ar' ? 'تجربة التصفح المجهول — التقاط العملاء المحتملين وإشارات التفاعل التلقائية.' : 'Anonymous browsing experience — lead capture and progressive engagement signals.'}</p>
             <div className="auto-demo-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </a>
-          <a href="/automotive/dashboard" className="auto-demo-portal auto-demo-featured auto-reveal">
+          <a href="/unified" className="auto-demo-portal auto-demo-featured auto-reveal">
             <div className="auto-demo-badge red">{lang === 'ar' ? 'لوحة التحليلات' : 'ANALYTICS'}</div>
             <h4>{lang === 'ar' ? 'لوحة تحكم الوكيل' : 'Dealer Intelligence Dashboard'}</h4>
             <p>{lang === 'ar' ? 'تحليلات سلوكية في الوقت الحقيقي — تسجيل العملاء المحتملين، تتبع السلوك، مسارات التحويل.' : 'Real-time behavioral analytics — lead scoring, behavior tracking, conversion funnels, A/B testing.'}</p>
@@ -646,7 +646,7 @@ export default function Automotive() {
         <div className="auto-cta-buttons">
           <button className="auto-btn-primary" onClick={openPilot}>{t('ctaPilot')}</button>
           <Link to="/automotive/demo" className="auto-btn-secondary">{t('ctaDemo')}</Link>
-          <Link to="/automotive/dashboard" className="auto-btn-secondary">{t('ctaDashboard')}</Link>
+          <Link to="/unified" className="auto-btn-secondary">{t('ctaDashboard')}</Link>
           <Link to="/contact-sales" className="auto-btn-secondary">{t('ctaContact')}</Link>
         </div>
       </section>

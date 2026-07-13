@@ -199,7 +199,7 @@ const STEP_DESCS = {
 };
 
 export default function YachtAIDemo() {
-  const { regionId } = useRegion();
+  const { regionId, region } = useRegion();
   const [lang, setLang] = useState("en");
   const t = useCallback((k) => TR[lang]?.[k] ?? TR.en[k] ?? k, [lang]);
   const trackEvent = useCallback(
@@ -302,6 +302,7 @@ export default function YachtAIDemo() {
         summary: REAL_RESULTS.calendar.title, location: MARINA,
         description: `Exclusive private sea trial of ${VESSEL} for VIP owner ${OWNER}. Full owner's trial with captain and marina advisor aboard.`,
         startDateTime: startDT.toISOString(), endDateTime: endDT.toISOString(), attendeeEmail: null,
+        timeZone: region.timeZone,
       })
         .then((result) => setLiveResults((prev) => ({ ...prev, calendar: result })))
         .catch(() => {});
@@ -319,7 +320,7 @@ export default function YachtAIDemo() {
       return next;
     });
     setTimeout(() => { const el = stepRefs.current[stepIdx]; if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 150);
-  }, [typeLines, googleToken]);
+  }, [typeLines, googleToken, region.timeZone]);
 
   const runAll = useCallback(async () => {
     setAllRunning(true);

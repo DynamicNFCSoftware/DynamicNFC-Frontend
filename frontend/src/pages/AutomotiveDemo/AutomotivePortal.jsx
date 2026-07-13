@@ -444,7 +444,7 @@ export default function AutomotivePortal() {
         <span className="active">{t.crossnav.vipPerf}</span>
         <Link to="/automotive/demo/sultan">{t.crossnav.vipFamily}</Link>
         <Link to="/automotive/demo/showroom">{t.crossnav.showroom}</Link>
-        <Link to="/automotive/dashboard">{t.crossnav.dashboard}</Link>
+        <Link to="/unified">{t.crossnav.dashboard}</Link>
         <Link to="/automotive/demo/ai">{t.crossnav.ai}</Link>
         <span className="crossnav-persona">👤 {vipName}</span>
       </div>

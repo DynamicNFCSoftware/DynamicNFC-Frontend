@@ -471,7 +471,7 @@ export default function MarketplacePortal() {
         <Link to="/enterprise/crmdemo/khalid">VIP Portal</Link>
         <Link to="/enterprise/crmdemo/ahmed">Ahmed Portal</Link>
         <span className="active">Marketplace</span>
-        <Link to="/enterprise/crmdemo/dashboard">Dashboard</Link>
+        <Link to="/unified">Dashboard</Link>
         <Link to="/enterprise/crmdemo/ai-demo">AI Pipeline</Link>
         <span className="crossnav-persona"><i className="ti ti-world" aria-hidden="true" /> {lang === "ar" ? "زائر عام" : "Public visitor"}</span>
       </div>

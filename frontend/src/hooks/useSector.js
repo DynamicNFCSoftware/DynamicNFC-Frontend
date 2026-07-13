@@ -15,7 +15,7 @@ const LEGACY_STORAGE_KEY = "ud-sector";
 /**
  * SectorProvider wraps dashboard pages.
  * Determines sector from:
- * 1. URL path (e.g., /automotive/dashboard → 'automotive')
+ * 1. URL path (e.g., /automotive/demo → 'automotive')
  * 2. Props (explicit sectorId)
  * 3. Default: 'real_estate'
  */

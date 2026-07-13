@@ -56,9 +56,6 @@ function getMessageContext(pathname, lang) {
   if (pathname.includes('/crmdemo/marketplace')) {
     return { message: isAr ? 'مرحباً، أتصفح سوق النور ريزيدنسز وأرغب في معرفة المزيد عن الوحدات المتاحة.' : "Hi, I'm browsing the Al Noor Residences Marketplace and would like to learn more about available units.", badge: isAr ? 'السوق' : 'Marketplace', intent: 'lead' };
   }
-  if (pathname.includes('/crmdemo/dashboard')) {
-    return { message: isAr ? 'مرحباً، أنا أراجع لوحة التحكم التحليلية لـ DynamicNFC — أريد مناقشة كيف يمكن لهذا النظام أن يعمل لمشروعي.' : "Hi, I'm reviewing the DynamicNFC Analytics Dashboard — I'd like to discuss how this system could work for my project.", badge: isAr ? 'لوحة التحكم' : 'Dashboard', intent: 'sales' };
-  }
   if (pathname.includes('/crmdemo')) {
     return { message: isAr ? 'مرحباً، أنا أتصفح عرض CRM التجريبي لـ DynamicNFC — أريد معرفة المزيد عن منصة تسريع المبيعات.' : "Hi, I'm exploring the DynamicNFC CRM Demo — I'd like to learn more about the Sales Velocity Platform.", badge: isAr ? 'عرض تجريبي' : 'CRM Demo', intent: 'sales' };
   }
