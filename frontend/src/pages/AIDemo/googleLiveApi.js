@@ -165,12 +165,12 @@ export function buildVipEmailHtml({ buyerName, unitName, unitPrice, showingDate,
 <body style="margin:0;padding:0;background:#f5f3f0;font-family:'Helvetica Neue',Arial,sans-serif;">
 <div style="max-width:600px;margin:0 auto;background:#ffffff;">
   <div style="background:linear-gradient(135deg,#C5A467,#9a7d3d);padding:2.5rem;text-align:center;">
-    <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:#fff;margin:0 0 .3rem;">Vista Residences</h1>
+    <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:#fff;margin:0 0 .3rem;">Al Noor Residences</h1>
     <p style="font-size:.75rem;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:2px;margin:0;">VIP Private Showing Invitation</p>
   </div>
   <div style="padding:2rem 2.5rem;">
     <p style="color:#333;font-size:.95rem;line-height:1.7;">Dear ${_n},</p>
-    <p style="color:#555;font-size:.9rem;line-height:1.7;">Thank you for your continued interest in Vista Residences. As a valued VIP Access Key holder, we are pleased to invite you to an <strong style="color:#C5A467;">exclusive private showing</strong>.</p>
+    <p style="color:#555;font-size:.9rem;line-height:1.7;">Thank you for your continued interest in Al Noor Residences. As a valued VIP Access Key holder, we are pleased to invite you to an <strong style="color:#C5A467;">exclusive private showing</strong>.</p>
     <div style="background:rgba(197,164,103,0.08);border:1px solid rgba(197,164,103,0.2);border-radius:12px;padding:1.25rem;margin:1.25rem 0;">
       <h3 style="font-family:Georgia,serif;color:#C5A467;margin:0 0 .4rem;font-size:1rem;">${_u} — ${_p}</h3>
       <p style="color:#666;font-size:.85rem;margin:0;line-height:1.5;">Premium residence with panoramic views, smart home technology, and exclusive VIP amenities.</p>
@@ -181,7 +181,7 @@ export function buildVipEmailHtml({ buyerName, unitName, unitPrice, showingDate,
       <p style="color:#888;font-size:.82rem;margin:.2rem 0 0;">${_l}</p>
     </div>
     <p style="color:#555;font-size:.9rem;line-height:1.7;">We look forward to welcoming you.</p>
-    <p style="color:#555;font-size:.85rem;margin-top:1.5rem;">Warm regards,<br><strong>Vista Residences Sales Team</strong><br><span style="color:#999;">Powered by DynamicNFC</span></p>
+    <p style="color:#555;font-size:.85rem;margin-top:1.5rem;">Warm regards,<br><strong>Al Noor Residences Sales Team</strong><br><span style="color:#999;">Powered by DynamicNFC</span></p>
   </div>
 </div>
 </body></html>`;

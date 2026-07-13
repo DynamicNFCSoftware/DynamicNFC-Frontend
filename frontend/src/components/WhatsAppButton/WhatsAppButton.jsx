@@ -10,7 +10,7 @@ import './WhatsAppButton.css';
 // ─── CONFIG ───────────────────────────────────────────
 const REGIONS = {
   canada: {
-    number: '16722008071',       // ← Replace: Canada WhatsApp number
+    number: '16722008071',
     office: 'Vancouver Office',
     officeAr: 'مكتب فانكوفر',
     flag: '🇨🇦',
@@ -18,10 +18,10 @@ const REGIONS = {
     hoursAr: 'الإثنين–الجمعة ٩ص–٦م بتوقيت فانكوفر',
   },
   gulf: {
-    number: '966548888377',      // ← Replace: Gulf/UAE WhatsApp number
+    number: '966548888377',
     office: 'Gulf Office',
     officeAr: 'مكتب الخليج',
-    flag: '🇦🇪',
+    flag: '🇸🇦',
     hours: 'Sun–Thu 9AM–6PM GST',
     hoursAr: 'الأحد–الخميس ٩ص–٦م بتوقيت الخليج',
   },

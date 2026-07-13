@@ -59,13 +59,13 @@ c = c.replace(
       liveApiPromise = createGmailDraft(googleToken, {
         to: googleUser?.email || "demo@example.com",
         subject: "Your private viewing of the Sky Penthouse is confirmed",
-        senderName: "Vista Residences VIP",
-        htmlBody: buildVipEmailHtml({ buyerName: googleUser?.name || "Valued Client", unitName: "Sky Penthouse — Unit PH-4201", unitPrice: "AED 12,500,000", showingDate: sd.toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric", year:"numeric" }), showingTime: "2:00 PM GST", showingLocation: "Vista Residences Sales Center, Dubai Marina" }),
+        senderName: "Al Noor Residences VIP",
+        htmlBody: buildVipEmailHtml({ buyerName: googleUser?.name || "Valued Client", unitName: "Sky Penthouse — Unit PH-4201", unitPrice: "AED 12,500,000", showingDate: sd.toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric", year:"numeric" }), showingTime: "2:00 PM GST", showingLocation: "Al Noor Residences Sales Center, Riyadh" }),
       }).then(r => setLiveResults(p => ({ ...p, gmail: r }))).catch(e => console.error("Live Gmail:", e));
     }
     if (googleToken && cfg.key === "calendar") {
       const s = new Date(); s.setDate(s.getDate() + 7); s.setHours(14,0,0,0); const e = new Date(s); e.setHours(15,0,0,0);
-      liveApiPromise = createCalendarEvent(googleToken, { summary: "Private Showing — Sky Penthouse — VIP", location: "Vista Residences Sales Center, Dubai Marina", description: "Exclusive private viewing. Powered by DynamicNFC.", startDateTime: s.toISOString(), endDateTime: e.toISOString() })
+      liveApiPromise = createCalendarEvent(googleToken, { summary: "Private Showing — Sky Penthouse — VIP", location: "Al Noor Residences Sales Center, Riyadh", description: "Exclusive private viewing. Powered by DynamicNFC.", startDateTime: s.toISOString(), endDateTime: e.toISOString() })
         .then(r => setLiveResults(p => ({ ...p, calendar: r }))).catch(e => console.error("Live Calendar:", e));
     }
     let docusignPromise = null;`

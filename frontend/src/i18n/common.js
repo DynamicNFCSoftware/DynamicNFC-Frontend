@@ -53,7 +53,7 @@ export const common = {
     footSignup: "Sign up",
     footDev: "Developers",
     footRe: "Developers & Agents",
-    footCopy: "© 2026 DynamicNFC Software Inc. All Rights Reserved.",
+    footCopy: "© 2026 DynamicNFC Card Inc. All Rights Reserved.",
 
     /* ── Status ── */
     available: "Available",
@@ -146,7 +146,7 @@ export const common = {
     footSignup: "إنشاء حساب",
     footDev: "المطورون",
     footRe: "المطورين والوكلاء",
-    footCopy: "© ٢٠٢٦ DynamicNFC Software Inc. جميع الحقوق محفوظة.",
+    footCopy: "© ٢٠٢٦ DynamicNFC Card Inc. جميع الحقوق محفوظة.",
 
     /* ── Status ── */
     available: "متاح",
