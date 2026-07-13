@@ -1,12 +1,30 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-07-04 — **Sprint D + Chore #13 + Analytics fix dalgası CANLIDA.** Bugün deploy edilen zincir: PR #12 (yacht portalları) → PR #13 (fake-metrik temizliği + AutoGateway header parity) → main'e direkt analytics fix commit'leri (sector+region event tagging, strict read filter + vipId region recovery, yacht funnel/heatmap taksonomisi, VIP persona allowlist). Build'li hosting deploy tamamlandı.
-**Session:** Cowork (Claude) + Cursor paralel, 2026-07-03/04 — Sprint D directive → Cursor PR #12 → Claude audit → UI polish (Claude direkt edit: kontrast, tipografik logo, KSA/USA/MEX/CAN region switcher, dil cycle) → tracking pipeline debug (Claude teşhis + Cursor fix, aynı dosyada temiz hibrit) → deploy.
+**Last updated:** 2026-07-13 — **FAZ 5 KAPANDI + yat fotoğrafları CANLIDA. Yapı Raporu A→E yol haritası tamamlandı.** PR #15 (`171518b`, Sprint E: legacy Dashboard+AutoDashboard silindi → `/unified` redirect, -4591L, ordercard.css route-split ile ana CSS 134→45KB, region-aware AI timezone, Home/Enterprise fake-metrik temizliği) + PR #13 (`281700a`, index.html meta + AutoGateway qualitative + header parity) merge + build'li deploy. 32 AI-üretimi yat fotoğrafı (Claude: optimize 43→7MB + IMG map + koşullu render; Cursor screenshot QA: 0 broken/0 silhouette). Prod meta doğrulandı: "Named, Real-Time, Zero Guesswork".
+**Session:** Cowork (Claude) + Cursor, 2026-07-09/13 — Sprint E directive → Cursor execute → CI kırmızı krizi (Claude teşhis: FAZ5'in AIDemo `useRegion`'ı test'te provider'sız → 8 FAIL; fix Claude'da doğrulandı, Cursor push) → PR kuyruğu çözümü (#14 hayalet PR'dı → #15 açıldı; #13 rebase) → deploy + prod fetch doğrulaması.
 **Author of this update:** Claude (Cowork)
 
 ---
 
-## ▶︎ RESUME HERE — Sprint D + tracking pipeline kapandı (2026-07-04)
+## ▶︎ RESUME HERE — FAZ 5 kapandı, teknik yol haritası bitti (2026-07-13)
+
+**Ürün durumu:** 3 sektör × 4 region, tek analytics yüzeyi (`/unified`), çalışan canlı tracking, fotoğraflı yacht demo, sıfır fake metrik, -4591 satır legacy. Teknik borç listesindeki büyük kalemler (legacy dashboards, ordercard.css, tracking birleştirme, blinq efsanesi) kapandı.
+
+### Next session first move — artık SATIŞ
+1. **Pilot outreach** — teknik bahane kalmadı. Canada RE one-pager v1 hazır; Claude Design v2 + design system süreci devam ediyor (`CANADA_ONEPAGER_DESIGN_BRIEF.md` outputs'ta). Hedef liste + outreach e-postası + demo akışı paketi: Claude scope.
+2. **CLAUDE.md tazeleme** — §6 route tabloları (legacy dashboard satırları), §9 (yacht PLANLI değil CANLI), §10 (Asia/Dubai debt kapandı), §14 tech-debt işaretleri güncellenmeli. 15 dk doc işi.
+3. **PR hijyeni** — Nisan'dan kalma #1/#2 draft PR'ları kapat.
+4. **Kalan küçükler:** `shareholders/` klasörü kararı; Unified topbar bayrak emoji (Windows) kontrolü; eski directive'lerin `docs(directives): historical trail` commit'i.
+
+### Lessons added (2026-07-09/13)
+- **"PR açıldı" da doğrulanacak claim'dir.** Cursor'un verdiği PR #14 linki hiç var olmamıştı; branch push'luydu ama PR açılmamıştı. Kural: rapor linkine tıkla, PR listesinde gör, sonra "var" say.
+- **Cursor verify = build + TEST.** Sprint E branch'inde CI 3 gün kırmızıydı; "build PASS" raporu doğruydu ama `npm test` hiç koşulmamıştı (AIDemo `useRegion` provider'sız → 8 FAIL). Directive'lerin "Bitti sayılır" bölümüne test kanıtı zorunlu.
+- **Deploy zinciri checklist'i:** açık PR var mı? → merge → pull → BUILD → deploy → prod'u ayrı kanaldan fetch'le doğrula (`.web.app` URL'i custom-domain CDN cache'ini bypass eder — bugün dynamicnfc.ca eski gösterirken .web.app yeniyi gösterdi).
+- **Component'e context hook eklersen o component'in TESTLERİNE provider ekle** — FAZ5 dersinin genel hali.
+
+---
+
+## ✅ CLOSED — Sprint D + tracking pipeline kapandı (2026-07-04)
 
 **Yacht sektörü canlıda, 3 sektör × 4 region parity + canlı demo tracking artık gerçekten çalışıyor.** Bugünün ikinci dalgası kritik bir ürün bug'ını kapattı: portal event'leri `sector`/`region` alanı olmadan yazılıyordu → Unified analytics HİÇBİR canlı portal aksiyonunu göstermiyordu (tüm sektörlerde; Sprint C QA'i yakalamamıştı çünkü toast'lar BroadcastChannel'dan gelir). Fix zinciri: write-time tagging (`enrichPortalEvent`), read-time strict filter (`resolveEventRegionStrict` — explicit region veya vipId'den kurtarma; etiketsizler düşer, aktif region'a SIZMAZ), yacht funnel/heatmap taksonomisi (AUTOMOTIVE mirasını override), VIP CRM persona allowlist.
 
