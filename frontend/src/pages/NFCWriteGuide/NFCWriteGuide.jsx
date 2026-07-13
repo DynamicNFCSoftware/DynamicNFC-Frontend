@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './NFCWriteGuide.css';
+import SEO from '../../components/SEO/SEO';
 
 const STEPS = [
   {
@@ -55,6 +56,7 @@ export default function NFCWriteGuide() {
 
   return (
     <div className="nwg-page">
+      <SEO title="NFC Write Guide" description="Learn how to program a DynamicNFC card for a private buyer experience across real estate, automotive, and yacht." path="/nfc-write-guide" />
       <div className="nwg-header">
         <h1 className="nwg-title">How to Write Your NFC Card</h1>
         <p className="nwg-subtitle">Program any NFC card with your DynamicNFC digital card in 5 simple steps.</p>

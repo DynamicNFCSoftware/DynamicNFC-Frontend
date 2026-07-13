@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import './ROICalculator.css';
+import SEO from '../../components/SEO/SEO';
 
 /* ─── Industry Presets ─── */
 const INDUSTRIES = {
@@ -139,6 +140,7 @@ export default function ROICalculator() {
 
   return (
     <div className="rc-page">
+      <SEO title="Sales Velocity Calculator" description="An illustrative sales velocity model for real estate, automotive, and yacht teams. Build a pilot around your own numbers." path="/sales/roi-calculator" />
       {/* Nav */}
       <nav className="rc-nav">
         <a href="/" className="rc-nav-logo">
@@ -179,14 +181,14 @@ export default function ROICalculator() {
         {/* Results */}
         <div className="rc-results">
           <div className="rc-kpi-grid">
-            <KPI label={`Additional ${ind.viewingLabel} / mo`} accent="rc-kpi-blue"><AnimNum value={additionalViewings} prefix="+" /></KPI>
-            <KPI label="Days Saved per Deal" accent="rc-kpi-red"><AnimNum value={daysSaved} /></KPI>
-            <KPI label="Projected Additional Sales" accent="rc-kpi-green"><AnimNum value={vipSales} prefix="+" /></KPI>
-            <KPI label="Revenue Impact" accent="rc-kpi-gold" sub={<>Investment: $<AnimNum value={investment} /></>}><AnimNum value={revenueImpact} prefix="$" /></KPI>
+            <KPI label={`Estimated additional ${ind.viewingLabel} / mo`} accent="rc-kpi-blue"><AnimNum value={additionalViewings} prefix="+" /></KPI>
+            <KPI label="Estimated days saved per deal" accent="rc-kpi-red"><AnimNum value={daysSaved} /></KPI>
+            <KPI label="Estimated additional sales" accent="rc-kpi-green"><AnimNum value={vipSales} prefix="+" /></KPI>
+            <KPI label="Estimated revenue range" accent="rc-kpi-gold" sub={<>Illustrative investment: $<AnimNum value={investment} /></>}><AnimNum value={revenueImpact} prefix="$" /></KPI>
           </div>
 
           <div className="rc-roi-hero">
-            <div className="rc-roi-label">Return on Investment</div>
+            <div className="rc-roi-label">Estimated Return on Investment</div>
             <div className="rc-roi-value"><AnimNum value={roi} decimals={0} suffix="×" /></div>
             <div className="rc-roi-sub">For every $1 invested in DynamicNFC</div>
           </div>
@@ -198,6 +200,17 @@ export default function ROICalculator() {
             <FunnelBar label="Highly engaged" value={engagedVIPs} max={vipInvites} color="#d4a017" />
             <FunnelBar label={`Booked ${ind.viewingLabel}`} value={additionalViewings} max={vipInvites} color="#e67317" />
             <FunnelBar label="Closed sales" value={vipSales} max={vipInvites} color="#e63946" />
+          </div>
+
+          <div className="rc-card">
+            <h2 className="rc-card-title">Model assumptions (illustrative)</h2>
+            <ul className="rc-assumptions">
+              <li>Tap rate: {(TAP_RATE * 100).toFixed(0)}% of VIP invitations</li>
+              <li>Engagement lift: {(ENGAGEMENT_LIFT * 100).toFixed(0)}% after a tap</li>
+              <li>Conversion multiplier: {CONVERSION_MULTIPLIER}× baseline conversion</li>
+              <li>Decision-speed improvement: {(SPEED_REDUCTION * 100).toFixed(0)}%</li>
+              <li>VIP invitation cost: ${COST_PER_VIP} per invitation</li>
+            </ul>
           </div>
 
           <div className="rc-compare">
@@ -225,7 +238,7 @@ export default function ROICalculator() {
         </div>
       </div>
 
-      <p className="rc-disclaimer">Projections based on aggregated pilot data. Actual results vary by market, product type, and sales execution. Model: {(TAP_RATE*100).toFixed(0)}% tap rate, {(ENGAGEMENT_LIFT*100).toFixed(0)}% engagement lift, {CONVERSION_MULTIPLIER}× conversion multiplier, {(SPEED_REDUCTION*100).toFixed(0)}% decision speed improvement.</p>
+      <p className="rc-disclaimer">This is an illustrative model — not measured results. Your pilot will define your numbers.</p>
     </div>
   );
 }

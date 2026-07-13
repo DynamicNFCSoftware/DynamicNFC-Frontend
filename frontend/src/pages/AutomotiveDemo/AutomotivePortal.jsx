@@ -437,7 +437,7 @@ export default function AutomotivePortal() {
 
   return (
     <div className="ap-page" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <SEO title="Automotive" description="NFC-powered VIP showroom experiences for luxury automotive dealers. Test drive bookings, configurations, and real-time analytics." path="/automotive" />
+      <SEO title="Automotive" description="NFC-powered VIP showroom experiences for luxury automotive dealers. Test drive bookings, configurations, and real-time analytics." path="/automotive/demo/khalid" />
       {/* Cross-Nav */}
       <div className={`ap-crossnav ${scrolled ? "show" : ""}`}>
         <Link to="/automotive/demo" style={{ color: "var(--ap-t3)" }}>← {t.crossnav.hub}</Link>

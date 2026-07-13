@@ -44,7 +44,7 @@ const TR = {
     docusignDesc: 'Before Khalid walks in, we send him an NDA. He signs, exclusive pricing unlocks in his portal. Pre-filled, ready to go.',
     detected: 'Detected', leadScore: 'Lead Score',
     pagesGen: 'Pages Generated',
-    canvaMeta: 'Personalized Gulf Region luxury proposal with Unit PH-4201 details, ROI analysis, exclusive VIP pricing (AED 8,500,000), and premium amenities. Bilingual EN/AR with Arabic-inspired design.',
+    canvaMeta: 'Personalized Gulf Region luxury proposal with Unit PH-4201 details, ROI analysis, exclusive VIP pricing (AED 12,500,000), and premium amenities. Bilingual EN/AR with Arabic-inspired design.',
     viewCanva: 'View in Canva', editDesign: 'Edit Design',
     canvaExport: 'Real Canva design generated via MCP — exported as PDF and attached to email in next step',
     clickPreview: 'Click to preview full email',
@@ -59,13 +59,13 @@ const TR = {
     finalH2: 'Done.', finalTotal: 's total.',
     finalDesc: 'Khalid has a proposal in his inbox, a showing on his calendar, and an NDA waiting for his signature. Your sales team can focus on closing — not chasing.',
     finalItem1: 'Proposal built and exported', finalItem2: 'Email drafted and sent', finalItem3: 'Showing booked', finalItem4: 'NDA sent, pricing unlocked',
-    emailModalTitle: 'Vista Residences', emailModalSub: 'VIP Private Showing Invitation',
+    emailModalTitle: 'Al Noor Residences', emailModalSub: 'VIP Private Showing Invitation',
     emailDear: 'Dear Khalid,',
-    emailBody1: 'Thank you for your continued interest in Vista Residences. As a VIP buyer, we are pleased to invite you to an',
+    emailBody1: 'Thank you for your continued interest in Al Noor Residences. As a VIP buyer, we are pleased to invite you to an',
     emailBody1b: 'exclusive private showing',
     emailBody1c: 'of the Sky Penthouse.',
     emailBrochure: 'Your personalized property brochure with ROI analysis is attached. Please complete the enclosed NDA to unlock exclusive pre-launch pricing before your showing.',
-    emailRegards: 'Warm regards,', emailTeam: 'Vista Residences Sales Team', emailPowered: 'Powered by Dynamic NFC',
+    emailRegards: 'Warm regards,', emailTeam: 'Al Noor Residences Sales Team', emailPowered: 'Powered by Dynamic NFC',
     emailRealDraft: 'This is a real draft — Open in Gmail',
     footer: 'AI Sales Automation Demo for', footerLink: 'Dynamic NFC',
     footNote: 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and enterprise.',
@@ -100,7 +100,7 @@ const TR = {
     docusignDesc: 'قبل وصول خالد، نرسل له اتفاقية سرية. يوقّع، والأسعار الحصرية تُفتح في بوابته. معبأ مسبقًا، جاهز.',
     detected: 'تم الكشف', leadScore: 'تقييم العميل',
     pagesGen: 'صفحات تم إنشاؤها',
-    canvaMeta: 'عرض استثماري مخصص لمنطقة الخليج مع تفاصيل الوحدة PH-4201، تحليل العائد، تسعير VIP حصري (8,500,000 درهم)، ومرافق فاخرة. ثنائي اللغة EN/AR بتصميم عربي.',
+    canvaMeta: 'عرض استثماري مخصص لمنطقة الخليج مع تفاصيل الوحدة PH-4201، تحليل العائد، تسعير VIP حصري (12,500,000 درهم)، ومرافق فاخرة. ثنائي اللغة EN/AR بتصميم عربي.',
     viewCanva: 'عرض في Canva', editDesign: 'تعديل التصميم',
     canvaExport: 'تصميم Canva حقيقي عبر MCP — تم تصديره كـ PDF وإرفاقه بالبريد في الخطوة التالية',
     clickPreview: 'انقر لمعاينة البريد الكامل',
@@ -115,13 +115,13 @@ const TR = {
     finalH2: 'تم.', finalTotal: ' ثانية إجمالي.',
     finalDesc: 'خالد لديه عرض في بريده، معاينة في تقويمه، واتفاقية سرية بانتظار توقيعه. فريق مبيعاتك يمكنه التركيز على الإغلاق — لا الملاحقة.',
     finalItem1: 'تم بناء العرض وتصديره', finalItem2: 'تم صياغة البريد وإرساله', finalItem3: 'تم حجز المعاينة', finalItem4: 'تم إرسال الاتفاقية، والتسعير مفتوح',
-    emailModalTitle: 'Vista Residences', emailModalSub: 'دعوة معاينة خاصة لكبار الشخصيات',
+    emailModalTitle: 'النور ريزيدنسز', emailModalSub: 'دعوة معاينة خاصة لكبار الشخصيات',
     emailDear: 'عزيزي خالد،',
-    emailBody1: 'شكرًا لاهتمامك المستمر بـ Vista Residences. بصفتك مشتري VIP، يسعدنا دعوتك إلى',
+    emailBody1: 'شكرًا لاهتمامك المستمر بـ النور ريزيدنسز. بصفتك مشتري VIP، يسعدنا دعوتك إلى',
     emailBody1b: 'معاينة خاصة حصرية',
     emailBody1c: 'لـ Sky Penthouse.',
     emailBrochure: 'كتيب العقار المخصص مع تحليل العائد مرفق. يرجى إكمال اتفاقية السرية المرفقة لفتح أسعار ما قبل الإطلاق الحصرية قبل معاينتك.',
-    emailRegards: 'مع أطيب التحيات،', emailTeam: 'فريق مبيعات Vista Residences', emailPowered: 'مدعوم من Dynamic NFC',
+    emailRegards: 'مع أطيب التحيات،', emailTeam: 'فريق مبيعات النور ريزيدنسز', emailPowered: 'مدعوم من Dynamic NFC',
     emailRealDraft: 'هذه مسودة حقيقية — افتح في Gmail',
     footer: 'عرض أتمتة مبيعات AI لـ', footerLink: 'Dynamic NFC',
     footNote: 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات والمؤسسات.',
@@ -151,7 +151,7 @@ const REAL_RESULTS = {
       title: "Private Showing — Sky Penthouse — Khalid Al-Rashid (VIP)",
       date: day,
       time: "2:00 PM – 3:00 PM GST",
-      location: "Vista Residences Sales Center, Dubai Marina",
+      location: "Al Noor Residences Sales Center, Riyadh",
       link: "https://www.google.com/calendar/event?eid=b3VwazdtbmRldHZtamI5dnMyZHJ1bnZ0cHMgaW5mb0BkeW5hbWljbmZjLmhlbHA",
       slotsFound: 3,
     };
@@ -215,14 +215,14 @@ const TERMINAL_LINES = {
       { type: "data", text: `Optimal: ${short}, 2:00 PM GST (all available)` },
       { type: "cmd", text: "mcp.gcal.create_event({summary: 'Private Showing...'})" },
       { type: "ok", text: "Event created: 'Private Showing — Sky Penthouse'" },
-      { type: "data", text: "Location: Vista Residences Sales Center, Dubai Marina" },
+      { type: "data", text: "Location: Al Noor Residences Sales Center, Riyadh" },
       { type: "ok", text: "Reminders set: 1 day before (email) + 1 hour before (popup)" },
     ];
   })(),
   docusign: [
     { type: "cmd", text: "POST /api/docusign/demo/create-nda" },
     { type: "wait", text: "Authenticating with DocuSign via JWT Grant..." },
-    { type: "data", text: "Account: ozzy@dynamiccrm.ca (353d13ef-...)" },
+    { type: "data", text: "Account: connected ✓" },
     { type: "cmd", text: "Creating NDA envelope for Khalid Al-Rashid..." },
     { type: "wait", text: "Generating HTML document with pre-filled VIP terms..." },
     { type: "data", text: "Document: VIP Buyer NDA — Al Noor Residences (4 sections)" },
@@ -371,13 +371,13 @@ export default function AIDemo() {
         unitPrice: "AED 12,500,000",
         showingDate: showDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }),
         showingTime: "2:00 PM GST",
-        showingLocation: "Vista Residences Sales Center, Dubai Marina",
+        showingLocation: "Al Noor Residences Sales Center, Riyadh",
       });
       gmailPromise = createGmailDraft(googleToken, {
         to: "khalid.alrashid@vista.ae",
         subject: "Khalid, your private viewing of the Sky Penthouse is confirmed",
         htmlBody,
-        senderName: "Vista Residences",
+        senderName: "Al Noor Residences",
       })
         .then(result => setLiveResults(prev => ({ ...prev, gmail: result })))
         .catch(err => console.error("Live Gmail failed:", err));
@@ -391,7 +391,7 @@ export default function AIDemo() {
       endDT.setHours(15, 0, 0, 0);
       calendarPromise = createCalendarEvent(googleToken, {
         summary: "Private Showing — Sky Penthouse — Khalid Al-Rashid (VIP)",
-        location: "Vista Residences Sales Center, Dubai Marina",
+        location: "Al Noor Residences Sales Center, Riyadh",
         description: "Exclusive private showing of Sky Penthouse PH-4201 for VIP buyer Khalid Al-Rashid. Investment proposal attached.",
         startDateTime: startDT.toISOString(),
         endDateTime: endDT.toISOString(),
@@ -465,7 +465,7 @@ export default function AIDemo() {
 
   return (
     <div className={`ai-demo ${theme}`} dir={lang === "ar" ? "rtl" : "ltr"}>
-      <SEO title="AI Sales Demo" description="Interactive AI-powered sales pipeline automation demo." path="/ai-demo" />
+      <SEO title="AI Sales Demo" description="Interactive AI-powered sales pipeline automation demo." path="/enterprise/crmdemo/ai-demo" />
       <div className="ai-bg"><div className="ai-blob ai-blob-1" /><div className="ai-blob ai-blob-2" /><div className="ai-blob ai-blob-3" /></div>
 
       {/* Progress */}
@@ -796,8 +796,8 @@ export default function AIDemo() {
                   </div>
                   <div className="ai-em-showing">
                     <div className="ai-em-showing-label">Your Private Showing</div>
-                    <div className="ai-em-showing-val">Thursday, March 12, 2026 at 2:00 PM GST</div>
-                    <div className="ai-em-showing-loc">Vista Residences Sales Center, Dubai Marina</div>
+                    <div className="ai-em-showing-val">{REAL_RESULTS.calendar.date} at 2:00 PM GST</div>
+                    <div className="ai-em-showing-loc">Al Noor Residences Sales Center, Riyadh</div>
                   </div>
                   <p className="ai-em-text">{t('emailBrochure')}</p>
                   <div className="ai-em-attach">

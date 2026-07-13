@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from '../../i18n';
+import { useRegion } from '../../hooks/useRegion';
+import { REGION_LIST } from '../../config/regionConfig';
 import './CRMGateway.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/portals/crmGateway';
@@ -12,7 +14,6 @@ const T = {
     title2: "Choose an industry to explore",
     descDefault: "Experience how Dynamic NFC transforms sales across industries with intelligent, personalized portals. Each tap delivers a unique experience tailored to customer preferences, interests, and stage in the journey.",
     descRe: "Experience how Dynamic NFC transforms luxury real estate sales with intelligent, personalized buyer portals. Each tap delivers a unique experience tailored to buyer preferences, interests, and stage in the journey.",
-    descAuto: "Experience how Dynamic NFC transforms automotive sales with intelligent, personalized showroom portals. Each tap delivers a unique experience tailored to customer preferences, vehicle interests, and purchase journey.",
 
     sectionChoose: "Choose Your Industry",
     indReTitle: "Real Estate Developers & Agents",
@@ -23,6 +24,10 @@ const T = {
     indAutoSub: "Dealerships, luxury showrooms, fleet management",
     indAutoPreview: "2 VIP portals · 1 showroom · dashboard · AI pipeline",
     indAutoTags: ["VIP Experience", "Test Drives", "Public Showroom", "Dashboard", "AI Pipeline"],
+    indYachtTitle: "Yacht",
+    indYachtSub: "Brokerages, charter fleets, marinas",
+    indYachtPreview: "VIP portal · fleet showroom · AI concierge",
+    indYachtTags: ["VIP Experience", "Sea Trials", "Fleet", "AI Concierge"],
     backAll: "All Industries",
 
     sectionPortals: "Demo Portals",
@@ -42,22 +47,6 @@ const T = {
     c5d: "Watch AI orchestrate Canva, Gmail, Google Calendar, and DocuSign to automate the entire sales pipeline — from personalized brochures to signed agreements in under 2 minutes.",
     c5tags: ["Canva", "Gmail", "Google Calendar", "DocuSign", "MCP"],
 
-    ab1: "VIP Client", ac1t: "Khalid Al-Rashid",
-    ac1d: "Elite client experience with luxury SUV preferences, test drive history, and personalized offers.",
-    ac1tags: ["Luxury SUVs", "Test Drives", "VIP Tier"],
-    ab2: "VIP Client", ac2t: "Sultan Al-Dhaheri",
-    ac2d: "Performance enthusiast portal with sports car focus, financing options, and trade-in valuation.",
-    ac2tags: ["Sports Cars", "Financing", "Trade-in"],
-    ab3: "Public Access", ac3t: "Public Showroom",
-    ac3d: "Walk-in and online browsing experience with adaptive content based on engagement.",
-    ac3tags: ["Browse Models", "Lead Capture", "Inventory"],
-    ab4: "AI Pipeline", ac4t: "AI Sales Pipeline",
-    ac4d: "Automated follow-up system generating personalized offers and test drive scheduling.",
-    ac4tags: ["AI Follow-up", "Test Drive Booking", "Smart Offers"],
-    ab5: "Analytics", ac5t: "Unified Dashboard — Dealer Intelligence",
-    ac5d: "Real-time showroom analytics, lead scoring, vehicle interest tracking, and conversion funnels.",
-    ac5tags: ["Showroom Analytics", "Lead Scoring", "Inventory Insights"],
-
     footer: "Demo environment for",
     footerLink: "Dynamic NFC",
     homeBtn: "Home",
@@ -76,7 +65,6 @@ const T = {
     title2: "اختر مجالك واستكشف",
     descDefault: "اختبر كيف تحول Dynamic NFC المبيعات عبر القطاعات ببوابات ذكية ومخصصة. كل نقرة تقدّم تجربة فريدة حسب تفضيلات العميل واهتماماته ومرحلة رحلته.",
     descRe: "اختبر كيف تحول Dynamic NFC مبيعات العقارات الفاخرة عبر بوابات مشترٍ ذكية ومخصصة. كل نقرة تقدّم تجربة فريدة حسب تفضيلات المشتري واهتماماته ومرحلة رحلته.",
-    descAuto: "اختبر كيف تحول Dynamic NFC مبيعات السيارات عبر بوابات صالة عرض ذكية ومخصصة. كل نقرة تقدّم تجربة فريدة حسب تفضيلات العميل واهتماماته بالسيارات ورحلة الشراء.",
 
     sectionChoose: "اختر مجالك",
     indReTitle: "مطورو ووكلاء العقارات",
@@ -87,6 +75,10 @@ const T = {
     indAutoSub: "الوكالات، صالات العرض الفاخرة، إدارة الأسطول",
     indAutoPreview: "بوابتان VIP · صالة عرض · لوحة تحكم · مسار AI",
     indAutoTags: ["تجربة VIP", "تجارب القيادة", "صالة العرض", "لوحة التحكم", "مسار AI"],
+    indYachtTitle: "اليخوت",
+    indYachtSub: "الوساطات وأساطيل التأجير والمراسي",
+    indYachtPreview: "بوابة VIP · صالة عرض للأسطول · كونسيرج AI",
+    indYachtTags: ["تجربة VIP", "تجارب بحرية", "الأسطول", "كونسيرج AI"],
     backAll: "جميع القطاعات",
 
     sectionPortals: "بوابات العرض التجريبي",
@@ -105,22 +97,6 @@ const T = {
     b5: "أتمتة الذكاء الاصطناعي", c5t: "مسار مبيعات الذكاء الاصطناعي",
     c5d: "شاهد الذكاء الاصطناعي ينظم Canva، Gmail، Google Calendar، و DocuSign لأتمتة كامل مسار المبيعات — من الكتيبات المخصصة إلى الاتفاقيات الموقعة في أقل من دقيقتين.",
     c5tags: ["Canva", "Gmail", "Google Calendar", "DocuSign", "MCP"],
-
-    ab1: "عميل VIP", ac1t: "خالد الرشيد",
-    ac1d: "تجربة العميل المتميز مع تفضيلات سيارات الدفع الرباعي الفاخرة، وتاريخ تجارب القيادة، والعروض المخصصة.",
-    ac1tags: ["سيارات SUV فاخرة", "تجارب القيادة", "مستوى VIP"],
-    ab2: "عميل VIP", ac2t: "سلطان الظاهري",
-    ac2d: "بوابة عشاق الأداء مع التركيز على السيارات الرياضية، وخيارات التمويل، وتقييم الاستبدال.",
-    ac2tags: ["سيارات رياضية", "تمويل", "استبدال"],
-    ab3: "الوصول العام", ac3t: "صالة العرض العامة",
-    ac3d: "تجربة تصفح للزوار والعملاء عبر الإنترنت مع محتوى متكيف حسب التفاعل.",
-    ac3tags: ["تصفح الموديلات", "التقاط العملاء", "المخزون"],
-    ab4: "مسار AI", ac4t: "مسار مبيعات الذكاء الاصطناعي",
-    ac4d: "نظام متابعة آلي يولّد عروضًا مخصصة وجدولة تجارب القيادة.",
-    ac4tags: ["متابعة AI", "حجز تجربة قيادة", "عروض ذكية"],
-    ab5: "تحليلات", ac5t: "لوحة التحكم الموحدة — ذكاء الوكالة",
-    ac5d: "تحليلات صالة العرض في الوقت الفعلي، تقييم العملاء، تتبع الاهتمام بالسيارات، ومسارات التحويل.",
-    ac5tags: ["تحليلات صالة العرض", "تقييم العملاء", "رؤى المخزون"],
 
     footer: "بيئة العرض التجريبي لـ",
     footerLink: "Dynamic NFC",
@@ -176,6 +152,7 @@ const TRUST_ROWS = [
 /* SVG Icons */
 const IconBuilding = <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="6" width="32" height="38" rx="3" /><line x1="16" y1="14" x2="16" y2="14.01" /><line x1="24" y1="14" x2="24" y2="14.01" /><line x1="32" y1="14" x2="32" y2="14.01" /><line x1="16" y1="22" x2="16" y2="22.01" /><line x1="24" y1="22" x2="24" y2="22.01" /><line x1="32" y1="22" x2="32" y2="22.01" /><line x1="16" y1="30" x2="16" y2="30.01" /><line x1="24" y1="30" x2="24" y2="30.01" /><line x1="32" y1="30" x2="32" y2="30.01" /><path d="M20 44V38h8v6" /></svg>;
 const IconCar = <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 30h28M6 24l4-10h28l4 10" /><rect x="6" y="24" width="36" height="10" rx="2" /><circle cx="14" cy="34" r="3" /><circle cx="34" cy="34" r="3" /></svg>;
+const IconAnchor = <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="24" cy="11" r="4" /><path d="M24 15v24M12 26h24M14 39c3.5 3.5 7 5 10 5s6.5-1.5 10-5M10 26c0 10 6 18 14 18M38 26c0 10-6 18-14 18" /></svg>;
 
 const GwIconChart = (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden>
@@ -238,10 +215,12 @@ function GwChevronBackIcon() {
 }
 
 export default function CRMGateway() {
-  const { lang } = useLanguage();
+  const { lang, setLang } = useLanguage();
+  const { regionId, switchRegion, languages } = useRegion();
   const navigate = useNavigate();
   const [industry, setIndustry] = useState(null);
-  const t = T[lang];
+  const t = T[lang] || T.en;
+  const nextLang = (languages || ["en"])[((languages || ["en"]).indexOf(lang) + 1) % (languages || ["en"]).length] || "en";
   const particlesRef = useRef(null);
 
   useEffect(() => {
@@ -267,16 +246,8 @@ export default function CRMGateway() {
     { id: "ai-demo", path: "/enterprise/crmdemo/ai-demo", badge: t.b5, badgeCls: "purple", cardIcon: "ai", title: t.c5t, desc: t.c5d, tags: t.c5tags, featured: true },
   ];
 
-  const autoPortals = [
-    { id: "auto-dashboard", path: "/unified", badge: t.ab5, badgeCls: "red", cardIcon: "chart", title: t.ac5t, desc: t.ac5d, tags: t.ac5tags, featured: true },
-    { id: "khalid-auto", path: "/automotive/demo/khalid", badge: t.ab1, badgeCls: "red", avatar: "KA", avatarCls: "gold", title: t.ac1t, desc: t.ac1d, tags: t.ac1tags },
-    { id: "sultan", path: "/automotive/demo/sultan", badge: t.ab2, badgeCls: "red", avatar: "SA", avatarCls: "blue", title: t.ac2t, desc: t.ac2d, tags: t.ac2tags },
-    { id: "showroom", path: "/automotive/demo/showroom", badge: t.ab3, badgeCls: "blue", cardIcon: "store", title: t.ac3t, desc: t.ac3d, tags: t.ac3tags },
-    { id: "auto-ai", path: "/automotive/demo/ai", badge: t.ab4, badgeCls: "purple", cardIcon: "ai", title: t.ac4t, desc: t.ac4d, tags: t.ac4tags, featured: true },
-  ];
-
-  const portals = industry === 'auto' ? autoPortals : rePortals;
-  const heroDesc = industry === 're' ? t.descRe : industry === 'auto' ? t.descAuto : t.descDefault;
+  const portals = rePortals;
+  const heroDesc = industry === 're' ? t.descRe : t.descDefault;
 
   return (
     <div className="gw" dir={lang === "ar" ? "rtl" : "ltr"}>
@@ -292,6 +263,14 @@ export default function CRMGateway() {
           </Link>
           <div className="gw-badge"><span>{t.badge}</span></div>
           <div className="gw-hd-right">
+            <div className="gw-region" role="group" aria-label="Region">
+              {REGION_LIST.map((region) => (
+                <button key={region.id} type="button" className={`gw-region-btn${regionId === region.id ? " act" : ""}`} onClick={() => switchRegion(region.id)} aria-pressed={regionId === region.id}>
+                  {region.id === "gulf" ? "KSA" : region.id === "usa" ? "USA" : region.id === "mexico" ? "MEX" : "CAN"}
+                </button>
+              ))}
+            </div>
+            <button type="button" className="gw-lang" onClick={() => setLang(nextLang)}>{nextLang.toUpperCase()}</button>
             <Link to="/" className="gw-home">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               {t.homeBtn}
@@ -358,6 +337,21 @@ export default function CRMGateway() {
               <button
                 type="button"
                 className="gw-ind-btn"
+                onClick={() => navigate('/yacht/demo')}
+                aria-label={`${t.indYachtTitle}. ${t.indYachtSub}`}
+              >
+                <div className="gw-ind-card gw-ind-yacht">
+                  <div className="gw-ind-icon-wrap gw-ind-icon-yacht">{IconAnchor}</div>
+                  <h3>{t.indYachtTitle}</h3>
+                  <p>{t.indYachtSub}</p>
+                  <p className="gw-ind-preview"><span className="gw-ind-preview-icon" aria-hidden><GwArrowInlineIcon /></span><span className="gw-ind-preview-text">{t.indYachtPreview}</span></p>
+                  <div className="gw-ind-tags">{t.indYachtTags.map((tag, i) => <span className="gw-tag" key={i}>{tag}</span>)}</div>
+                  <div className="gw-card-arrow" aria-hidden><GwArrowCircleIcon /></div>
+                </div>
+              </button>
+              <button
+                type="button"
+                className="gw-ind-btn"
                 onClick={() => navigate('/automotive/demo')}
                 aria-label={`${t.indAutoTitle}. ${t.indAutoSub}`}
               >
@@ -389,7 +383,7 @@ export default function CRMGateway() {
             </div>
             <div className="gw-grid">
               {portals.map((p) => (
-                <Link key={p.id} to={p.path} className={`gw-card ${p.featured ? "featured" : ""}`} onClick={() => { if (typeof gtag === 'function') gtag('event', 'select_content', { content_type: 'demo_portal', content_id: p.id }); }}>
+                <a key={p.id} href={p.path} target="_blank" rel="noreferrer" className={`gw-card ${p.featured ? "featured" : ""}`} onClick={() => { if (typeof gtag === 'function') gtag('event', 'select_content', { content_type: 'demo_portal', content_id: p.id }); }}>
                   <div className={`gw-card-badge ${p.badgeCls}`}>{p.badge}</div>
                   {p.avatar ? (
                     <div className={`gw-card-avatar ${p.avatarCls}`}>{p.avatar}</div>
@@ -401,13 +395,13 @@ export default function CRMGateway() {
                   <div className="gw-card-tags">{p.tags.map((tag, i) => {
                     const isRoiTag = tag === "ROI Calculator" || tag === "حاسبة العائد";
                     return isRoiTag ? (
-                      <Link to="/enterprise/crmdemo/roi-calculator" className="gw-tag gw-tag-link" key={i} onClick={(e) => e.stopPropagation()}>{tag}</Link>
+                      <a href="/enterprise/crmdemo/roi-calculator" target="_blank" rel="noreferrer" className="gw-tag gw-tag-link" key={i} onClick={(e) => e.stopPropagation()}>{tag}</a>
                     ) : (
                       <span className="gw-tag" key={i}>{tag}</span>
                     );
                   })}</div>
                   <div className="gw-card-arrow" aria-hidden><GwArrowCircleIcon /></div>
-                </Link>
+                </a>
               ))}
             </div>
           </section>

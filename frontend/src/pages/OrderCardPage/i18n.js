@@ -81,7 +81,7 @@ export const TR = {
     footCreateCard: 'Create Card',
     footLogin: 'Log in',
     footSignup: 'Sign up',
-    footCopy: '© 2026 DynamicNFC Technologies Pty Ltd. All Rights Reserved.',
+    footCopy: '© 2026 DynamicNFC Card Inc. All Rights Reserved.',
   },
   ar: {
     home: 'الرئيسية',
@@ -89,9 +89,9 @@ export const TR = {
     nfcCards: 'بطاقات NFC',
     login: 'تسجيل الدخول',
 
-    overline: 'بطاقات أعمال الاتصال قريب المدى فاخرة',
-    heroTitle: 'هوية ذكية. حضور فاخر.',
-    heroSub: 'مصنوعة يدويًا من المعدن المصقول، الذهب عيار 24 قيراط، الخيزران، وPVC الفاخر. كل بطاقة تحمل الاتصال قريب المدى + QR— كل هويتك المهنية في نقرة واحدة.',
+    overline: 'اختر نوع بطاقتك',
+    heroTitle: 'رقمية أو مادية. القرار لك.',
+    heroSub: 'تقدم DynamicNFC تجربتين مختلفتين للبطاقات. اختر ما يناسب احتياجاتك — أو احصل على كليهما.',
 
     digitalTitle: 'بطاقة رقمية',
     digitalPrice: 'مجاناً',
@@ -159,7 +159,7 @@ export const TR = {
     footCreateCard: 'إنشاء بطاقة',
     footLogin: 'تسجيل الدخول',
     footSignup: 'إنشاء حساب',
-    footCopy: '© 2026 DynamicNFC Technologies Pty Ltd. جميع الحقوق محفوظة.',
+    footCopy: '© 2026 DynamicNFC Card Inc. جميع الحقوق محفوظة.',
     ctaDesign: 'صمّم بطاقتك',
     ctaExplore: 'استعرض جميع البطاقات',
     feat1: 'الاتصال قريب المدى + QR',

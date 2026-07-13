@@ -62,6 +62,9 @@ const TR = {
     demoAuto: 'Automotive',
     demoAutod: 'See how a showroom guest configures their dream car, books a test drive, and gets a personalized follow-up.',
     demoAutoTag1: 'VIP Showroom', demoAutoTag2: 'Configurator', demoAutoTag3: 'Test Drive',
+    demoYacht: 'Yacht Brokerage Demo',
+    demoYachtd: 'Private marina experiences for owners and charter clients — every sea trial begins with a name.',
+    demoYachtTag1: 'VIP Portal', demoYachtTag2: 'Sea Trial', demoYachtTag3: 'Charter',
     demoCta: 'Launch the full demo',
 
     /* Industries */
@@ -80,13 +83,15 @@ const TR = {
     ind3d: 'VIP showroom portals, test drive intelligence, vehicle configurator, and buyer intent signals for luxury dealerships.',
     ind3cta: 'Automotive Solutions →',
     ind3tags: ['VIP Showroom', 'Test Drive Intel', 'Configurator', 'Dealer Dashboard'],
+    ind4t: 'Yacht Brokerage',
+    ind4d: 'Private marina experiences for owners and charter clients — every sea trial begins with a name.',
+    ind4cta: 'Yacht Solutions →',
+    ind4tags: ['Marinas', 'Brokerages', 'Charter Fleets', 'Sea Trials'],
     indDemoLink: 'Try demo →',
 
-    /* Testimonial */
-    testimonialLabel: 'Pilot Program Result',
-    testimonialQuote: 'Within 3 weeks of deploying DynamicNFC cards, we identified 14 high-intent buyers we would have never known about. Two penthouses sold directly from VIP portal interactions.',
-    testimonialName: 'Khalid Al-Rashid',
-    testimonialRole: 'VP of Sales, Prestige Developments',
+    /* Scenario (hypothetical — no invented stats) */
+    testimonialLabel: 'Imagine This Monday',
+    testimonialQuote: 'Imagine your sales director opening the dashboard on a Monday morning — and seeing exactly which VIPs spent the weekend inside the floor plans, and which penthouse they kept returning to.',
 
     /* FAQ */
     faqTitle: 'FAQ',
@@ -148,7 +153,7 @@ const TR = {
     footLogin: 'Log in', footDev: 'Developers & Agents', footRe: 'Real Estate',
     footAutomotive: 'Automotive', footLiveDemo: 'Live Demo',
     footCopy: '© 2026 DynamicNFC Card Inc. All Rights Reserved.',
-    footNote: 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and enterprise.',
+    footNote: 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and yacht sales.',
   },
   ar: {
     badge: "محرك سرعة المبيعات",
@@ -187,6 +192,9 @@ const TR = {
     demoAuto: 'السيارات',
     demoAutod: 'شاهد كيف يُخصص ضيف صالة العرض سيارة أحلامه، يحجز تجربة قيادة، ويحصل على متابعة مخصصة.',
     demoAutoTag1: 'صالة عرض VIP', demoAutoTag2: 'أداة التكوين', demoAutoTag3: 'تجربة قيادة',
+    demoYacht: 'عرض وساطة اليخوت',
+    demoYachtd: 'تجارب مارينا خاصة للملّاك وعملاء التأجير — كل تجربة إبحار تبدأ باسم.',
+    demoYachtTag1: 'بوابة VIP', demoYachtTag2: 'تجربة إبحار', demoYachtTag3: 'تأجير',
     demoCta: 'ابدأ العرض الكامل',
 
     indLabel: 'القطاعات', indTitle: "مصممة لصناعتك", indSub: "مسارات متخصصة، منصة واحدة",
@@ -196,11 +204,14 @@ const TR = {
     ind2cta: "بطاقات المؤسسات →", ind2tags: ['معدن وذهب', 'طلبات جماعية', 'إدارة الفرق', 'تحليلات'],
     ind3t: 'وكلاء السيارات', ind3d: 'بوابات صالة عرض VIP، ذكاء تجربة القيادة، أداة التكوين، وإشارات نية المشتري.',
     ind3cta: 'حلول السيارات →', ind3tags: ['صالة عرض VIP', 'ذكاء التجربة', 'أداة التكوين', 'لوحة الوكيل'],
+    ind4t: 'وساطة اليخوت',
+    ind4d: 'تجارب مارينا خاصة للملّاك وعملاء التأجير — كل تجربة إبحار تبدأ باسم.',
+    ind4cta: 'حلول اليخوت →',
+    ind4tags: ['المراسي', 'الوساطة', 'أساطيل التأجير', 'تجارب الإبحار'],
     indDemoLink: 'جرّب العرض →',
 
-    testimonialLabel: 'نتيجة البرنامج التجريبي',
-    testimonialQuote: 'خلال 3 أسابيع من نشر بطاقات DynamicNFC، حددنا 14 مشترياً ذوي نية عالية لم نكن لنعرفهم أبداً. تم بيع شقتين بنتهاوس مباشرة من تفاعلات بوابة VIP.',
-    testimonialName: 'خالد الرشيد', testimonialRole: 'نائب رئيس المبيعات، بريستيج للتطوير',
+    testimonialLabel: 'تخيّل صباح الاثنين',
+    testimonialQuote: 'تخيّل مدير المبيعات يفتح لوحة التحكم صباح يوم الاثنين — ويرى بالضبط أي كبار الشخصيات قضوا عطلة نهاية الأسبوع داخل المخططات الطابقية، وأي بنتهاوس عادوا إليه مراراً.',
 
     faqTitle: 'الأسئلة الشائعة',
     faq1q: "هل هذا يحل محل إدارة علاقات العملاء؟", faq1a: "لا. DynamicNFC تعمل على تعزيز إدارة علاقات العملاء بالذكاء السلوكي من بوابات VIP.",
@@ -246,7 +257,7 @@ const TR = {
     footLogin: 'تسجيل الدخول', footDev: 'المطورين والوكلاء', footRe: 'العقارات',
     footAutomotive: 'السيارات', footLiveDemo: 'عرض تجريبي مباشر',
     footCopy: '© ٢٠٢٦ DynamicNFC Card Inc. جميع الحقوق محفوظة.',
-    footNote: 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات والمؤسسات.',
+    footNote: 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات واليخوت.',
   },
 };
 
@@ -265,6 +276,7 @@ const ICONS = {
   cpu:     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>,
   building:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="16"/><line x1="15" y1="22" x2="15" y2="16"/><line x1="8" y1="6" x2="8" y2="6.01"/><line x1="12" y1="6" x2="12" y2="6.01"/><line x1="16" y1="6" x2="16" y2="6.01"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/></svg>,
   car:     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="22" height="22"><path d="M5 17h14M3 12l2-5h14l2 5M7 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>,
+  anchor:  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="22" height="22"><circle cx="12" cy="5" r="2.5"/><path d="M12 7.5v12.5"/><path d="M7 12h10"/><path d="M5 21c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg>,
 };
 
 /* How-it-works — static line icons + one filled chart (no idle animation; motion only on .hp-step:hover via CSS) */
@@ -773,6 +785,15 @@ export default function Home() {
             </div>
             <span className="hp-demo-sector-cta">{t('demoCardCta')}</span>
           </Link>
+          <Link to="/yacht/demo" className="hp-demo-sector-card hp-demo-sector-card--yacht">
+            <div className="hp-demo-sector-icon hp-demo-sector-icon--yacht">{ICONS.anchor}</div>
+            <h3>{t('demoYacht')}</h3>
+            <p>{t('demoYachtd')}</p>
+            <div className="hp-demo-tags">
+              <span>{t('demoYachtTag1')}</span><span>{t('demoYachtTag2')}</span><span>{t('demoYachtTag3')}</span>
+            </div>
+            <span className="hp-demo-sector-cta">{t('demoCardCta')}</span>
+          </Link>
         </div>
       </div>
     </section>
@@ -789,6 +810,7 @@ export default function Home() {
         {[
           { k: 'ind1', icon: ICONS.building, c: 'blue', nav: '/developers', demo: '/enterprise/crmdemo' },
           { k: 'ind3', icon: ICONS.car, c: 'red', nav: '/automotive', demo: '/automotive/demo' },
+          { k: 'ind4', icon: ICONS.anchor, c: 'teal', nav: '/yacht/demo', demo: '/yacht/demo' },
           { k: 'ind2', icon: ICONS.card, c: 'gold', nav: '/nfc-cards', wide: true },
         ].map((ind, i) => (
           <div
@@ -907,6 +929,7 @@ export default function Home() {
               <h5>{t('footIndustries')}</h5>
               <Link to="/developers">{t('footDev')}</Link>
               <Link to="/automotive">{t('footAutomotive')}</Link>
+              <Link to="/yacht/demo">{t('ind4t')}</Link>
               <Link to="/nfc-cards">{t('footNfcCards')}</Link>
             </div>
             <div className="hp-footer-col">

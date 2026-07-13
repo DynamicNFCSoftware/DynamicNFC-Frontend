@@ -14,17 +14,20 @@ const TR = {
     navChallenge:'The Challenge', navHow:'How It Works', navDemo:'Live Demo', navImpact:'Impact', navPilot:'Request a Pilot',
     heroBadge:'Enterprise Sales Velocity Engine',
     heroTitle:'Turn Anonymous Visitors Into Booked Viewings',
-    heroSub:'DynamicNFC transforms premium NFC cards into private buyer experiences — bridging the gap between anonymous traffic and named, high-intent prospects across real estate developments, automotive showrooms, and beyond.',
+    heroSub:'DynamicNFC transforms premium NFC cards into private buyer experiences — bridging the gap between anonymous traffic and named, high-intent prospects across real estate, automotive, and yacht sales.',
     heroTitle_re:'Turn Anonymous Visitors Into Booked Viewings',
     heroTitle_auto:'Turn Showroom Browsers Into Test Drive Bookings',
+    heroTitle_yacht:'Turn Yacht Interest Into Sea Trial Requests',
     heroSub_re:'DynamicNFC transforms premium NFC cards into private buyer portals — bridging the gap between anonymous digital traffic and named, high-intent prospects ready to commit across mega-developments and branded residences.',
     heroSub_auto:'DynamicNFC transforms premium NFC cards into private VIP showroom experiences — bridging the gap between anonymous walk-ins and named, high-intent buyers ready to configure, finance, and drive away.',
+    heroSub_yacht:'DynamicNFC transforms premium NFC cards into private yacht experiences — connecting named buyers and charter guests with the vessels, itineraries, and sea trials that move a decision forward.',
+    statValNamed:'Named', statValIntent:'Real-Time', statValZero:'Zero',
     statConversion:'Conversion Rate', statDecision:'Faster Decision Cycle', statIdentified:'Identified Visitors',
     heroCtaPilot:'Request a Pilot →', heroCtaDemo:'See the Live Demo',
 
     probLabel:'The Blind Spot', probTitle:'Your Sales Team Is Operating Without Context',
     probQuote:'Your highest-intent buyers spend weeks exploring floor plans, pricing, and payment options online. Yet when sales teams engage, they lack the one critical thing that closes deals: ', probQuoteHighlight:'context.',
-    prob1Icon:'🏙️', prob1Title:'Anonymous Traffic', prob1Desc:'97% of your website visitors leave without ever identifying themselves — across every project launch',
+    prob1Icon:'🏙️', prob1Title:'Anonymous Traffic', prob1Desc:'Nearly all of your website visitors leave without ever identifying themselves.',
     prob2Icon:'⏳', prob2Title:'Delayed Follow-ups', prob2Desc:'Sales teams reach out too late, with no insight into which units, payment plans, or amenities prospects explored',
     prob3Icon:'📋', prob3Title:'Generic Conversations', prob3Desc:'Every prospect gets the same pitch — whether they\'re an investor seeking ROI or a family seeking community',
 
@@ -44,7 +47,7 @@ const TR = {
 
     idLabel:'The Key Difference', idTitle:'Same Website. Same Actions. Different Intelligence.', idTagline:'Identity is the multiplier.',
     idVipLabel:'VIP Access Key Holder', idVipTitle:'Named Prospect — Khalid Al-Rashid',
-    idVipDesc:'You know he viewed the Skyline Penthouse three times, downloaded the ROI brochure, and spent 8 minutes on payment plans. Your sales team calls with context, timing, and the right offer.',
+    idVipDesc:'You know he returned to the Skyline Penthouse again and again, downloaded the ROI brochure, and spent long, focused minutes reviewing payment plans. Your sales team calls with context, timing, and the right offer.',
     idVip1:'Personal Follow-ups', idVip2:'Tailored Incentives', idVip3:'Concierge Sales', idVip4:'Named Intelligence',
     idAnonLabel:'Anonymous Website Visitor', idAnonTitle:'Unknown — Segment Data Only',
     idAnonDesc:"Someone visited the penthouse page. You don't know who, how many times, or what else they explored. The lead sits in a queue with hundreds of others.",
@@ -104,15 +107,23 @@ const TR = {
     successTitle:'Pilot Request Submitted',
     successDesc:'Thank you. Our enterprise team will review your project details and reach out within 24 hours to design your custom pilot program.',
     successClose:'Close',
-    footerText:'© 2026 DynamicNFC — Sales Velocity Engine for Real Estate & Automotive',
-    indChoose:'Choose Your Industry', indAll:'All Industries', indRE:'Real Estate Developers & Agents', indAuto:'Automotive',
-    prob1Desc_auto:'85% of showroom visitors browse anonymously — your sales team doesn\'t know who viewed the AMG GT 63 S three times',
+    footerText:'© 2026 DynamicNFC — Sales Velocity Engine for Real Estate, Automotive & Yacht',
+    indChoose:'Choose Your Industry', indAll:'All Industries', indRE:'Real Estate Developers & Agents', indAuto:'Automotive', indYacht:'Yacht',
+    prob1Desc_auto:'Most showroom visitors browse anonymously.',
     prob2Desc_auto:'Sales teams follow up too late, with no insight into which models, configurations, or financing options prospects explored',
     prob3Desc_auto:'Every prospect gets the same pitch — whether they\'re a luxury collector seeking exclusivity or a family upgrading their SUV',
     step3Desc_auto:'One tap opens their private showroom portal — tailored vehicle collections, configurations, pricing, and test drive booking, all linked to their VIP identity.',
     step4Desc_auto:'Every interaction — model views, configurations saved, financing explored, test drives booked — feeds your dealer dashboard in real time.',
     idVipTitle_auto:'Named Prospect — Khalid Al-Mansouri',
-    idVipDesc_auto:'You know he configured an AMG GT 63 S in Obsidian Black, opened the finance calculator, compared it with the G 63, and spent 12 minutes on payment plans. Your sales team calls with the exact spec sheet, test drive availability, and a VIP finance offer.',
+    idVipDesc_auto:'You know he configured an AMG GT 63 S in Obsidian Black, opened the finance calculator, compared it with the G 63, and returned to payment plans again and again. Your sales team calls with the exact spec sheet, test drive availability, and a VIP finance offer.',
+    prob1Desc_yacht:'Most yacht buyers and charter guests browse without ever identifying themselves.',
+    idVipTitle_yacht:'Named Prospect — Private Yacht Guest',
+    idVipDesc_yacht:'You know which vessels they returned to, the itineraries they explored, and when they requested a sea trial. Your team responds with the right charter or brokerage conversation.',
+    demoTitle_yacht:'See It In Action — Private Yacht Experience',
+    yachtDemo1Title:'Yacht Demo Gateway', yachtDemo1Desc:'Explore a private yacht experience designed for named buyers and charter guests.',
+    yachtDemo2Title:'VIP Yacht Portal', yachtDemo2Desc:'A tailored VIP journey with vessel details, itineraries, and sea trial requests.',
+    yachtDemo3Title:'Yacht Showroom', yachtDemo3Desc:'Browse the fleet, compare vessels, and capture real intent.',
+    yachtDemo4Title:'Yacht AI Concierge', yachtDemo4Desc:'See an AI-assisted concierge flow for yacht sales and charter conversations.',
     demoTitle_re:'See It In Action — Al Noor Residences',
     demoTitle_auto:'See It In Action — Prestige Motors',
     autoDemo1Title:'Khalid Al-Mansouri Portal', autoDemo1Desc:'VIP automotive experience with AMG performance focus, saved configurations, and finance calculator access.',
@@ -127,16 +138,19 @@ const TR = {
     navChallenge:"التحدي", navHow:"كيف تعمل", navDemo:"العرض التجريبي المباشر", navImpact:"التأثير", navPilot:"طلب تجربة تجريبية",
     heroBadge:"محرك تسريع مبيعات الشركات",
     heroTitle:"تحويل الزوار المجهولين إلى زيارات محجوزة",
-    heroSub:"يحوّل DynamicNFC بطاقات NFC الفاخرة إلى تجارب خاصة بالمشترين — جسر بين الزوار المجهولين والعملاء ذوي النية العالية عبر المشاريع العقارية وصالات عرض السيارات وما بعدها.",
+    heroSub:"يحوّل DynamicNFC بطاقات NFC الفاخرة إلى تجارب خاصة بالمشترين — جسر بين الزوار المجهولين والعملاء ذوي النية العالية عبر العقارات والسيارات واليخوت.",
     heroTitle_re:"تحويل الزوار المجهولين إلى زيارات محجوزة",
     heroTitle_auto:"تحويل زوار صالة العرض إلى حجوزات تجربة قيادة",
+    heroTitle_yacht:"تحويل الاهتمام باليخوت إلى طلبات تجربة بحرية",
     heroSub_re:"يحوّل DynamicNFC بطاقات NFC الفاخرة إلى بوابات خاصة بالمشترين — جسر بين الزوار المجهولين والعملاء ذوي النية العالية عبر المشاريع الضخمة والمساكن ذات العلامات التجارية.",
     heroSub_auto:"يحوّل DynamicNFC بطاقات NFC الفاخرة إلى تجارب صالة عرض VIP خاصة — جسر بين الزوار المجهولين والمشترين ذوي النية العالية الجاهزين للتكوين والتمويل والقيادة.",
+    heroSub_yacht:"يحوّل DynamicNFC بطاقات NFC الفاخرة إلى تجارب يخوت خاصة — تربط المشترين والضيوف المعروفين باليخوت والرحلات وتجارب البحر التي تحرّك القرار.",
+    statValNamed:"بالاسم", statValIntent:"فوري", statValZero:"صفر",
     statConversion:"معدل التحويل", statDecision:"دورة اتخاذ القرار أسرع", statIdentified:"زوار محددون",
     heroCtaPilot:"طلب تجربة تجريبية →", heroCtaDemo:"شاهد العرض التجريبي المباشر",
     probLabel:"النقطة العمياء", probTitle:"فريق المبيعات يعمل دون سياق",
     probQuote:"يقضي المشترون الأكثر جدية أسابيع في استكشاف مخططات الطوابق والأسعار وخيارات الدفع عبر الإنترنت. ومع ذلك، عندما تتواصل فرق المبيعات معهم، فإنها تفتقر إلى الشيء الأهم الذي يحسم الصفقات: ", probQuoteHighlight:"السياق.",
-    prob1Icon:"🏙️", prob1Title:"حركة مرور مجهولة", prob1Desc:"97% من زوار موقعك يغادرون دون الكشف عن هويتهم — عبر كل إطلاق مشروع",
+    prob1Icon:"🏙️", prob1Title:"حركة مرور مجهولة", prob1Desc:"يغادر معظم زوّار موقعك دون أن يعرّفوا عن أنفسهم أبداً.",
     prob2Icon:"⏳", prob2Title:"متابعات متأخرة", prob2Desc:"يتواصل فرق المبيعات متأخرًا، دون معرفة الوحدات، أو خطط الدفع، أو المرافق التي استكشفها العملاء المحتملون",
     prob3Icon:"📋", prob3Title:"المحادثات العامة", prob3Desc:"كل عميل محتمل يحصل على نفس العرض — سواء كان مستثمرًا يبحث عن العائد أو عائلة تبحث عن المجتمع",
     shiftLabel:"التحول", shiftTitle:"من موقع كتيب عام إلى دعوة خاصة",
@@ -153,7 +167,7 @@ const TR = {
     step4Title:"التحليلات السلوكية", step4Desc:"كل تفاعل — مشاهدة مخططات الطوابق، طلبات الأسعار، حجز الزيارات — يُغذي لوحة التحكم الخاصة بك في الوقت الفعلي.",
     idLabel:"الفرق الرئيسي", idTitle:"نفس الموقع. نفس الإجراءات. ذكاء مختلف.", idTagline:"الهوية هي المضاعف.",
     idVipLabel:"حامل مفتاح وصول كبار الشخصيات", idVipTitle:"عميل معروف بالاسم — خالد الرشيد",
-    idVipDesc:"تعرف أنه شاهد بنتهاوس Skyline ثلاث مرات، وحمل كتيب العائد على الاستثمار، وقضى 8 دقائق في خطط الدفع. يتصل فريق المبيعات بالسياق والتوقيت والعرض المناسب.",
+    idVipDesc:"تعرف أنه عاد إلى بنتهاوس Skyline مرارًا، وحمّل كتيب العائد على الاستثمار، وقضى وقتًا طويلًا ومركّزًا في مراجعة خطط الدفع. يتصل فريق المبيعات بالسياق والتوقيت والعرض المناسب.",
     idVip1:"المتابعات الشخصية", idVip2:"الحوافز المخصصة", idVip3:"مبيعات بخدمة شخصية", idVip4:"الذكاء المعروف بالاسم",
     idAnonLabel:"زائر موقع مجهول", idAnonTitle:"مجهول — بيانات الشريحة فقط",
     idAnonDesc:"زار شخص صفحة البنتهاوس. لا تعرف من هو، كم مرة زار، أو ما الذي استكشفه أيضًا. العميل المحتمل في قائمة انتظار مع المئات غيره.",
@@ -195,15 +209,23 @@ const TR = {
     modalNote:"نرد خلال 24 ساعة. معلوماتك محفوظة بسرية تامة.",
     successTitle:"تم تقديم طلب تجربة تجريبية", successDesc:"شكرًا لك. سيقوم فريق الشركات بمراجعة تفاصيل مشروعك والتواصل خلال 24 ساعة لتصميم برنامجك التجريبي المخصص.",
     successClose:"إغلاق",
-    footerText:"© 2026 DynamicNFC — محرك تسريع المبيعات للعقارات والسيارات",
-    indChoose:"اختر قطاعك", indAll:"جميع القطاعات", indRE:"العقارات", indAuto:"السيارات",
-    prob1Desc_auto:"85% من زوار صالة العرض يتصفحون دون الكشف عن هويتهم — فريق المبيعات لا يعرف من شاهد AMG GT 63 S ثلاث مرات",
+    footerText:"© 2026 DynamicNFC — محرك تسريع المبيعات للعقارات والسيارات واليخوت",
+    indChoose:"اختر قطاعك", indAll:"جميع القطاعات", indRE:"العقارات", indAuto:"السيارات", indYacht:"اليخوت",
+    prob1Desc_auto:"يتصفح معظم زوار صالة العرض دون الكشف عن هويتهم.",
     prob2Desc_auto:"يتواصل فرق المبيعات متأخرًا، دون معرفة الموديلات أو التكوينات أو خيارات التمويل التي استكشفها العملاء",
     prob3Desc_auto:"كل عميل محتمل يحصل على نفس العرض — سواء كان جامع سيارات فاخرة يبحث عن التميز أو عائلة تبحث عن ترقية SUV",
     step3Desc_auto:"نقرة واحدة تفتح بوابة صالة العرض الخاصة — مجموعات سيارات مخصصة، تكوينات، أسعار، وحجز تجارب القيادة، كلها مرتبطة بهوية VIP.",
     step4Desc_auto:"كل تفاعل — مشاهدة موديلات، حفظ تكوينات، استكشاف التمويل، حجز تجارب القيادة — يُغذي لوحة تحكم التاجر في الوقت الفعلي.",
     idVipTitle_auto:"عميل معروف بالاسم — خالد المنصوري",
-    idVipDesc_auto:"تعرف أنه كوّن AMG GT 63 S بلون أسود أوبسيديان، وفتح حاسبة التمويل، وقارنها مع G 63، وقضى 12 دقيقة في خطط الدفع. يتصل فريق المبيعات بالمواصفات الدقيقة، وتوفر تجربة القيادة، وعرض تمويل VIP.",
+    idVipDesc_auto:"تعرف أنه كوّن AMG GT 63 S بلون أسود أوبسيديان، وفتح حاسبة التمويل، وقارنها مع G 63، وعاد إلى خطط الدفع مرارًا. يتصل فريق المبيعات بالمواصفات الدقيقة، وتوفر تجربة القيادة، وعرض تمويل VIP.",
+    prob1Desc_yacht:"يتصفح معظم مشتري اليخوت وضيوف التأجير دون أن يعرّفوا عن أنفسهم.",
+    idVipTitle_yacht:"عميل معروف بالاسم — ضيف يخت خاص",
+    idVipDesc_yacht:"تعرف اليخوت التي عاد إليها، والرحلات التي استكشفها، ومتى طلب تجربة بحرية. يستجيب فريقك بمحادثة التأجير أو الوساطة المناسبة.",
+    demoTitle_yacht:"شاهد التطبيق عمليًا — تجربة يخت خاصة",
+    yachtDemo1Title:"بوابة عرض اليخوت", yachtDemo1Desc:"استكشف تجربة يخت خاصة صُممت للمشترين وضيوف التأجير المعروفين.",
+    yachtDemo2Title:"بوابة يخت VIP", yachtDemo2Desc:"رحلة VIP مخصصة تتضمن تفاصيل اليخوت والرحلات وطلبات التجارب البحرية.",
+    yachtDemo3Title:"صالة عرض اليخوت", yachtDemo3Desc:"تصفح الأسطول وقارن اليخوت والتقط إشارات النية الحقيقية.",
+    yachtDemo4Title:"كونسيرج اليخوت بالذكاء الاصطناعي", yachtDemo4Desc:"شاهد مسار كونسيرج مدعوم بالذكاء الاصطناعي لمبيعات اليخوت ومحادثات التأجير.",
     demoTitle_re:"شاهد التطبيق عمليًا — نور ريزيدنسز",
     demoTitle_auto:"شاهد التطبيق عمليًا — بريستيج موتورز",
     autoDemo1Title:"بوابة خالد المنصوري", autoDemo1Desc:"تجربة VIP للسيارات مع التركيز على أداء AMG، والتكوينات المحفوظة، والوصول إلى حاسبة التمويل.",
@@ -230,6 +252,7 @@ export default function Enterprise() {
   const ind = industry;
   const isRE = ind === 're';
   const isAuto = ind === 'auto';
+  const isYacht = ind === 'yacht';
   const isOverview = ind === null;
   const t = useCallback(
     (k) => TR[lang]?.[k] ?? common[lang]?.[k] ?? TR.en[k] ?? common.en[k] ?? k,
@@ -304,7 +327,7 @@ export default function Enterprise() {
 
   return (
     <div className="ent-page" dir={isRTL ? 'rtl' : 'ltr'}>
-      <SEO title="Enterprise" description="Sales Velocity Engine for real estate developers and automotive dealers. Private VIP portals with behavioral intelligence." path="/enterprise" />
+      <SEO title="Enterprise" description="Sales Velocity Engine for real estate, automotive, and yacht teams. Private VIP portals with behavioral intelligence." path="/enterprise" />
       <div className="ent-bg-mesh" />
       <div className="ent-particles">
         {particles.map((p, i) => <div key={i} className="ent-particle" style={p} />)}
@@ -319,8 +342,8 @@ export default function Enterprise() {
           <div className="ent-nfc-card-icon"><NfcIcon /></div>
         </div>
         <div className="ent-hero-badge">{t('heroBadge')}</div>
-        <h1>{t(isAuto ? 'heroTitle_auto' : isRE ? 'heroTitle_re' : 'heroTitle')}</h1>
-        <p className="ent-hero-sub">{t(isAuto ? 'heroSub_auto' : isRE ? 'heroSub_re' : 'heroSub')}</p>
+        <h1>{t(isAuto ? 'heroTitle_auto' : isYacht ? 'heroTitle_yacht' : isRE ? 'heroTitle_re' : 'heroTitle')}</h1>
+        <p className="ent-hero-sub">{t(isAuto ? 'heroSub_auto' : isYacht ? 'heroSub_yacht' : isRE ? 'heroSub_re' : 'heroSub')}</p>
         <div className="ent-hero-stats">
           <div className="ent-stat"><span className="ent-stat-val">{t('statValNamed')}</span><span className="ent-stat-lbl">{t('statConversion')}</span></div>
           <div className="ent-stat"><span className="ent-stat-val">{t('statValIntent')}</span><span className="ent-stat-lbl">{t('statDecision')}</span></div>
@@ -337,6 +360,7 @@ export default function Enterprise() {
             <button className={`ent-ind-tab ${ind === null ? 'active' : ''}`} onClick={() => setIndustry(null)}>{t('indAll')}</button>
             <button className={`ent-ind-tab ${ind === 're' ? 'active' : ''}`} onClick={() => setIndustry('re')}>{t('indRE')}</button>
             <button className={`ent-ind-tab ${ind === 'auto' ? 'active' : ''}`} onClick={() => setIndustry('auto')}>{t('indAuto')}</button>
+            <button className={`ent-ind-tab ${ind === 'yacht' ? 'active' : ''}`} onClick={() => setIndustry('yacht')}>{t('indYacht')}</button>
           </div>
         </div>
       </section>
@@ -353,7 +377,7 @@ export default function Enterprise() {
             <div className="ent-problem-card" key={i}>
               <div className="ent-problem-card-icon">{t(`prob${i}Icon`)}</div>
               <h4>{t(`prob${i}Title`)}</h4>
-              <p>{t(isAuto ? `prob${i}Desc_auto` : `prob${i}Desc`)}</p>
+              <p>{t(isAuto || isYacht ? `prob${i}Desc_${ind}` : `prob${i}Desc`)}</p>
             </div>
           ))}
         </div>
@@ -420,7 +444,7 @@ export default function Enterprise() {
             <div className="ent-step-card" key={i}>
               <div className="ent-step-num">{i}</div>
               <h4>{t(`step${i}Title`)}</h4>
-              <p>{t((isAuto && (i === 3 || i === 4)) ? `step${i}Desc_auto` : `step${i}Desc`)}</p>
+            <p>{t((isAuto && (i === 3 || i === 4)) ? `step${i}Desc_auto` : `step${i}Desc`)}</p>
               {i < 4 && <div className="ent-step-connector" />}
             </div>
           ))}
@@ -437,8 +461,8 @@ export default function Enterprise() {
         <div className="ent-identity-grid">
           <div className="ent-identity-card vip">
             <div className="ent-card-label">{t('idVipLabel')}</div>
-            <h3>{t(isAuto ? 'idVipTitle_auto' : 'idVipTitle')}</h3>
-            <p>{t(isAuto ? 'idVipDesc_auto' : 'idVipDesc')}</p>
+            <h3>{t(isAuto || isYacht ? `idVipTitle_${ind}` : 'idVipTitle')}</h3>
+            <p>{t(isAuto || isYacht ? `idVipDesc_${ind}` : 'idVipDesc')}</p>
             <div className="ent-identity-features">
               {['idVip1','idVip2','idVip3','idVip4'].map(k => <span className="ent-identity-feature" key={k}>{t(k)}</span>)}
             </div>
@@ -459,7 +483,7 @@ export default function Enterprise() {
       {/* ═══ LIVE DEMO ═══ */}
       <section className="ent-section ent-demo ent-reveal" id="demo">
         <div className="ent-section-label blue">{t('demoLabel')}</div>
-        <div className="ent-section-title">{t(isAuto ? 'demoTitle_auto' : isRE ? 'demoTitle_re' : 'demoTitle')}</div>
+        <div className="ent-section-title">{t(isAuto ? 'demoTitle_auto' : isYacht ? 'demoTitle_yacht' : isRE ? 'demoTitle_re' : 'demoTitle')}</div>
         <p className="ent-section-desc" style={{ margin: '0 auto' }}>{t('demoDesc')}</p>
         <div className="ent-demo-showcase">
           <div className="ent-demo-portals">
@@ -520,6 +544,25 @@ export default function Enterprise() {
                 <h4>{t('autoDemo3Title')}</h4>
                 <p>{t('autoDemo3Desc')}</p>
                 <div className="ent-portal-arrow"><ArrowIcon /></div>
+              </a>
+            </>)}
+
+            {(isOverview || isYacht) && (<>
+              <a href="/yacht/demo" target="_blank" rel="noreferrer" className="ent-demo-portal">
+                <div className="ent-portal-badge gold">VIP YACHT</div><div className="ent-portal-avatar blue">Y</div>
+                <h4>{t('yachtDemo1Title')}</h4><p>{t('yachtDemo1Desc')}</p><div className="ent-portal-arrow"><ArrowIcon /></div>
+              </a>
+              <a href="/yacht/demo/vip" target="_blank" rel="noreferrer" className="ent-demo-portal">
+                <div className="ent-portal-badge gold">VIP</div><div className="ent-portal-avatar red">VIP</div>
+                <h4>{t('yachtDemo2Title')}</h4><p>{t('yachtDemo2Desc')}</p><div className="ent-portal-arrow"><ArrowIcon /></div>
+              </a>
+              <a href="/yacht/demo/showroom" target="_blank" rel="noreferrer" className="ent-demo-portal">
+                <div className="ent-portal-badge teal">FLEET</div><div className="ent-portal-icon">⚓</div>
+                <h4>{t('yachtDemo3Title')}</h4><p>{t('yachtDemo3Desc')}</p><div className="ent-portal-arrow"><ArrowIcon /></div>
+              </a>
+              <a href="/yacht/demo/ai" target="_blank" rel="noreferrer" className="ent-demo-portal ent-demo-portal-featured">
+                <div className="ent-portal-badge purple">AI CONCIERGE</div><div className="ent-portal-icon">AI</div>
+                <h4>{t('yachtDemo4Title')}</h4><p>{t('yachtDemo4Desc')}</p><div className="ent-portal-arrow"><ArrowIcon /></div>
               </a>
             </>)}
 
@@ -662,6 +705,7 @@ export default function Enterprise() {
                     <option value="real_estate_developer">Real Estate Developer</option>
                     <option value="real_estate_agent">Real Estate Agent / Brokerage</option>
                     <option value="automotive">Automotive Dealership</option>
+                    <option value="yacht_brokerage">Yacht Brokerage</option>
                     <option value="other">Other</option>
                   </select>
                 </div>
@@ -786,7 +830,7 @@ export default function Enterprise() {
       {/* ═══ FOOTER ═══ */}
       <footer className="ent-footer">
         <p>{t('footerText').includes('DynamicNFC') ? (
-          <>© 2026 <a href="https://dynamicnfc.ca" >DynamicNFC</a> — {lang === 'ar' ? 'محرك تسريع المبيعات للعقارات والسيارات' : 'Sales Velocity Engine for Real Estate & Automotive'}</>
+          <>© 2026 <a href="https://dynamicnfc.ca" >DynamicNFC</a> — {lang === 'ar' ? 'محرك تسريع المبيعات للعقارات والسيارات واليخوت' : 'Sales Velocity Engine for Real Estate, Automotive & Yacht'}</>
         ) : t('footerText')}</p>
       </footer>
     </div>

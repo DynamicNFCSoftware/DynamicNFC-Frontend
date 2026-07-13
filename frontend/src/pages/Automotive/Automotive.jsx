@@ -63,9 +63,9 @@ const TR = {
 
     roiLabel:'Why This Matters', roiTitle:'Measured by One Thing: Deals Closed Faster.',
     roiDesc:'Success isn\'t about impressions or clicks. It\'s about how fast a buyer moves from showroom visit to signed contract.',
-    roiMetric1:'4.1×', roiMetric1Label:'Higher Conversion', roiMetric1Sub:'VIP key holders vs. anonymous walk-ins',
-    roiMetric2:'52%', roiMetric2Label:'Faster Decision Cycle', roiMetric2Sub:'From first tap to signed contract',
-    roiMetric3:'100%', roiMetric3Label:'Identified Engagement', roiMetric3Sub:'Every interaction linked to a named buyer',
+    roiMetric1:'Named', roiMetric1Label:'Every Buyer', roiMetric1Sub:'Identity is established before the sales conversation',
+    roiMetric2:'Real-Time', roiMetric2Label:'Intent Signals', roiMetric2Sub:'Every interaction gives your team useful context',
+    roiMetric3:'Zero', roiMetric3Label:'Guesswork', roiMetric3Sub:'Outreach follows buyer behavior, not assumptions',
 
     trustLabel:'Built for Automotive', trustTitle:'Privacy-First. DMS-Integrated. Zero Friction.',
     trust1Title:'Consent by Design', trust1Desc:'The physical tap is the ultimate opt-in. No dark patterns. The handshake is the consent.',
@@ -161,9 +161,9 @@ const TR = {
 
     roiLabel:'لماذا هذا مهم', roiTitle:'يُقاس بشيء واحد: صفقات تُغلق أسرع.',
     roiDesc:'النجاح ليس عن الانطباعات أو النقرات. إنه عن سرعة انتقال المشتري من زيارة صالة العرض إلى عقد موقّع.',
-    roiMetric1:'4.1×', roiMetric1Label:'تحويل أعلى', roiMetric1Sub:'حاملو مفتاح VIP مقابل الزوار المجهولين',
-    roiMetric2:'52%', roiMetric2Label:'دورة قرار أسرع', roiMetric2Sub:'من أول نقرة إلى عقد موقّع',
-    roiMetric3:'100%', roiMetric3Label:'تفاعل محدد بالهوية', roiMetric3Sub:'كل تفاعل مرتبط بمشترٍ معروف',
+    roiMetric1:'بالاسم', roiMetric1Label:'كل مشترٍ', roiMetric1Sub:'تُعرف الهوية قبل بدء محادثة المبيعات',
+    roiMetric2:'فوري', roiMetric2Label:'إشارات النية', roiMetric2Sub:'كل تفاعل يمنح فريقك سياقًا مفيدًا',
+    roiMetric3:'صفر', roiMetric3Label:'تخمين', roiMetric3Sub:'تأتي المتابعة من سلوك المشتري، لا من الافتراضات',
 
     trustLabel:'مصمم لقطاع السيارات', trustTitle:'خصوصية أولاً. متكامل مع نظام إدارة الوكالة. بدون عوائق.',
     trust1Title:'الموافقة حسب التصميم', trust1Desc:'النقرة الفعلية هي الموافقة المطلقة. لا أنماط مظلمة. المصافحة هي الموافقة.',
@@ -347,9 +347,9 @@ export default function Automotive() {
         <h1>{t('heroTitle')}</h1>
         <p className="auto-hero-sub">{t('heroSub')}</p>
         <div className="auto-hero-stats">
-          <div className="auto-stat"><span className="auto-stat-val">4.1×</span><span className="auto-stat-lbl">{t('statConversion')}</span></div>
-          <div className="auto-stat"><span className="auto-stat-val">52%</span><span className="auto-stat-lbl">{t('statDecision')}</span></div>
-          <div className="auto-stat"><span className="auto-stat-val">100%</span><span className="auto-stat-lbl">{t('statIdentified')}</span></div>
+          <div className="auto-stat"><span className="auto-stat-val">{t('roiMetric1')}</span><span className="auto-stat-lbl">{t('roiMetric1Label')}</span></div>
+          <div className="auto-stat"><span className="auto-stat-val">{t('roiMetric2')}</span><span className="auto-stat-lbl">{t('roiMetric2Label')}</span></div>
+          <div className="auto-stat"><span className="auto-stat-val">{t('roiMetric3')}</span><span className="auto-stat-lbl">{t('roiMetric3Label')}</span></div>
         </div>
         <div className="auto-hero-ctas">
           <button className="auto-btn-primary" onClick={openPilot}>{t('heroCtaPilot')}</button>

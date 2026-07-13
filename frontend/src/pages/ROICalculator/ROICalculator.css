@@ -81,6 +81,13 @@
   margin-bottom: 1.25rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
+
+.rc-assumptions {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  color: #4b5563;
+  line-height: 1.8;
+}
 .rc-card-input { border-top: 3px solid #e63946; }
 .rc-card-title {
   display: flex;

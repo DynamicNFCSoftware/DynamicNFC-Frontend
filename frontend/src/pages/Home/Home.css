@@ -441,6 +441,12 @@
     inset 0 1px 0 rgba(255,255,255,0.35),
     inset 3px 0 0 rgba(230, 57, 70, 0.9);
 }
+.hp-demo-sector-card--yacht {
+  box-shadow:
+    0 14px 44px rgba(10, 30, 50, 0.38),
+    inset 0 1px 0 rgba(255,255,255,0.35),
+    inset 3px 0 0 rgba(69, 123, 157, 0.95);
+}
 .hp-demo-sector-card::before {
   content: '';
   position: absolute;
@@ -486,6 +492,12 @@
 .hp-demo-sector-icon--auto {
   background: linear-gradient(155deg, #fff5f5 0%, #f0b8be 100%);
   color: #9b1c2e;
+  border: 1px solid rgba(255,255,255,0.65);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.85);
+}
+.hp-demo-sector-icon--yacht {
+  background: linear-gradient(155deg, #f0f7fb 0%, #a8c8db 100%);
+  color: #2d5a73;
   border: 1px solid rgba(255,255,255,0.65);
   box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.85);
 }
@@ -635,6 +647,7 @@
 .hp-ind-card.blue::before { background: var(--blue); }
 .hp-ind-card.red::before { background: var(--red); }
 .hp-ind-card.gold::before { background: var(--gold); }
+.hp-ind-card.teal::before { background: #457b9d; }
 .hp-ind-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 14px 36px rgba(26, 26, 31, 0.09), 0 2px 8px rgba(26, 26, 31, 0.04);
@@ -663,6 +676,7 @@
 .hp-ind-icon.blue { background: var(--blue-soft); color: var(--blue); border-color: rgba(69, 123, 157, 0.14); }
 .hp-ind-icon.red { background: var(--red-soft); color: var(--red); border-color: rgba(230, 57, 70, 0.14); }
 .hp-ind-icon.gold { background: var(--gold-soft); color: var(--gold); border-color: rgba(184, 154, 61, 0.2); }
+.hp-ind-icon.teal { background: rgba(69, 123, 157, 0.1); color: #457b9d; border-color: rgba(69, 123, 157, 0.18); }
 
 .hp-ind-card h3 {
   font-family: 'Playfair Display', serif;
