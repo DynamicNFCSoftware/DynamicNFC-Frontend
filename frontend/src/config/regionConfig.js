@@ -135,7 +135,7 @@ const CANADA = {
     ],
     automotive: [
       { id: 'vip1', name: 'David Thompson', gender: 'male', email: 'david@prestige.ca', type: 'vip', role: { en: 'VIP Collector', ar: 'جامع VIP', es: 'Coleccionista VIP', fr: 'Collectionneur VIP' } },
-      { id: 'vip2', name: 'Jennifer Laurent', gender: 'female', email: 'sarah@prestige.ca', type: 'vip', role: { en: 'VIP Client', ar: 'عميل VIP', es: 'Cliente VIP', fr: 'Client VIP' } },
+      { id: 'vip2', name: 'Jennifer Laurent', gender: 'female', email: 'jennifer@prestige.ca', type: 'vip', role: { en: 'VIP Client', ar: 'عميل VIP', es: 'Cliente VIP', fr: 'Client VIP' } },
     ],
     yacht: [
       { id: 'vip1', name: 'Robert MacKenzie', gender: 'male', email: 'robert@marina.ca', type: 'vip', role: { en: 'VIP Owner', ar: 'مالك VIP', es: 'Propietario VIP', fr: 'Propriétaire VIP' } },

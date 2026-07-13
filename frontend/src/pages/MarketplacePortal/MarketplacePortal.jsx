@@ -30,6 +30,7 @@ const LANG = {
   en: {
     dir: "ltr",
     nav: { brand: "Vista Residences", lang: "العربية", register: "Register / Login", account: "My Account" },
+    crossnav: { visitor: "Public visitor" },
     hero: {
       badge: "Now selling — Phase 2",
       title: "Vista\nResidences",
@@ -106,6 +107,7 @@ const LANG = {
   ar: {
     dir: "rtl",
     nav: { brand: "فيستا ريزيدنسز", lang: "English", register: "تسجيل / دخول", account: "حسابي" },
+    crossnav: { visitor: "زائر عام" },
     hero: {
       badge: "البيع الآن — المرحلة ٢",
       title: "فيستا\nريزيدنسز",
@@ -177,6 +179,7 @@ const LANG = {
   es: {
     dir: "ltr",
     nav: { brand: "Vista Residences", lang: "English", register: "Registrarse / Acceder", account: "Mi cuenta" },
+    crossnav: { visitor: "Visitante público" },
     hero: {
       badge: "En venta — Fase 2",
       title: "Vista\nResidences",
@@ -253,6 +256,7 @@ const LANG = {
   fr: {
     dir: "ltr",
     nav: { brand: "Vista Residences", lang: "English", register: "S'inscrire / Se connecter", account: "Mon compte" },
+    crossnav: { visitor: "Visiteur public" },
     hero: {
       badge: "En vente — Phase 2",
       title: "Vista\nResidences",
@@ -473,7 +477,7 @@ export default function MarketplacePortal() {
         <span className="active">Marketplace</span>
         <Link to="/unified">Dashboard</Link>
         <Link to="/enterprise/crmdemo/ai-demo">AI Pipeline</Link>
-        <span className="crossnav-persona"><i className="ti ti-world" aria-hidden="true" /> {lang === "ar" ? "زائر عام" : "Public visitor"}</span>
+        <span className="crossnav-persona"><i className="ti ti-world" aria-hidden="true" /> {t.crossnav?.visitor || "Public visitor"}</span>
       </div>
       <header className={`mp-hd ${scrolled ? "sc" : ""}`}>
         <div className="mp-logo">{projectName(lang)}</div>

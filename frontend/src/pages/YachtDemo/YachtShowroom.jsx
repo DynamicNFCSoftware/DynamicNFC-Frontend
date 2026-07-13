@@ -274,7 +274,7 @@ export default function YachtShowroom() {
 
       <footer className="ysh-footer">
         <p>{t.footer}</p>
-        <p className="ysh-footer-brand">{t.poweredBy} <strong>Dynamic NFC</strong></p>
+        <p className="ysh-footer-brand">{t.poweredBy} <strong>DynamicNFC</strong></p>
       </footer>
     </div>
   );
