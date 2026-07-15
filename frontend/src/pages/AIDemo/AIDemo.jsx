@@ -404,12 +404,12 @@ export default function AIDemo() {
     if (trackedRef.current.has(key) || key === 'crm') return;
     trackedRef.current.add(key);
     const persona = { id: vip.vipId, name: vip.name };
-    if (key === 'trigger') trackPortalEvent('ai_demo', persona, 'portal_opened', { source: 'ai_demo', portal: 'ai_pipeline' });
-    if (key === 'canva') trackPortalEvent('ai_demo', persona, 'download_brochure', { source: 'ai_demo', step: 'proposal', unitName: vip.unitName });
-    if (key === 'gmail') trackPortalEvent('ai_demo', persona, 'contact_advisor', { source: 'ai_demo', channel: 'email' });
-    if (key === 'whatsapp') trackPortalEvent('ai_demo', persona, 'contact_advisor', { source: 'ai_demo', channel: 'whatsapp' });
-    if (key === 'calendar') trackPortalEvent('ai_demo', persona, 'book_viewing', { source: 'ai_demo', unitName: vip.unitName });
-    if (key === 'docusign') trackPortalEvent('ai_demo', persona, 'lead_captured', { source: 'ai_demo', step: 'nda' });
+    if (key === 'trigger') trackPortalEvent('vip', persona, 'portal_opened', { source: 'ai_demo', portal: 'ai_pipeline' });
+    if (key === 'canva') trackPortalEvent('vip', persona, 'download_brochure', { source: 'ai_demo', step: 'proposal', unitName: vip.unitName });
+    if (key === 'gmail') trackPortalEvent('vip', persona, 'contact_advisor', { source: 'ai_demo', channel: 'email' });
+    if (key === 'whatsapp') trackPortalEvent('vip', persona, 'contact_advisor', { source: 'ai_demo', channel: 'whatsapp' });
+    if (key === 'calendar') trackPortalEvent('vip', persona, 'book_viewing', { source: 'ai_demo', unitName: vip.unitName });
+    if (key === 'docusign') trackPortalEvent('vip', persona, 'lead_captured', { source: 'ai_demo', step: 'nda' });
   }, [vip]);
 
   const typeLines = useCallback((stepIdx, lines) => {
