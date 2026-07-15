@@ -9,7 +9,6 @@ import { HelmetProvider } from "react-helmet-async";
 import { RegionProvider } from "../../hooks/useRegion";
 import AIDemo from "./AIDemo";
 
-// Mock googleLiveApi to avoid loading real GIS script
 vi.mock("./googleLiveApi", () => ({
   loadGIS: vi.fn(() => Promise.resolve(false)),
   requestToken: vi.fn(),
@@ -20,11 +19,11 @@ vi.mock("./googleLiveApi", () => ({
   buildVipEmailHtml: vi.fn(() => "<html></html>"),
 }));
 
+vi.mock("../../services/portalTrack", () => ({
+  trackPortalEvent: vi.fn(),
+}));
+
 function renderDemo() {
-  // HelmetProvider wraps the tree so <SEO>'s <Helmet> can register itself
-  // in the helmet context — required for any test that renders a page
-  // component that uses react-helmet-async.
-  // RegionProvider required since FAZ5 AIDemo uses useRegion() for timeZone.
   return render(
     <HelmetProvider>
       <RegionProvider>
@@ -41,12 +40,9 @@ describe("AIDemo — Security", () => {
     vi.clearAllMocks();
   });
 
-  // ─── Initial State Security ────────────────────────────
-
   it("should render without crashing", () => {
     renderDemo();
-    // Page heading text (was "AI-Orchestrated", updated to the One-tap hero copy).
-    expect(screen.getByText(/One tap/i)).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toMatch(/One tap/i);
   });
 
   it("should show Connect button when not authenticated", () => {
@@ -67,8 +63,6 @@ describe("AIDemo — Security", () => {
     expect(screen.getByText(/your password never touches our servers/i)).toBeTruthy();
   });
 
-  // ─── Link Safety ───────────────────────────────────────
-
   it("should use target=_blank with rel=noreferrer on external links", () => {
     renderDemo();
     const externalLinks = document.querySelectorAll('a[target="_blank"]');
@@ -77,18 +71,12 @@ describe("AIDemo — Security", () => {
     });
   });
 
-  // ─── Demo Data Isolation ───────────────────────────────
-
   it("should show demo Gmail link by default (not live)", () => {
     renderDemo();
-    // Before running pipeline, no draft links are visible
-    // Just verify the component renders in demo mode
     const html = document.body.innerHTML;
     expect(html).not.toContain("Open YOUR draft");
     expect(html).not.toContain("Open YOUR event");
   });
-
-  // ─── No Sensitive Data in DOM ──────────────────────────
 
   it("should not expose access tokens in DOM", () => {
     renderDemo();
@@ -102,5 +90,10 @@ describe("AIDemo — Security", () => {
     const html = document.body.innerHTML;
     expect(html).not.toContain("sessionId");
     expect(html).not.toContain("JSESSIONID");
+  });
+
+  it("should show Seven actions hero copy", () => {
+    renderDemo();
+    expect(screen.getByText(/Seven actions/i)).toBeTruthy();
   });
 });

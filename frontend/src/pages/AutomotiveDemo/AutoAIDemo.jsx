@@ -21,7 +21,7 @@ const TR = {
     home: 'Home', back: 'Back to Demo Hub',
     badge: 'Live MCP Demo — Real API Results',
     light: 'Light', dark: 'Dark',
-    heroH1a: 'One tap.', heroH1b: 'Five actions. Zero manual work.',
+    heroH1a: 'One tap.', heroH1b: 'Seven actions. Zero manual work.',
     heroDesc: 'Khalid taps his NFC card at the showroom. In under a minute: a brochure is designed, an email is sent, a test drive is booked, and an agreement is signed. Every result below is real — click any link to verify.',
     statPlatforms: 'Live Platforms', statTime: 'Full Pipeline', statActual: 'Actual Time', statSteps: 'Steps Complete',
     googleTitle: 'Connect Your Google Account', googleLive: 'Live Mode',
@@ -51,7 +51,7 @@ const TR = {
     calVerify: 'Real calendar event created via MCP — click link above to verify',
     docDraft: 'Draft Created', docSent: 'Sent',
     docRecipient: 'Recipient', docEmail: 'Email', docEnvelope: 'Envelope ID', docStatus: 'Status',
-    docStatusLive: 'Real DocuSign envelope via REST API', docStatusDemo: 'Demo mode — configure DocuSign credentials',
+    docStatusLive: 'Real DocuSign envelope via REST API', docStatusDemo: 'Sandbox envelope — your live DocuSign account connects during pilot setup',
     viewDocusign: 'View in DocuSign', apiResponse: 'API Response',
     docUnlock: 'Workflow triggered: VIP priority pricing unlocked in Khalid\'s showroom portal',
     finalH2: 'Done.', finalTotal: 's total.',
@@ -75,7 +75,7 @@ const TR = {
     home: 'الرئيسية', back: 'العودة إلى مركز العروض',
     badge: 'عرض MCP مباشر — نتائج API حقيقية',
     light: 'فاتح', dark: 'داكن',
-    heroH1a: 'نقرة واحدة.', heroH1b: 'خمسة إجراءات. بلا أي عمل يدوي.',
+    heroH1a: 'نقرة واحدة.', heroH1b: 'سبعة إجراءات. بلا أي عمل يدوي.',
     heroDesc: 'خالد ينقر بطاقة NFC في صالة العرض. خلال أقل من دقيقة: يتم تصميم كتيب، إرسال بريد، حجز تجربة قيادة، وتوقيع اتفاقية. كل نتيجة أدناه حقيقية — انقر على أي رابط للتحقق.',
     statPlatforms: 'منصات مباشرة', statTime: 'كامل المسار', statActual: 'الوقت الفعلي', statSteps: 'الخطوات المكتملة',
     googleTitle: 'اربط حسابك في Google', googleLive: 'الوضع المباشر',
@@ -724,7 +724,7 @@ export default function AutoAIDemo() {
                             <div className="ai-doc-field"><div className="ai-doc-field-label">Recipient</div><div className="ai-doc-field-val">{REAL_RESULTS.docusign.recipient}</div></div>
                             <div className="ai-doc-field"><div className="ai-doc-field-label">Email</div><div className="ai-doc-field-val">{REAL_RESULTS.docusign.email}</div></div>
                             <div className="ai-doc-field"><div className="ai-doc-field-label">Envelope ID</div><div className="ai-doc-field-val" style={{fontFamily:"'JetBrains Mono',monospace",fontSize:".78rem"}}>{envId}</div></div>
-                            <div className="ai-doc-field"><div className="ai-doc-field-label">Status</div><div className="ai-doc-field-val">{isLive ? "Real DocuSign envelope via REST API" : "Demo mode — configure DocuSign credentials"}</div></div>
+                            <div className="ai-doc-field"><div className="ai-doc-field-label">Status</div><div className="ai-doc-field-val">{isLive ? "Real DocuSign envelope via REST API" : "Sandbox envelope — your live DocuSign account connects during pilot setup"}</div></div>
                           </div>
                           {isLive && (
                             <div style={{display:"flex",gap:".5rem",marginTop:"1rem"}}>

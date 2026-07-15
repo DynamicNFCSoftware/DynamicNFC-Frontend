@@ -58,6 +58,16 @@ html { scroll-behavior: smooth; }
 .vp-btn-o:hover { background:var(--vp-gold-glow); border-color:var(--vp-gold); }
 .vp-btn-sm { padding:.5rem 1rem; font-size:.7rem; letter-spacing:.06em; }
 
+/* NDA pricing unlock banner (AIDemo deep link) */
+.vp-pricing-banner {
+  display:flex; align-items:center; justify-content:center; gap:.75rem;
+  padding:.85rem 1.5rem; text-align:center;
+  background:linear-gradient(135deg, rgba(197,164,103,0.18), rgba(197,164,103,0.08));
+  border-bottom:1px solid var(--vp-gold-bdr);
+  color:var(--vp-gold); font-family:var(--vp-sans); font-size:.82rem; font-weight:500;
+  letter-spacing:.04em;
+}
+
 /* Stats */
 .vp-stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--vp-glb); border-bottom:1px solid var(--vp-glb); background:var(--vp-ch2); }
 .vp-stat { padding:2.5rem 2rem; text-align:center; border-inline-end:1px solid var(--vp-glb); transition:.3s; }

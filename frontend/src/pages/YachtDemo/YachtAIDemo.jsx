@@ -48,7 +48,7 @@ function buildTR(owner) {
       canvaVerify: "Real Canva design generated via MCP — exported as PDF and attached to email in next step",
       pagesGen: "Pages Generated",
       docRecipient: "Recipient", docEmail: "Email", docEnvelope: "Envelope ID", docStatus: "Status",
-      docDraft: "Draft Created", docStatusDemo: "Demo mode — configure DocuSign credentials",
+      docDraft: "Draft Created", docStatusDemo: "Sandbox envelope — your live DocuSign account connects during pilot setup",
       docUnlock: `Workflow triggered: sea trial confirmed and VIP experience prepared for ${owner}`,
       finalTitle: "Pipeline Complete",
       finalDesc: `What traditionally takes a brokerage 2–3 days of manual coordination was completed autonomously by AI. ${owner} received a personalized VIP sea-trial experience — from specification to signed agreement.`,

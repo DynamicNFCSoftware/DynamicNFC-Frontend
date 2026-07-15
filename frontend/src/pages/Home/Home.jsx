@@ -118,8 +118,8 @@ const TR = {
 
     /* AI Section */
     aiBadge: 'WHAT FIRES AFTER THE TAP',
-    aiTitle: 'Four platforms. Zero manual work.',
-    aiSub: 'Khalid taps his NFC card. In under a minute, these four things happen without anyone lifting a finger.',
+    aiTitle: 'Six platforms. Zero manual work.',
+    aiSub: 'A VIP taps their NFC card. In under a minute, these six things happen without anyone lifting a finger.',
     aiCard1t: 'Canva', aiCard1d: 'A 7-page investment proposal gets designed on the spot — his name, his unit, ROI numbers, floor plans.',
     aiCard1ex: 'Gulf-luxury layout, bilingual EN/AR, exported as PDF.',
     aiCard2t: 'Gmail', aiCard2d: 'The proposal gets attached to a personal invite email and lands in Khalid\'s inbox automatically.',
@@ -226,8 +226,8 @@ const TR = {
     faq10q: 'ما المواد المتاحة للبطاقات؟', faq10a: 'PVC، معدن فاخر، ذهب 24 قيراط، بامبو، وألياف كربون. جميعها مزودة بـ NFC مع ترميز وعلامة تجارية مخصصة.',
 
     aiBadge: 'ماذا يحدث بعد النقرة',
-    aiTitle: 'أربع منصات. بلا أي عمل يدوي.',
-    aiSub: 'خالد ينقر بطاقة NFC. خلال أقل من دقيقة، هذه الأشياء الأربعة تحدث بدون أن يرفع أحد إصبعه.',
+    aiTitle: 'ست منصات. بلا أي عمل يدوي.',
+    aiSub: 'عميل VIP ينقر بطاقة NFC. خلال أقل من دقيقة، هذه الأشياء الستة تحدث بدون أن يرفع أحد إصبعه.',
     aiCard1t: 'Canva', aiCard1d: 'عرض استثماري من 7 صفحات يُصمَّم فوراً — اسمه، وحدته، أرقام العائد، والمخططات.',
     aiCard1ex: 'تصميم فاخر خليجي، ثنائي اللغة، يُصدَّر كـ PDF.',
     aiCard2t: 'Gmail', aiCard2d: 'العرض يُرفق ببريد دعوة شخصي ويصل إلى بريد خالد تلقائياً.',
