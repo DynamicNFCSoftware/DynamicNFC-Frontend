@@ -44,6 +44,14 @@
 .yvp-hero-cta { background: var(--yvp-accent); color: #fff; border: none; padding: 0.85rem 2rem; border-radius: 10px; font-size: 0.95rem; cursor: pointer; transition: transform 0.2s, background 0.2s; }
 .yvp-hero-cta:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--yvp-accent) 85%, white); }
 
+.yvp-pricing-banner {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  padding: 0.85rem 1.5rem; text-align: center;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--yvp-gold) 18%, transparent), color-mix(in srgb, var(--yvp-gold) 8%, transparent));
+  border-block-end: 1px solid color-mix(in srgb, var(--yvp-gold) 30%, transparent);
+  color: var(--yvp-gold); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.02em;
+}
+
 .yvp-fleet { max-inline-size: 1180px; margin-inline: auto; padding: 2.5rem 1.5rem 4rem; }
 .yvp-sec-head { text-align: center; margin-block-end: 2rem; }
 .yvp-sec-kicker { color: var(--yvp-accent); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.5px; }

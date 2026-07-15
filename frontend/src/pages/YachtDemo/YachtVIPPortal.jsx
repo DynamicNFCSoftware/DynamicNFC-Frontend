@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { trackPortalEvent } from "../../services/portalTrack";
 import { usePortalRegion } from "../../services/portalRegion";
 import { usePortalYachts } from "../../hooks/usePortalYachts";
@@ -21,7 +21,8 @@ const LANG = {
   en: {
     nav: { back: "Demo Hub", dashboard: "Dashboard" },
     hero: { badge: "Private Marina", welcomeMale: "Welcome,", welcomeFemale: "Welcome,",
-      title: "Your Private Fleet Awaits", sub: "A curated selection of exceptional vessels, reserved for owners who expect the extraordinary — at anchor and under way.", cta: "Explore Fleet" },
+      title: "Your Private Fleet Awaits", sub: "A curated selection of exceptional vessels, reserved for owners who expect the extraordinary — at anchor and under way.", cta: "Explore Fleet",
+      pricingUnlocked: "Exclusive VIP terms unlocked — sea trial agreement signed" },
     fleet: { title: "The Fleet", sub: "Curated for You", hint: "Select any vessel to explore full details" },
     card: { from: "From", guests: "Guests", cabins: "Cabins", view: "View Details" },
     detail: { overview: "Overview", specs: "Specifications", ownership: "Ownership", charter: "Charter",
@@ -35,7 +36,8 @@ const LANG = {
   ar: {
     nav: { back: "مركز العرض", dashboard: "لوحة التحكم" },
     hero: { badge: "مارينا خاصة", welcomeMale: "مرحبًا،", welcomeFemale: "مرحبًا،",
-      title: "أسطولك الخاص بانتظارك", sub: "مجموعة مختارة من اليخوت الاستثنائية، محجوزة لملاك يتوقعون ما هو استثنائي — عند الرسو وأثناء الإبحار.", cta: "استكشف الأسطول" },
+      title: "أسطولك الخاص بانتظارك", sub: "مجموعة مختارة من اليخوت الاستثنائية، محجوزة لملاك يتوقعون ما هو استثنائي — عند الرسو وأثناء الإبحار.", cta: "استكشف الأسطول",
+      pricingUnlocked: "تم فتح شروط VIP الحصرية — تم توقيع اتفاقية تجربة الإبحار" },
     fleet: { title: "الأسطول", sub: "مختار لك", hint: "اختر أي يخت لاستكشاف كامل التفاصيل" },
     card: { from: "يبدأ من", guests: "ضيوف", cabins: "كبائن", view: "عرض التفاصيل" },
     detail: { overview: "نظرة عامة", specs: "المواصفات", ownership: "تملّك", charter: "استئجار",
@@ -49,7 +51,8 @@ const LANG = {
   es: {
     nav: { back: "Centro Demo", dashboard: "Panel" },
     hero: { badge: "Marina Privada", welcomeMale: "Bienvenido,", welcomeFemale: "Bienvenida,",
-      title: "Su Flota Privada le Espera", sub: "Una selección curada de embarcaciones excepcionales, reservada para propietarios que esperan lo extraordinario — al ancla y en navegación.", cta: "Explorar Flota" },
+      title: "Su Flota Privada le Espera", sub: "Una selección curada de embarcaciones excepcionales, reservada para propietarios que esperan lo extraordinario — al ancla y en navegación.", cta: "Explorar Flota",
+      pricingUnlocked: "Condiciones VIP exclusivas desbloqueadas — acuerdo de prueba de mar firmado" },
     fleet: { title: "La Flota", sub: "Curada para Usted", hint: "Seleccione cualquier embarcación para ver todos los detalles" },
     card: { from: "Desde", guests: "Invitados", cabins: "Camarotes", view: "Ver Detalles" },
     detail: { overview: "Resumen", specs: "Especificaciones", ownership: "Propiedad", charter: "Chárter",
@@ -63,7 +66,8 @@ const LANG = {
   fr: {
     nav: { back: "Hub Démo", dashboard: "Tableau de bord" },
     hero: { badge: "Marina Privée", welcomeMale: "Bienvenue,", welcomeFemale: "Bienvenue,",
-      title: "Votre Flotte Privée Vous Attend", sub: "Une sélection choisie de navires d'exception, réservée aux propriétaires qui attendent l'extraordinaire — au mouillage comme en navigation.", cta: "Explorer la Flotte" },
+      title: "Votre Flotte Privée Vous Attend", sub: "Une sélection choisie de navires d'exception, réservée aux propriétaires qui attendent l'extraordinaire — au mouillage comme en navigation.", cta: "Explorer la Flotte",
+      pricingUnlocked: "Conditions VIP exclusives débloquées — accord d'essai en mer signé" },
     fleet: { title: "La Flotte", sub: "Sélectionnée pour Vous", hint: "Sélectionnez un navire pour voir tous les détails" },
     card: { from: "À partir de", guests: "Invités", cabins: "Cabines", view: "Voir les Détails" },
     detail: { overview: "Aperçu", specs: "Spécifications", ownership: "Propriété", charter: "Affrètement",
@@ -78,6 +82,8 @@ const LANG = {
 
 export default function YachtVIPPortal() {
   const [lang, setLang] = useState("en");
+  const [searchParams] = useSearchParams();
+  const pricingUnlocked = searchParams.get("vip_pricing") === "unlocked";
   const { projectName, fmtCurrency, regionId, region, vipPersona } = usePortalRegion("yacht", lang);
   const accent = region?.sidebarAccent || "#457b9d";
   const yachts = usePortalYachts("vip");
@@ -194,6 +200,10 @@ export default function YachtVIPPortal() {
           <button className="yvp-hero-cta" onClick={scrollToFleet}>{t.hero.cta}</button>
         </div>
       </header>
+
+      {pricingUnlocked && (
+        <div className="yvp-pricing-banner" role="status">{t.hero.pricingUnlocked}</div>
+      )}
 
       <section className="yvp-fleet" ref={fleetRef}>
         <div className="yvp-sec-head">

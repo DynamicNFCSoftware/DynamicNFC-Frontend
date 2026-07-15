@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { trackPortalEvent } from "../../services/portalTrack";
 import { usePortalRegion } from "../../services/portalRegion";
 import { usePortalVehicles } from "../../hooks/usePortalVehicles";
@@ -32,6 +32,7 @@ const LANG = {
       subtitle: "A curated selection of premium vehicles, handpicked for discerning collectors who demand nothing less than extraordinary performance and luxury.",
       cta: "Explore Vehicles",
       ctaSecondary: "Book Test Drive",
+      pricingUnlocked: "Exclusive VIP pricing unlocked — agreement signed",
     },
     stats: { models: "Models Curated", collections: "Collections", access: "VIP Access", advisor: "Personal Advisor" },
     sections: {
@@ -140,6 +141,7 @@ const LANG = {
       subtitle: "مجموعة مختارة من السيارات الفاخرة، مختارة بعناية لهواة التميز الذين لا يقبلون بأقل من الأداء الاستثنائي والفخامة.",
       cta: "استكشف السيارات",
       ctaSecondary: "حجز تجربة قيادة",
+      pricingUnlocked: "تم فتح أسعار VIP الحصرية — تم توقيع الاتفاقية",
     },
     stats: { models: "سيارات مختارة", collections: "مجموعات", access: "وصول VIP", advisor: "مستشار شخصي" },
     sections: {
@@ -240,7 +242,7 @@ const LANG = {
     dir: "ltr",
     nav: { vip: "Acceso VIP", lang: "English", compare: "Comparar", favorites: "Favoritos" },
     crossnav: { hub: "Centro Demo", vipPerf: "VIP Rendimiento", vipFamily: "VIP Familiar", showroom: "Sala Pública", dashboard: "Panel", ai: "Pipeline IA" },
-    hero: { badge: "Sala Privada", greeting: "Bienvenido,", titleLine1: "Su Sala", titleEm: "Privada", titleLine2: "Le Espera", tagline: "Su sala privada le espera", subtitle: "Una selección curada de vehículos premium, elegidos para coleccionistas exigentes.", cta: "Explorar Vehículos", ctaSecondary: "Reservar Prueba" },
+    hero: { badge: "Sala Privada", greeting: "Bienvenido,", titleLine1: "Su Sala", titleEm: "Privada", titleLine2: "Le Espera", tagline: "Su sala privada le espera", subtitle: "Una selección curada de vehículos premium, elegidos para coleccionistas exigentes.", cta: "Explorar Vehículos", ctaSecondary: "Reservar Prueba", pricingUnlocked: "Precios VIP exclusivos desbloqueados — acuerdo firmado" },
     stats: { models: "Modelos Curados", collections: "Colecciones", access: "Acceso VIP", advisor: "Asesor Personal" },
     sections: { collections: "Colecciones", collectionsSub: "Seleccione una Colección", vehicles: "Los Vehículos", vehiclesSub: "Curados para Sus Preferencias", vehiclesHint: "Seleccione cualquier vehículo para ver detalles", contact: "Reservar Prueba Privada", contactSub: "Su Experiencia Personal", contactHint: "Su asesor preparará el vehículo y le recibirá en la sala" },
     filters: { all: "Todos", performance: "AMG Performance", suv: "SUV de Lujo", sedan: "Sedán Ejecutivo", ev: "Eléctrico" },
@@ -260,7 +262,7 @@ const LANG = {
     dir: "ltr",
     nav: { vip: "Accès VIP", lang: "English", compare: "Comparer", favorites: "Favoris" },
     crossnav: { hub: "Hub Démo", vipPerf: "VIP Performance", vipFamily: "VIP Famille", showroom: "Salle Publique", dashboard: "Tableau de bord", ai: "Pipeline IA" },
-    hero: { badge: "Salle Privée", greeting: "Bienvenue,", titleLine1: "Votre Salle", titleEm: "Privée", titleLine2: "Vous Attend", tagline: "Votre salle privée vous attend", subtitle: "Une sélection de véhicules premium, choisis pour les collectionneurs exigeants.", cta: "Explorer", ctaSecondary: "Réserver un Essai" },
+    hero: { badge: "Salle Privée", greeting: "Bienvenue,", titleLine1: "Votre Salle", titleEm: "Privée", titleLine2: "Vous Attend", tagline: "Votre salle privée vous attend", subtitle: "Une sélection de véhicules premium, choisis pour les collectionneurs exigeants.", cta: "Explorer", ctaSecondary: "Réserver un Essai", pricingUnlocked: "Tarification VIP exclusive débloquée — accord signé" },
     stats: { models: "Modèles", collections: "Collections", access: "Accès VIP", advisor: "Conseiller" },
     sections: { collections: "Collections", collectionsSub: "Choisissez une Collection", vehicles: "Les Véhicules", vehiclesSub: "Sélectionnés pour Vous", vehiclesHint: "Sélectionnez un véhicule pour les détails", contact: "Réserver un Essai Privé", contactSub: "Votre Expérience", contactHint: "Votre conseiller préparera le véhicule et vous accueillera" },
     filters: { all: "Tous", performance: "AMG Performance", suv: "SUV de Luxe", sedan: "Berline Exécutive", ev: "Électrique" },
@@ -281,6 +283,8 @@ const LANG = {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function AutomotivePortal() {
   const [lang, setLang] = useState("en");
+  const [searchParams] = useSearchParams();
+  const pricingUnlocked = searchParams.get("vip_pricing") === "unlocked";
   const { projectName, fmtCurrency, regionId, region } = usePortalRegion("automotive", lang);
   const vehicles = usePortalVehicles("vip");
   const vipPersona = getAutoPersona(regionId, "vip");
@@ -479,6 +483,10 @@ export default function AutomotivePortal() {
           </div>
         </div>
       </section>
+
+      {pricingUnlocked && (
+        <div className="ap-pricing-banner" role="status">{t.hero.pricingUnlocked}</div>
+      )}
 
       {/* ── STATS ── */}
       <div className="ap-stats">

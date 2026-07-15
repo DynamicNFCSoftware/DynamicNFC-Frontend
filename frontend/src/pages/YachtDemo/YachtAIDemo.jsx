@@ -8,6 +8,7 @@ import { getPersonas } from "../../config/regionConfig";
 import { YACHTS } from "../../data/yachtVesselData";
 import canvaProposalCover from "../../assets/images/canva-proposal-cover.png";
 import SEO from "../../components/SEO/SEO";
+import { getWhatsAppInvite } from "../../services/aiDemoShared";
 
 // ═══════════════════════════════════════════════════════════════════
 // YACHT AI CONCIERGE DEMO — NFC tap → AI-orchestrated VIP sea trial
@@ -26,9 +27,10 @@ function buildTR(owner) {
       home: "Home", back: "Back to Demo Hub",
       badge: "Live MCP Demo — Real API Results",
       light: "Light", dark: "Dark",
-      heroH1a: "One tap.", heroH1b: "Four actions. Zero manual work.",
-      heroDesc: `${owner} taps his NFC Access Key at the marina. In under a minute: a specification is designed, an invitation is sent, a private sea trial is booked, and an agreement is ready to sign. Every result below is real — click any link to verify.`,
+      heroH1a: "One tap.", heroH1b: "Seven actions. Zero manual work.",
+      heroDesc: `${owner} taps his NFC Access Key at the marina. In under a minute: a specification is designed, an invitation is sent, WhatsApp delivers the invite, a private sea trial is booked, an agreement is ready to sign, and CRM syncs. Every result below is real — click any link to verify.`,
       statPlatforms: "Live Platforms", statTime: "Full Pipeline", statActual: "Actual Time", statSteps: "Steps Complete",
+      recipientLabel: "Send results to (optional — try your own inbox)",
       googleTitle: "Connect Your Google Account", googleLive: "Live Mode",
       googleDescLive: "Gmail drafts and Calendar events will be created in YOUR account.",
       googleDescDemo: "Connect to create real Gmail drafts and Calendar events in your own account. Otherwise, demo data is shown.",
@@ -48,11 +50,16 @@ function buildTR(owner) {
       canvaVerify: "Real Canva design generated via MCP — exported as PDF and attached to email in next step",
       pagesGen: "Pages Generated",
       docRecipient: "Recipient", docEmail: "Email", docEnvelope: "Envelope ID", docStatus: "Status",
-      docDraft: "Draft Created", docStatusDemo: "Demo mode — configure DocuSign credentials",
-      docUnlock: `Workflow triggered: sea trial confirmed and VIP experience prepared for ${owner}`,
+      docDraft: "Draft Created", docStatusDemo: "Sandbox envelope — your live DocuSign account connects during pilot setup",
+      docUnlock: `Workflow triggered: sea trial confirmed and exclusive VIP pricing unlocked in ${owner}'s portal`,
+      waOpen: "Open in WhatsApp \u2197",
+      crmCaption: "Salesforce \u00b7 HubSpot \u00b7 Zoho — any CRM with an API",
+      openPortal: `Open ${owner}'s portal — pricing unlocked \u2192`,
       finalTitle: "Pipeline Complete",
       finalDesc: `What traditionally takes a brokerage 2–3 days of manual coordination was completed autonomously by AI. ${owner} received a personalized VIP sea-trial experience — from specification to signed agreement.`,
-      finalItems: ["VIP specification designed in Canva", "Sea-trial invitation delivered", "Private sea trial booked", "Sea-trial agreement sent", "Full pipeline — zero manual work"],
+      finalItems: ["VIP specification designed in Canva", "Sea-trial invitation delivered", "WhatsApp invite delivered", "Private sea trial booked", "Sea-trial agreement sent, pricing unlocked", "CRM synced — sea trial scheduled"],
+      finalScheduled: "Scheduled — if the agreement is unsigned within 24h, a reminder goes out automatically.",
+      finalDashCta: "See it land in your dashboard \u2192",
       completedIn: "Completed in",
       emailSub: "VIP Private Sea Trial Invitation", emailOpen: "This is a real draft — Open in Gmail",
       footer: "AI Concierge Demo for", footerLink: "DynamicNFC",
@@ -61,9 +68,10 @@ function buildTR(owner) {
       home: "الرئيسية", back: "العودة إلى مركز العروض",
       badge: "عرض MCP مباشر — نتائج API حقيقية",
       light: "فاتح", dark: "داكن",
-      heroH1a: "نقرة واحدة.", heroH1b: "أربعة إجراءات. بلا أي عمل يدوي.",
-      heroDesc: `${owner} ينقر بطاقة NFC في المارينا. خلال أقل من دقيقة: تُصمّم مواصفات، تُرسل دعوة، تُحجز تجربة إبحار خاصة، وتُجهّز اتفاقية للتوقيع. كل نتيجة أدناه حقيقية — انقر أي رابط للتحقق.`,
+      heroH1a: "نقرة واحدة.", heroH1b: "سبعة إجراءات. بلا أي عمل يدوي.",
+      heroDesc: `${owner} ينقر بطاقة NFC في المارينا. خلال أقل من دقيقة: تُصمّم مواصفات، تُرسل دعوة، يوصّل واتساب الدعوة، تُحجز تجربة إبحار خاصة، تُجهّز اتفاقية للتوقيع، وتتم مزامنة CRM. كل نتيجة أدناه حقيقية — انقر أي رابط للتحقق.`,
       statPlatforms: "منصات مباشرة", statTime: "كامل المسار", statActual: "الوقت الفعلي", statSteps: "الخطوات المكتملة",
+      recipientLabel: "أرسل النتائج إلى (اختياري — جرّب بريدك)",
       googleTitle: "اربط حسابك في Google", googleLive: "الوضع المباشر",
       googleDescLive: "سيتم إنشاء مسودات Gmail وأحداث التقويم في حسابك أنت.",
       googleDescDemo: "اربط حسابك لإنشاء مسودات Gmail وأحداث تقويم حقيقية. وإلا ستُعرض بيانات تجريبية.",
@@ -84,10 +92,15 @@ function buildTR(owner) {
       pagesGen: "صفحات تم إنشاؤها",
       docRecipient: "المستلم", docEmail: "البريد", docEnvelope: "معرّف المغلف", docStatus: "الحالة",
       docDraft: "تم إنشاء المسودة", docStatusDemo: "وضع تجريبي — قم بإعداد بيانات DocuSign",
-      docUnlock: `تم تفعيل سير العمل: تم تأكيد تجربة الإبحار وتجهيز تجربة VIP لـ ${owner}`,
+      docUnlock: `تم تفعيل سير العمل: تم تأكيد تجربة الإبحار وفتح تسعير VIP الحصري في بوابة ${owner}`,
+      waOpen: "فتح في واتساب \u2197",
+      crmCaption: "Salesforce \u00b7 HubSpot \u00b7 Zoho — أي CRM بواجهة API",
+      openPortal: `افتح بوابة ${owner} — التسعير مفتوح \u2190`,
       finalTitle: "اكتمل المسار",
       finalDesc: `ما يستغرق عادةً من وسيط اليخوت يومين إلى ثلاثة من التنسيق اليدوي، أنجزه الذكاء الاصطناعي ذاتيًا. حصل ${owner} على تجربة إبحار VIP مخصصة — من المواصفات إلى الاتفاقية الموقعة.`,
-      finalItems: ["تصميم مواصفات VIP في Canva", "تسليم دعوة تجربة الإبحار", "حجز تجربة إبحار خاصة", "إرسال اتفاقية تجربة الإبحار", "مسار كامل — بلا عمل يدوي"],
+      finalItems: ["تصميم مواصفات VIP في Canva", "تسليم دعوة تجربة الإبحار", "توصيل دعوة واتساب", "حجز تجربة إبحار خاصة", "إرسال اتفاقية تجربة الإبحار، والتسعير مفتوح", "مزامنة CRM — تجربة إبحار مجدولة"],
+      finalScheduled: "مجدول — إذا لم تُوقَّع الاتفاقية خلال 24 ساعة، يُرسل تذكير تلقائيًا.",
+      finalDashCta: "شاهدها تصل إلى لوحتك \u2190",
       completedIn: "اكتمل في",
       emailSub: "دعوة تجربة إبحار خاصة VIP", emailOpen: "هذه مسودة حقيقية — افتح في Gmail",
       footer: "عرض الكونسيرج الذكي لـ", footerLink: "DynamicNFC",
@@ -96,9 +109,10 @@ function buildTR(owner) {
       home: "Inicio", back: "Volver al Hub Demo",
       badge: "Demo MCP en vivo — Resultados API reales",
       light: "Claro", dark: "Oscuro",
-      heroH1a: "Un toque.", heroH1b: "Cuatro acciones. Cero trabajo manual.",
-      heroDesc: `${owner} toca su Llave de Acceso NFC en la marina. En menos de un minuto: se diseña una especificación, se envía una invitación, se reserva una prueba de mar privada y un acuerdo queda listo para firmar. Cada resultado abajo es real — haga clic en cualquier enlace para verificar.`,
+      heroH1a: "Un toque.", heroH1b: "Siete acciones. Cero trabajo manual.",
+      heroDesc: `${owner} toca su Llave de Acceso NFC en la marina. En menos de un minuto: se diseña una especificación, se envía una invitación, WhatsApp entrega la invitación, se reserva una prueba de mar privada, un acuerdo queda listo para firmar, y el CRM se sincroniza. Cada resultado abajo es real — haga clic en cualquier enlace para verificar.`,
       statPlatforms: "Plataformas en vivo", statTime: "Pipeline completo", statActual: "Tiempo real", statSteps: "Pasos completados",
+      recipientLabel: "Enviar resultados a (opcional — pruebe su propio correo)",
       googleTitle: "Conecte su cuenta de Google", googleLive: "Modo en vivo",
       googleDescLive: "Los borradores de Gmail y los eventos de Calendar se crearán en SU cuenta.",
       googleDescDemo: "Conéctese para crear borradores de Gmail y eventos de Calendar reales en su cuenta. De lo contrario, se muestran datos de demostración.",
@@ -119,10 +133,15 @@ function buildTR(owner) {
       pagesGen: "Páginas generadas",
       docRecipient: "Destinatario", docEmail: "Email", docEnvelope: "ID de sobre", docStatus: "Estado",
       docDraft: "Borrador creado", docStatusDemo: "Modo demo — configure las credenciales de DocuSign",
-      docUnlock: `Flujo activado: prueba de mar confirmada y experiencia VIP preparada para ${owner}`,
+      docUnlock: `Flujo activado: prueba de mar confirmada y precios VIP exclusivos desbloqueados en el portal de ${owner}`,
+      waOpen: "Abrir en WhatsApp \u2197",
+      crmCaption: "Salesforce \u00b7 HubSpot \u00b7 Zoho — cualquier CRM con API",
+      openPortal: `Abrir el portal de ${owner} — precios desbloqueados \u2192`,
       finalTitle: "Pipeline completo",
       finalDesc: `Lo que tradicionalmente toma a un broker 2–3 días de coordinación manual lo completó la IA de forma autónoma. ${owner} recibió una experiencia VIP de prueba de mar personalizada — de la especificación al acuerdo firmado.`,
-      finalItems: ["Especificación VIP diseñada en Canva", "Invitación a prueba de mar entregada", "Prueba de mar privada reservada", "Acuerdo de prueba de mar enviado", "Pipeline completo — cero trabajo manual"],
+      finalItems: ["Especificación VIP diseñada en Canva", "Invitación a prueba de mar entregada", "Invitación de WhatsApp entregada", "Prueba de mar privada reservada", "Acuerdo de prueba de mar enviado, precios desbloqueados", "CRM sincronizado — prueba de mar programada"],
+      finalScheduled: "Programado — si el acuerdo no se firma en 24h, se envía un recordatorio automáticamente.",
+      finalDashCta: "Véalo llegar a su panel \u2192",
       completedIn: "Completado en",
       emailSub: "Invitación VIP a prueba de mar privada", emailOpen: "Este es un borrador real — Abrir en Gmail",
       footer: "Demo de conserjería IA para", footerLink: "DynamicNFC",
@@ -131,9 +150,10 @@ function buildTR(owner) {
       home: "Accueil", back: "Retour au Hub Démo",
       badge: "Démo MCP en direct — Résultats API réels",
       light: "Clair", dark: "Sombre",
-      heroH1a: "Un tap.", heroH1b: "Quatre actions. Zéro travail manuel.",
-      heroDesc: `${owner} présente sa Clé d'Accès NFC à la marina. En moins d'une minute : une spécification est conçue, une invitation est envoyée, un essai en mer privé est réservé, et un accord est prêt à signer. Chaque résultat ci-dessous est réel — cliquez sur n'importe quel lien pour vérifier.`,
+      heroH1a: "Un tap.", heroH1b: "Sept actions. Zéro travail manuel.",
+      heroDesc: `${owner} présente sa Clé d'Accès NFC à la marina. En moins d'une minute : une spécification est conçue, une invitation est envoyée, WhatsApp livre l'invitation, un essai en mer privé est réservé, un accord est prêt à signer, et le CRM se synchronise. Chaque résultat ci-dessous est réel — cliquez sur n'importe quel lien pour vérifier.`,
       statPlatforms: "Plateformes live", statTime: "Pipeline complet", statActual: "Temps réel", statSteps: "Étapes terminées",
+      recipientLabel: "Envoyer les résultats à (facultatif — essayez votre boîte mail)",
       googleTitle: "Connectez votre compte Google", googleLive: "Mode live",
       googleDescLive: "Les brouillons Gmail et les événements Calendar seront créés dans VOTRE compte.",
       googleDescDemo: "Connectez-vous pour créer de vrais brouillons Gmail et événements Calendar dans votre compte. Sinon, des données de démo sont affichées.",
@@ -154,10 +174,15 @@ function buildTR(owner) {
       pagesGen: "Pages générées",
       docRecipient: "Destinataire", docEmail: "Email", docEnvelope: "ID d'enveloppe", docStatus: "Statut",
       docDraft: "Brouillon créé", docStatusDemo: "Mode démo — configurez les identifiants DocuSign",
-      docUnlock: `Flux déclenché : essai en mer confirmé et expérience VIP préparée pour ${owner}`,
+      docUnlock: `Flux déclenché : essai en mer confirmé et tarification VIP exclusive débloquée dans le portail de ${owner}`,
+      waOpen: "Ouvrir dans WhatsApp \u2197",
+      crmCaption: "Salesforce \u00b7 HubSpot \u00b7 Zoho — tout CRM avec une API",
+      openPortal: `Ouvrir le portail de ${owner} — tarification débloquée \u2192`,
       finalTitle: "Pipeline terminé",
       finalDesc: `Ce qui prend traditionnellement à un courtier 2–3 jours de coordination manuelle a été achevé de façon autonome par l'IA. ${owner} a reçu une expérience VIP d'essai en mer personnalisée — de la spécification à l'accord signé.`,
-      finalItems: ["Spécification VIP conçue dans Canva", "Invitation à l'essai en mer livrée", "Essai en mer privé réservé", "Accord d'essai en mer envoyé", "Pipeline complet — zéro travail manuel"],
+      finalItems: ["Spécification VIP conçue dans Canva", "Invitation à l'essai en mer livrée", "Invitation WhatsApp livrée", "Essai en mer privé réservé", "Accord d'essai en mer envoyé, tarification débloquée", "CRM synchronisé — essai en mer planifié"],
+      finalScheduled: "Planifié — si l'accord n'est pas signé dans les 24h, un rappel est envoyé automatiquement.",
+      finalDashCta: "Voir cela arriver dans votre tableau de bord \u2192",
       completedIn: "Terminé en",
       emailSub: "Invitation VIP à un essai en mer privé", emailOpen: "Ceci est un vrai brouillon — Ouvrir dans Gmail",
       footer: "Démo conciergerie IA pour", footerLink: "DynamicNFC",
@@ -171,29 +196,37 @@ function buildStepDescs(owner, vessel) {
       trigger: `${owner}, a flagship yacht owner, taps his VIP Access Key at the marina. The system instantly identifies his profile, vessel preferences, and engagement history.`,
       canva: `AI designs a 5-page luxury vessel specification personalized for ${owner} — featuring the ${vessel}, layout, performance data, and exclusive VIP terms. Generated via Canva MCP. This is a real Canva design you can view and edit.`,
       gmail: `AI composes a personalized VIP sea-trial invitation email with the Canva-generated specification attached as PDF, then creates it via the Gmail MCP API. The email is a real draft you can verify in Gmail.`,
+      whatsapp: `The same sea-trial invitation is pushed via WhatsApp Business — delivery receipts, a single tap to open. Zero backend; the link is a real wa.me deep link.`,
       calendar: `AI checks the VIP sea-trial calendar, considers tide windows and crew prep time, and books a private sea trial. A real Google Calendar event is created with all details.`,
       docusign: `Before the sea trial, AI sends a VIP Sea Trial Agreement covering liability waiver, insurance confirmation, and vessel condition report — pre-filled and ready for e-signature via DocuSign.`,
+      crm: `Lead upserted, activity timeline written, deal stage advanced to Sea Trial Scheduled — ready for Salesforce, HubSpot, or Zoho.`,
     },
     ar: {
       trigger: `${owner}، مالك يخت رائد، ينقر بطاقة VIP في المارينا. يتعرف النظام فورًا على ملفه وتفضيلاته وسجل تفاعله.`,
       canva: `يصمم الذكاء الاصطناعي مواصفات فاخرة من 5 صفحات مخصصة لـ ${owner} — تعرض ${vessel} والمخطط وبيانات الأداء وشروط VIP الحصرية. عبر Canva MCP. تصميم حقيقي يمكنك عرضه وتعديله.`,
       gmail: `يصيغ الذكاء الاصطناعي دعوة تجربة إبحار VIP مخصصة مع إرفاق المواصفات كـ PDF، ثم ينشئها عبر Gmail MCP. البريد مسودة حقيقية يمكنك التحقق منها.`,
+      whatsapp: `نفس دعوة تجربة الإبحار تُدفع عبر واتساب للأعمال — إيصالات التسليم، نقرة واحدة للفتح. بلا خلفية؛ الرابط wa.me حقيقي.`,
       calendar: `يتحقق الذكاء الاصطناعي من تقويم تجارب الإبحار، ويراعي نوافذ المد ووقت تجهيز الطاقم، ويحجز تجربة إبحار خاصة. يُنشأ حدث تقويم حقيقي.`,
       docusign: `قبل التجربة، يرسل الذكاء الاصطناعي اتفاقية تجربة إبحار VIP تشمل إعفاء المسؤولية وتأكيد التأمين وتقرير حالة اليخت — معبأة مسبقًا وجاهزة للتوقيع عبر DocuSign.`,
+      crm: `تم تحديث العميل المحتمل، وكتابة الجدول الزمني، وتقدّم الصفقة إلى مرحلة تجربة إبحار مجدولة — جاهز لـ Salesforce أو HubSpot أو Zoho.`,
     },
     es: {
       trigger: `${owner}, propietario de un yate insignia, toca su Llave de Acceso VIP en la marina. El sistema identifica al instante su perfil, preferencias de embarcación e historial de interacción.`,
       canva: `La IA diseña una especificación de lujo de 5 páginas personalizada para ${owner} — con el ${vessel}, distribución, datos de rendimiento y términos VIP exclusivos. Generada vía Canva MCP. Es un diseño Canva real que puede ver y editar.`,
       gmail: `La IA redacta una invitación VIP personalizada a la prueba de mar con la especificación de Canva adjunta en PDF, luego la crea vía la API Gmail MCP. El email es un borrador real verificable en Gmail.`,
+      whatsapp: `La misma invitación a la prueba de mar se envía vía WhatsApp Business — recibos de entrega, un solo toque para abrir. Sin backend; el enlace es un enlace real wa.me.`,
       calendar: `La IA consulta el calendario de pruebas de mar VIP, considera ventanas de marea y tiempo de preparación de tripulación, y reserva una prueba privada. Se crea un evento real de Google Calendar con todos los detalles.`,
       docusign: `Antes de la prueba, la IA envía un Acuerdo de Prueba de Mar VIP que cubre renuncia de responsabilidad, confirmación de seguro e informe de condición de la embarcación — precargado y listo para firma electrónica vía DocuSign.`,
+      crm: `Lead actualizado, línea de tiempo de actividad escrita, etapa del trato avanzada a Prueba de Mar Programada — listo para Salesforce, HubSpot o Zoho.`,
     },
     fr: {
       trigger: `${owner}, propriétaire d'un yacht phare, présente sa Clé d'Accès VIP à la marina. Le système identifie instantanément son profil, ses préférences de navire et son historique d'engagement.`,
       canva: `L'IA conçoit une spécification de luxe en 5 pages personnalisée pour ${owner} — mettant en avant le ${vessel}, le plan, les données de performance et les conditions VIP exclusives. Générée via Canva MCP. C'est un vrai design Canva que vous pouvez consulter et modifier.`,
       gmail: `L'IA rédige une invitation VIP personnalisée à l'essai en mer avec la spécification Canva jointe en PDF, puis la crée via l'API Gmail MCP. L'email est un vrai brouillon vérifiable dans Gmail.`,
+      whatsapp: `La même invitation à l'essai en mer est envoyée via WhatsApp Business — accusés de réception, un seul tap pour ouvrir. Zéro backend ; le lien est un vrai lien wa.me.`,
       calendar: `L'IA consulte le calendrier des essais en mer VIP, tient compte des fenêtres de marée et du temps de préparation de l'équipage, et réserve un essai privé. Un vrai événement Google Calendar est créé avec tous les détails.`,
       docusign: `Avant l'essai, l'IA envoie un Accord d'Essai en Mer VIP couvrant la renonciation de responsabilité, la confirmation d'assurance et le rapport d'état du navire — prérempli et prêt pour signature électronique via DocuSign.`,
+      crm: `Lead mis à jour, chronologie d'activité écrite, étape de l'affaire avancée à Essai en Mer Planifié — prêt pour Salesforce, HubSpot ou Zoho.`,
     },
   };
 }
@@ -232,7 +265,8 @@ function buildRealResults(owner, vessel, marina, toEmail, vesselPriceFmt) {
   };
 }
 
-function buildTerminalLines(owner, vessel, marina, toEmail, budgetLabel) {
+function buildTerminalLines(owner, vessel, marina, toEmail, budgetLabel, vesselPriceFmt) {
+  const wa = getWhatsAppInvite({ vesselName: vessel, marina, priceFmt: vesselPriceFmt, timeLabel: "10:00 AM GST", inviteKind: "Private sea trial" });
   return {
     trigger: [
       { type: "cmd", text: "nfc.detect() \u2192 VIP Access Key scanned" },
@@ -260,6 +294,13 @@ function buildTerminalLines(owner, vessel, marina, toEmail, budgetLabel) {
       { type: "cmd", text: "mcp.gmail.send_draft()" },
       { type: "ok", text: "Email draft created and ready to send" },
     ],
+    whatsapp: [
+      { type: "cmd", text: "mcp.whatsapp.business.send({template: 'vip_sea_trial_invite'})" },
+      { type: "wait", text: "Pushing sea trial invite link via WhatsApp Business..." },
+      { type: "data", text: `To: ${owner} (VIP ID: YV-001)` },
+      { type: "data", text: `Message: "${wa.text.slice(0, 72)}\u2026"` },
+      { type: "ok", text: "Delivered \u2713\u2713 \u2014 WhatsApp Business API" },
+    ],
     calendar: [
       { type: "cmd", text: "mcp.gcal.find_free_time({calendar: 'vip-sea-trials'})" },
       { type: "wait", text: "Checking VIP sea-trial availability + tide window..." },
@@ -278,6 +319,13 @@ function buildTerminalLines(owner, vessel, marina, toEmail, budgetLabel) {
       { type: "cmd", text: `mcp.docusign.send_envelope({recipient: '${toEmail}'})` },
       { type: "ok", text: "Sea trial agreement sent for e-signature" },
     ],
+    crm: [
+      { type: "cmd", text: "crm.leads.upsert({source: 'nfc_tap'})" },
+      { type: "wait", text: "Writing activity timeline\u2026" },
+      { type: "data", text: `Lead: ${owner} | Score: 94 | Events: 6` },
+      { type: "cmd", text: "crm.deals.update({stage: 'sea_trial'})" },
+      { type: "ok", text: `Deal stage \u2192 Sea Trial Scheduled | Value: ${vesselPriceFmt}` },
+    ],
   };
 }
 
@@ -285,11 +333,14 @@ const STEP_CONFIG = [
   { key: "trigger", label: "!", title: "VIP Owner Taps NFC Card", subtitle: "NFC Detection & Profile Lookup", color: "trigger" },
   { key: "canva", label: "1", title: "Generate Personalized Vessel Specification", subtitle: "Canva MCP \u2014 AI Design & PDF Export", color: "canva" },
   { key: "gmail", label: "2", title: "Send VIP Sea Trial Invitation", subtitle: "Gmail MCP \u2014 Specification Delivery", color: "gmail" },
-  { key: "calendar", label: "3", title: "Book Private Sea Trial", subtitle: "Google Calendar MCP \u2014 Smart Scheduling", color: "calendar" },
-  { key: "docusign", label: "4", title: "Send Sea Trial Agreement", subtitle: "DocuSign MCP \u2014 E-Signature", color: "docusign" },
+  { key: "whatsapp", label: "3", title: "Push via WhatsApp", subtitle: "WhatsApp Business delivers the invite", color: "whatsapp" },
+  { key: "calendar", label: "4", title: "Book Private Sea Trial", subtitle: "Google Calendar MCP \u2014 Smart Scheduling", color: "calendar" },
+  { key: "docusign", label: "5", title: "Send Sea Trial Agreement", subtitle: "DocuSign MCP \u2014 E-Signature", color: "docusign" },
+  { key: "crm", label: "6", title: "Sync to CRM", subtitle: "Lead + deal stage written to your CRM", color: "crm" },
 ];
 
 const futureDate = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d; };
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function YachtAIDemo() {
   const [lang, setLang] = useState("en");
@@ -312,16 +363,30 @@ export default function YachtAIDemo() {
   const budgetLabel = `${fmtCurrency(budgetLow)}\u2013${fmtCurrency(budgetHigh)}`;
   const ownerInitials = owner.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const validRecipient = EMAIL_RE.test(recipientEmail.trim()) ? recipientEmail.trim() : "";
+  const effectiveEmail = validRecipient || toEmail;
+
   const TR = useMemo(() => buildTR(owner), [owner]);
   const STEP_DESCS = useMemo(() => buildStepDescs(owner, vessel), [owner, vessel]);
   const REAL_RESULTS = useMemo(
-    () => buildRealResults(owner, vessel, marina, toEmail, vesselPriceFmt),
-    [owner, vessel, marina, toEmail, vesselPriceFmt]
+    () => buildRealResults(owner, vessel, marina, effectiveEmail, vesselPriceFmt),
+    [owner, vessel, marina, effectiveEmail, vesselPriceFmt]
   );
   const TERMINAL_LINES = useMemo(
-    () => buildTerminalLines(owner, vessel, marina, toEmail, budgetLabel),
-    [owner, vessel, marina, toEmail, budgetLabel]
+    () => buildTerminalLines(owner, vessel, marina, effectiveEmail, budgetLabel, vesselPriceFmt),
+    [owner, vessel, marina, effectiveEmail, budgetLabel, vesselPriceFmt]
   );
+  const waInvite = useMemo(
+    () => getWhatsAppInvite({ vesselName: vessel, marina, priceFmt: vesselPriceFmt, timeLabel: "10:00 AM GST", inviteKind: "Private sea trial" }),
+    [vessel, marina, vesselPriceFmt]
+  );
+  const crmPayload = {
+    lead: { id: "YV-001", name: owner, email: effectiveEmail, tier: "Platinum VIP" },
+    score: 94,
+    events: 6,
+    deal: { stage: "sea_trial", value: vesselPriceFmt },
+  };
 
   const t = useCallback((k) => TR[lang]?.[k] ?? TR.en[k] ?? k, [lang, TR]);
   const trackEvent = useCallback(
@@ -351,12 +416,23 @@ export default function YachtAIDemo() {
   const stepRefs = useRef([]);
   const finalRef = useRef(null);
   const startTime = useRef(null);
+  const trackedRef = useRef(new Set());
 
   const isRtl = lang === "ar";
   const nextLang = LANG_CYCLE[(LANG_CYCLE.indexOf(lang) + 1) % LANG_CYCLE.length];
 
   useEffect(() => { loadGIS().then((ok) => setGisReady(ok)); }, []);
-  useEffect(() => { trackEvent("portal_opened", { scenario: "ai_sea_trial" }); }, [trackEvent]);
+
+  // Reset pipeline when region/lang persona changes mid-demo
+  useEffect(() => {
+    trackedRef.current = new Set();
+    setSteps(STEP_CONFIG.map((_, i) => ({ status: i === 0 ? "ready" : "locked", lines: [], showResult: false, expanded: false })));
+    setAllDone(false);
+    setAllRunning(false);
+    setElapsed(null);
+    setLiveResults({ gmail: null, calendar: null });
+    startTime.current = null;
+  }, [regionId, lang]);
 
   const handleGoogleConnect = async () => {
     setConnecting(true); setConnectError(false);
@@ -373,11 +449,23 @@ export default function YachtAIDemo() {
     revokeToken(googleToken);
     setGoogleToken(null); setGoogleUser(null);
     setLiveResults({ gmail: null, calendar: null });
+    setRecipientEmail("");
   };
 
   const isLiveMode = !!googleToken;
   const doneCount = steps.filter((s) => s.status === "done").length;
   const progress = (doneCount / STEP_CONFIG.length) * 100;
+
+  const fireTrack = useCallback((key) => {
+    if (trackedRef.current.has(key) || key === "crm") return;
+    trackedRef.current.add(key);
+    if (key === "trigger") trackEvent("portal_opened", { scenario: "ai_sea_trial" });
+    if (key === "canva") trackEvent("download_brochure", {});
+    if (key === "gmail") trackEvent("contact_advisor", { channel: "email" });
+    if (key === "whatsapp") trackEvent("contact_advisor", { channel: "whatsapp" });
+    if (key === "calendar") trackEvent("book_viewing", { via: "ai_pipeline" });
+    if (key === "docusign") trackEvent("request_pricing", { step: "nda" });
+  }, [trackEvent]);
 
   const typeLines = useCallback((stepIdx) => {
     return new Promise((resolve) => {
@@ -418,7 +506,7 @@ export default function YachtAIDemo() {
         trialDate: d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }),
         trialTime: "10:00 AM GST", trialLocation: marina,
       });
-      gmailPromise = createGmailDraft(googleToken, { to: toEmail, subject: REAL_RESULTS.gmail.subject, htmlBody, senderName: "Marina Yachts" })
+      gmailPromise = createGmailDraft(googleToken, { to: effectiveEmail, subject: REAL_RESULTS.gmail.subject, htmlBody, senderName: "Marina Yachts" })
         .then((result) => setLiveResults((prev) => ({ ...prev, gmail: result })))
         .catch(() => {});
     }
@@ -429,7 +517,7 @@ export default function YachtAIDemo() {
       calendarPromise = createCalendarEvent(googleToken, {
         summary: REAL_RESULTS.calendar.title, location: marina,
         description: `Exclusive private sea trial of ${vessel} for VIP owner ${owner}. Full owner's trial with captain and marina advisor aboard.`,
-        startDateTime: startDT.toISOString(), endDateTime: endDT.toISOString(), attendeeEmail: null,
+        startDateTime: startDT.toISOString(), endDateTime: endDT.toISOString(), attendeeEmail: validRecipient || null,
         timeZone: region.timeZone,
       })
         .then((result) => setLiveResults((prev) => ({ ...prev, calendar: result })))
@@ -447,8 +535,9 @@ export default function YachtAIDemo() {
       if (stepIdx + 1 < next.length) next[stepIdx + 1] = { ...next[stepIdx + 1], status: "ready" };
       return next;
     });
+    fireTrack(cfg.key);
     setTimeout(() => { const el = stepRefs.current[stepIdx]; if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 150);
-  }, [typeLines, googleToken, region.timeZone, owner, vessel, vesselPriceFmt, marina, toEmail, REAL_RESULTS]);
+  }, [typeLines, googleToken, region.timeZone, owner, vessel, vesselPriceFmt, marina, effectiveEmail, validRecipient, REAL_RESULTS, fireTrack]);
 
   const runAll = useCallback(async () => {
     setAllRunning(true);
@@ -456,9 +545,8 @@ export default function YachtAIDemo() {
     for (let i = 0; i < STEP_CONFIG.length; i++) { await runStep(i); await new Promise((r) => setTimeout(r, 300)); }
     setElapsed(Math.round((Date.now() - startTime.current) / 1000));
     setAllDone(true); setAllRunning(false);
-    trackEvent("book_viewing", { via: "ai_pipeline" });
     setTimeout(() => { if (finalRef.current) finalRef.current.scrollIntoView({ behavior: "smooth", block: "center" }); }, 200);
-  }, [runStep, trackEvent]);
+  }, [runStep]);
 
   const handleRunSingle = useCallback(async (idx) => {
     if (!startTime.current) startTime.current = Date.now();
@@ -466,10 +554,9 @@ export default function YachtAIDemo() {
     if (idx === STEP_CONFIG.length - 1) {
       setElapsed(Math.round((Date.now() - startTime.current) / 1000));
       setAllDone(true);
-      trackEvent("book_viewing", { via: "ai_pipeline" });
       setTimeout(() => { if (finalRef.current) finalRef.current.scrollIntoView({ behavior: "smooth", block: "center" }); }, 200);
     }
-  }, [runStep, trackEvent]);
+  }, [runStep]);
 
   const toggleExpand = (idx) => {
     setSteps((prev) => {
@@ -513,7 +600,7 @@ export default function YachtAIDemo() {
           <h1><span>{t("heroH1a")}</span><br />{t("heroH1b")}</h1>
           <p>{t("heroDesc")}</p>
           <div className="yai-stats">
-            <div className="yai-stat"><span className="yai-stat-v">4</span><span className="yai-stat-l">{t("statPlatforms")}</span></div>
+            <div className="yai-stat"><span className="yai-stat-v">6</span><span className="yai-stat-l">{t("statPlatforms")}</span></div>
             <div className="yai-stat"><span className="yai-stat-v">{elapsed ? elapsed + "s" : "<1min"}</span><span className="yai-stat-l">{elapsed ? t("statActual") : t("statTime")}</span></div>
             <div className="yai-stat"><span className="yai-stat-v">{doneCount}/{STEP_CONFIG.length}</span><span className="yai-stat-l">{t("statSteps")}</span></div>
           </div>
@@ -531,11 +618,23 @@ export default function YachtAIDemo() {
               {connectError && <p className="yai-google-error">{t("googleError")}</p>}
             </>
           ) : (
-            <div className="yai-google-user">
-              {googleUser?.picture ? <img className="yai-google-avatar" src={googleUser.picture} alt="" referrerPolicy="no-referrer" /> : <div className="yai-google-avatar-fallback">{(googleUser?.name || googleUser?.email || "U").charAt(0).toUpperCase()}</div>}
-              <div className="yai-google-info">{googleUser?.name && <div className="yai-google-name">{googleUser.name}</div>}<div className="yai-google-email">{googleUser?.email}</div></div>
-              <button className="yai-google-disconnect" onClick={handleGoogleDisconnect}>{t("googleDisconnect")}</button>
-            </div>
+            <>
+              <div className="yai-google-user">
+                {googleUser?.picture ? <img className="yai-google-avatar" src={googleUser.picture} alt="" referrerPolicy="no-referrer" /> : <div className="yai-google-avatar-fallback">{(googleUser?.name || googleUser?.email || "U").charAt(0).toUpperCase()}</div>}
+                <div className="yai-google-info">{googleUser?.name && <div className="yai-google-name">{googleUser.name}</div>}<div className="yai-google-email">{googleUser?.email}</div></div>
+                <button className="yai-google-disconnect" onClick={handleGoogleDisconnect}>{t("googleDisconnect")}</button>
+              </div>
+              <label className="yai-recipient-label" htmlFor="yai-recipient-email">{t("recipientLabel")}</label>
+              <input
+                id="yai-recipient-email"
+                className="yai-recipient-input"
+                type="email"
+                value={recipientEmail}
+                onChange={(e) => setRecipientEmail(e.target.value)}
+                placeholder="you@company.com"
+                autoComplete="email"
+              />
+            </>
           )}
           <p className="yai-google-privacy">{t("googlePrivacy")}</p>
         </div>
@@ -636,6 +735,16 @@ export default function YachtAIDemo() {
                           </div>
                         )}
 
+                        {cfg.key === "whatsapp" && (
+                          <div className="yai-wa-card">
+                            <div className="yai-wa-bubble">
+                              <p>{waInvite.text}</p>
+                              <span className="yai-wa-ticks">{"\u2713\u2713"}</span>
+                            </div>
+                            <a href={waInvite.href} target="_blank" rel="noreferrer" className="yai-wa-link">{t("waOpen")}</a>
+                          </div>
+                        )}
+
                         {cfg.key === "calendar" && (
                           <>
                             <div className="yai-cal-card">
@@ -660,6 +769,14 @@ export default function YachtAIDemo() {
                               <div className="yai-doc-field"><div className="yai-doc-field-label">{t("docStatus")}</div><div className="yai-doc-field-val">{t("docStatusDemo")}</div></div>
                             </div>
                             <div className="yai-doc-unlock"><span style={{ fontSize: "1.1rem" }}>&#128275;</span> {t("docUnlock")}</div>
+                            <Link to="/yacht/demo/vip?vip_pricing=unlocked" className="yai-portal-cta">{t("openPortal")}</Link>
+                          </div>
+                        )}
+
+                        {cfg.key === "crm" && (
+                          <div className="yai-crm-card">
+                            <pre className="yai-crm-json">{JSON.stringify(crmPayload, null, 2)}</pre>
+                            <p className="yai-crm-caption">{t("crmCaption")}</p>
                           </div>
                         )}
                       </div>
@@ -680,6 +797,8 @@ export default function YachtAIDemo() {
               {t("finalItems").map((item, i) => <div className="yai-final-item" key={i}><span className="yai-final-check">&#10003;</span>{item}</div>)}
             </div>
             <div className="yai-final-time">{t("completedIn")} {elapsed}s</div>
+            <div className="yai-final-scheduled">{t("finalScheduled")}</div>
+            <Link to="/unified/overview" className="yai-final-dash-cta">{t("finalDashCta")}</Link>
           </div>
         )}
 

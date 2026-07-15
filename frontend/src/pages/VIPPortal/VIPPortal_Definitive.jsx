@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { trackPortalEvent } from "../../services/portalTrack";
 import { usePortalRegion } from "../../services/portalRegion";
 import './VIPPortal.css';
@@ -29,6 +29,7 @@ const LANG = {
       subtitle: "A curated selection of premium residences, handpicked for discerning investors who demand nothing less than extraordinary.",
       cta: "Explore residences",
       ctaSecondary: "Schedule private viewing",
+      pricingUnlocked: "Exclusive pre-launch pricing unlocked — NDA signed",
     },
     stats: { units: "Premium units", floors: "Floors of luxury", roi: "Projected ROI", completion: "Completion" },
     roiBanner: {
@@ -140,6 +141,7 @@ const LANG = {
       subtitle: "مجموعة مختارة من الوحدات الفاخرة، بعنايةٍ لمن يبحثون عن ما يفوق العادي.",
       cta: "استكشاف الوحدات",
       ctaSecondary: "جدولة زيارة خاصة",
+      pricingUnlocked: "تم فتح أسعار ما قبل الإطلاق الحصرية — بعد توقيع اتفاقية السرية",
     },
     stats: { units: "الوحدات المميزة", floors: "طوابق من الفخامة", roi: "العائد المتوقع على الاستثمار", completion: "الانتهاء" },
     roiBanner: {
@@ -242,6 +244,7 @@ const LANG = {
       subtitle: "Una selección curada de residencias premium, escogidas a mano para inversionistas exigentes que no aceptan menos que lo extraordinario.",
       cta: "Explorar residencias",
       ctaSecondary: "Agendar visita privada",
+      pricingUnlocked: "Precios exclusivos de preventa desbloqueados — NDA firmado",
     },
     stats: { units: "Residencias premium", floors: "Pisos de lujo", roi: "ROI proyectado", completion: "Entrega" },
     roiBanner: {
@@ -353,6 +356,7 @@ const LANG = {
       subtitle: "Une sélection raffinée de résidences haut de gamme, choisies avec soin pour les investisseurs avertis qui n'acceptent rien de moins que l'extraordinaire.",
       cta: "Explorer les résidences",
       ctaSecondary: "Planifier une visite privée",
+      pricingUnlocked: "Tarification exclusive pré-lancement débloquée — NDA signé",
     },
     stats: { units: "Résidences premium", floors: "Étages de luxe", roi: "ROI projeté", completion: "Livraison" },
     roiBanner: {
@@ -471,6 +475,8 @@ const ROOM_COLORS = {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────
 export default function VIPPortal() {
   const [lang, setLang] = useState("en");
+  const [searchParams] = useSearchParams();
+  const pricingUnlocked = searchParams.get("vip_pricing") === "unlocked";
   const { projectName, fmtCurrency, vipPersona, region, luxuryUnits, amenities, investStats, unitMedia } = usePortalRegion("real_estate", lang);
   const trackEvent = useCallback(
     (event, data) => trackPortalEvent("vip", vipPersona, event, data),
@@ -698,6 +704,12 @@ export default function VIPPortal() {
           </div>
         </div>
       </section>
+
+      {pricingUnlocked && (
+        <div className="vp-pricing-banner" role="status">
+          {t.hero.pricingUnlocked}
+        </div>
+      )}
 
       {/* ── STATS ── */}
       <div className="vp-stats">
