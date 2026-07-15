@@ -21,9 +21,11 @@
    Do instead: re-check file lengths after edits for files over 500 lines before planning split/refactor work.
 
 ## Domain Behavior Guardrails
-1. **[2026-04-24] FR is missing from language toggle cycle**
+1. **[2026-07-13] Stale i18n registry ≠ live page copy**
+   Do instead: when cleaning unused `registerTranslations` files, rewrite only obvious myth keys (`$4,800`, `40+`, `©2025`); do not gut files or touch `src/shared/translations.js` / `src/translations/*.json`.
+2. **[2026-04-24] FR is missing from language toggle cycle**
    Do instead: use direct language selector for FR testing until FAZ 6 fixes `LanguageContext` toggle order.
-2. **[2026-04-24] SoS label is unresolved terminology**
+3. **[2026-04-24] SoS label is unresolved terminology**
    Do instead: keep current SoS behavior unchanged until business meaning is confirmed.
 
 ## User Directives
