@@ -107,7 +107,7 @@ const TR = {
     successTitle:'Pilot Request Submitted',
     successDesc:'Thank you. Our enterprise team will review your project details and reach out within 24 hours to design your custom pilot program.',
     successClose:'Close',
-    footerText:'© 2026 DynamicNFC — Sales Velocity Engine for Real Estate, Automotive & Yacht',
+    footerText:'© 2026 DynamicNFC Card Inc. — Sales Velocity Engine for Real Estate, Automotive & Yacht',
     indChoose:'Choose Your Industry', indAll:'All Industries', indRE:'Real Estate Developers & Agents', indAuto:'Automotive', indYacht:'Yacht',
     prob1Desc_auto:'Most showroom visitors browse anonymously.',
     prob2Desc_auto:'Sales teams follow up too late, with no insight into which models, configurations, or financing options prospects explored',
@@ -209,7 +209,7 @@ const TR = {
     modalNote:"نرد خلال 24 ساعة. معلوماتك محفوظة بسرية تامة.",
     successTitle:"تم تقديم طلب تجربة تجريبية", successDesc:"شكرًا لك. سيقوم فريق الشركات بمراجعة تفاصيل مشروعك والتواصل خلال 24 ساعة لتصميم برنامجك التجريبي المخصص.",
     successClose:"إغلاق",
-    footerText:"© 2026 DynamicNFC — محرك تسريع المبيعات للعقارات والسيارات واليخوت",
+    footerText:"© 2026 DynamicNFC Card Inc. — محرك تسريع المبيعات للعقارات والسيارات واليخوت",
     indChoose:"اختر قطاعك", indAll:"جميع القطاعات", indRE:"العقارات", indAuto:"السيارات", indYacht:"اليخوت",
     prob1Desc_auto:"يتصفح معظم زوار صالة العرض دون الكشف عن هويتهم.",
     prob2Desc_auto:"يتواصل فرق المبيعات متأخرًا، دون معرفة الموديلات أو التكوينات أو خيارات التمويل التي استكشفها العملاء",
@@ -842,7 +842,7 @@ export default function Enterprise() {
       {/* ═══ FOOTER ═══ */}
       <footer className="ent-footer">
         <p>{t('footerText').includes('DynamicNFC') ? (
-          <>© 2026 <a href="https://dynamicnfc.ca" >DynamicNFC</a> — {lang === 'ar' ? 'محرك تسريع المبيعات للعقارات والسيارات واليخوت' : 'Sales Velocity Engine for Real Estate, Automotive & Yacht'}</>
+          <>© 2026 <a href="https://dynamicnfc.ca" >DynamicNFC Card Inc.</a> — {lang === 'ar' ? 'محرك تسريع المبيعات للعقارات والسيارات واليخوت' : 'Sales Velocity Engine for Real Estate, Automotive & Yacht'}</>
         ) : t('footerText')}</p>
       </footer>
     </div>

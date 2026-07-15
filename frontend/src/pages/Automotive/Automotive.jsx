@@ -108,7 +108,7 @@ const TR = {
     successDesc:'Thank you. Our automotive team will review your details and reach out within 24 hours to design your custom pilot.',
     successClose:'Close',
     closeLabel:'Close dialog',
-    footerText:'© 2026 DynamicNFC — Sales Velocity Engine for Automotive',
+    footerText:'© 2026 DynamicNFC Card Inc. — Sales Velocity Engine for Automotive',
   },
   ar: {
     seoTitle:'السيارات — محرك تسريع المبيعات',
@@ -202,7 +202,7 @@ const TR = {
     modalNote:'نرد خلال 24 ساعة. معلوماتك محفوظة بسرية تامة.',
     successTitle:'تم تقديم طلب التجربة', successDesc:'شكرًا لك. سيقوم فريق السيارات بمراجعة تفاصيلك والتواصل خلال 24 ساعة لتصميم تجربتك المخصصة.',
     successClose:'إغلاق',
-    footerText:'© 2026 DynamicNFC — محرك تسريع المبيعات لقطاع السيارات',
+    footerText:'© 2026 DynamicNFC Card Inc. — محرك تسريع المبيعات لقطاع السيارات',
     closeLabel:'إغلاق الحوار',
   },
 };
@@ -789,7 +789,7 @@ export default function Automotive() {
 
       {/* ═══ FOOTER ═══ */}
       <footer className="auto-footer">
-        <p>© 2026 <a href="https://dynamicnfc.ca">DynamicNFC</a> — {lang === 'ar' ? 'محرك تسريع المبيعات لقطاع السيارات' : 'Sales Velocity Engine for Automotive'}</p>
+        <p>© 2026 <a href="https://dynamicnfc.ca">DynamicNFC Card Inc.</a> — {lang === 'ar' ? 'محرك تسريع المبيعات لقطاع السيارات' : 'Sales Velocity Engine for Automotive'}</p>
       </footer>
     </div>
   );

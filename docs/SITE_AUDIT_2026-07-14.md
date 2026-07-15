@@ -33,7 +33,37 @@
 
 | # | Bulgu | Detay |
 |---|-------|-------|
-| C1 | **Unified Overview metrikleri 0** | Demo portal gezintisi sonrası VIP Sessions / Website Visitors / Viewings Booked = 0. Oguzhan doğruladı: bilerek böyle DEĞİL. Not: 2026-07-04'te `enrichPortalEvent` write-time tagging + strict filter fix'i yapılmıştı — regresyon mu, farklı katman mı (event yazılmıyor / yanlış tenant'a yazılıyor / Overview kartları farklı sorgu) araştırılacak. Fix-sprint'in EN KRİTİK maddesi: dashboard demo'nun bel kemiği. |
+| C1 | **Unified Overview metrikleri 0** | Demo portal gezintisi sonrası VIP Sessions / Website Visitors / Viewings Booked = 0. Oguzhan doğruladı: bilerek böyle DEĞİL. |
+
+### C1 — KÖK NEDEN (2026-07-14 canlı teşhis, Claude)
+
+Kanıt zinciri (canlıda, login'li owner hesabıyla):
+1. Pipeline "+ Add Deal" → **"Could not create deal." + konsol: `FirebaseError: Missing or insufficient permissions`** — owner kendi tenant'ına deal YAZAMIYOR.
+2. Okumalar çalışıyor: `tenants/{uid}/aggregates/dailyBrief` render oluyor (Today's brief güncel timestamp'li) — yani subcollection READ izinli.
+3. Root doc yazması çalışıyor: `updateLastActivity` init'te await ediliyor ve akış devam ediyor.
+4. Repo'daki `firestore.rules` bu create'e İZİN VERİYOR (owner + aggregates guard'ı geçiyor).
+
+**Sonuç: Prod'a deploy edilmiş Firestore rules ≠ repo rules.** Deploy'lu sürüm tenant subcollection CREATE'i reddediyor. Bu tek nokta her şeyi açıklıyor: seed batch'i her yüklemede patlıyor (seedComplete=false kalıyor, tenant boş), portal bridge'in `tenants/{uid}/events` yazması sessizce (`.catch(()=>{})`) yutulup düşüyor, dashboard 0.
+
+**Fix: `firebase deploy --only firestore:rules` (host'ta, repo root'tan).** Deploy sonrası dashboard'a ilk girişte seed otomatik koşacak (checkTenantExists → needsSeed).
+
+### Bu oturumda yapılan kod düzeltmeleri (lokal, commit bekliyor)
+
+| Dosya | Değişiklik |
+|-------|-----------|
+| `firestore.rules` | A2: kullanıcı KENDİ `admins/{email}` kaydını `get` edebilir (exists=false döner, permission hatası yerine). `list` hâlâ admin-only. |
+| `hooks/useAdmin.js` | A2: `permission-denied` = "admin değil", console.error atılmıyor (diğer hatalar loglanmaya devam). |
+| `services/tenantService.js` | C1-yan: `createTenantDeal` artık `sector`+`region` stamp'liyor (CLAUDE.md §7) — yoksa manuel deal strict filter'dan düşüp görünmez oluyordu. Fallback: `ud-sector`/`ud-region` localStorage. |
+| `tabs/PipelineTab.jsx` | İki createTenantDeal çağrısına explicit `sector`/`region`; AddDealModal'a `currency={currency}` (Canada'da "Value (AED)" görünüyordu). |
+| `pages/CreatePhysicalCard/CreatePhysicalCard.jsx` | A1: sayfanın lokal navbar'ı kaldırıldı (global navbar zaten var — çift navbar buydu); lokal `lang` state'i global `useLanguage()`'a bağlandı; ölü importlar temizlendi; **dosya sonundaki 1537 NUL byte** (bilinen sync artefaktı) temizlendi. |
+| `pages/Home/Home.jsx` | B4: `demoYachtd` (EN+AR) Industries kartındaki metnin kopyasıydı — demo kartına özgü deneyimsel metin yazıldı. |
+| Footer unvanları (9 dosya) | B1: `© 2026 DynamicNFC — …` → `© 2026 DynamicNFC Card Inc. — …` (Enterprise, ContactSales, Developers, RealEstate, Automotive sayfa+i18n dosyaları; ContactSales'taki bayat "© 2025" de düzeltildi). |
+
+### Düzeltme İSTEMEYEN audit maddeleri (yeniden sınıflandırma)
+
+- **B3 (Canva "C")**: Bug değil — trademark kaçınması için bilinçli çizilmiş SVG rozet. Dokunulmadı. İstenirse tasarım tazelenir.
+- **B7 (SEO title)**: Enterprise/Developers repo'da `<SEO>` içeriyor; canlıda jenerik kalması muhtemelen bundle/deploy meselesi. Sonraki deploy'da doğrula; hâlâ jenerikse Helmet'e bakılır.
+- **AddDealModal "e.g. Al Qamar" placeholder**: sectorConfig'ten geliyor, region-aware değil — kozmetik, sonraki içerik sprintine.
 
 ## D. Sağlam çalışanlar (regresyon kontrolü için pozitif liste)
 

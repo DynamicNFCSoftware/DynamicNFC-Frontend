@@ -51,6 +51,8 @@ export default function PipelineTab() {
           categoryId: pending.categoryId || "",
           categoryName: pending.categoryName || "",
           campaignId: pending.campaignId || "",
+          sector: activeSectorId || sectorId,
+          region: regionId,
         };
         const tempId = `temp-${Date.now()}`;
         setLocalDeals((prev) => [...prev, { ...payload, id: tempId }]);
@@ -167,13 +169,14 @@ export default function PipelineTab() {
       />
       {showAddDeal && (
         <AddDealModal
+          currency={currency}
           campaigns={(campaigns || []).filter((c) => String(c.status || "").toLowerCase() !== "archived")}
           dealStages={schema.dealStages}
           onClose={() => setShowAddDeal(false)}
           onSave={async (deal) => {
             if (!user?.uid) return;
             try {
-              await createTenantDeal(user.uid, deal);
+              await createTenantDeal(user.uid, { ...deal, sector: activeSectorId || sectorId, region: regionId });
               setShowAddDeal(false);
             } catch (error) {
               setPipelineError(

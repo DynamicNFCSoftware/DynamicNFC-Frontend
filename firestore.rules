@@ -35,9 +35,13 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Admin roster — admin read, console-only write
+    // Admin roster — console-only write.
+    // `get` also allowed on your OWN entry so useAdmin() can resolve
+    // "not admin" via exists()=false instead of a permission error.
     match /admins/{email} {
-      allow read: if isAdmin();
+      allow get: if isAdmin()
+        || (request.auth != null && request.auth.token.email == email);
+      allow list: if isAdmin();
       allow write: if false;
     }
 

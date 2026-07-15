@@ -129,7 +129,7 @@ const TR = {
     sideQuote:'"You are not handing out NFC cards. You are issuing private invitations — and turning digital intent into real sales momentum."',
 
     /* Footer */
-    footerText:'© 2025 DynamicNFC — Sales Velocity Engine',
+    footerText:'© 2026 DynamicNFC Card Inc. — Sales Velocity Engine',
   },
 
   ar: {
@@ -220,7 +220,7 @@ const TR = {
     side3Title:"مقترح مخصص", side3Desc:"خلال 48 ساعة، ستتلقى خطة تجريبية مخصصة — تصميم البوابة، وعدد مفاتيح الوصول لكبار الشخصيات، والجدول الزمني، والتسعير.",
     side4Title:"الإطلاق", side4Desc:"من أسبوعين إلى أربعة أسابيع من الموافقة حتى وصول أول البطاقات إلى أيدي العملاء المميزين.",
     sideQuote:"\"أنت لا توزع بطاقات الاتصال قريب المدى. أنت تصدر دعوات خاصة — وتحول الاهتمام الرقمي إلى زخم حقيقي في المبيعات.\"",
-    footerText:'© 2026 DynamicNFC — محرك تسريع المبيعات',
+    footerText:'© 2026 DynamicNFC Card Inc. — محرك تسريع المبيعات',
 },
 };
 
@@ -442,7 +442,7 @@ export default function ContactSales() {
 
       {/* FOOTER */}
       <footer className="cs-footer">
-        <p>© 2026 <a href="https://dynamicnfc.ca">DynamicNFC</a> — {lang === 'ar' ? 'محرك تسريع المبيعات' : 'Sales Velocity Engine'}</p>
+        <p>© 2026 <a href="https://dynamicnfc.ca">DynamicNFC Card Inc.</a> — {lang === 'ar' ? 'محرك تسريع المبيعات' : 'Sales Velocity Engine'}</p>
       </footer>
     </div>
   );

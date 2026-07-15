@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../../assets/css/enterprise-light.css";
-import IndustriesDropdown from "../../components/IndustriesDropdown";
+import { useLanguage } from "../../i18n";
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/createPhysicalCard';
 
@@ -252,8 +251,6 @@ const CARD_NAME_KEYS = { white: "cardWhite", black: "cardBlack", golden: "cardGo
 const CARD_SHORT_KEYS = { white: "shortWhite", black: "shortBlack", golden: "shortGolden", silver: "shortSilver", "metal-golden": "shortMetalGold", "metal-silver": "shortMetalSilver", "metal-black": "shortMetalBlack", "metal-rosegold": "shortRoseGold", "24k-gold": "short24k", bambu: "shortBamboo", wooden: "shortWood", transparent: "shortTransparent" };
 const MAT_LABEL_KEYS = { PVC: "matPVC", Metal: "matMetal", Eco: "matEco" };
 
-function detectLang() { const n = navigator.language || navigator.userLanguage || "en"; return n.startsWith("ar") ? "ar" : "en"; }
-
 /* ── Card catalogue ── */
 const CARD_TYPES = [
   { id: "white", name: "White NFC Business Card", shortName: "White", material: "PVC", materialClass: "mat-pvc-white", textColor: "#1a1a1f", nfcColor: "#457b9d", qrStyle: "dark" },
@@ -305,10 +302,8 @@ function isValidUrl(str) {
 /* Main Component                                         */
 /* ═══════════════════════════════════════════════════════ */
 export default function CreatePhysicalCard() {
-  const { logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { state } = useLocation();
-  const handleLogout = () => { logout(); navigate("/"); };
   const incomingCard = state?.card;
 
   // Resolve initial card from route state (OrderCard passes { id })
@@ -341,8 +336,8 @@ export default function CreatePhysicalCard() {
   const [teamMembers, setTeamMembers] = useState([]);
   const [csvError, setCsvError] = useState("");
 
-  // ── i18n ──
-  const [lang, setLang] = useState(detectLang);
+  // ── i18n — follows the global navbar language toggle ──
+  const { lang } = useLanguage();
   const isRTL = lang === "ar";
   const t = useCallback((key) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key, [lang]);
   const cardName = (c) => t(CARD_NAME_KEYS[c.id]) || c.name;
@@ -514,28 +509,6 @@ export default function CreatePhysicalCard() {
       <SEO title="Order Physical Cards" description="Create and order custom physical NFC business cards in PVC, metal, or eco-friendly materials." path="/create-physical-card" />
       <div className="bg-mesh" />
       <div className="particles" id="el-particles" />
-
-      <nav className="nav-bar">
-        <div className="nav-container">
-          <Link to="/" className="logo"><img src="/assets/images/logo.png" alt="DynamicNFC" style={{height:'52px',width:'auto'}} /></Link>
-          <div className="nav-links">
-            <Link to="/">{t("home")}</Link>
-            <IndustriesDropdown lang={lang} triggerClassName="el-nav-dd-trigger" />
-            <Link to="/nfc-cards">{t("nfcCards")}</Link>
-            <Link to="/contact-sales">{t("inqCallSales") || "Contact Sales"}</Link>
-            {isAuthenticated && isAuthenticated() && <Link to="/dashboard">{t("dashboard")}</Link>}
-            <div className="lang-switcher">
-              <button className={`lang-btn${lang === "en" ? " active" : ""}`} onClick={() => setLang("en")}>EN</button>
-              <button className={`lang-btn${lang === "ar" ? " active" : ""}`} onClick={() => setLang("ar")}>ع</button>
-            </div>
-            {isAuthenticated && isAuthenticated() ? (
-              <button onClick={handleLogout} className="nav-btn">{t("logout")}</button>
-            ) : (
-              <Link to="/login" className="nav-btn">{t("login")}</Link>
-            )}
-          </div>
-        </div>
-      </nav>
 
       <main className="enterprise-content">
         <div className="page-header">
@@ -1113,7 +1086,7 @@ export default function CreatePhysicalCard() {
       )}
 
       <footer className="el-footer">
-        <p>&copy; 2026 <a href="https://dynamicnfc.ca" target="_blank" rel="noreferrer">DynamicNFC</a> — {t("footerText")}</p>
+        <p>&copy; 2026 <a href="https://dynamicnfc.ca" target="_blank" rel="noreferrer">DynamicNFC Card Inc.</a> — {t("footerText")}</p>
       </footer>
     </div>
   );

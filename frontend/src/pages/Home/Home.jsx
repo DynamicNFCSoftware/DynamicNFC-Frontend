@@ -63,7 +63,7 @@ const TR = {
     demoAutod: 'See how a showroom guest configures their dream car, books a test drive, and gets a personalized follow-up.',
     demoAutoTag1: 'VIP Showroom', demoAutoTag2: 'Configurator', demoAutoTag3: 'Test Drive',
     demoYacht: 'Yacht Brokerage Demo',
-    demoYachtd: 'Private marina experiences for owners and charter clients — every sea trial begins with a name.',
+    demoYachtd: 'See how a yacht owner tours the fleet, requests a sea trial, and gets concierge follow-up — all from one tap.',
     demoYachtTag1: 'VIP Portal', demoYachtTag2: 'Sea Trial', demoYachtTag3: 'Charter',
     demoCta: 'Launch the full demo',
 
@@ -193,7 +193,7 @@ const TR = {
     demoAutod: 'شاهد كيف يُخصص ضيف صالة العرض سيارة أحلامه، يحجز تجربة قيادة، ويحصل على متابعة مخصصة.',
     demoAutoTag1: 'صالة عرض VIP', demoAutoTag2: 'أداة التكوين', demoAutoTag3: 'تجربة قيادة',
     demoYacht: 'عرض وساطة اليخوت',
-    demoYachtd: 'تجارب مارينا خاصة للملّاك وعملاء التأجير — كل تجربة إبحار تبدأ باسم.',
+    demoYachtd: 'شاهد كيف يتجول مالك اليخت في الأسطول، ويطلب تجربة إبحار، ويتلقى متابعة كونسيرج — كل ذلك من نقرة واحدة.',
     demoYachtTag1: 'بوابة VIP', demoYachtTag2: 'تجربة إبحار', demoYachtTag3: 'تأجير',
     demoCta: 'ابدأ العرض الكامل',
 

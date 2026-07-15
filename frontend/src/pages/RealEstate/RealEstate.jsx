@@ -198,7 +198,7 @@ const TR = {
     fldNotes:'Notes', fldNotesHint:'Tell us about your current project, sales goals, or pilot ideas...',
     fldError:'Something went wrong. Please try again.',
 
-    footerText:'© 2026 DynamicNFC — Sales Velocity Engine for Real Estate Professionals',
+    footerText:'© 2026 DynamicNFC Card Inc. — Sales Velocity Engine for Real Estate Professionals',
   },
 
   ar: {
@@ -310,7 +310,7 @@ const TR = {
     fldNotes:'ملاحظات', fldNotesHint:'أخبرنا عن مشروعك الحالي وأهداف المبيعات...',
     fldError:'حدث خطأ. يرجى المحاولة مرة أخرى.',
 
-    footerText:"© 2026 DynamicNFC — محرك سرعة المبيعات للمحترفين العقاريين",
+    footerText:"© 2026 DynamicNFC Card Inc. — محرك سرعة المبيعات للمحترفين العقاريين",
   },
 };
 

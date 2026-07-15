@@ -23,7 +23,8 @@ export function useAdmin() {
         setIsAdmin(exists);
         setAdminRole(exists ? (adminDoc.data().role || 'admin') : null);
       } catch (err) {
-        console.error('Admin check failed:', err);
+        // permission-denied simply means "not an admin" — expected for normal users, not an error
+        if (err?.code !== 'permission-denied') console.error('Admin check failed:', err);
         setIsAdmin(false);
         setAdminRole(null);
       }

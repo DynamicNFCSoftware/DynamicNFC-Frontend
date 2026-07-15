@@ -13,6 +13,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { normalizeSectorId, toPublicSectorId } from "../utils/sectorId";
 import { buildRealEstateSeed } from "./seeds/realEstateSeed";
 import { buildAutomotiveSeed } from "./seeds/automotiveSeed";
 import { buildYachtSeed } from "./seeds/yachtSeed";
@@ -224,10 +225,16 @@ export async function createTenantDeal(uid, payload) {
   const campaignId = String(payload?.campaignId || "").trim();
   const value = Number(payload?.value || 0);
   const stage = String(payload?.stage || "inquiry");
+  // Every tenant doc must carry sector + region (CLAUDE.md §7) — otherwise
+  // filterBySectorAndRegion drops it and the deal is invisible in the dashboard.
+  const sector = toPublicSectorId(normalizeSectorId(payload?.sector || localStorage.getItem("ud-sector")));
+  const region = String(payload?.region || localStorage.getItem("ud-region") || "gulf").toLowerCase().trim();
 
   const title = unitName ? `${unitName} - ${leadName}` : leadName;
   const docRef = await addDoc(collection(db, "tenants", uid, "deals"), {
     title,
+    sector,
+    region,
     leadName,
     unitName: unitName || "",
     categoryId: categoryId || "",

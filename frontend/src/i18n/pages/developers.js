@@ -261,7 +261,7 @@ const developers = {
 
     /* ── Footer ── */
     footerText:
-      "© 2026 DynamicNFC — Sales Velocity Engine for Real Estate Developers",
+      "© 2026 DynamicNFC Card Inc. — Sales Velocity Engine for Real Estate Developers",
   },
 
   ar: {
@@ -519,7 +519,7 @@ const developers = {
 
     /* ── Footer ── */
     footerText:
-      "© 2026 DynamicNFC — محرك تسريع المبيعات لمطوري العقارات",
+      "© 2026 DynamicNFC Card Inc. — محرك تسريع المبيعات لمطوري العقارات",
   },
 };
 
