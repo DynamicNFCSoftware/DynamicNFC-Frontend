@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════
 // AI DEMO DATA — region-aware VIP / unit / price for AIDemo
 // Composes from regionConfig + realEstateUnitData (no duplicates).
+// Shared helpers live in services/aiDemoShared.js.
 // ═══════════════════════════════════════════════════════
 
 import {
@@ -10,22 +11,17 @@ import {
   formatCurrency,
 } from "../../config/regionConfig";
 import { getLuxuryUnits } from "../../config/realEstateUnitData";
-
-/** City labels for sales-center copy (regionConfig has no city field). */
-const CITY = {
-  gulf: "Riyadh",
-  usa: "New York",
-  mexico: "Mexico City",
-  canada: "Vancouver",
-};
-
-/** Clock abbreviations matching region.timeZone. */
-const TIME_ABBR = {
-  gulf: "GST",
-  usa: "ET",
-  mexico: "CST",
-  canada: "PT",
-};
+import {
+  CITY,
+  TIME_ABBR,
+  nameParts,
+  slugifyEmailLocal,
+  projectSlug,
+  makeVipId,
+  attachmentName,
+  fill,
+  getWhatsAppInvite,
+} from "../../services/aiDemoShared";
 
 const UNIT_CODE = {
   gulf: "PH-4201",
@@ -33,40 +29,6 @@ const UNIT_CODE = {
   mexico: "PH-5501",
   canada: "PH-5501",
 };
-
-function nameParts(fullName) {
-  return String(fullName || "")
-    .replace(/-/g, " ")
-    .split(/\s+/)
-    .filter((w) => w && !/^al$/i.test(w));
-}
-
-function slugifyEmailLocal(fullName) {
-  const parts = nameParts(fullName);
-  const first = (parts[0] || "vip").toLowerCase().replace(/[^a-z]/g, "");
-  const last = (parts[parts.length - 1] || "buyer").toLowerCase().replace(/[^a-z]/g, "");
-  return `${first}.${last}`;
-}
-
-function projectSlug(projectEn) {
-  return String(projectEn || "residences")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function makeVipId(fullName) {
-  const parts = nameParts(fullName);
-  const a = (parts[0] || "V")[0];
-  const b = (parts[parts.length - 1] || "I")[0];
-  return `${a}${b}`.toUpperCase() + "-001";
-}
-
-function attachmentName(projectEn, unitCode, fullName) {
-  const slug = projectSlug(projectEn).replace(/-/g, "_");
-  const who = String(fullName || "VIP").replace(/[\s-]+/g, "_").replace(/[^A-Za-z0-9_]/g, "");
-  return `${slug}_${unitCode}_${who}.pdf`;
-}
 
 /**
  * Region-aware VIP payload for the AI sales pipeline demo.
@@ -117,18 +79,8 @@ export function getAiVip(regionId, lang = "en") {
     priceBase,
     attachment: attachmentName(projectEn, unitCode, name),
     initials: vipId.replace("-001", ""),
+    inviteKind: "Private showing",
   };
 }
 
-/** Fill `{name}` / `{unit}` style placeholders in a string. */
-export const fill = (s, v) =>
-  String(s ?? "").replace(/\{(\w+)\}/g, (_, k) => (v?.[k] != null ? String(v[k]) : ""));
-
-/** WhatsApp invite + wa.me deep link (no backend). */
-export function getWhatsAppInvite(vip) {
-  const text = `Private showing invitation: ${vip.unitName} (${vip.unitCode}) at ${vip.project} — ${vip.priceFmt}. ${vip.timeLabel}. Reply to confirm.`;
-  return {
-    text,
-    href: `https://wa.me/?text=${encodeURIComponent(text)}`,
-  };
-}
+export { fill, getWhatsAppInvite };

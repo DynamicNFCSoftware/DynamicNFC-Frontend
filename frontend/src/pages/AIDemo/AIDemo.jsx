@@ -409,7 +409,7 @@ export default function AIDemo() {
     if (key === 'gmail') trackPortalEvent('vip', persona, 'contact_advisor', { source: 'ai_demo', channel: 'email' });
     if (key === 'whatsapp') trackPortalEvent('vip', persona, 'contact_advisor', { source: 'ai_demo', channel: 'whatsapp' });
     if (key === 'calendar') trackPortalEvent('vip', persona, 'book_viewing', { source: 'ai_demo', unitName: vip.unitName });
-    if (key === 'docusign') trackPortalEvent('vip', persona, 'lead_captured', { source: 'ai_demo', step: 'nda' });
+    if (key === 'docusign') trackPortalEvent('vip', persona, 'request_pricing', { source: 'ai_demo', step: 'nda' });
   }, [vip]);
 
   const typeLines = useCallback((stepIdx, lines) => {
