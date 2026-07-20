@@ -8,7 +8,7 @@ import { getPersonas } from "../../config/regionConfig";
 import { YACHTS } from "../../data/yachtVesselData";
 import canvaProposalCover from "../../assets/images/canva-proposal-cover.png";
 import SEO from "../../components/SEO/SEO";
-import { getWhatsAppInvite } from "../../services/aiDemoShared";
+import { getWhatsAppInvite, MARINA_TIME_ABBR } from "../../services/aiDemoShared";
 
 // ═══════════════════════════════════════════════════════════════════
 // YACHT AI CONCIERGE DEMO — NFC tap → AI-orchestrated VIP sea trial
@@ -231,7 +231,7 @@ function buildStepDescs(owner, vessel) {
   };
 }
 
-function buildRealResults(owner, vessel, marina, toEmail, vesselPriceFmt) {
+function buildRealResults(owner, vessel, marina, toEmail, vesselPriceFmt, timeAbbr) {
   return {
     canva: {
       title: `Private Sea Trial Invitation — ${owner}`,
@@ -243,7 +243,7 @@ function buildRealResults(owner, vessel, marina, toEmail, vesselPriceFmt) {
     },
     calendar: {
       title: `Private Sea Trial — ${vessel} — ${owner} (VIP)`,
-      time: "10:00 AM – 12:00 PM GST",
+      time: `10:00 AM – 12:00 PM ${timeAbbr}`,
       location: marina,
       link: "https://www.google.com/calendar",
     },
@@ -265,8 +265,8 @@ function buildRealResults(owner, vessel, marina, toEmail, vesselPriceFmt) {
   };
 }
 
-function buildTerminalLines(owner, vessel, marina, toEmail, budgetLabel, vesselPriceFmt) {
-  const wa = getWhatsAppInvite({ vesselName: vessel, marina, priceFmt: vesselPriceFmt, timeLabel: "10:00 AM GST", inviteKind: "Private sea trial" });
+function buildTerminalLines(owner, vessel, marina, toEmail, budgetLabel, vesselPriceFmt, timeAbbr) {
+  const wa = getWhatsAppInvite({ vesselName: vessel, marina, priceFmt: vesselPriceFmt, timeLabel: `10:00 AM ${timeAbbr}`, inviteKind: "Private sea trial" });
   return {
     trigger: [
       { type: "cmd", text: "nfc.detect() \u2192 VIP Access Key scanned" },
@@ -305,7 +305,7 @@ function buildTerminalLines(owner, vessel, marina, toEmail, budgetLabel, vesselP
       { type: "cmd", text: "mcp.gcal.find_free_time({calendar: 'vip-sea-trials'})" },
       { type: "wait", text: "Checking VIP sea-trial availability + tide window..." },
       { type: "data", text: "Found 3 available slots this week" },
-      { type: "data", text: "Optimal slot: 10:00 AM GST \u2014 based on tide and crew prep time" },
+      { type: "data", text: `Optimal slot: 10:00 AM ${timeAbbr} \u2014 based on tide and crew prep time` },
       { type: "cmd", text: "mcp.gcal.create_event({type: 'vip_sea_trial'})" },
       { type: "data", text: `Location: ${marina}` },
       { type: "data", text: "Vessel prep: provisioned, fueled, crew briefed" },
@@ -357,6 +357,7 @@ export default function YachtAIDemo() {
   const vessel = vesselData?.name || "";
   const vesselPrice = vesselData?.price || 0;
   const marina = vesselData?.marina || "";
+  const timeAbbr = MARINA_TIME_ABBR[regionId] || "GST";
   const vesselPriceFmt = fmtCurrency(vesselPrice);
   const budgetLow = Math.round(vesselPrice * 0.9);
   const budgetHigh = Math.round(vesselPrice * 1.3);
@@ -370,16 +371,16 @@ export default function YachtAIDemo() {
   const TR = useMemo(() => buildTR(owner), [owner]);
   const STEP_DESCS = useMemo(() => buildStepDescs(owner, vessel), [owner, vessel]);
   const REAL_RESULTS = useMemo(
-    () => buildRealResults(owner, vessel, marina, effectiveEmail, vesselPriceFmt),
-    [owner, vessel, marina, effectiveEmail, vesselPriceFmt]
+    () => buildRealResults(owner, vessel, marina, effectiveEmail, vesselPriceFmt, timeAbbr),
+    [owner, vessel, marina, effectiveEmail, vesselPriceFmt, timeAbbr]
   );
   const TERMINAL_LINES = useMemo(
-    () => buildTerminalLines(owner, vessel, marina, effectiveEmail, budgetLabel, vesselPriceFmt),
-    [owner, vessel, marina, effectiveEmail, budgetLabel, vesselPriceFmt]
+    () => buildTerminalLines(owner, vessel, marina, effectiveEmail, budgetLabel, vesselPriceFmt, timeAbbr),
+    [owner, vessel, marina, effectiveEmail, budgetLabel, vesselPriceFmt, timeAbbr]
   );
   const waInvite = useMemo(
-    () => getWhatsAppInvite({ vesselName: vessel, marina, priceFmt: vesselPriceFmt, timeLabel: "10:00 AM GST", inviteKind: "Private sea trial" }),
-    [vessel, marina, vesselPriceFmt]
+    () => getWhatsAppInvite({ vesselName: vessel, marina, priceFmt: vesselPriceFmt, timeLabel: `10:00 AM ${timeAbbr}`, inviteKind: "Private sea trial" }),
+    [vessel, marina, vesselPriceFmt, timeAbbr]
   );
   const crmPayload = {
     lead: { id: "YV-001", name: owner, email: effectiveEmail, tier: "Platinum VIP" },
@@ -504,7 +505,7 @@ export default function YachtAIDemo() {
       const htmlBody = buildYachtEmailHtml({
         ownerName: owner, vesselName: vessel, vesselPrice: vesselPriceFmt,
         trialDate: d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }),
-        trialTime: "10:00 AM GST", trialLocation: marina,
+        trialTime: `10:00 AM ${timeAbbr}`, trialLocation: marina,
       });
       gmailPromise = createGmailDraft(googleToken, { to: effectiveEmail, subject: REAL_RESULTS.gmail.subject, htmlBody, senderName: "Marina Yachts" })
         .then((result) => setLiveResults((prev) => ({ ...prev, gmail: result })))
@@ -537,7 +538,7 @@ export default function YachtAIDemo() {
     });
     fireTrack(cfg.key);
     setTimeout(() => { const el = stepRefs.current[stepIdx]; if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 150);
-  }, [typeLines, googleToken, region.timeZone, owner, vessel, vesselPriceFmt, marina, effectiveEmail, validRecipient, REAL_RESULTS, fireTrack]);
+  }, [typeLines, googleToken, region.timeZone, owner, vessel, vesselPriceFmt, marina, timeAbbr, effectiveEmail, validRecipient, REAL_RESULTS, fireTrack]);
 
   const runAll = useCallback(async () => {
     setAllRunning(true);

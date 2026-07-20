@@ -19,6 +19,15 @@ export const TIME_ABBR = {
   canada: "PT",
 };
 
+/** Marina clock abbreviations (yacht demo — marina anchors differ from CITY map:
+    Dubai Marina / San Diego / Cabo / Coal Harbour Vancouver). */
+export const MARINA_TIME_ABBR = {
+  gulf: "GST",
+  usa: "PT",
+  mexico: "MT",
+  canada: "PT",
+};
+
 export function nameParts(fullName) {
   return String(fullName || "")
     .replace(/-/g, " ")
