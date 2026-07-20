@@ -28,6 +28,14 @@ export const MARINA_TIME_ABBR = {
   canada: "PT",
 };
 
+/** Region-aware terminal Locale line (Canva step). */
+export const LOCALE_LINE = {
+  gulf: "Locale: Bilingual EN/AR — right-to-left layout support enabled",
+  usa: "Locale: English (US)",
+  mexico: "Locale: Bilingual ES/EN",
+  canada: "Locale: Bilingual EN/FR",
+};
+
 export function nameParts(fullName) {
   return String(fullName || "")
     .replace(/-/g, " ")

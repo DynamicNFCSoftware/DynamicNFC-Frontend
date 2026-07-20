@@ -60,6 +60,7 @@ export function getAiVip(regionId, lang = "en") {
   const salesCenter = `${project} Sales Center, ${city}`;
 
   return {
+    regionId: rid,
     name,
     firstName,
     email,

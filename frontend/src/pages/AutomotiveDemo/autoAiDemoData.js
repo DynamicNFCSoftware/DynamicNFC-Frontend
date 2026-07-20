@@ -22,6 +22,9 @@ import {
   getWhatsAppInvite,
 } from "../../services/aiDemoShared";
 
+/** Short display codes for region flagships (terminal/WA aesthetics). */
+const FLAGSHIP_CODE = { gulf: "G63", usa: "ESCALADE-V", mexico: "RR-LWB", canada: "PLAID" };
+
 /**
  * Region-aware VIP payload for the automotive AI sales pipeline demo.
  * @param {string} regionId
@@ -39,7 +42,7 @@ export function getAutoAiVip(regionId, lang = "en") {
   const list = VEHICLES[rid] || VEHICLES.gulf;
   const flagship = list[0];
   const vehicleName = vName(flagship, lang) || flagship?.name?.en || "Flagship";
-  const vehicleCode = String(flagship?.id || "VIP").toUpperCase().replace(/-/g, " ");
+  const vehicleCode = FLAGSHIP_CODE[rid] || String(flagship?.id || "VIP").toUpperCase().replace(/-/g, " ");
   const priceBase = flagship?.priceLocal ?? 0;
   const priceFmt = formatCurrency(priceBase, rid, lang);
   const currency = region.currency;
@@ -54,6 +57,7 @@ export function getAutoAiVip(regionId, lang = "en") {
   const salesCenter = `${dealership} Showroom, ${city}`;
 
   return {
+    regionId: rid,
     name,
     firstName,
     email,

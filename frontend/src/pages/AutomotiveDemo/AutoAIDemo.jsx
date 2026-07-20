@@ -7,6 +7,7 @@ import SEO from '../../components/SEO/SEO';
 import { useRegion } from '../../hooks/useRegion';
 import { trackPortalEvent } from '../../services/portalTrack';
 import { getAutoAiVip, fill, getWhatsAppInvite } from './autoAiDemoData';
+import { LOCALE_LINE } from '../../services/aiDemoShared';
 
 /* ═══ TRANSLATIONS ═══ */
 const TR = {
@@ -40,7 +41,7 @@ const TR = {
     crmDesc: 'Lead upserted, activity timeline written, deal stage advanced to Test Drive Scheduled — ready for Salesforce, HubSpot, or Zoho.',
     detected: 'Detected', leadScore: 'Lead Score',
     pagesGen: 'Pages Generated',
-    canvaMeta: 'Personalized spec dossier with {vehicle} {code} details, performance analysis, exclusive VIP pricing ({price}), and premium configuration. Bilingual EN/AR design.',
+    canvaMeta: 'Personalized spec dossier with {vehicle} details, performance analysis, exclusive VIP pricing ({price}), and premium configuration.',
     viewCanva: 'View in Canva', editDesign: 'Edit Design',
     canvaExport: 'Real Canva design generated via MCP — exported as PDF and attached to email in next step',
     clickPreview: 'Click to preview full email',
@@ -121,7 +122,7 @@ const TR = {
     crmDesc: 'تم تحديث العميل المحتمل، وكتابة الجدول الزمني، وتقدّم صفقة تجربة القيادة — جاهز لـ Salesforce أو HubSpot أو Zoho.',
     detected: 'تم الكشف', leadScore: 'تقييم العميل',
     pagesGen: 'صفحات تم إنشاؤها',
-    canvaMeta: 'ملف مواصفات مخصص مع تفاصيل {vehicle} {code}، تحليل الأداء، تسعير VIP حصري ({price})، وتكوين فاخر. تصميم ثنائي اللغة EN/AR.',
+    canvaMeta: 'ملف مواصفات مخصص مع تفاصيل {vehicle}، تحليل الأداء، تسعير VIP حصري ({price})، وتكوين فاخر.',
     viewCanva: 'عرض في Canva', editDesign: 'تعديل التصميم',
     canvaExport: 'تصميم Canva حقيقي عبر MCP — تم تصديره كـ PDF وإرفاقه بالبريد في الخطوة التالية',
     clickPreview: 'انقر لمعاينة البريد الكامل',
@@ -210,7 +211,7 @@ function buildTerminalLines(vip, recipientEmail) {
       { type: 'data', text: 'Template: Region luxury — carbon fiber textures, gold accents' },
       { type: 'data', text: `Personalizing for: ${vip.name} — ${vip.vehicleCode}, ${vip.dealership}` },
       { type: 'data', text: 'Pages: Cover, Personal Letter, The Vehicle, Performance & Specs, Your Configuration, Your Invitation, Back Cover' },
-      { type: 'data', text: 'Locale: Bilingual EN/AR — right-to-left layout support enabled' },
+      { type: 'data', text: LOCALE_LINE[vip.regionId] || LOCALE_LINE.gulf },
       { type: 'cmd', text: "mcp.canva.export_design({format: 'pdf', design_id: 'DAHDl2uZnXE'})" },
       { type: 'wait', text: 'Exporting 7-page spec dossier as PDF...' },
       { type: 'ok', text: `Dossier generated — ${vip.attachment} (3.1MB)` },
@@ -469,7 +470,7 @@ export default function AutoAIDemo() {
       driveDate.setDate(driveDate.getDate() + 7);
       const htmlBody = buildVipEmailHtml({
         buyerName: vip.name,
-        vehicleName: `${vip.vehicleName} ${vip.vehicleCode}`,
+        vehicleName: `${vip.vehicleName}`,
         vehiclePrice: vip.priceFmt,
         testDriveDate: driveDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
         testDriveTime: vip.timeLabel,
@@ -494,7 +495,7 @@ export default function AutoAIDemo() {
       calendarPromise = createCalendarEvent(googleToken, {
         summary: `Private Test Drive — ${vip.vehicleName} — ${vip.name} (VIP)`,
         location: vip.salesCenter,
-        description: `Exclusive private test drive of ${vip.vehicleName} ${vip.vehicleCode} for VIP client ${vip.name}. Spec dossier attached.`,
+        description: `Exclusive private test drive of ${vip.vehicleName} for VIP client ${vip.name}. Spec dossier attached.`,
         startDateTime: startDT.toISOString(),
         endDateTime: endDT.toISOString(),
         attendeeEmail: validRecipient || null,

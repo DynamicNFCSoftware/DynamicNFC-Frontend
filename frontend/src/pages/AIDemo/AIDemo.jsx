@@ -7,6 +7,7 @@ import SEO from '../../components/SEO/SEO';
 import { useRegion } from '../../hooks/useRegion';
 import { trackPortalEvent } from '../../services/portalTrack';
 import { getAiVip, fill, getWhatsAppInvite } from './aiDemoData';
+import { LOCALE_LINE } from '../../services/aiDemoShared';
 
 /* ═══ TRANSLATIONS ═══ */
 const TR = {
@@ -40,7 +41,7 @@ const TR = {
     crmDesc: 'Lead upserted, activity timeline written, deal stage advanced to Viewing Scheduled — ready for Salesforce, HubSpot, or Zoho.',
     detected: 'Detected', leadScore: 'Lead Score',
     pagesGen: 'Pages Generated',
-    canvaMeta: 'Personalized luxury proposal with Unit {code} details, ROI analysis, exclusive VIP pricing ({price}), and premium amenities. Bilingual EN/AR design.',
+    canvaMeta: 'Personalized luxury proposal with Unit {code} details, ROI analysis, exclusive VIP pricing ({price}), and premium amenities.',
     viewCanva: 'View in Canva', editDesign: 'Edit Design',
     canvaExport: 'Real Canva design generated via MCP — exported as PDF and attached to email in next step',
     clickPreview: 'Click to preview full email',
@@ -121,7 +122,7 @@ const TR = {
     crmDesc: 'تم تحديث العميل المحتمل، وكتابة الجدول الزمني، وتقدّم صفقة المعاينة — جاهز لـ Salesforce أو HubSpot أو Zoho.',
     detected: 'تم الكشف', leadScore: 'تقييم العميل',
     pagesGen: 'صفحات تم إنشاؤها',
-    canvaMeta: 'عرض استثماري مخصص مع تفاصيل الوحدة {code}، تحليل العائد، تسعير VIP حصري ({price})، ومرافق فاخرة. تصميم ثنائي اللغة EN/AR.',
+    canvaMeta: 'عرض استثماري مخصص مع تفاصيل الوحدة {code}، تحليل العائد، تسعير VIP حصري ({price})، ومرافق فاخرة.',
     viewCanva: 'عرض في Canva', editDesign: 'تعديل التصميم',
     canvaExport: 'تصميم Canva حقيقي عبر MCP — تم تصديره كـ PDF وإرفاقه بالبريد في الخطوة التالية',
     clickPreview: 'انقر لمعاينة البريد الكامل',
@@ -210,7 +211,7 @@ function buildTerminalLines(vip, recipientEmail) {
       { type: 'data', text: 'Template: Region luxury — geometric patterns, gold & ivory palette' },
       { type: 'data', text: `Personalizing for: ${vip.name} — Unit ${vip.unitCode}, ${vip.project}` },
       { type: 'data', text: 'Pages: Cover, Personal Letter, The Residence, Investment Analysis, The Lifestyle, Your Invitation, Back Cover' },
-      { type: 'data', text: 'Locale: Bilingual EN/AR — right-to-left layout support enabled' },
+      { type: 'data', text: LOCALE_LINE[vip.regionId] || LOCALE_LINE.gulf },
       { type: 'cmd', text: "mcp.canva.export_design({format: 'pdf', design_id: 'DAHDl2uZnXE'})" },
       { type: 'wait', text: 'Exporting 7-page proposal as PDF...' },
       { type: 'ok', text: `Proposal generated — ${vip.attachment} (3.1MB)` },
