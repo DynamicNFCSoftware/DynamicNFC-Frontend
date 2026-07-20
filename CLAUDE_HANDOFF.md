@@ -3,6 +3,10 @@
 **Last updated:** 2026-07-20 — **Sprint AI-2 MERGE + DEPLOY DOĞRULANDI (Claude/Cowork, uzaktan kanıtla).** (1) Merge ✅: PR #18 "Sprint/ai 2 auto yacht aidemo" squash-merge → `origin/main = 4963eacf` (tek-PR stratejisi uygulanmış; 3 commit'in içeriği squash'ta). (2) Deploy ✅: `.web.app` kanalından doğrulandı — `aiDemoShared-CuNirjtx.js` canlı release'te (sadece AI-2'de yaratılan dosya, Riyadh/NY/Mexico City map'iyle açılıyor) + ana bundle hash lokal dist ile birebir; lokal dist 07-15 19:41 build, `request_pricing` ✓ / `lead_captured` 0 üç AIDemo chunk'ında. (3) Host `git status` TEMİZ: `main` branch'inde, origin ile güncel — sandbox mount'un gösterdiği `.git/HEAD` NUL corruption + "broken branch" **hayalet çıktı** (07-04 "sandbox mount stale git state" dersi üçüncü kez doğrulandı; mount bozulma gösterirse tek geçerli kanıt host terminali). **Kalan işler:** (a) **Branch temizliği:** `git push origin --delete sprint/ai-2-auto-yacht-aidemo sprint/ai-1-aidemo-region-tracking` (+ lokalde varsa `git branch -d`). (b) **Handoff + napkin commit:** `docs(handoff): AI-2 merge+deploy verification` (SEEDANCE_VIDEO_PROMPTS.md untracked — dahil et veya ayrı commit). (c) **Runtime QA hâlâ AÇIK:** Auto Canada+Gulf, Yacht USA+Gulf, wa.me linkleri, `?vip_pricing=unlocked` banner'ları, Unified'da sektör switch ile feed. (d) QA sonrası CLAUDE.md tazeleme + pilot outreach'e dönüş (satış modu).
 **Author of this update:** Claude (Cowork), 2026-07-20 — doğrulama zinciri: mount git refs + `origin/main` log + canlı `.web.app` chunk fetch + Oguzhan host `git status` çıktısı.
 
+**QA güncellemesi (2026-07-20, aynı gün — Claude/Cowork, Chrome ile canlıda):** Runtime QA TAMAM — 4/4. (1) **Auto AIDemo Gulf** 7/7 (58s): Khalid Al-Mansouri + G63 + SAR + Riyadh; wa.me gerçek deep link; NDA→`/automotive/demo/khalid?vip_pricing=unlocked` banner render ✓. (2) **Auto AIDemo Canada** 7/7 (56s): David Thompson + Tesla Model S Plaid + Prestige Motors Vancouver + CA$ + PT — region sızıntısı 0. (3) **Yacht AIDemo USA** 7/7 (56s): Richard Blackwell + Westport 40M + San Diego + USD; `/yacht/demo/vip` banner ✓; Gulf içerik swap: Prince Nasser Al-Saud + Azimut Grande 35 Metri ✓. (4) **Unified iki-sekme testi** (login'li, dynamicnfc.ca): Auto AIDemo koşusu → Automotive Overview Sales Triggers'a "David Thompson [100] HOT — Requested pricing — just now" CANLI düştü; sektör switch RE→Auto→Yacht üçünde doğru feed/persona (Yacht Canada: Robert MacKenzie izole ✓). **3 bulgu (yeni sprint adayı):** (B1) **YachtAIDemo'da timezone "GST" hardcoded** — USA/San Diego'da "10:00 AM GST" gösteriyor, PT olmalı (WhatsApp mesajı + takvim bloğu; Auto tarafı PT'yi doğru yapıyor — Gulf TZ kalıntısı). (B2) Kozmetik: dossier metninde model adı çift basılıyor ("Mercedes-AMG G 63 G63", "Tesla Model S Plaid TESLA MODEL S PLAID"). (B3) Kozmetik: Canada Auto dossier "Locale: Bilingual EN/AR" diyor — Canada'da EN/FR olmalı. Not-1: KPI kartları trigger'ın düştüğü anda 0 kalabiliyor — aggregate 15 dk cycle'dan geliyor, bug değil. Not-2: `.web.app` ayrı origin = ayrı Firebase Auth oturumu; login'li Unified QA'i her zaman custom domain'de yap.
+
+**B1 KAPANDI (2026-07-20, Claude audit: PASS, sıfır düzeltme):** Commit `a10cc281` main'de — `MARINA_TIME_ABBR` (gulf:GST, usa:PT, mexico:MT, canada:PT) `aiDemoShared.js`'e eklendi, YachtAIDemo'daki 5 hardcoded "AM GST" template'e çevrildi, 3 useMemo + 1 effect dep array'ine `timeAbbr` eklendi. Blob-level grep doğrulandı: "AM GST" = 0, RE/Auto untouched, tail temiz. Not: dosya 828 satıra büyümüştü (directive ~703 demişti — sandbox mount bayat blob okumuş; satır sayısı farkı bu fix'ten değil, parent commit de 828). **Kalan:** `git push` (a10cc281 henüz origin'de değil) → build + hosting deploy → 30 sn spot check: `/yacht/demo/ai` USA'da "10:00 AM PT". B2+B3 (kozmetik) ayrı mini directive olarak bekliyor.
+
 ---
 
 **Önceki güncelleme (2026-07-15, 2.):** **Sprint AI-2 Claude AUDIT: PASS, sıfır düzeltme.** Grep kanıtları host'ta doğrulandı: WP-0 taksonomia tamirleri 3/3 (global `lead_captured→request_pricing`, auto `contact_agent→contact_advisor` + `lead_captured→request_quote`), AutoAIDemo hardcoded Gulf 0 + 6 fire portalType 'vip' doğru event map'iyle, Yacht 6 fire + Cursor proaktif olarak eski mount-anı `portal_opened` ve çift `book_viewing`'i de temizlemiş, iki portalda `vip_pricing` banner wired. Runtime spot-check yapılamadı (dev server kapalıydı) — QA Oguzhan'da. **Merge stratejisi: TEK PR — `sprint/ai-2-auto-yacht-aidemo` → main (üç commit'i birden taşır: `0ad36669` + `758ac988` + `47b82421`); ayrı bir AI-1 PR'ı açıksa merge etmeden kapat.** Sonra: build → hosting deploy → `.web.app` spot-check + runtime QA (Auto Canada+Gulf, Yacht USA+Gulf, wa.me, banner'lar, Unified'da sektör switch ile feed).
@@ -1567,116 +1571,3 @@ Also: **CSS Module rules are not safe defaults for critical SVG attributes.** In
 **Problem:** With reseed loop closed (#4.1), the animation never fired because its render gate was `if (seedingInProgress)` and `seedingInProgress` no longer turns true on region switch. The animation was a side-effect of the reseed loop, not an intentional trigger.
 
 **Fix:** `UnifiedLayout.jsx` — added local `isSwitching` state with refs to detect actual region/sector change (skip first mount), 1100ms timer, render gate widened to `seedingInProgress || isSwitching`. Pure UI state, zero Firestore writes. Sprint 2 #4.1 contract preserved.
-
-**Verified live:** Animation now triggers on region/sector change. **BUT** the animation itself renders as black polygons (see "Unresolved issue 1" above).
-
----
-
-## Production state (as of 2026-05-04 03:00)
-
-| Surface | State |
-|---------|-------|
-| `/unified/overview` Today's Brief | ✅ Rendering with template content |
-| `/unified/overview` Sales Velocity (8 metrics) | ✅ Rendering, threshold dots correct |
-| Region switch reseed loop | ✅ Closed (zero writes) |
-| Region switch UI animation trigger | ✅ Fires (1100ms `isSwitching`) |
-| Region switch animation visual rendering | 🔴 Black polygons over white grid (regression, root cause TBD) |
-| AI brief refresh button (`Generate AI summary`) | 🔴 CORS preflight blocked, function never reached |
-| Region switch performance (data swap) | ✅ Instant client-side filter |
-| Frontend bundle | `1f94c81c` deployed `5/4/26 2:43 AM` (`71799b`) |
-| Cloud Functions deployed | 9 total: api, contactForm, onWalletPassRequest, aggregateTaps, aggregateCampaignTaps, cleanupInactiveTenants, seedDemoData, **aggregateVelocityMetrics (new)**, **refreshDailyBriefAi (new)** |
-
----
-
-## GCP gotchas hit tonight (notes for future sessions)
-
-1. **Secret Manager IAM auto-grant works.** `firebase functions:secrets:set ANTHROPIC_API_KEY` + `defineSecret` + redeploy automatically grants `roles/secretmanager.secretAccessor` to `dynamicnfc-prod-68b4e@appspot.gserviceaccount.com`. No manual IAM step needed.
-2. **Domain Restricted Sharing org policy blocks `allUsers`/`allAuthenticatedUsers` IAM grants.** GCP Console exposes two related policies under filter `allowedPolicyMember`:
-   - `iam.allowedPolicyMembers` (Managed) — newer, was Inactive
-   - `iam.allowedPolicyMemberDomains` (Managed Legacy, "Domain restricted sharing") — older, was **Active and inheriting from parent**
-   The older one was the actual blocker. Fix: navigate to that policy → **Override parent's policy** → **Replace** (not Merge — Merge keeps parent's deny rules) → **Allow all** rule → **Set policy**. Propagation 30sec–2min.
-3. **Firebase legacy `functions:config:set` deprecated March 2027.** Migrate to `defineSecret` params API now. Secret access in code via `process.env.SECRET_NAME` after `runWith({ secrets: [...] })`.
-4. **Firebase deploy `--only` flag with multiple functions:** `--only "functions:aggregateVelocityMetrics,refreshDailyBriefAi"` (single quoted string). Without quotes the parser swallows the second function name silently.
-5. **Cursor Cloud Agent sandbox push can silently fail.** Round 1 of Sprint 2 #4 reported "completed" but `git ls-remote` showed only handoff commits. Mandatory `git ls-remote origin "<branch>"` proof in directives now standard.
-6. **Cursor can produce duplicate `module.exports` in same file.** Bugbot caught this in Sprint 2 #4 audit-3 — `briefTemplates.js`, `aiBriefGenerator.js`, `velocityMetrics.js` each had two concatenated implementations with mismatched field names (Node uses last, first dead code). Always grep for duplicates after Cursor's larger generations.
-
----
-
-## Region focus order (added 2026-05-02, kept)
-
-Production prioritization changed from "4 equal primary" framing in CLAUDE.md to actual outreach ordering:
-- **Canada > USA > Mexico > Gulf (paused)** due to regional conflict
-- CLAUDE.md unchanged (stable rules — Gulf code/personas/Arabic translations remain production-grade peer to other regions)
-- This file (CLAUDE_HANDOFF.md) is authoritative for the **current** focus
-- Demo UI keeps Gulf selector visible (P1 sales optionality)
-
----
-
-## Carried-over note: regression user reported
-
-> "dün bu animasyon adam gibi çalışıyordu, bugünkü değişikliklerden sonra patladı"
-> — User, ~2026-05-04 03:00 local
-
-Diff analysis between `30909c11` (4/29 deploy state, last green animation per user) and `HEAD` (1f94c81c) shows:
-- **Animation components themselves: 0 changes.** No diff in `RegionMorphLoader/`, `AutomotiveMorphLoader/`, `YachtMorphLoader/` between those commits
-- `UnifiedLayout.css` +452 lines (Sprint 2 #4 styles for `.ud-todays-brief__*`, `.ud-sales-velocity__*`). CSS scan for `^svg|^path|^polygon|^circle|svg \{|path \{|polygon \{|circle \{|fill|stroke|\* {` returned only one match: `.ud-overflow-item--export > *` — animation-irrelevant
-- `UnifiedLayout.jsx` +136 lines: i18n `moreActions` strings, Sprint 2 #4.2 `isSwitching` state, topbar overflow menu (mobile UX). Animation render block (`isRealEstate` / `isAutomotive` / `isYacht` ternary, lines 743-784 of HEAD) is **byte-identical** to 30909c11 version
-
-**Two open hypotheses:**
-- **H1:** Animation was always black-polygon-ed and reseed loop's continuous re-trigger somehow masked the bug visually. Rejected by user's clear memory.
-- **H2:** Something subtle in build pipeline / CSS Module hash / bundle ordering broke animation between deploys. Not yet investigated. Best next step: hard-refresh + private window + DOM inspect on a black polygon → check computed `fill` CSS in DevTools → trace which rule is winning.
-
-**Action for next session:** Treat user's recall as authoritative. Re-investigate without dismissing.
-
-If H2 is real, possible culprits to check:
-- Vite manual chunk reordering with new dependencies (DOMPurify added to bundle)
-- CSS Module class hash collision between new `.ud-todays-brief__*` rules and animation's `.bpEl` / `.bpDetail` / `.bpLabel` (unlikely but checkable)
-- `frontend/src/components/RegionMorphLoader/RegionMorphLoader.jsx` line ~190 sets `el.setAttribute("class", styles.bpEl)` and `el.setAttribute("stroke", d.accent)` but never sets `fill`. CSS rule `.bpEl { fill: rgba(69, 123, 157, 0.15) }` is supposed to do it. If CSS Module is producing a different hashed class name in the new build than the JS reference, animation paths fall back to browser default `fill="black"`. **This is the strongest H2 candidate.** Check by: open DevTools → Elements → click a black polygon → see whether `class="_bpEl_xxxxx"` matches the CSS Module's compiled class
-
----
-
-## Branches and HEAD
-
-- `main` HEAD: `1f94c81c feat(layout): restore region+sector switch morph animations (#7)`
-- All `cursor/sprint-2-4-*` branches deleted from remote
-- Local working tree clean
-
-Recent commits:
-```
-1f94c81c feat(layout): restore region+sector switch morph animations (#7)
-1cb71a2f fix(tenant): stop server-side reseed on region switch (#6)
-4e61a702 feat(overview): velocity KPIs + AI daily brief (Sprint 2 #4) (#5)
-1500e55a chore(summary): update day/hour github activity log
-88f06171 docs(handoff): Sprint 2 #4 reset - Cursor sandbox lost, awaiting fresh execution
-```
-
----
-
-## Sprint 2 remaining (after #4)
-
-Order TBD with user, but the queue from CLAUDE.md §14:
-
-- **Sprint 2 #1** — 5-Minute Proof tutorial. Stack approved: G3+H1+I2+J2+K1+L2+M1+N2+P1. 5-step copy + visual concepts approved. Directive (`SPRINT2_1_FIVE_MINUTE_PROOF_DIRECTIVE.md`) not yet written
-- **Sprint 2 #2** — Sales Trigger panel
-- **Sprint 2 #3** — Buyer Sites sidebar
-- **Sprint 2 #4.3 (new)** — RegionMorphLoader animation visual fix (this session's regression)
-- **Sprint 2 #4.4 (new)** — `refreshDailyBriefAi` CORS fix
-- **Sprint 2 #5** — VIP Alert Summary
-- **Sprint 2 #6** — Outreach guardrail copy
-- **Sprint 2 #7** — Owner workload columns
-
-User has 8AM-ish meeting tomorrow (toplantı saati explicit söylenmedi but session ended at ~03:10 with user going to sleep, presumably for an early meeting). Demo strategy for tomorrow: lead with Today's Brief + Sales Velocity (Sprint 2 #4 main value), region switch via before/after data narrative (Canada Pipeline $0M → USA Pipeline $159.3M, persona Marc Patel → James Mitchell), skip the broken morph animation, frame as "Sprint 2 #5 polish in flight".
-
-If user wants the morph animation working before the meeting, Sprint 2 #4.3 must be the first thing next session, and the H2 CSS Module hash hypothesis above is where to start.
-
----
-
-## Tone for next session opener
-
-User went to sleep at 03:10 frustrated about the animation regression — reasonably so, the animation was supposed to be intact through this work. Open the next session by:
-1. Acknowledging the animation issue without re-litigating whether it worked yesterday (user's memory is the authority)
-2. Going straight to DevTools Inspect on a black polygon as the first diagnostic step
-3. Having the H2 CSS Module hash diagnostic ready to run
-4. Holding the rollback option in pocket: cherry-pick Today's Brief + Sales Velocity off the Sprint 2 #4 commits onto a new branch from `30909c11`, leaving animation code paths untouched. ~1hr work if needed.
-
-User does not need a postmortem, user needs the animation working. Lead with action.
