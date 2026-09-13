@@ -6,13 +6,13 @@ on:
     # Yaz saatinde efektif olarak 00:00 Toronto'ya kayar — kabul edilebilir.
     # Firestore region (northamerica-northeast1) + cleanupInactiveTenants
     # cron'u (03:00 Toronto) ile aynı timezone pattern'i.
-    - cron: "0 4 * * *"
+    - cron: "0 4 * * 1"
   workflow_dispatch:
     inputs:
       lookback_hours:
         description: "How many past hours to summarize"
         required: false
-        default: "24"
+        default: "168"
       timezone:
         description: "Timezone for day/hour grouping (IANA format)"
         required: false
@@ -38,7 +38,7 @@ jobs:
 
           LOOKBACK_HOURS="${{ github.event.inputs.lookback_hours }}"
           if [ -z "${LOOKBACK_HOURS}" ]; then
-            LOOKBACK_HOURS="24"
+            LOOKBACK_HOURS="168"
           fi
 
           TZ_NAME="${{ github.event.inputs.timezone }}"
