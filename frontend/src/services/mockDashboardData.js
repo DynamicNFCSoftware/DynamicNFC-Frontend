@@ -4,14 +4,14 @@
 // ═══════════════════════════════════════════════════════
 
 import { calculateDecayedScore, calculateVelocity, detectSalesTriggers } from "../config/sectorConfig";
-import { getPersonas } from "../config/regionConfig";
+import { getPersonas, DEFAULT_REGION } from "../config/regionConfig";
 
 const now = Date.now();
 const mins = (n) => new Date(now - n * 60000);
 const hrs = (n) => new Date(now - n * 3600000);
 const days = (n) => new Date(now - n * 86400000);
 
-function buildRawMockVips(regionId = "gulf") {
+function buildRawMockVips(regionId = DEFAULT_REGION) {
   const rePersonas = getPersonas("real_estate", regionId);
   const autoPersonas = getPersonas("automotive", regionId);
   const reName1 = rePersonas[0]?.name || "VIP 1";
@@ -136,12 +136,12 @@ export const MOCK_VIPS = {
 };
 
 // Region-aware getter (preferred)
-export function getMockVips(sectorId, regionId = "gulf") {
+export function getMockVips(sectorId, regionId = DEFAULT_REGION) {
   const raw = buildRawMockVips(regionId);
   return (raw[sectorId] || []).map((vip) => enrichVip(vip, sectorId));
 }
 
-export function getMockDeals(sectorId, regionId = "gulf") {
+export function getMockDeals(sectorId, regionId = DEFAULT_REGION) {
   const personas = getPersonas(sectorId, regionId);
   const n1 = personas[0]?.name || "VIP 1";
   const n2 = personas[1]?.name || "VIP 2";
@@ -167,7 +167,7 @@ export const MOCK_DEALS = {
   automotive: getMockDeals("automotive", "gulf"),
 };
 
-export function getMockEvents(sectorId, regionId = "gulf") {
+export function getMockEvents(sectorId, regionId = DEFAULT_REGION) {
   const vips = getMockVips(sectorId, regionId);
   const allEvents = [];
   vips.forEach((vip) => {
@@ -206,7 +206,7 @@ export function getMockAnalytics() {
   };
 }
 
-export function getMockCards(sectorId, regionId = "gulf") {
+export function getMockCards(sectorId, regionId = DEFAULT_REGION) {
   const personas = getPersonas(sectorId, regionId);
   const n1 = personas[0]?.name || "VIP 1";
   const n2 = personas[1]?.name || "VIP 2";

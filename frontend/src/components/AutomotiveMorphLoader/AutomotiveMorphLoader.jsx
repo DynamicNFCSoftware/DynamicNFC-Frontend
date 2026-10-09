@@ -227,6 +227,27 @@ const ASSETS = {
       { x: 280, y: 75, text: '⌂ PARROQUIA · 1880' },
     ],
   },
+  italy: {
+    backdrop: [
+      { type: 'path', d: 'M 40,225 L 80,160 L 140,190 L 200,120 L 280,170 L 360,130 L 440,175 L 520,140 L 570,180 L 570,225 Z', fill: true, opacity: 0.1 },
+      { type: 'path', d: 'M 40,225 L 80,160 L 140,190 L 200,120 L 280,170 L 360,130 L 440,175 L 520,140 L 570,180' },
+      { type: 'path', d: 'M 90,225 L 90,150 L 150,150 L 150,225' },
+      { type: 'path', d: 'M 90,150 L 120,120 L 150,150' },
+    ],
+    vehicle: [
+      { type: 'path', d: 'M 160,190 L 190,165 L 250,158 L 310,158 L 360,170 L 420,175 L 450,190 Z' },
+      { type: 'circle', cx: 220, cy: 192, r: 16 },
+      { type: 'circle', cx: 390, cy: 192, r: 16 },
+    ],
+    details: [
+      { type: 'line', x1: 250, y1: 158, x2: 250, y2: 175 },
+      { type: 'line', x1: 310, y1: 158, x2: 310, y2: 172 },
+    ],
+    labels: [
+      { x: 300, y: 130, text: 'PUROSANGUE · V12 · MILANO' },
+      { x: 120, y: 108, text: 'BRERA' },
+    ],
+  },
 };
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -676,6 +697,7 @@ function AutomotiveMorphLoader({ region = 'canada', statusText = 'Showroom data 
             <path className={`auto-mmCountry ${d.miniMap.countryId === 'mm-canada' ? 'auto-mmActive' : ''}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
             <path className={`auto-mmCountry ${d.miniMap.countryId === 'mm-usa' ? 'auto-mmActive' : ''}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
             <path className={`auto-mmCountry ${d.miniMap.countryId === 'mm-mexico' ? 'auto-mmActive' : ''}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
+            <path className={`auto-mmCountry ${d.miniMap.countryId === 'mm-italy' ? 'auto-mmActive' : ''}`} d="M 108,34 L 114,32 L 113,46 L 118,52 L 122,54 L 121,64 L 112,63 L 109,52 L 103,56 L 100,48 L 106,44 Z" />
             <path className="auto-mmCountry" d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
             <path className="auto-mmCountry" d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
             <path className="auto-mmCountry" d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />

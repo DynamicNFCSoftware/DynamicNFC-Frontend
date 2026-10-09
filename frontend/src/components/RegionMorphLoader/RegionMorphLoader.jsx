@@ -106,6 +106,26 @@ const BLUEPRINTS = {
       { x: 300, y: 266, text: "◯ PATIO" },
     ],
   },
+  italy: {
+    parts: [
+      { type: "rect", x: 70, y: 150, w: 160, h: 70, dash: 460 },
+      { type: "path", d: "M 70,150 L 110,110 L 190,110 L 230,150", dash: 280 },
+      { type: "path", d: "M 250,220 L 250,160 Q 300,120 350,160 L 350,220", dash: 240 },
+      { type: "rect", x: 400, y: 145, w: 130, h: 75, dash: 410 },
+      { type: "line", x1: 40, y1: 200, x2: 560, y2: 200, dash: 520 },
+    ],
+    details: [
+      { type: "rect", x: 100, y: 165, w: 18, h: 28 },
+      { type: "rect", x: 140, y: 165, w: 18, h: 28 },
+      { type: "rect", x: 430, y: 160, w: 18, h: 28 },
+      { type: "circle", cx: 300, cy: 190, r: 8 },
+    ],
+    labels: [
+      { x: 150, y: 100, text: "VILLA LARIO" },
+      { x: 300, y: 108, text: "LAGO" },
+      { x: 465, y: 132, text: "BRERA" },
+    ],
+  },
 };
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -284,6 +304,7 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
             <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-canada" ? "rml-mmActive" : ""}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
             <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-usa" ? "rml-mmActive" : ""}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
             <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-mexico" ? "rml-mmActive" : ""}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
+            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-italy" ? "rml-mmActive" : ""}`} d="M 108,34 L 114,32 L 113,46 L 118,52 L 122,54 L 121,64 L 112,63 L 109,52 L 103,56 L 100,48 L 106,44 Z" />
             <path className="rml-mmCountry" d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
             <path className="rml-mmCountry" d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
             <path className="rml-mmCountry" d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />

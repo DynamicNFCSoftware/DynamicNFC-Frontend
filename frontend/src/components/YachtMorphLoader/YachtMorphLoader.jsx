@@ -74,6 +74,24 @@ const REGION_DATA = {
     coords: { lat: '20.91° N', lng: '100.74° W', short: '20.9N / 100.7W' },
     miniMap: { x: 42, y: 72, countryId: 'mm-mexico' },
   },
+  italy: {
+    proj: 'Riviera Ligure Yachts',
+    model: 'AZIMUT · GRANDE 35M',
+    reg: 'Italy · Portofino',
+    city: 'Portofino',
+    code: 'ITA',
+    tagline: 'PORTOFINO · 44.30° N',
+    depthLabel: 'LIGURIAN SEA · 40FT DEPTH',
+    accent: '#007a3d',
+    gold: '#c5a467',
+    anchorColor: '#007a3d',
+    anchorColorName: 'LIGURIAN GREEN',
+    seaDepth: '#c5d5e0',
+    anchorStartX: 170,
+    anchorStartY: 220,
+    coords: { lat: '44.30° N', lng: '9.21° E', short: '44.3N / 9.2E' },
+    miniMap: { x: 108, y: 48, countryId: 'mm-italy' },
+  },
 };
 
 // SVG path data — DO NOT MODIFY anything in ASSETS
@@ -237,6 +255,26 @@ const ASSETS = {
       { type: 'path', d: 'M 300,105 L 310,108 L 300,111 Z' },
     ],
     labels: [{ x: 300, y: 98, text: 'COASTAL · 50FT · CATAMARAN' }],
+  },
+  italy: {
+    far: {
+      fill: [{ d: 'M -100,210 L 40,190 L 160,200 L 280,175 L 400,195 L 520,170 L 700,200 L 700,250 L -100,250 Z', opacity: 0.16 }],
+      stroke: [{ d: 'M -100,210 L 40,190 L 160,200 L 280,175 L 400,195 L 520,170 L 700,200', opacity: 0.5 }],
+    },
+    mid: {
+      fill: [{ d: 'M -100,230 L 80,222 L 220,228 L 360,220 L 520,228 L 700,222 L 700,250 L -100,250 Z', opacity: 0.18 }],
+      stroke: [{ d: 'M -100,230 L 80,222 L 220,228 L 360,220 L 520,228 L 700,222', opacity: 0.4 }],
+    },
+    near: { stroke: [{ d: 'M -100,318 Q 80,314 220,318 Q 360,322 520,318 Q 620,314 700,318', opacity: 0.3 }] },
+    yacht: [
+      { type: 'path', d: 'M 150,230 L 175,214 L 250,208 L 400,208 L 455,218 L 470,230 Z' },
+      { type: 'path', d: 'M 210,208 L 230,188 L 380,188 L 400,208' },
+    ],
+    details: [
+      { type: 'line', x1: 250, y1: 208, x2: 250, y2: 188 },
+      { type: 'circle', cx: 300, cy: 198, r: 3 },
+    ],
+    labels: [{ x: 310, y: 168, text: 'PORTOFINO · 35M · AZIMUT' }],
   },
 };
 
@@ -679,6 +717,7 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
             <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-canada' ? 'yc-mmActive' : ''}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
             <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-usa' ? 'yc-mmActive' : ''}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
             <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-mexico' ? 'yc-mmActive' : ''}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
+            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-italy' ? 'yc-mmActive' : ''}`} d="M 108,34 L 114,32 L 113,46 L 118,52 L 122,54 L 121,64 L 112,63 L 109,52 L 103,56 L 100,48 L 106,44 Z" />
             <path className="yc-mmCountry" d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
             <path className="yc-mmCountry" d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
             <path className="yc-mmCountry" d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />

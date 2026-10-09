@@ -13,14 +13,15 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { DEFAULT_REGION } from "../config/regionConfig";
 import { normalizeSectorId, toPublicSectorId } from "../utils/sectorId";
 import { buildRealEstateSeed } from "./seeds/realEstateSeed";
 import { buildAutomotiveSeed } from "./seeds/automotiveSeed";
 import { buildYachtSeed } from "./seeds/yachtSeed";
 
-export const SEED_VERSION = "2.2-all-regions";
+export const SEED_VERSION = "2.3-italy";
 const SCHEMA_VERSION = 1;
-const REGIONS = ["gulf", "usa", "canada", "mexico"];
+const REGIONS = ["canada", "italy", "usa", "mexico", "gulf"];
 const LAST_ACTIVITY_THROTTLE_MS = 60 * 60 * 1000;
 const lastActivityWriteByUid = new Map();
 
@@ -33,7 +34,7 @@ const slugify = (value) =>
 const sanitizeFirestoreRow = (row) =>
   Object.fromEntries(Object.entries(row || {}).filter(([, value]) => value !== undefined));
 
-export async function checkTenantExists(uid, regionId = "gulf") {
+export async function checkTenantExists(uid, regionId = DEFAULT_REGION) {
   const tenantSnap = await getDoc(doc(db, "tenants", uid));
   if (!tenantSnap.exists()) {
     console.log("[TENANT CHECK] Checking tenant for uid:", uid, "exists:", false, "seedComplete:", false);
@@ -94,7 +95,7 @@ async function seedSector(uid, payload) {
   await batch.commit();
 }
 
-export async function seedTenantData(uid, userInfo = {}, regionId = "gulf") {
+export async function seedTenantData(uid, userInfo = {}, regionId = DEFAULT_REGION) {
   console.log("[TENANT SEED] Starting seed for uid:", uid, "region:", regionId);
   try {
     const tenantRef = doc(db, "tenants", uid);
@@ -127,7 +128,7 @@ export async function seedTenantData(uid, userInfo = {}, regionId = "gulf") {
     );
 
     const baseTimeMs = Date.now();
-    // Seed all 4 regions × 3 sectors so region switch finds data everywhere.
+    // Seed all 5 regions × 3 sectors so region switch finds data everywhere.
     // IDs are region-prefixed (handled inside each builder), so writes don't collide.
     for (const r of REGIONS) {
       await seedSector(uid, buildRealEstateSeed(baseTimeMs, r));
@@ -179,7 +180,7 @@ export async function updateLastActivity(uid, options = {}) {
   return { skipped: false };
 }
 
-export async function resetToDemo(uid, userInfo = {}, regionId = "gulf") {
+export async function resetToDemo(uid, userInfo = {}, regionId = DEFAULT_REGION) {
   await setDoc(doc(db, "tenants", uid), { seedComplete: false }, { merge: true });
   return seedTenantData(uid, userInfo, regionId);
 }
@@ -228,7 +229,7 @@ export async function createTenantDeal(uid, payload) {
   // Every tenant doc must carry sector + region (CLAUDE.md §7) — otherwise
   // filterBySectorAndRegion drops it and the deal is invisible in the dashboard.
   const sector = toPublicSectorId(normalizeSectorId(payload?.sector || localStorage.getItem("ud-sector")));
-  const region = String(payload?.region || localStorage.getItem("ud-region") || "gulf").toLowerCase().trim();
+  const region = String(payload?.region || localStorage.getItem("ud-region") || DEFAULT_REGION).toLowerCase().trim();
 
   const title = unitName ? `${unitName} - ${leadName}` : leadName;
   const docRef = await addDoc(collection(db, "tenants", uid, "deals"), {

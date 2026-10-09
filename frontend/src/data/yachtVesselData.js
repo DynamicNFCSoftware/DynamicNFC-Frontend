@@ -1,4 +1,4 @@
-// Sprint D — region-keyed yacht fleet (4 regions × 8 vessels)
+// Sprint D — region-keyed yacht fleet (5 regions × 8 vessels)
 // Source of truth: yachtSeed.js (IDs, names, types, marinas, prices, charterWeekly 1:1).
 // Localized desc/features/specFeature from SPRINT_D_YACHT_DATA.md companion bundle.
 // Image assets: pages/YachtDemo/assets (1600px, JPG q80). Missing key → null →
@@ -70,6 +70,14 @@ const IMG = {
   "YA-CAN-006": princessY80,
   "YA-CAN-007": gradyWhite376,
   "YA-CAN-008": burger140,
+  "YA-ITA-001": azimutGrande35,
+  "YA-ITA-002": ferretti1000,
+  "YA-ITA-003": sanlorenzoSl90a,
+  "YA-ITA-004": benettiOasis40m,
+  "YA-ITA-005": azimutS7,
+  "YA-ITA-006": ferrettiCl130,
+  "YA-ITA-007": azimutMagellano66,
+  "YA-ITA-008": benettiOasis34m,
 };
 
 // y(id, name, type, marina, price, charterWeekly, guests, cabins, desc, features, specFeature)
@@ -360,7 +368,45 @@ const CANADA = [
     { en: "North American flagship", ar: "السفينة الرائدة في أمريكا الشمالية", es: "Buque insignia norteamericano", fr: "Navire amiral nord-américain" }),
 ];
 
-export const YACHTS = { gulf: GULF, usa: USA, mexico: MEXICO, canada: CANADA };
+const bi = (en, it) => ({ en, it });
+const feat = (en, it) => [{ en, it }];
+
+const ITALY = [
+  y("YA-ITA-001", "Azimut Grande 35 Metri", "motor", "Portofino", 28000000, 180000, 12, 6,
+    bi("A 35-metre Azimut berthed at Portofino, built for twelve guests between the Ligurian coast and a week in Sardinia.", "Un Azimut da 35 metri a Portofino, per dodici ospiti tra la costa ligure e una settimana in Sardegna."),
+    feat("Owner suite and sea terrace", "Suite armatore e terrazza a mare"),
+    bi("24 knots", "24 nodi")),
+  y("YA-ITA-002", "Ferretti 1000", "motor", "Porto Cervo", 18000000, 125000, 10, 5,
+    bi("A Ferretti 1000 on the Costa Smeralda, sized for a private week out of Porto Cervo.", "Un Ferretti 1000 in Costa Smeralda, per una settimana privata da Porto Cervo."),
+    feat("Five cabins, beach platform", "Cinque cabine, piattaforma di poppa"),
+    bi("26 knots", "26 nodi")),
+  y("YA-ITA-003", "Sanlorenzo SL90 Asymmetric", "motor", "Portofino", 8500000, 72000, 8, 4,
+    bi("The asymmetric SL90, a shorter weekender that still carries a full owner layout.", "L'SL90 asimmetrico, un weekender più corto che mantiene il layout armatore."),
+    feat("Asymmetric deck, four cabins", "Ponte asimmetrico, quattro cabine"),
+    bi("Award-winning", "Premiato")),
+  y("YA-ITA-004", "Benetti Oasis 40M", "motor", "Porto Cervo", 42000000, 280000, 12, 6,
+    bi("A 40-metre Benetti Oasis with the beach club open to the water at Porto Cervo.", "Un Benetti Oasis da 40 metri con beach club aperto sull'acqua a Porto Cervo."),
+    feat("Beach club, six cabins", "Beach club, sei cabine"),
+    bi("Beach club", "Beach club")),
+  y("YA-ITA-005", "Azimut S7", "sport", "Portofino", 3200000, 28000, 6, 3,
+    bi("A fast Azimut S7 for day runs out of Portofino.", "Un Azimut S7 veloce per le uscite di giornata da Portofino."),
+    feat("Three cabins, open cockpit", "Tre cabine, pozzetto aperto"),
+    bi("34 knots", "34 nodi")),
+  y("YA-ITA-006", "Ferretti Custom Line 130", "motor", "Porto Cervo", 22000000, 160000, 12, 6,
+    bi("A Custom Line 130 for longer Ligurian and Sardinian passages.", "Una Custom Line 130 per traversate più lunghe tra Liguria e Sardegna."),
+    feat("Six cabins, long-range tanks", "Sei cabine, serbatoi a lungo raggio"),
+    bi("22 knots", "22 nodi")),
+  y("YA-ITA-007", "Azimut Magellano 66", "motor", "Portofino", 4500000, 38000, 8, 4,
+    bi("A Magellano 66 for slower coastal weeks, berthed at Portofino.", "Un Magellano 66 per settimane costiere più lente, ormeggiato a Portofino."),
+    feat("Long-range hull, four cabins", "Scafo long-range, quattro cabine"),
+    bi("Long-range", "Lungo raggio")),
+  y("YA-ITA-008", "Benetti Oasis 34M", "motor", "Porto Cervo", 18000000, 140000, 10, 5,
+    bi("A 34-metre Oasis, the smaller sister of the 40, still with the beach club.", "Un Oasis da 34 metri, la sorella minore del 40, sempre con beach club."),
+    feat("Beach club, five cabins", "Beach club, cinque cabine"),
+    bi("Beach club", "Beach club")),
+];
+
+export const YACHTS = { gulf: GULF, usa: USA, mexico: MEXICO, canada: CANADA, italy: ITALY };
 
 // VIP curation — the 5 highest-priced vessels per region (flagship-heavy)
 export const VIP_IDS = {
@@ -368,6 +414,7 @@ export const VIP_IDS = {
   usa: ["YA-USA-008", "YA-USA-001", "YA-USA-003", "YA-USA-004", "YA-USA-006"],
   mexico: ["YA-MEX-001", "YA-MEX-008", "YA-MEX-004", "YA-MEX-003", "YA-MEX-002"],
   canada: ["YA-CAN-008", "YA-CAN-003", "YA-CAN-001", "YA-CAN-002", "YA-CAN-006"],
+  italy: ["YA-ITA-004", "YA-ITA-001", "YA-ITA-006", "YA-ITA-002", "YA-ITA-008"],
 };
 
 // Vessel-type labels for showroom filter chips (4-lang)

@@ -35,6 +35,15 @@ const BASE_MAP_REGION_DATA = {
     coords: { lat: "20.91° N", lng: "100.74° W", short: "20.9N / 100.7W" },
     miniMap: { x: 42, y: 72, countryId: "mm-mexico" },
   },
+  italy: {
+    reg: "Italy · Milan",
+    city: "Milan",
+    code: "ITA",
+    accent: "#007a3d",
+    gold: "#c5a467",
+    coords: { lat: "45.46° N", lng: "9.19° E", short: "45.5N / 9.2E" },
+    miniMap: { x: 52, y: 48, countryId: "mm-italy" },
+  },
 };
 
 const REAL_ESTATE_PROJECTS = {
@@ -42,6 +51,7 @@ const REAL_ESTATE_PROJECTS = {
   gulf: "Al Noor Residences",
   usa: "Skyline Towers",
   mexico: "Residencias del Sol",
+  italy: "Residenze del Lario",
 };
 
 const AUTOMOTIVE_REGION_META = {
@@ -49,6 +59,7 @@ const AUTOMOTIVE_REGION_META = {
   gulf: { proj: "Al Noor Prestige", model: "ROLLS-ROYCE · PHANTOM VIII" },
   usa: { proj: "Liberty British Motors", model: "ASTON MARTIN · DB12" },
   mexico: { proj: "Motores Colonial", model: "JAGUAR · E-TYPE SERIES 1 · 1968" },
+  italy: { proj: "Autosalone Brera Milano", model: "FERRARI · PUROSANGUE" },
 };
 
 function mergeWithBase(overridesByRegion) {

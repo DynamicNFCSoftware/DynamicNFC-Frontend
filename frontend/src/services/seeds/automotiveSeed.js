@@ -1,4 +1,4 @@
-import { getPersonas } from "../../config/regionConfig";
+import { getPersonas, DEFAULT_REGION } from "../../config/regionConfig";
 
 const SECTOR = "automotive";
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -76,6 +76,24 @@ const REGION_DATA = {
       ["AU-CAN-006", "Audi RS 6 Avant", "Audi Sport", "wagon", 158000, "available", 68, 14, 1, 11, 1, "4,7,9,12,10,14,18", "591HP · Performance Wagon · Quattro", 1, "Lease CA$2,340/mo · 48mo"],
       ["AU-CAN-007", "Porsche Macan GTS", "Porsche Performance", "suv", 102000, "available", 52, 10, 0, 8, 0, "3,5,7,9,7,11,14", "434HP · PDK 7-speed · Sport Chrono", 1, "Lease CA$1,520/mo · 48mo"],
       ["AU-CAN-008", "Audi e-tron Sportback", "Audi e-tron", "suv", 125000, "available", 16, 2, 0, 4, 0, "1,2,1,3,1,2,6", "402HP · 218mi Range · Quattro", 0, "Lease CA$1,850/mo · 48mo"],
+    ],
+  },
+  italy: {
+    client: "Autosalone Brera Milano",
+    location: "Milano",
+    reps: [
+      { id: "rep_ita_auto_01", name: "Paolo Greco" },
+      { id: "rep_ita_auto_02", name: "Laura Fontana" },
+    ],
+    cards: [
+      ["AU-ITA-001", "Ferrari Purosangue", "Ferrari", "suv", 430000, "reserved", 142, 36, 4, 26, 3, "9,13,17,22,20,28,35", "725HP · V12 · 4 seats", 0, "Leasing €6.800/mo · 48 mesi"],
+      ["AU-ITA-002", "Lamborghini Revuelto", "Lamborghini", "coupe", 580000, "available", 168, 42, 4, 30, 4, "11,15,20,26,24,32,40", "1,015HP · V12 hybrid", 0, "Leasing €9.200/mo · 36 mesi"],
+      ["AU-ITA-003", "Maserati MC20", "Maserati", "coupe", 260000, "available", 112, 28, 3, 21, 3, "7,11,15,18,16,22,28", "630HP · Nettuno V6", 1, "Leasing €4.100/mo · 48 mesi"],
+      ["AU-ITA-004", "Ferrari Roma", "Ferrari", "coupe", 240000, "available", 88, 20, 2, 16, 2, "5,8,12,15,13,18,22", "620HP · V8 biturbo", 0, "Leasing €3.800/mo · 48 mesi"],
+      ["AU-ITA-005", "Lamborghini Urus", "Lamborghini", "suv", 280000, "available", 72, 15, 1, 12, 1, "4,7,10,13,11,15,19", "650HP · V8 biturbo", 1, "Leasing €4.400/mo · 48 mesi"],
+      ["AU-ITA-006", "Ferrari 296 GTB", "Ferrari", "coupe", 320000, "available", 62, 12, 1, 10, 1, "3,6,8,11,9,13,17", "830HP · V6 hybrid", 0, "Leasing €5.100/mo · 36 mesi"],
+      ["AU-ITA-007", "Lamborghini Huracán Tecnica", "Lamborghini", "coupe", 270000, "available", 48, 9, 0, 7, 0, "2,4,6,8,6,10,14", "640HP · V10", 1, "Leasing €4.300/mo · 36 mesi"],
+      ["AU-ITA-008", "Maserati GranTurismo", "Maserati", "coupe", 210000, "available", 12, 1, 0, 3, 0, "1,0,2,3,1,2,3", "550HP · Nettuno V6", 0, "Leasing €3.300/mo · 48 mesi"],
     ],
   },
 };
@@ -259,8 +277,8 @@ function buildEvents(baseTimeMs, regionId, cards, personas) {
   return events;
 }
 
-export function buildAutomotiveSeed(baseTimeMs = Date.now(), regionId = "gulf") {
-  const config = REGION_DATA[regionId] || REGION_DATA.gulf;
+export function buildAutomotiveSeed(baseTimeMs = Date.now(), regionId = DEFAULT_REGION) {
+  const config = REGION_DATA[regionId] || REGION_DATA[DEFAULT_REGION];
   const personas = getPersonas("automotive", regionId);
   const cards = buildCards(baseTimeMs, regionId, config);
   const leads = buildLeads(baseTimeMs, regionId, config, personas);

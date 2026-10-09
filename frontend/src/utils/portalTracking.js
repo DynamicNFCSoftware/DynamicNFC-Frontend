@@ -23,7 +23,7 @@ export function toStoredSector(internalSector) {
 
 export function inferRegionFromVipId(vipId) {
   if (!vipId) return null;
-  const match = String(vipId).match(/^(gulf|usa|mexico|canada)-/i);
+  const match = String(vipId).match(/^(gulf|usa|mexico|canada|italy)-/i);
   return match ? match[1].toLowerCase() : null;
 }
 

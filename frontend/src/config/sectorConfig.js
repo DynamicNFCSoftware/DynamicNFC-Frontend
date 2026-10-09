@@ -69,6 +69,7 @@ const REAL_ESTATE = {
     usa: [{ id: "rep1", name: "Jessica Park" }, { id: "rep2", name: "David Kim" }],
     mexico: [{ id: "rep1", name: "Ana Torres" }, { id: "rep2", name: "Luis Mendez" }],
     canada: [{ id: "rep1", name: "Sophie Martin" }, { id: "rep2", name: "Ryan Cooper" }],
+    italy: [{ id: "rep1", name: "Elena Russo" }, { id: "rep2", name: "Davide Moretti" }],
   },
 
   // --- Tracking Events ---
@@ -280,6 +281,7 @@ const AUTOMOTIVE = {
     usa: [{ id: "rep1", name: "Brian Clark" }, { id: "rep2", name: "Megan Torres" }],
     mexico: [{ id: "rep1", name: "Roberto Sanchez" }, { id: "rep2", name: "Carmen Diaz" }],
     canada: [{ id: "rep1", name: "Marc Tremblay" }, { id: "rep2", name: "Karen Lee" }],
+    italy: [{ id: "rep1", name: "Paolo Greco" }, { id: "rep2", name: "Laura Fontana" }],
   },
 
   // --- Tracking Events ---

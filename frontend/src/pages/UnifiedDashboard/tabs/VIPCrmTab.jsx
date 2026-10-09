@@ -4,6 +4,7 @@ import { useLanguage, useTranslation } from "../../../i18n";
 import { getEventLabel } from "../../../i18n/eventDisplayMap";
 import { useSector } from "../../../hooks/useSector";
 import { useRegion } from "../../../hooks/useRegion";
+import { DEFAULT_REGION } from "../../../config/regionConfig";
 import { useDashboard } from "../useDashboard";
 import BehavioralTimeline from "../components/BehavioralTimeline";
 import CreateVipModal from "../components/CreateVipModal";
@@ -387,7 +388,7 @@ export default function VIPCrmTab() {
     const vipOnlyRows = effectiveVips.filter((row) => !row?.isFamily);
     const rowIndex = vipOnlyRows.findIndex((row) => row.id === vip?.id);
     const ordinal = rowIndex >= 0 ? rowIndex + 1 : 1;
-    return `${sectorPrefix}-${String(regionId || "gulf").toUpperCase()}-V${String(ordinal).padStart(3, "0")}`;
+    return `${sectorPrefix}-${String(regionId || DEFAULT_REGION).toUpperCase()}-V${String(ordinal).padStart(3, "0")}`;
   };
   const handleReissuePortalLink = async (vip) => {
     if (!vip) return;

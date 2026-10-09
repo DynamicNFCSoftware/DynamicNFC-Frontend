@@ -35,7 +35,7 @@ function nextLang(current, regionLanguages = ["en"]) {
 }
 
 // 2-letter region codes for the topbar chip (replaces emoji flags — no-emoji house rule + Windows render parity)
-const REGION_CODES = { gulf: "SA", usa: "US", mexico: "MX", canada: "CA" };
+const REGION_CODES = { gulf: "SA", usa: "US", mexico: "MX", canada: "CA", italy: "IT" };
 
 const LAYOUT_TEXT = {
   en: {

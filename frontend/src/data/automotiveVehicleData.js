@@ -1,4 +1,4 @@
-// Phase 2b.Auto — region-keyed vehicle inventory (4 regions × 9 vehicles)
+// Phase 2b.Auto — region-keyed vehicle inventory (5 regions × 9 vehicles)
 
 import collectionPerformanceImg from "../pages/AutomotiveDemo/assets/collection-amg.jpg";
 import collectionSuvImg from "../pages/AutomotiveDemo/assets/collection-suv.jpg";
@@ -58,6 +58,15 @@ const IMG = {
   "bmw-i7-m70": bmwI7M70Img,
   "lucid-air-grand-touring": lucidAirGrandTouringImg,
   "genesis-g90": genesisG90Img,
+  "ferrari-purosangue": collectionSuvImg,
+  "lamborghini-revuelto": collectionPerformanceImg,
+  "maserati-mc20": collectionPerformanceImg,
+  "ferrari-roma": collectionSedanImg,
+  "lamborghini-urus": collectionSuvImg,
+  "ferrari-296-gtb": collectionPerformanceImg,
+  "lamborghini-huracan-tecnica": collectionPerformanceImg,
+  "maserati-granturismo": collectionSedanImg,
+  "ferrari-sf90": collectionPerformanceImg,
 };
 
 const COLORS_STD = [
@@ -197,13 +206,34 @@ const CANADA = [
     { hp: "409 HP", accel: "5.1s", topSpeed: "240 km/h", engine: { en: "3.5L V6 Twin Turbo", ar: "3.5 لتر V6 توين توربو", es: "3.5L V6 Twin Turbo", fr: "3.5L V6 Twin Turbo" }, torque: "405 lb-ft" }),
 ];
 
-export const VEHICLES = { gulf: GULF, usa: USA, mexico: MEXICO, canada: CANADA };
+const n = (en) => ({ en, it: en });
+const spec = (hp, accel, topSpeed, engine) => ({
+  hp, accel, topSpeed,
+  engine: { en: engine, it: engine },
+  torque: "—",
+});
+
+// ─── ITALY — EUR. Four models beyond the five named flagships are showroom fillers so the list stays 9, matching the other regions.
+const ITALY = [
+  v("ferrari-purosangue", n("Ferrari Purosangue"), "suv", 430000, "EUR", spec("725 HP", "3.3s", "310 km/h", "6.5L V12")),
+  v("lamborghini-revuelto", n("Lamborghini Revuelto"), "performance", 580000, "EUR", spec("1,015 HP", "2.5s", "350 km/h", "V12 hybrid")),
+  v("maserati-mc20", n("Maserati MC20"), "performance", 260000, "EUR", spec("630 HP", "2.9s", "325 km/h", "3.0L V6 Nettuno")),
+  v("ferrari-roma", n("Ferrari Roma"), "performance", 240000, "EUR", spec("620 HP", "3.4s", "320 km/h", "3.9L V8 biturbo")),
+  v("lamborghini-urus", n("Lamborghini Urus"), "suv", 280000, "EUR", spec("650 HP", "3.6s", "305 km/h", "4.0L V8 biturbo")),
+  v("ferrari-296-gtb", n("Ferrari 296 GTB"), "performance", 320000, "EUR", spec("830 HP", "2.9s", "330 km/h", "V6 hybrid")),
+  v("lamborghini-huracan-tecnica", n("Lamborghini Huracán Tecnica"), "performance", 270000, "EUR", spec("640 HP", "3.2s", "325 km/h", "5.2L V10")),
+  v("maserati-granturismo", n("Maserati GranTurismo"), "performance", 210000, "EUR", spec("550 HP", "3.5s", "320 km/h", "3.0L V6 Nettuno")),
+  v("ferrari-sf90", n("Ferrari SF90 Stradale"), "performance", 520000, "EUR", spec("986 HP", "2.5s", "340 km/h", "V8 hybrid")),
+];
+
+export const VEHICLES = { gulf: GULF, usa: USA, mexico: MEXICO, canada: CANADA, italy: ITALY };
 
 export const SULTAN_IDS = {
   gulf: ["g63", "gls600-maybach", "range-rover-autobiography", "maybach-s680", "s580"],
   usa: ["escalade-v", "range-rover-sv", "maybach-s680", "bmw-760i", "rolls-royce-ghost"],
   mexico: ["range-rover-autobiography", "g63", "bmw-x7-m60i", "maybach-s680", "gls600-maybach"],
   canada: ["range-rover-autobiography", "eqs580", "bmw-i7-m70", "porsche-cayenne-turbo-ehybrid", "genesis-g90"],
+  italy: ["ferrari-purosangue", "lamborghini-revuelto", "maserati-mc20", "ferrari-roma", "lamborghini-urus"],
 };
 
 export const COLLECTIONS = {

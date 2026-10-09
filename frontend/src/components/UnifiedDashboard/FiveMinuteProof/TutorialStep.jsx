@@ -24,6 +24,7 @@ const PROJECT_SHORT_LABEL = {
   gulf: "AL NOOR · 2026",
   usa: "SKYLINE · 2026",
   mexico: "DEL SOL · 2026",
+  italy: "DEL LARIO · 2026",
 };
 
 const COUNTRY_SHORT_LABEL = {
@@ -31,6 +32,7 @@ const COUNTRY_SHORT_LABEL = {
   gulf: "KSA",
   usa: "USA",
   mexico: "MEXICO",
+  italy: "ITALY",
 };
 
 function withTokens(template, values) {

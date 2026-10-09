@@ -1103,6 +1103,8 @@ export default function useDashboardData() {
                { id: "rep2", name: sectorId === "automotive" ? "Carmen Diaz" : "Luis Mendez" }],
       canada: [{ id: "rep1", name: sectorId === "automotive" ? "Marc Tremblay" : "Sophie Martin" },
                { id: "rep2", name: sectorId === "automotive" ? "Karen Lee" : "Ryan Cooper" }],
+      italy:  [{ id: "rep1", name: sectorId === "automotive" ? "Paolo Greco" : sectorId === "yacht" ? "Giorgio Bruno" : "Elena Russo" },
+               { id: "rep2", name: sectorId === "automotive" ? "Laura Fontana" : sectorId === "yacht" ? "Silvia Gallo" : "Davide Moretti" }],
     };
     const reps = regionReps || FALLBACK[regionId] || FALLBACK.gulf;
     return reps.map((rep) => {

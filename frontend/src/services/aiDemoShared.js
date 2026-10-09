@@ -9,6 +9,7 @@ export const CITY = {
   usa: "New York",
   mexico: "Mexico City",
   canada: "Vancouver",
+  italy: "Milan",
 };
 
 /** Clock abbreviations matching region.timeZone. */
@@ -17,6 +18,7 @@ export const TIME_ABBR = {
   usa: "ET",
   mexico: "CST",
   canada: "PT",
+  italy: "CET",
 };
 
 /** Marina clock abbreviations (yacht demo — marina anchors differ from CITY map:
@@ -26,6 +28,7 @@ export const MARINA_TIME_ABBR = {
   usa: "PT",
   mexico: "MT",
   canada: "PT",
+  italy: "CET",
 };
 
 /** Region-aware terminal Locale line (Canva step). */
@@ -34,6 +37,7 @@ export const LOCALE_LINE = {
   usa: "Locale: English (US)",
   mexico: "Locale: Bilingual ES/EN",
   canada: "Locale: Bilingual EN/FR",
+  italy: "Locale: Bilingual IT/EN",
 };
 
 export function nameParts(fullName) {
