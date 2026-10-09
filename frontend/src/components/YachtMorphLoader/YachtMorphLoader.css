@@ -37,7 +37,7 @@
 }
 
 .yc-miniMap {
-  width: 200px;
+  width: clamp(260px, 26vw, 320px);
   background: #ffffff;
   border: 0.5px solid rgba(26, 26, 31, 0.12);
   border-radius: 8px;
@@ -61,32 +61,9 @@
   transition: color 0.6s;
 }
 
-.yc-miniMapSvg {
-  width: 100%;
-  height: 100px;
-  display: block;
-}
 
-.yc-mmCountry {
-  fill: rgba(69, 123, 157, 0.15);
-  stroke: rgba(69, 123, 157, 0.35);
-  stroke-width: 0.4;
-  transition: fill 0.7s ease, stroke 0.7s ease;
-}
 
-.yc-mmActive {
-  fill: rgba(184, 134, 11, 0.55);
-  stroke: #b8860b;
-  stroke-width: 0.7;
-}
 
-.yc-mmPinAnim {
-  transition:
-    cx 0.9s cubic-bezier(0.65, 0, 0.35, 1),
-    cy 0.9s cubic-bezier(0.65, 0, 0.35, 1),
-    fill 0.6s,
-    stroke 0.6s;
-}
 
 .yc-miniMapInfo {
   display: flex;
@@ -308,8 +285,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .yc-yachtBob { animation: none; }
-  .yc-mmPinAnim,
-  .yc-mmCountry,
   .yc-miniMapCoords,
   .yc-miniCity,
   .yc-miniCode,

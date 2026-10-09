@@ -6,7 +6,7 @@ const BASE_MAP_REGION_DATA = {
     accent: "#457b9d",
     gold: "#b8860b",
     coords: { lat: "49.28° N", lng: "123.12° W", short: "49.3N / 123.1W" },
-    miniMap: { x: 38, y: 30, countryId: "mm-canada" },
+    miniMap: { lat: 49.28, lng: -123.12 },
   },
   gulf: {
     reg: "Gulf · Riyadh",
@@ -15,7 +15,7 @@ const BASE_MAP_REGION_DATA = {
     accent: "#b8860b",
     gold: "#b8860b",
     coords: { lat: "24.71° N", lng: "46.67° E", short: "24.7N / 46.7E" },
-    miniMap: { x: 130, y: 54, countryId: "mm-gulf" },
+    miniMap: { lat: 24.71, lng: 46.67 },
   },
   usa: {
     reg: "USA · Miami Beach",
@@ -24,7 +24,7 @@ const BASE_MAP_REGION_DATA = {
     accent: "#1e3a8a",
     gold: "#c7302f",
     coords: { lat: "25.79° N", lng: "80.13° W", short: "25.8N / 80.1W" },
-    miniMap: { x: 53, y: 56, countryId: "mm-usa" },
+    miniMap: { lat: 25.79, lng: -80.13 },
   },
   mexico: {
     reg: "Mexico · San Miguel",
@@ -33,7 +33,7 @@ const BASE_MAP_REGION_DATA = {
     accent: "#006341",
     gold: "#c7302f",
     coords: { lat: "20.91° N", lng: "100.74° W", short: "20.9N / 100.7W" },
-    miniMap: { x: 42, y: 72, countryId: "mm-mexico" },
+    miniMap: { lat: 20.91, lng: -100.74 },
   },
   italy: {
     reg: "Italy · Milan",
@@ -42,7 +42,7 @@ const BASE_MAP_REGION_DATA = {
     accent: "#007a3d",
     gold: "#c5a467",
     coords: { lat: "45.46° N", lng: "9.19° E", short: "45.5N / 9.2E" },
-    miniMap: { x: 110, y: 38, countryId: "mm-italy" },
+    miniMap: { lat: 45.46, lng: 9.19 },
   },
 };
 
