@@ -1,14 +1,14 @@
 /** One relative-time map for the unified dashboard.
- *  en/fr/es/ar follow the form shared by CardsTab and InventoryTab.
+ *  en/fr/es/ar follow the form shared by CardsTab and InventoryTab; English keeps "ago", under a minute reads "just now".
  *  Italian uses the product forms: ora, "5 min fa", "3 h fa", "2 g fa".
  */
 
 const FORMS = {
   en: {
-    now: (n) => `${n}m`,
-    m: (n) => `${n}m`,
-    h: (n) => `${n}h`,
-    d: (n) => `${n}d`,
+    now: () => "just now",
+    m: (n) => `${n}m ago`,
+    h: (n) => `${n}h ago`,
+    d: (n) => `${n}d ago`,
     idle: "d idle",
   },
   it: {
@@ -19,21 +19,21 @@ const FORMS = {
     idle: "g inattivo",
   },
   fr: {
-    now: (n) => `il y a ${n}m`,
+    now: () => "à l'instant",
     m: (n) => `il y a ${n}m`,
     h: (n) => `il y a ${n}h`,
     d: (n) => `il y a ${n}j`,
     idle: "j inactif",
   },
   es: {
-    now: (n) => `hace ${n}m`,
+    now: () => "ahora",
     m: (n) => `hace ${n}m`,
     h: (n) => `hace ${n}h`,
     d: (n) => `hace ${n}d`,
     idle: "d inactivo",
   },
   ar: {
-    now: (n) => `منذ ${n} د`,
+    now: () => "الآن",
     m: (n) => `منذ ${n} د`,
     h: (n) => `منذ ${n} س`,
     d: (n) => `منذ ${n} ي`,
@@ -60,7 +60,7 @@ export function timeAgo(ts, lang = "en") {
   if (ms == null) return "";
   const form = FORMS[lang] || FORMS.en;
   const mins = Math.floor((Date.now() - ms) / 60000);
-  if (mins < 1) return form.now(0);
+  if (mins < 1) return form.now();
   if (mins < 60) return form.m(mins);
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return form.h(hrs);

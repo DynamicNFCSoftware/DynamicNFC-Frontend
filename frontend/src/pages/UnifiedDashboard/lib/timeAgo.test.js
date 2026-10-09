@@ -9,10 +9,10 @@ describe("timeAgo", () => {
   it("reproduces the shared en/fr/es/ar form and the Italian forms", () => {
     const now = Date.now();
     const cases = [
-      [now - 10 * 1000, { en: "0m", it: "ora", fr: "il y a 0m", es: "hace 0m", ar: "منذ 0 د" }],
-      [now - 5 * MIN, { en: "5m", it: "5 min fa", fr: "il y a 5m", es: "hace 5m", ar: "منذ 5 د" }],
-      [now - 3 * HOUR, { en: "3h", it: "3 h fa", fr: "il y a 3h", es: "hace 3h", ar: "منذ 3 س" }],
-      [now - 2 * DAY, { en: "2d", it: "2 g fa", fr: "il y a 2j", es: "hace 2d", ar: "منذ 2 ي" }],
+      [now - 10 * 1000, { en: "just now", it: "ora", fr: "à l'instant", es: "ahora", ar: "الآن" }],
+      [now - 5 * MIN, { en: "5m ago", it: "5 min fa", fr: "il y a 5m", es: "hace 5m", ar: "منذ 5 د" }],
+      [now - 3 * HOUR, { en: "3h ago", it: "3 h fa", fr: "il y a 3h", es: "hace 3h", ar: "منذ 3 س" }],
+      [now - 2 * DAY, { en: "2d ago", it: "2 g fa", fr: "il y a 2j", es: "hace 2d", ar: "منذ 2 ي" }],
     ];
     for (const [ts, expected] of cases) {
       for (const lang of Object.keys(expected)) {
