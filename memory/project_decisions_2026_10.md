@@ -10,6 +10,10 @@
 - Gulf, USA, Mexico and Italy are **expansion markets**, always described as expansion from Canada.
 - Code parity across regions is unchanged: every region × sector combination must work the same.
 
+## Regions (2026-10-08)
+- **Default region is Canada.** Region order everywhere: Canada, Italy, USA, Mexico, Gulf.
+- Italy demo setting: real estate Lake Como + Milan ("Residenze del Lario"), automotive supercar showroom in Milan ("Autosalone Brera Milano"), yacht Portofino + Porto Cervo ("Riviera Ligure Yachts"). EUR, `it-IT`, Europe/Rome.
+
 ## Languages
 - Public site: English, Italian, French, Spanish, Arabic (order in the selector: EN, IT, FR, ES, AR). Dropdown selector, not a cycle button.
 - Demo portals and Unified Dashboard: Italian arrives with the Italy region (Step B).
@@ -26,6 +30,7 @@
 - Privacy policy sections 8–14 (GDPR) and the cookie banner wording are a **draft for the lawyer**, written 2026-10-06. IT/FR/ES legal text is machine-translated.
 
 ## Open questions
+- **Home page voices (to review page by page later, not now):** the public pages lean on Gulf/Arabic personas and their experiences. Oguzhan wants people who fit both Canada and Italy, with their own experience stories. Do this as a page-by-page review with him; no invented testimonials or quotes presented as real.
 - Does the dealer dashboard really have "A/B testing"? The Automotive and Enterprise pages say so. To discuss.
 - EU representative (GDPR Art. 27), postal address in the Privacy policy, a data processing agreement template, governing-law clause in the Terms — ask the lawyer.
 - Enterprise → Yacht tab shows raw keys `prob2Desc_yacht` / `prob3Desc_yacht`: copy was never written.
