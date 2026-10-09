@@ -135,11 +135,11 @@ function SectionHeader({ title }) {
   );
 }
 
-function LegendRow() {
+function LegendRow({ t }) {
   return (
     <div className="ud-sales-velocity__legend">
       {THRESHOLD_LEGEND.map((legend) => (
-        <LegendPill key={legend.key} className={legend.className} text={legend.key} />
+        <LegendPill key={legend.key} className={legend.className} text={t(`legend.${legend.key}`)} />
       ))}
     </div>
   );
@@ -169,7 +169,7 @@ export default function SalesVelocity({ metrics, lang, sector, region }) {
       aria-live="polite"
     >
       <SectionHeader title={t("sectionTitle")} />
-      <LegendRow />
+      <LegendRow t={t} />
       <SectionShell title={buyerTitle}>
         <MetricGrid items={rows.buyer} theme={GROUP_THEME.buyer} />
       </SectionShell>

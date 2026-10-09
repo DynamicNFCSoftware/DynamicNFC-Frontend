@@ -465,7 +465,7 @@ export default function OverviewTab() {
   const conversionBars = useMemo(() => {
     const conv = analytics?.conv || {};
     const rows = [
-      { id: "view_unit", label: { en: "Unit viewed", it: "Unità vista", ar: "عرض الوحدة", es: "Unidad vista", fr: "Unité consultée" }, keys: ["view_unit", "vehicle_view", "unit_detail_opened", "vehicle_detail_opened"] },
+      { id: "view_unit", label: { en: "Unit viewed", it: "Unità visualizzate", ar: "عرض الوحدة", es: "Unidad vista", fr: "Unité consultée" }, keys: ["view_unit", "vehicle_view", "unit_detail_opened", "vehicle_detail_opened"] },
       { id: "request_pricing", label: { en: "Pricing / quote", it: "Prezzo / preventivo", ar: "السعر / العرض", es: "Precio / cotizacion", fr: "Tarif / devis" }, keys: ["request_pricing", "request_quote", "pricing_request", "quote_request"] },
       { id: "download_brochure", label: { en: "Brochure", it: "Brochure", ar: "البروشور", es: "Folleto", fr: "Brochure" }, keys: ["download_brochure", "brochure_download"] },
       { id: "book_viewing", label: { en: "Booking", it: "Prenotazione", ar: "الحجز", es: "Reserva", fr: "Réservation" }, keys: ["book_viewing", "test_drive_request"] },

@@ -553,7 +553,7 @@ function UnifiedLayoutInner() {
   const getTabLabel = (tab) => {
     if (tab.dynamicLabel && tab.path === "inventory") {
       return `${st(config.inventory.itemLabelPlural)} & ${
-        { en: "Plans", ar: "الخطط", es: "Planos", fr: "Plans" }[lang] || "Plans"
+        { en: "Plans", it: "piani", ar: "الخطط", es: "Planos", fr: "Plans" }[lang] || "Plans"
       }`;
     }
     return tab.label?.[lang] || tab.label?.en || "";
