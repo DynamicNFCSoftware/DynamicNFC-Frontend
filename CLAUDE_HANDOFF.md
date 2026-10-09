@@ -1,11 +1,24 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-07-20 (EOD) — **GÜN KAPANIŞI: teknik kuyruk SIFIR.** Zincir: AI-2 merge+deploy uzaktan kanıtla doğrulandı → runtime QA 4/4 koşuldu (Auto Gulf+Canada, Yacht USA+Gulf, wa.me, banner'lar, Unified iki-sekme feed testi) → çıkan 3 bulgu aynı gün fix→audit→deploy→prod-doğrulama döngüsüyle kapandı: **B1** yacht marina TZ (`a10cc281`, `MARINA_TIME_ABBR`), **B2** çift model adı (`FLAGSHIP_CODE`), **B3** EN/AR locale hardcode (`LOCALE_LINE`) — B2+B3 tek commit `c383dfc8`. İkisi de deploy edildi ve `.web.app` bundle içeriğinden doğrulandı (Canada "Bilingual EN/FR" + "PLAID" canlıda, "Bilingual EN/AR design" bundle'dan silindi). 3 sektör × 4 region AIDemo hattı temiz. Günün detay kayıtları aşağıda.
-**Author of this update:** Claude (Cowork), 2026-07-20 EOD.
+**Last updated:** 2026-10-08 — **Step A is LIVE** (Canada anchor + 5 public languages) via PR #19 and the new CI deploy. `main` is protected. Next: Step B (Italy region). Previous header (2026-07-20) is kept in the history below.
+**Author of this update:** Claude (Cowork), 2026-10-08.
 
 ---
 
-## IN FLIGHT 2026-10-06 — Canada anchor + 5-language home (branch `feat/canada-anchor-5lang`, NOT committed, NOT deployed)
+## DONE 2026-10-08 — Step A live, CI deploy on, `main` protected
+
+- **Live:** PR #19 (`feat/canada-anchor-5lang`) merged → `deploy.yml` deployed hosting (run #1 green, commit `5529c49f`). Oguzhan confirmed dynamicnfc.ca shows the 5-language dropdown + Canada section after a hard refresh.
+- **CI deploy is ON:** repo variables `GCP_WORKLOAD_IDENTITY_PROVIDER` + `GCP_SERVICE_ACCOUNT` set (WIF, no JSON key). Every merge to `main` now runs lint + build + test + e2e + predeploy-check, deploys hosting, then checks the live page. Manual fallback stays `npm run deploy` from the repo root.
+- **Branch protection:** GitHub ruleset `protect-main` — changes reach `main` only through a PR with the `CI / build-and-test` check passing; no direct pushes, no bypass list.
+- **Merge method: "Create a merge commit" only.** A squash merge of PR #19 made local `main` diverge (fixed with `git reset --hard origin/main`; old local state kept in branch `backup-local-main`, can be deleted later). Squash/rebase should be switched off in repo settings.
+- **Activity summary workflow fixed (PR #20, merge `f6f3448f`):** it used to commit to `docs/github-summaries` and push to `main`, which `protect-main` now blocks. It now writes the weekly summary to the run's Summary page + a 90-day artifact, with read-only permissions. Old files in `docs/github-summaries/` stay as history.
+- **Cleanup done:** old service account `github-action-1063756147` is already disabled (its key cannot be used); `C:\Users\oguzh\firebase.json` + `.firebaserc` are renamed `*.DISABLED`; `debug/claude-dist-check.tgz` and stale git lock files deleted.
+- **Still open from Step A:** lawyer review (Privacy/Terms/cookie text, EU representative Art. 27, postal address, DPA template, governing law); native Italian review; decisions on A/B testing claim, Enterprise yacht copy, ROI calculator, DynamicMED Cursor rules; untracked leftovers (`Claude outputs/`, `frontend/directives/` → `docs/directives/`, `functions/package-lock.json`).
+- **Next: Step B — Italy as 5th region** (EUR, Italian personas + demo project, Italian in portals and Unified Dashboard, seed bump). Claude sends a plan first, then a Cursor directive.
+
+---
+
+## DONE (was IN FLIGHT) 2026-10-06 — Canada anchor + 5-language home (branch `feat/canada-anchor-5lang`, NOT committed, NOT deployed)
 
 - **Positioning rule changed (CLAUDE.md §3 + §12):** Canada = home base, "Made in Canada" dominant; Gulf / USA / Mexico / Italy = expansion markets. Code parity across regions unchanged.
 - **Deploy guard:** root `package.json` → `npm run deploy` (build + `firebase deploy --only hosting --project dynamicnfc-prod-68b4e`). Use this only. A stray `firebase.json` in `C:\Users\oguzh` overwrote the live site again on 2026-10-06 (1-file deploy); restored by `npm run deploy`.
