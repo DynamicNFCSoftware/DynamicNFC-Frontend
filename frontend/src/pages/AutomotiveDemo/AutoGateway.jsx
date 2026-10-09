@@ -6,7 +6,7 @@ import './AutoGateway.css';
 import SEO from '../../components/SEO/SEO';
 import { AUTOGATEWAY_TR_EXTRA, AUTOGATEWAY_REGION_LABEL } from './autoGatewayTranslations';
 
-const REGION_CODE = { gulf: "KSA", usa: "USA", mexico: "MEX", canada: "CAN" };
+const REGION_CODE = { gulf: "KSA", usa: "USA", mexico: "MEX", canada: "CAN", italy: "ITA" };
 const LANG_LABEL = { en: "English", it: "Italiano", fr: "Français", es: "Español", ar: "العربية" };
 
 const T = {

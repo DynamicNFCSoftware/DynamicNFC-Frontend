@@ -1,4 +1,4 @@
-// Phase 2b.Auto — region-keyed automotive demo personas (4 regions × 2 roles)
+// Phase 2b.Auto — region-keyed automotive demo personas (5 regions × 2 roles)
 
 export const AUTO_PERSONAS = {
   gulf: {
@@ -29,6 +29,16 @@ export const AUTO_PERSONAS = {
     secondary: {
       name: { en: "Diego Hernández", ar: "دييغو هيرنانديز", es: "Diego Hernández", fr: "Diego Hernández" },
       title: { en: "Monterrey Investments", ar: "استثمارات مونتيري", es: "Inversiones Monterrey", fr: "Investissements Monterrey" },
+    },
+  },
+  italy: {
+    vip: {
+      name: { en: "Matteo Ferraro", it: "Matteo Ferraro", ar: "Matteo Ferraro", es: "Matteo Ferraro", fr: "Matteo Ferraro" },
+      title: { en: "VIP Collector", it: "Collezionista VIP", ar: "VIP Collector", es: "VIP Collector", fr: "VIP Collector" },
+    },
+    secondary: {
+      name: { en: "Chiara Esposito", it: "Chiara Esposito", ar: "Chiara Esposito", es: "Chiara Esposito", fr: "Chiara Esposito" },
+      title: { en: "VIP Client", it: "Cliente VIP", ar: "VIP Client", es: "VIP Client", fr: "VIP Client" },
     },
   },
   canada: {

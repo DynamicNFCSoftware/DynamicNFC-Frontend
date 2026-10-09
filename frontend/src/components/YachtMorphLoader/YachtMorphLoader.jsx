@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import './YachtMorphLoader.css';
+import MiniWorldMap from '../MiniWorldMap/MiniWorldMap';
 
 const REGION_DATA = {
   canada: {
@@ -18,7 +19,7 @@ const REGION_DATA = {
     anchorStartX: 240,
     anchorStartY: 215,
     coords: { lat: '49.28° N', lng: '123.12° W', short: '49.3N / 123.1W' },
-    miniMap: { x: 38, y: 30, countryId: 'mm-canada' },
+    miniMap: { lat: 49.28, lng: -123.12 },
   },
   gulf: {
     proj: 'Al Noor Marina',
@@ -36,7 +37,7 @@ const REGION_DATA = {
     anchorStartX: 130,
     anchorStartY: 210,
     coords: { lat: '24.71° N', lng: '46.67° E', short: '24.7N / 46.7E' },
-    miniMap: { x: 130, y: 54, countryId: 'mm-gulf' },
+    miniMap: { lat: 24.71, lng: 46.67 },
   },
   usa: {
     proj: 'Liberty Yachts',
@@ -54,7 +55,7 @@ const REGION_DATA = {
     anchorStartX: 165,
     anchorStartY: 220,
     coords: { lat: '25.79° N', lng: '80.13° W', short: '25.8N / 80.1W' },
-    miniMap: { x: 53, y: 56, countryId: 'mm-usa' },
+    miniMap: { lat: 25.79, lng: -80.13 },
   },
   mexico: {
     proj: 'Cabo Luxury Marina',
@@ -72,7 +73,25 @@ const REGION_DATA = {
     anchorStartX: 175,
     anchorStartY: 220,
     coords: { lat: '20.91° N', lng: '100.74° W', short: '20.9N / 100.7W' },
-    miniMap: { x: 42, y: 72, countryId: 'mm-mexico' },
+    miniMap: { lat: 20.91, lng: -100.74 },
+  },
+  italy: {
+    proj: 'Riviera Ligure Yachts',
+    model: 'AZIMUT · GRANDE 35M',
+    reg: 'Italy · Portofino',
+    city: 'Portofino',
+    code: 'ITA',
+    tagline: 'PORTOFINO · 44.30° N',
+    depthLabel: 'LIGURIAN SEA · 40FT DEPTH',
+    accent: '#007a3d',
+    gold: '#c5a467',
+    anchorColor: '#007a3d',
+    anchorColorName: 'LIGURIAN GREEN',
+    seaDepth: '#c5d5e0',
+    anchorStartX: 170,
+    anchorStartY: 220,
+    coords: { lat: '44.30° N', lng: '9.21° E', short: '44.3N / 9.2E' },
+    miniMap: { lat: 44.3, lng: 9.21 },
   },
 };
 
@@ -237,6 +256,26 @@ const ASSETS = {
       { type: 'path', d: 'M 300,105 L 310,108 L 300,111 Z' },
     ],
     labels: [{ x: 300, y: 98, text: 'COASTAL · 50FT · CATAMARAN' }],
+  },
+  italy: {
+    far: {
+      fill: [{ d: 'M -100,210 L 40,190 L 160,200 L 280,175 L 400,195 L 520,170 L 700,200 L 700,250 L -100,250 Z', opacity: 0.16 }],
+      stroke: [{ d: 'M -100,210 L 40,190 L 160,200 L 280,175 L 400,195 L 520,170 L 700,200', opacity: 0.5 }],
+    },
+    mid: {
+      fill: [{ d: 'M -100,230 L 80,222 L 220,228 L 360,220 L 520,228 L 700,222 L 700,250 L -100,250 Z', opacity: 0.18 }],
+      stroke: [{ d: 'M -100,230 L 80,222 L 220,228 L 360,220 L 520,228 L 700,222', opacity: 0.4 }],
+    },
+    near: { stroke: [{ d: 'M -100,318 Q 80,314 220,318 Q 360,322 520,318 Q 620,314 700,318', opacity: 0.3 }] },
+    yacht: [
+      { type: 'path', d: 'M 150,230 L 175,214 L 250,208 L 400,208 L 455,218 L 470,230 Z' },
+      { type: 'path', d: 'M 210,208 L 230,188 L 380,188 L 400,208' },
+    ],
+    details: [
+      { type: 'line', x1: 250, y1: 208, x2: 250, y2: 188 },
+      { type: 'circle', cx: 300, cy: 198, r: 3 },
+    ],
+    labels: [{ x: 310, y: 168, text: 'PORTOFINO · 35M · AZIMUT' }],
   },
 };
 
@@ -666,32 +705,7 @@ export default function YachtMorphLoader({ region = 'canada', onAnimationEnd, st
             </span>
           </div>
 
-          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" className="yc-miniMapSvg">
-            <g stroke="rgba(0,0,0,0.04)" strokeWidth="0.3" fill="none">
-              <line x1="0" y1="25" x2="200" y2="25" />
-              <line x1="0" y1="50" x2="200" y2="50" />
-              <line x1="0" y1="75" x2="200" y2="75" />
-              <line x1="50" y1="0" x2="50" y2="100" />
-              <line x1="100" y1="0" x2="100" y2="100" />
-              <line x1="150" y1="0" x2="150" y2="100" />
-            </g>
-
-            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-canada' ? 'yc-mmActive' : ''}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
-            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-usa' ? 'yc-mmActive' : ''}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
-            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-mexico' ? 'yc-mmActive' : ''}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
-            <path className="yc-mmCountry" d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
-            <path className="yc-mmCountry" d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
-            <path className="yc-mmCountry" d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
-            <path className={`yc-mmCountry ${d.miniMap.countryId === 'mm-gulf' ? 'yc-mmActive' : ''}`} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
-            <path className="yc-mmCountry" d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
-            <path className="yc-mmCountry" d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
-            <path className="yc-mmCountry" d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
-
-            <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className="yc-mmPinAnim" />
-            <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className="yc-mmPinAnim" />
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="2.8" fill={d.gold} className="yc-mmPinAnim" />
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="1.2" fill="#ffffff" className="yc-mmPinAnim" />
-          </svg>
+          <MiniWorldMap region={region} lat={d.miniMap.lat} lng={d.miniMap.lng} ringRef={mmRingRef} ring2Ref={mmRing2Ref} />
 
           <div className="yc-miniMapInfo">
             <span className="yc-miniCity">{d.city}</span>

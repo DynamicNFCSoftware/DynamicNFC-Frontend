@@ -280,6 +280,70 @@ export const UNIT_REGION_OVERLAY_LUXURY = {
     },
   },
 
+  // ── ITALY — Lake Como (Cernobbio) + Milan
+  italy: {
+    "lux-ph": {
+      name: { en: "Attico Lario", it: "Attico Lario" },
+      tower: { en: "Villa Lario", it: "Villa Lario" },
+      floor: { en: "Floor 12", it: "Piano 12" },
+      beds: { en: "4 Bedrooms", it: "4 camere" },
+      baths: { en: "5 Bathrooms", it: "5 bagni" },
+      size: { en: "420 m²", it: "420 m²" },
+      feature: { en: "Lake Como panorama", it: "Panorama sul Lago di Como" },
+      status: { en: "Reserved", it: "Riservato" },
+      category: { en: "Penthouse", it: "Attico" },
+      view: { en: "Lake Como", it: "Lago di Como" },
+      desc: {
+        en: "A penthouse above Villa Lario in Cernobbio. Lake light, a private terrace, and a short drive to Milan.",
+        it: "Un attico sopra Villa Lario a Cernobbio. Luce del lago, terrazza privata e Milano a breve distanza.",
+      },
+      features: {
+        en: ["Private terrace", "Lake view", "Wine room", "Concierge", "Two parking spaces"],
+        it: ["Terrazza privata", "Vista lago", "Cantina", "Concierge", "Due posti auto"],
+      },
+    },
+    "lux-grand": {
+      name: { en: "Palazzo Brera Residence", it: "Residenza Palazzo Brera" },
+      tower: { en: "Palazzo Brera", it: "Palazzo Brera" },
+      floor: { en: "Floor 6", it: "Piano 6" },
+      beds: { en: "3 Bedrooms", it: "3 camere" },
+      baths: { en: "3 Bathrooms", it: "3 bagni" },
+      size: { en: "180 m²", it: "180 m²" },
+      feature: { en: "Brera courtyard", it: "Corte di Brera" },
+      status: { en: "Available", it: "Disponibile" },
+      category: { en: "Residence", it: "Residenza" },
+      view: { en: "Courtyard", it: "Corte interna" },
+      desc: {
+        en: "A Milan residence in Palazzo Brera, with courtyard quiet and walkable galleries.",
+        it: "Una residenza milanese in Palazzo Brera, corte silenziosa e gallerie a piedi.",
+      },
+      features: {
+        en: ["Courtyard", "High ceilings", "Concierge", "Cellar", "Parking"],
+        it: ["Corte", "Soffitti alti", "Concierge", "Cantina", "Posto auto"],
+      },
+    },
+    "lux-exec": {
+      name: { en: "Navigli Piano", it: "Piano Navigli" },
+      tower: { en: "Corte Navigli", it: "Corte Navigli" },
+      floor: { en: "Floor 4", it: "Piano 4" },
+      beds: { en: "3 Bedrooms", it: "3 camere" },
+      baths: { en: "2 Bathrooms", it: "2 bagni" },
+      size: { en: "165 m²", it: "165 m²" },
+      feature: { en: "Canal light", it: "Luce sui Navigli" },
+      status: { en: "Available", it: "Disponibile" },
+      category: { en: "Residence", it: "Residenza" },
+      view: { en: "Navigli", it: "Navigli" },
+      desc: {
+        en: "A canal-side residence at Corte Navigli, sized for a Milan week and a Como weekend.",
+        it: "Una residenza sui Navigli, a Corte Navigli, per la settimana a Milano e il weekend a Como.",
+      },
+      features: {
+        en: ["Canal view", "Study", "Storage", "Concierge", "Bike room"],
+        it: ["Vista canale", "Studio", "Ripostiglio", "Concierge", "Locale bici"],
+      },
+    },
+  },
+
   // ── CANADA — Vancouver waterfront (Vista Residences)
   canada: {
     "lux-ph": {
@@ -591,6 +655,52 @@ export const UNIT_REGION_OVERLAY_FAMILY = {
         es: ["Caminando a Escuelas", "Piscina Familiar", "Área de Juegos", "Almacenaje", "Estacionamiento Familiar"],
         fr: ["À Pied vers Écoles", "Piscine Familiale", "Aire de Jeux", "Rangement", "Stationnement Familial"],
       },
+    },
+  },
+
+  // ── ITALY — family residences, Como + Milan
+  italy: {
+    "fam-3br": {
+      name: { en: "Lario Garden", it: "Giardino Lario" },
+      tower: { en: "Villa Lario", it: "Villa Lario" },
+      floor: { en: "Floor 3", it: "Piano 3" },
+      beds: { en: "4 Bedrooms", it: "4 camere" },
+      baths: { en: "4 Bathrooms", it: "4 bagni" },
+      size: { en: "280 m²", it: "280 m²" },
+      feature: { en: "Garden and lake", it: "Giardino e lago" },
+      status: { en: "Available", it: "Disponibile" },
+      category: { en: "Family home", it: "Casa famiglia" },
+      view: { en: "Garden", it: "Giardino" },
+      desc: { en: "A family floor at Villa Lario, with garden access and room for three generations.", it: "Un piano famiglia a Villa Lario, con accesso al giardino e spazio per tre generazioni." },
+      features: { en: ["Garden", "Family kitchen", "Storage", "Parking", "Concierge"], it: ["Giardino", "Cucina famiglia", "Ripostiglio", "Posto auto", "Concierge"] },
+    },
+    "fam-4br": {
+      name: { en: "Brera Family", it: "Brera Famiglia" },
+      tower: { en: "Palazzo Brera", it: "Palazzo Brera" },
+      floor: { en: "Floor 2", it: "Piano 2" },
+      beds: { en: "3 Bedrooms", it: "3 camere" },
+      baths: { en: "3 Bathrooms", it: "3 bagni" },
+      size: { en: "180 m²", it: "180 m²" },
+      feature: { en: "Quiet courtyard", it: "Corte silenziosa" },
+      status: { en: "Available", it: "Disponibile" },
+      category: { en: "Family home", it: "Casa famiglia" },
+      view: { en: "Courtyard", it: "Corte" },
+      desc: { en: "A family residence in Palazzo Brera, close to schools and the gallery quarter.", it: "Una residenza famiglia in Palazzo Brera, vicina alle scuole e al quartiere delle gallerie." },
+      features: { en: ["Courtyard", "Study", "Storage", "Parking", "Concierge"], it: ["Corte", "Studio", "Ripostiglio", "Posto auto", "Concierge"] },
+    },
+    "fam-2br": {
+      name: { en: "Navigli Due", it: "Navigli Due" },
+      tower: { en: "Corte Navigli", it: "Corte Navigli" },
+      floor: { en: "Floor 1", it: "Piano 1" },
+      beds: { en: "2 Bedrooms", it: "2 camere" },
+      baths: { en: "2 Bathrooms", it: "2 bagni" },
+      size: { en: "110 m²", it: "110 m²" },
+      feature: { en: "Canal walk", it: "Passeggiata sui Navigli" },
+      status: { en: "Available", it: "Disponibile" },
+      category: { en: "Apartment", it: "Appartamento" },
+      view: { en: "Canal", it: "Canale" },
+      desc: { en: "A two-bedroom at Corte Navigli for a smaller household that still wants Milan on foot.", it: "Un bilocale a Corte Navigli per una famiglia più piccola che vuole Milano a piedi." },
+      features: { en: ["Canal", "Storage", "Bike room", "Concierge", "Parking"], it: ["Canale", "Ripostiglio", "Locale bici", "Concierge", "Posto auto"] },
     },
   },
 
@@ -1051,6 +1161,17 @@ export const AMENITIES_REGION_OVERLAY = {
     },
   ],
 
+  italy: [
+    { icon: "pool", title: { en: "Lake pool", it: "Piscina sul lago" }, desc: { en: "A quiet pool terrace at Villa Lario, facing Como.", it: "Una terrazza piscina a Villa Lario, verso Como." } },
+    { icon: "spa", title: { en: "Spa", it: "Spa" }, desc: { en: "Treatment rooms for owners in residence.", it: "Sale trattamenti per chi è in residenza." } },
+    { icon: "dining", title: { en: "Private dining", it: "Sala da pranzo privata" }, desc: { en: "A dining room for family tables, not a public restaurant.", it: "Una sala per i tavoli di famiglia, non un ristorante pubblico." } },
+    { icon: "fitness", title: { en: "Gym", it: "Palestra" }, desc: { en: "A residents' gym in Palazzo Brera.", it: "Una palestra per i residenti in Palazzo Brera." } },
+    { icon: "marina", title: { en: "Lake landing", it: "Approdo sul lago" }, desc: { en: "A small landing for lake boats at Cernobbio.", it: "Un piccolo approdo per le barche a Cernobbio." } },
+    { icon: "garden", title: { en: "Garden court", it: "Corte giardino" }, desc: { en: "A planted court between the three buildings.", it: "Una corte alberata tra i tre edifici." } },
+    { icon: "kids", title: { en: "Family room", it: "Sala famiglia" }, desc: { en: "An indoor room for children when the lake weather turns.", it: "Una sala al chiuso per i bambini quando il lago cambia tempo." } },
+    { icon: "valet", title: { en: "Parking", it: "Parcheggio" }, desc: { en: "Covered parking and a driver desk in Milan.", it: "Parcheggio coperto e un desk autista a Milano." } },
+  ],
+
   // ── CANADA — Vancouver waterfront
   canada: [
     {
@@ -1162,6 +1283,12 @@ export const INVEST_REGION_OVERLAY = {
     { stat: "15%",    label: { en: "Capital growth", ar: "نمو رأس المال",  es: "Crecimiento de capital", fr: "Croissance du capital" }, desc: { en: "Projected 3-year appreciation",        ar: "التقدير المتوقع على مدى 3 سنوات", es: "Apreciación proyectada a 3 años",            fr: "Appréciation projetée sur 3 ans" } },
     { stat: "65/35",  label: { en: "Payment plan",   ar: "خطة الدفع",       es: "Plan de pago",           fr: "Plan de paiement" },     desc: { en: "Construction-linked structure",        ar: "هيكل مرتبط بمراحل البناء",     es: "Estructura vinculada a la construcción",     fr: "Structure liée à la construction" } },
     { stat: "Q3 2027", label: { en: "Handover",      ar: "التسليم",          es: "Entrega",                fr: "Livraison" },            desc: { en: "On schedule",                          ar: "وفقًا للجدول الزمني",         es: "Según lo previsto",                          fr: "Conforme au calendrier" } },
+  ],
+  italy: [
+    { stat: "4.5%", label: { en: "Rental yield", it: "Rendimento da locazione" }, desc: { en: "Como and Milan long-let demand", it: "Domanda di locazione lunga a Como e Milano" } },
+    { stat: "12%", label: { en: "Capital growth", it: "Crescita del capitale" }, desc: { en: "Lake and city residences held together", it: "Residenze di lago e di città tenute insieme" } },
+    { stat: "30/70", label: { en: "Payment plan", it: "Piano di pagamento" }, desc: { en: "30/70 with a 20-year mortgage", it: "30/70 con mutuo a 20 anni" } },
+    { stat: "Q4 2027", label: { en: "Handover", it: "Consegna" }, desc: { en: "On the published schedule", it: "Secondo il calendario pubblicato" } },
   ],
 };
 

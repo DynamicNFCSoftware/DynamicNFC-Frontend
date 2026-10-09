@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./RegionMorphLoader.css";
+import MiniWorldMap from "../MiniWorldMap/MiniWorldMap";
 import { getRealEstateMapRegionData } from "../../config/mapRegionConfig";
 
 const REGION_DATA = getRealEstateMapRegionData();
@@ -104,6 +105,26 @@ const BLUEPRINTS = {
     labels: [
       { x: 300, y: 98, text: "HACIENDA" },
       { x: 300, y: 266, text: "◯ PATIO" },
+    ],
+  },
+  italy: {
+    parts: [
+      { type: "rect", x: 70, y: 150, w: 160, h: 70, dash: 460 },
+      { type: "path", d: "M 70,150 L 110,110 L 190,110 L 230,150", dash: 280 },
+      { type: "path", d: "M 250,220 L 250,160 Q 300,120 350,160 L 350,220", dash: 240 },
+      { type: "rect", x: 400, y: 145, w: 130, h: 75, dash: 410 },
+      { type: "line", x1: 40, y1: 200, x2: 560, y2: 200, dash: 520 },
+    ],
+    details: [
+      { type: "rect", x: 100, y: 165, w: 18, h: 28 },
+      { type: "rect", x: 140, y: 165, w: 18, h: 28 },
+      { type: "rect", x: 430, y: 160, w: 18, h: 28 },
+      { type: "circle", cx: 300, cy: 190, r: 8 },
+    ],
+    labels: [
+      { x: 150, y: 100, text: "VILLA LARIO" },
+      { x: 300, y: 108, text: "LAGO" },
+      { x: 465, y: 132, text: "BRERA" },
     ],
   },
 };
@@ -271,33 +292,7 @@ function RegionMorphLoader({ region = "canada", statusText = "Setting up region 
             </span>
           </div>
 
-          <svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" className="rml-miniMapSvg">
-            <g stroke="rgba(0,0,0,0.04)" strokeWidth="0.3" fill="none">
-              <line x1="0" y1="25" x2="200" y2="25" />
-              <line x1="0" y1="50" x2="200" y2="50" />
-              <line x1="0" y1="75" x2="200" y2="75" />
-              <line x1="50" y1="0" x2="50" y2="100" />
-              <line x1="100" y1="0" x2="100" y2="100" />
-              <line x1="150" y1="0" x2="150" y2="100" />
-            </g>
-
-            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-canada" ? "rml-mmActive" : ""}`} d="M 20,20 L 60,15 L 68,24 L 64,36 L 52,40 L 44,46 L 35,47 L 24,43 L 19,35 Z" />
-            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-usa" ? "rml-mmActive" : ""}`} d="M 24,43 L 35,47 L 44,46 L 52,40 L 58,44 L 62,54 L 55,61 L 45,65 L 35,65 L 27,60 L 24,52 Z" />
-            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-mexico" ? "rml-mmActive" : ""}`} d="M 35,65 L 45,65 L 50,72 L 54,81 L 49,85 L 41,83 L 36,76 Z" />
-            <path className="rml-mmCountry" d="M 54,81 L 60,86 L 64,97 L 56,98 L 50,91 Z" />
-            <path className="rml-mmCountry" d="M 93,32 L 110,28 L 119,32 L 119,43 L 108,47 L 96,44 L 90,40 Z" />
-            <path className="rml-mmCountry" d="M 95,47 L 114,47 L 123,56 L 124,68 L 119,81 L 111,86 L 104,84 L 99,75 L 95,65 L 95,47 Z" />
-            <path className={`rml-mmCountry ${d.miniMap.countryId === "mm-gulf" ? "rml-mmActive" : ""}`} d="M 120,43 L 135,44 L 141,54 L 139,64 L 130,66 L 124,62 L 121,54 Z" />
-            <path className="rml-mmCountry" d="M 135,28 L 170,26 L 180,36 L 178,49 L 165,54 L 150,51 L 141,47 L 135,44 Z" />
-            <path className="rml-mmCountry" d="M 165,54 L 180,58 L 184,67 L 178,72 L 168,71 L 163,63 Z" />
-            <path className="rml-mmCountry" d="M 170,81 L 186,81 L 190,89 L 184,94 L 172,94 L 168,87 Z" />
-
-            <circle ref={mmRing2Ref} cx={d.miniMap.x} cy={d.miniMap.y} r="3" fill="none" stroke={d.gold} strokeWidth="0.8" opacity="0" className="rml-mmPinAnim" />
-            <circle ref={mmRingRef} cx={d.miniMap.x} cy={d.miniMap.y} r="2.5" fill="none" stroke={d.gold} strokeWidth="1" opacity="0.9" className="rml-mmPinAnim" />
-
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="2.8" fill={d.gold} className="rml-mmPinAnim" />
-            <circle cx={d.miniMap.x} cy={d.miniMap.y} r="1.2" fill="#ffffff" className="rml-mmPinAnim" />
-          </svg>
+          <MiniWorldMap region={region} lat={d.miniMap.lat} lng={d.miniMap.lng} ringRef={mmRingRef} ring2Ref={mmRing2Ref} />
 
           <div className="rml-miniMapInfo">
             <span className="rml-miniCity">{d.city}</span>

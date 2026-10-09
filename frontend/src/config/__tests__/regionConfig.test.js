@@ -40,7 +40,7 @@ describe("getPersonas — region × sector matrix", () => {
   });
 
   it("all sectors are populated for every region (no empty mappings)", () => {
-    const regions = ["gulf", "usa", "mexico", "canada"];
+    const regions = ["canada", "italy", "usa", "mexico", "gulf"];
     const sectors = ["real_estate", "automotive", "yacht"];
     regions.forEach((r) => {
       sectors.forEach((s) => {
@@ -74,6 +74,14 @@ describe("getProjectName", () => {
 
   it("USA real_estate → 'Skyline Towers'", () => {
     expect(getProjectName("real_estate", "usa", "en")).toBe("Skyline Towers");
+  });
+
+  it("Italy + real_estate → Alessandro Conti and Residenze del Lario", () => {
+    const personas = getPersonas("real_estate", "italy");
+    expect(personas).toHaveLength(4);
+    expect(personas.find((p) => p.id === "vip1").name).toBe("Alessandro Conti");
+    expect(personas.find((p) => p.id === "vip1").email).toBe("alessandro@residenzelario.it");
+    expect(getProjectName("real_estate", "italy", "it")).toBe("Residenze del Lario");
   });
 
   it("Unknown lang falls back to English", () => {

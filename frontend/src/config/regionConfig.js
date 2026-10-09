@@ -5,7 +5,7 @@
 
 const GULF = {
   id: 'gulf',
-  label: { en: 'Gulf / KSA', ar: 'الخليج', es: 'Golfo / KSA' },
+  label: { en: 'Gulf / KSA', it: 'Golfo / KSA', ar: 'الخليج', es: 'Golfo / KSA' },
   flag: '🇸🇦',
   languages: ['ar', 'en'],
   defaultLang: 'ar',
@@ -40,7 +40,7 @@ const GULF = {
 
 const USA = {
   id: 'usa',
-  label: { en: 'United States', ar: 'الولايات المتحدة', es: 'Estados Unidos' },
+  label: { en: 'United States', it: 'Stati Uniti', ar: 'الولايات المتحدة', es: 'Estados Unidos' },
   flag: '🇺🇸',
   languages: ['en', 'es'],
   defaultLang: 'en',
@@ -75,7 +75,7 @@ const USA = {
 
 const MEXICO = {
   id: 'mexico',
-  label: { en: 'Mexico', ar: 'المكسيك', es: 'México' },
+  label: { en: 'Mexico', it: 'Messico', ar: 'المكسيك', es: 'México' },
   flag: '🇲🇽',
   languages: ['es', 'en'],
   defaultLang: 'es',
@@ -110,7 +110,7 @@ const MEXICO = {
 
 const CANADA = {
   id: 'canada',
-  label: { en: 'Canada', ar: 'كندا', es: 'Canadá', fr: 'Canada' },
+  label: { en: 'Canada', it: 'Canada', ar: 'كندا', es: 'Canadá', fr: 'Canada' },
   flag: '🇨🇦',
   languages: ['en', 'fr'],
   defaultLang: 'en',
@@ -145,12 +145,48 @@ const CANADA = {
   dealValueRange: { min: 500000, max: 15000000 },
 };
 
-export const REGIONS = { gulf: GULF, usa: USA, mexico: MEXICO, canada: CANADA };
-export const REGION_LIST = [GULF, USA, MEXICO, CANADA];
-export const DEFAULT_REGION = 'gulf';
+const ITALY = {
+  id: 'italy',
+  label: { en: 'Italy', it: 'Italia', fr: 'Italie', es: 'Italia', ar: 'إيطاليا' },
+  flag: '🇮🇹',
+  languages: ['it', 'en'],
+  defaultLang: 'it',
+  rtl: { it: false, en: false },
+  currency: 'EUR',
+  currencySymbol: '€',
+  locale: 'it-IT',
+  timeZone: 'Europe/Rome',
+  sidebarAccent: '#007a3d',
+  projects: {
+    real_estate: { en: 'Residenze del Lario', it: 'Residenze del Lario' },
+    automotive: { en: 'Autosalone Brera Milano', it: 'Autosalone Brera Milano' },
+    yacht: { en: 'Riviera Ligure Yachts', it: 'Riviera Ligure Yachts' },
+  },
+  personas: {
+    real_estate: [
+      { id: 'vip1', name: 'Alessandro Conti', gender: 'male', email: 'alessandro@residenzelario.it', type: 'vip', role: { en: 'VIP Investor', it: 'Investitore VIP', ar: 'مستثمر VIP', es: 'Inversor VIP', fr: 'Investisseur VIP' } },
+      { id: 'vip2', name: 'Giulia Romano', gender: 'female', email: 'giulia@residenzelario.it', type: 'vip', role: { en: 'VIP Buyer', it: 'Acquirente VIP', ar: 'مشترية VIP', es: 'Compradora VIP', fr: 'Acheteuse VIP' } },
+      { id: 'fam1', name: 'Marco Bianchi', gender: 'male', email: 'marco@residenzelario.it', type: 'family', role: { en: 'Family Buyer', it: 'Acquirente famiglia', ar: 'مشتري عائلي', es: 'Comprador Familiar', fr: 'Acheteur Familial' } },
+      { id: 'fam2', name: 'Francesca Ricci', gender: 'female', email: 'francesca@residenzelario.it', type: 'family', role: { en: 'Family Buyer', it: 'Acquirente famiglia', ar: 'مشتري عائلي', es: 'Comprador Familiar', fr: 'Acheteuse Familiale' } },
+    ],
+    automotive: [
+      { id: 'vip1', name: 'Matteo Ferraro', gender: 'male', email: 'matteo@autosalonebrera.it', type: 'vip', role: { en: 'VIP Collector', it: 'Collezionista VIP', ar: 'جامع VIP', es: 'Coleccionista VIP', fr: 'Collectionneur VIP' } },
+      { id: 'vip2', name: 'Chiara Esposito', gender: 'female', email: 'chiara@autosalonebrera.it', type: 'vip', role: { en: 'VIP Client', it: 'Cliente VIP', ar: 'عميل VIP', es: 'Cliente VIP', fr: 'Client VIP' } },
+    ],
+    yacht: [
+      { id: 'vip1', name: 'Federico Marino', gender: 'male', email: 'federico@rivieraligure.it', type: 'vip', role: { en: 'VIP Owner', it: 'Armatore VIP', ar: 'مالك VIP', es: 'Propietario VIP', fr: 'Propriétaire VIP' } },
+      { id: 'vip2', name: 'Sofia Colombo', gender: 'female', email: 'sofia@rivieraligure.it', type: 'vip', role: { en: 'VIP Charter', it: 'Charter VIP', ar: 'مستأجر VIP', es: 'VIP Charter', fr: 'Affréteur VIP' } },
+    ],
+  },
+  dealValueRange: { min: 400000, max: 12000000 },
+};
+
+export const REGIONS = { canada: CANADA, italy: ITALY, usa: USA, mexico: MEXICO, gulf: GULF };
+export const REGION_LIST = [CANADA, ITALY, USA, MEXICO, GULF];
+export const DEFAULT_REGION = 'canada';
 
 export function getRegion(regionId) {
-  return REGIONS[regionId] || GULF;
+  return REGIONS[regionId] || REGIONS[DEFAULT_REGION];
 }
 
 // Regions whose native locale renders bare "$" — force explicit prefix to disambiguate from USD
@@ -181,6 +217,7 @@ export function getEffectiveLocale(regionId, lang) {
     usa: { en: "en-US", es: "es-US" },
     mexico: { es: "es-MX", en: "en-US" },
     canada: { en: "en-CA", fr: "fr-CA" },
+    italy: { it: "it-IT", en: "en-GB" },
   };
   return map[regionId]?.[lang] || "en-US";
 }

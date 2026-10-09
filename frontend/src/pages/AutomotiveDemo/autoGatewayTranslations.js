@@ -130,7 +130,7 @@ export const AUTOGATEWAY_TR_EXTRA = {
 
 /* Region tooltips for languages the shared region config may not carry yet. */
 export const AUTOGATEWAY_REGION_LABEL = {
-  it: { gulf: "Golfo", usa: "USA", mexico: "Messico", canada: "Canada" },
-  fr: { gulf: "Golfe", usa: "États-Unis", mexico: "Mexique", canada: "Canada" },
-  es: { gulf: "Golfo", usa: "Estados Unidos", mexico: "México", canada: "Canadá" },
+  it: { gulf: "Golfo", usa: "USA", mexico: "Messico", canada: "Canada", italy: "Italia" },
+  fr: { gulf: "Golfe", usa: "États-Unis", mexico: "Mexique", canada: "Canada", italy: "Italie" },
+  es: { gulf: "Golfo", usa: "Estados Unidos", mexico: "México", canada: "Canadá", italy: "Italia" },
 };

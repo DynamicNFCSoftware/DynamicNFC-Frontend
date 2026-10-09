@@ -1,0 +1,23 @@
+.mwm-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.mwm-dot {
+  fill: rgba(69, 123, 157, 0.28);
+}
+
+.mwm-dot--glow {
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mwm-dot {
+    transition: fill 0.6s ease, opacity 0.6s ease;
+  }
+
+  .mwm-pin {
+    transition: cx 0.9s cubic-bezier(0.65, 0, 0.35, 1), cy 0.9s cubic-bezier(0.65, 0, 0.35, 1), fill 0.6s, stroke 0.6s;
+  }
+}

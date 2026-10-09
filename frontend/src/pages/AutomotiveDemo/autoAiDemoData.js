@@ -6,6 +6,7 @@
 import {
   getRegion,
   getPersonas,
+  DEFAULT_REGION,
   getProjectName,
   formatCurrency,
 } from "../../config/regionConfig";
@@ -23,7 +24,7 @@ import {
 } from "../../services/aiDemoShared";
 
 /** Short display codes for region flagships (terminal/WA aesthetics). */
-const FLAGSHIP_CODE = { gulf: "G63", usa: "ESCALADE-V", mexico: "RR-LWB", canada: "PLAID" };
+const FLAGSHIP_CODE = { gulf: "G63", usa: "ESCALADE-V", mexico: "RR-LWB", canada: "PLAID", italy: "PUROSANGUE" };
 
 /**
  * Region-aware VIP payload for the automotive AI sales pipeline demo.
@@ -31,7 +32,7 @@ const FLAGSHIP_CODE = { gulf: "G63", usa: "ESCALADE-V", mexico: "RR-LWB", canada
  * @param {string} lang
  */
 export function getAutoAiVip(regionId, lang = "en") {
-  const rid = regionId || "gulf";
+  const rid = regionId || DEFAULT_REGION;
   const region = getRegion(rid);
   const personas = getPersonas("automotive", rid);
   const vip1 = personas.find((p) => p.id === "vip1") || personas[0];

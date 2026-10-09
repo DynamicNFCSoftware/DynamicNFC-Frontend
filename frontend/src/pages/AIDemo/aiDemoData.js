@@ -7,6 +7,7 @@
 import {
   getRegion,
   getPersonas,
+  DEFAULT_REGION,
   getProjectName,
   formatCurrency,
 } from "../../config/regionConfig";
@@ -28,6 +29,7 @@ const UNIT_CODE = {
   usa: "PH-5501",
   mexico: "PH-5501",
   canada: "PH-5501",
+  italy: "AT-12A",
 };
 
 /**
@@ -36,7 +38,7 @@ const UNIT_CODE = {
  * @param {string} lang
  */
 export function getAiVip(regionId, lang = "en") {
-  const rid = regionId || "gulf";
+  const rid = regionId || DEFAULT_REGION;
   const region = getRegion(rid);
   const personas = getPersonas("real_estate", rid);
   const vip1 = personas.find((p) => p.id === "vip1") || personas[0];

@@ -93,20 +93,22 @@ The project operates with two AI collaborators. The roles are not interchangeabl
 
 | Region | Currency | Languages | Design Variant | Key Cultural Notes |
 |--------|----------|-----------|----------------|-------------------|
-| **Gulf** | SAR | Arabic (RTL) + English | Light luxury + gold accents, sand tones | Islamic finance vocabulary (Ijarah), WhatsApp primary, Riyadh-anchored |
+| **Canada** | CAD | English + French (mandatory) | Dark luxury, waterfront aesthetic | Vancouver demographics, bilingual compliance |
+| **Italy** | EUR | Italian + English | Lake and city, green accent `#007a3d` | Como + Milan residences, Brera supercars, Ligurian yachts. Mortgage-style plans, not Ijarah |
 | **USA** | USD | English + Spanish | Modern premium, Manhattan energy | Transactional directness, rapid-decision buyer personas |
 | **Mexico** | MXN | Spanish + English | Hacienda warmth, earth tones | Family-oriented buyer language, multi-generational context |
-| **Canada** | CAD | English + French (mandatory) | Dark luxury, waterfront aesthetic | Vancouver demographics, bilingual compliance |
+| **Gulf** | SAR | Arabic (RTL) + English | Light luxury + gold accents, sand tones | Islamic finance vocabulary (Ijarah), WhatsApp primary, Riyadh-anchored |
 
 Every region has demo data, demo portals, regional personas, and full dashboard coverage. Code parity is equal across regions; in public copy and positioning, Canada leads.
 
 ### Seed Data Baseline
-96 cards + 48 deals + 36 campaigns per tenant = 4 regions × 3 sectors × 8 items each. Seed is region-aware via `getPersonas(sector, regionId)`, IDs are region-prefixed (e.g., `AU-GULF-001`, `YA-CAN-005`).
+120 cards + 60 deals + 45 campaigns per tenant = 5 regions × 3 sectors × 8 items each. Seed is region-aware via `getPersonas(sector, regionId)`, IDs are region-prefixed (e.g., `AU-GULF-001`, `RE-ITA-001`, `YA-CAN-005`). Default region is Canada. Region order: Canada, Italy, USA, Mexico, Gulf.
 
 ### Personas (region-aware via `getPersonas(sector, regionId)`)
 - **Gulf Real Estate:** Khalid Al-Rashid (VIP investor), Ahmed Al-Fahad (family buyer)
 - **Gulf Automotive:** Khalid Al-Mansouri, Sultan
 - **Canada Real Estate:** Marc Patel, Ethan Chen, Chloe Thompson, William Sullivan, Rebecca Nakamura
+- **Italy:** Alessandro Conti, Giulia Romano, Marco Bianchi, Francesca Ricci (RE, Residenze del Lario); Matteo Ferraro, Chiara Esposito (Auto, Autosalone Brera Milano); Federico Marino, Sofia Colombo (Yacht, Riviera Ligure Yachts)
 - **Deprecated — never use:** Jane Doe, John Smith (retired April 20 in favor of Vancouver-accurate demographics)
 
 ### ⚠️ Data Retention — 22 Days
@@ -603,13 +605,22 @@ When Oguzhan asks "what next?", prioritize:
 
 **Canada is the home base; the other regions are expansion markets** (see §3). Product depth and code parity are equal across regions. Public-site copy keeps the Canadian identity ("Made in Canada", Vancouver R&D) dominant; new markets such as Italy are presented as expansion.
 
-### Gulf (KSA, anchored Riyadh)
-- **Demo project:** Al Noor Residences (3 towers: Al Qamar, Al Safwa, Al Rawda)
-- **Currency:** SAR
-- **Languages:** Arabic (RTL primary) + English
-- **Design:** Light luxury, gold accents, sand/warm cream base
-- **Cultural cues:** Islamic finance vocabulary (Ijarah payment plans), WhatsApp as primary contact, prayer time considerations in scheduling UX
-- **Personas:** Khalid Al-Rashid, Ahmed Al-Fahad (RE); Khalid Al-Mansouri, Sultan (Auto)
+### Canada (Vancouver-anchored)
+- **Demo project:** Vista Residences
+- **Currency:** CAD
+- **Languages:** English + French (federally mandatory for marketing materials)
+- **Design:** Dark luxury, waterfront aesthetic, mountain/glass imagery
+- **Cultural cues:** Vancouver demographic accuracy, bilingual compliance, waterfront investment narrative
+- **Personas:** Marc Patel, Ethan Chen, Chloe Thompson, William Sullivan, Rebecca Nakamura
+
+### Italy (Milan and Lake Como)
+- **Demo project:** Residenze del Lario — Villa Lario (Cernobbio), Palazzo Brera, Corte Navigli
+- **Automotive:** Autosalone Brera Milano — Ferrari Purosangue flagship
+- **Yacht:** Riviera Ligure Yachts — Portofino, with Porto Cervo as the second marina
+- **Currency:** EUR (`it-IT`, no forced prefix)
+- **Languages:** Italian + English. Dashboard and portal UI strings stay English until B2 and B3
+- **Design:** sidebar accent `#007a3d`. Do not hardcode that green in page CSS
+- **Personas:** Alessandro Conti, Giulia Romano, Marco Bianchi, Francesca Ricci (RE); Matteo Ferraro, Chiara Esposito (Auto); Federico Marino, Sofia Colombo (Yacht)
 
 ### USA
 - **Demo project:** to be named — Manhattan-anchored property set
@@ -627,16 +638,16 @@ When Oguzhan asks "what next?", prioritize:
 - **Cultural cues:** Multi-generational family context, extended family approval cycles, Spanish as primary customer language
 - **Personas:** to be finalized per sector
 
-### Canada (Vancouver-anchored)
-- **Demo project:** Vista Residences
-- **Currency:** CAD
-- **Languages:** English + French (federally mandatory for marketing materials)
-- **Design:** Dark luxury, waterfront aesthetic, mountain/glass imagery
-- **Cultural cues:** Vancouver demographic accuracy, bilingual compliance, waterfront investment narrative
-- **Personas:** Marc Patel, Ethan Chen, Chloe Thompson, William Sullivan, Rebecca Nakamura
+### Gulf (KSA, anchored Riyadh)
+- **Demo project:** Al Noor Residences (3 towers: Al Qamar, Al Safwa, Al Rawda)
+- **Currency:** SAR
+- **Languages:** Arabic (RTL primary) + English
+- **Design:** Light luxury, gold accents, sand/warm cream base
+- **Cultural cues:** Islamic finance vocabulary (Ijarah payment plans), WhatsApp as primary contact, prayer time considerations in scheduling UX
+- **Personas:** Khalid Al-Rashid, Ahmed Al-Fahad (RE); Khalid Al-Mansouri, Sultan (Auto)
 
 ### Sector Coverage Across Regions
-Real Estate, Automotive, and Yacht all must work in all four regions. Same routes, same components, different tokens + data via `useRegion()` and `getPersonas(sector, regionId)`.
+Real Estate, Automotive, and Yacht all must work in all five regions (Canada, Italy, USA, Mexico, Gulf). Same routes, same components, different tokens + data via `useRegion()` and `getPersonas(sector, regionId)`.
 
 ---
 

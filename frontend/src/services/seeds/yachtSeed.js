@@ -1,4 +1,4 @@
-import { getPersonas } from "../../config/regionConfig";
+import { getPersonas, DEFAULT_REGION } from "../../config/regionConfig";
 
 const SECTOR = "yacht";
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -76,6 +76,24 @@ const REGION_DATA = {
       ["YA-CAN-006", "Princess Y80", "motor", "Coal Harbour Marina", 7800000, "available", 58, 12, 1, 10, 1, "3,5,8,11,9,13,17", "8 guests · 4 cabins · 28 knots", 58000, 0],
       ["YA-CAN-007", "Grady-White Canyon 376", "sportfish", "Granville Marina", 680000, "available", 42, 8, 0, 7, 0, "2,4,6,8,6,10,14", "6 anglers · Twin Yamaha 425s", 0, 1],
       ["YA-CAN-008", "Burger 140 Raised Pilothouse", "superyacht", "Coal Harbour Marina", 58000000, "available", 11, 1, 0, 3, 0, "1,0,1,2,1,1,4", "12 guests · 6 cabins · North American flagship", 480000, 0],
+    ],
+  },
+  italy: {
+    client: "Riviera Ligure Yachts",
+    location: "Portofino & Porto Cervo",
+    reps: [
+      { id: "rep_ita_yacht_01", name: "Giorgio Bruno" },
+      { id: "rep_ita_yacht_02", name: "Silvia Gallo" },
+    ],
+    cards: [
+      ["YA-ITA-001", "Azimut Grande 35 Metri", "motor", "Portofino", 28000000, "reserved", 148, 38, 4, 26, 3, "9,13,18,23,21,29,36", "12 guests · 6 cabins · 24 knots", 180000, 0],
+      ["YA-ITA-002", "Ferretti 1000", "motor", "Porto Cervo", 18000000, "available", 112, 28, 3, 21, 3, "7,10,14,18,16,22,28", "10 guests · 5 cabins · 26 knots", 125000, 1],
+      ["YA-ITA-003", "Sanlorenzo SL90 Asymmetric", "motor", "Portofino", 8500000, "available", 92, 22, 2, 17, 2, "5,8,12,15,13,18,23", "8 guests · 4 cabins · Award-winning", 72000, 0],
+      ["YA-ITA-004", "Benetti Oasis 40M", "motor", "Porto Cervo", 42000000, "available", 78, 16, 1, 14, 1, "4,7,10,13,11,15,19", "12 guests · 6 cabins · Beach club", 280000, 0],
+      ["YA-ITA-005", "Azimut S7", "sport", "Portofino", 3200000, "available", 68, 13, 1, 11, 1, "4,6,9,12,10,14,18", "6 guests · 3 cabins · 34 knots", 28000, 1],
+      ["YA-ITA-006", "Ferretti Custom Line 130", "motor", "Porto Cervo", 22000000, "available", 58, 12, 1, 9, 1, "3,5,8,11,9,13,16", "12 guests · 6 cabins · 22 knots", 160000, 0],
+      ["YA-ITA-007", "Azimut Magellano 66", "motor", "Portofino", 4500000, "available", 38, 7, 0, 6, 0, "2,3,5,7,5,9,12", "8 guests · 4 cabins · Long-range", 38000, 1],
+      ["YA-ITA-008", "Benetti Oasis 34M", "motor", "Porto Cervo", 18000000, "available", 10, 1, 0, 2, 0, "1,0,1,2,1,1,3", "10 guests · 5 cabins · Beach club", 140000, 0],
     ],
   },
 };
@@ -261,8 +279,8 @@ function buildEvents(baseTimeMs, regionId, cards, personas) {
   return events;
 }
 
-export function buildYachtSeed(baseTimeMs = Date.now(), regionId = "gulf") {
-  const config = REGION_DATA[regionId] || REGION_DATA.gulf;
+export function buildYachtSeed(baseTimeMs = Date.now(), regionId = DEFAULT_REGION) {
+  const config = REGION_DATA[regionId] || REGION_DATA[DEFAULT_REGION];
   const personas = getPersonas("yacht", regionId);
   const cards = buildCards(baseTimeMs, regionId, config);
   const leads = buildLeads(baseTimeMs, regionId, config, personas);

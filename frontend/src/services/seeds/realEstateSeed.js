@@ -1,4 +1,4 @@
-import { getPersonas } from "../../config/regionConfig";
+import { getPersonas, DEFAULT_REGION } from "../../config/regionConfig";
 
 const SECTOR = "realEstate";
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -102,6 +102,30 @@ const REGION_DATA = {
       ["camp_can_re_vip_access", "Vista VIP Access Circle", "Invite-only harbour collection campaign", "active", "email", "viewings_booked", "high_intent_vips", 68000, 42000, 310, 205, 86, 11, 27],
       ["camp_can_re_private_viewing", "Vista Private Viewing Days", "Data-led shortlisting tours", "active", "event", "qualified_walkthroughs", "active_shortlist", 47000, 25500, 205, 142, 62, 8, 20],
       ["camp_can_re_spring_preview", "Vista Spring Launch Preview", "SMS teaser to waitlist subscribers", "draft", "sms", "early_interest", "waitlist", 28000, 0, 0, 0, 0, 0, 5],
+    ],
+  },
+  italy: {
+    client: "Residenze del Lario",
+    location: "Lake Como & Milan",
+    reps: [
+      { id: "rep_ita_01", name: "Elena Russo" },
+      { id: "rep_ita_02", name: "Davide Moretti" },
+    ],
+    cards: [
+      ["RE-ITA-001", "Attico Lario 12A", "Villa Lario", "penthouse", 8500000, "reserved", 128, 32, 4, 24, 3, "8,12,16,20,18,26,32", "4BR · 5BA · 420 m²", 0],
+      ["RE-ITA-002", "Brera 3 locali", "Palazzo Brera", "3br", 2100000, "available", 88, 20, 2, 16, 2, "5,8,12,15,12,18,22", "3BR · 3BA · 180 m²", 1],
+      ["RE-ITA-003", "Navigli Suite", "Corte Navigli", "3br", 2450000, "available", 74, 16, 2, 14, 2, "4,6,10,12,10,14,19", "3BR · 2BA · 165 m²", 0],
+      ["RE-ITA-004", "Brera 2 locali A", "Palazzo Brera", "2br", 1450000, "available", 52, 10, 1, 9, 1, "3,5,7,10,8,12,15", "2BR · 2BA · 110 m²", 1],
+      ["RE-ITA-005", "Lario Garden 4BR", "Villa Lario", "4br", 4200000, "available", 45, 10, 1, 8, 1, "2,4,6,8,6,10,13", "4BR · 4BA · 280 m²", 0],
+      ["RE-ITA-006", "Navigli Studio 8", "Corte Navigli", "studio", 890000, "available", 32, 5, 0, 4, 0, "1,2,4,5,4,6,8", "Studio · 1BA · 55 m²", 1],
+      ["RE-ITA-007", "Navigli 2 locali B", "Corte Navigli", "2br", 1650000, "available", 38, 8, 1, 6, 1, "2,3,5,7,6,8,11", "2BR · 2BA · 125 m²", 0],
+      ["RE-ITA-008", "Lario Sky 21", "Villa Lario", "3br", 3200000, "sold", 72, 18, 3, 14, 0, "15,18,16,14,10,8,5", "3BR · 3BA · 210 m²", 0],
+    ],
+    paymentPlan: { penthouse: "30/70 · mutuo 20 anni", "3br": "30/70 · mutuo 20 anni", "2br": "40/60 · mutuo 15 anni", studio: "40/60 · mutuo 15 anni", "4br": "30/70 · mutuo 20 anni" },
+    campaigns: [
+      ["camp_ita_re_vip_access", "Lario VIP Access", "Invito NFC per acquirenti sul lago e a Milano", "active", "email", "viewings_booked", "high_intent_vips", 72000, 41000, 310, 205, 86, 11, 26],
+      ["camp_ita_re_private_viewing", "Brera Private Viewing", "Visite riservate per shortlist", "active", "event", "qualified_walkthroughs", "family_buyers", 48000, 26000, 220, 148, 64, 8, 20],
+      ["camp_ita_re_spring_preview", "Lario Spring Preview", "SMS di anteprima alla lista d'attesa", "draft", "sms", "early_interest", "waitlist", 18000, 0, 0, 0, 0, 0, 5],
     ],
   },
 };
@@ -363,8 +387,8 @@ function buildEvents(baseTimeMs, regionId, cards, personas) {
   return events;
 }
 
-export function buildRealEstateSeed(baseTimeMs = Date.now(), regionId = "gulf") {
-  const config = REGION_DATA[regionId] || REGION_DATA.gulf;
+export function buildRealEstateSeed(baseTimeMs = Date.now(), regionId = DEFAULT_REGION) {
+  const config = REGION_DATA[regionId] || REGION_DATA[DEFAULT_REGION];
   const personas = getPersonas("real_estate", regionId);
   const cards = buildCards(baseTimeMs, regionId, config);
   const leads = buildLeads(baseTimeMs, regionId, config, personas);

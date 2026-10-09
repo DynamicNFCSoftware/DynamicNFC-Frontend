@@ -10,7 +10,7 @@ import SEO from "../../components/SEO/SEO";
 // Dark editorial luxury. Qualitative stats only — NO fake metrics.
 // ═══════════════════════════════════════════════════════════════════
 
-const REGION_CODE = { gulf: "KSA", usa: "USA", mexico: "MEX", canada: "CAN" };
+const REGION_CODE = { gulf: "KSA", usa: "USA", mexico: "MEX", canada: "CAN", italy: "ITA" };
 const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
 
 const T = {

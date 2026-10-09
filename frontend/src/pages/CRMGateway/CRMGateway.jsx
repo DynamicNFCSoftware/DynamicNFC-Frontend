@@ -8,6 +8,8 @@ import SEO from '../../components/SEO/SEO';
 import '../../i18n/portals/crmGateway';
 import { CRMGATEWAY_TR_EXTRA } from './crmGatewayTranslations';
 
+const REGION_CODE = { gulf: "KSA", usa: "USA", mexico: "MEX", canada: "CAN", italy: "ITA" };
+
 const T = {
   en: {
     badge: "Live Demo Environment",
@@ -296,7 +298,7 @@ export default function CRMGateway() {
             <div className="gw-region" role="group" aria-label={t.regionAria}>
               {REGION_LIST.map((region) => (
                 <button key={region.id} type="button" className={`gw-region-btn${regionId === region.id ? " act" : ""}`} onClick={() => switchRegion(region.id)} aria-pressed={regionId === region.id}>
-                  {region.id === "gulf" ? "KSA" : region.id === "usa" ? "USA" : region.id === "mexico" ? "MEX" : "CAN"}
+                  {REGION_CODE[region.id]}
                 </button>
               ))}
             </div>
