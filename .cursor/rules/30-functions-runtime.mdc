@@ -15,5 +15,5 @@ alwaysApply: false
 - Prefer additive, backward-compatible changes to function payloads and scheduled jobs.
 - Before deploy, verify for orphan functions and clean intentionally:
   `firebase functions:delete <orphan-name> --region us-central1 --force`
-- Currently deployed (7): `api`, `contactForm`, `onWalletPassRequest`, `aggregateTaps`, `aggregateCampaignTaps`, `cleanupInactiveTenants`, `seedDemoData`. For live state, check `CLAUDE_HANDOFF.md` or run `firebase functions:list`.
+- Exported from `functions/index.js` (9): `api`, `contactForm`, `onWalletPassRequest`, `aggregateTaps`, `aggregateCampaignTaps`, `cleanupInactiveTenants`, `seedDemoData`, `aggregateVelocityMetrics`, `refreshDailyBriefAi`. What is actually deployed can lag the file — check `CLAUDE_HANDOFF.md` before assuming the cloud matches.
 - `/c/:cardId` is handled client-side by the `CardRedirect` React component + Firestore lookup. Do not re-introduce a public HTTPS function for this — blocked by GCP org policy.

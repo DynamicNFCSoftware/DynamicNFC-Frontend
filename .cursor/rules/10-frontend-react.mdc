@@ -9,14 +9,14 @@ alwaysApply: false
 - Stack: React 18 + Vite 7 + JSX. Never TypeScript — not even for new files.
 - Styling: custom CSS with per-page prefixes only. No Tailwind, no CSS Modules, no styled-components.
 - Charts: Recharts. Icons: inline SVG or Lucide React. No icon font libraries.
-- Use functional components and hooks; avoid class components.
+- Use functional components and hooks. The one class component is `ErrorBoundary` (`frontend/src/components/ErrorBoundary/ErrorBoundary.jsx`).
 - Keep route definitions in `frontend/src/App.jsx`; route changes require explicit request.
 - CSS page prefixes (do not cross-share): `hp-` Home, `ent-` Enterprise, `dev-` Developers, `re-` RealEstate, `db-` Dashboard, `ai-` AIDemo, `ud-` UnifiedDashboard, `gw-` CRMGateway, `vp-` VIPPortal, `ap-` AhmedPortal, `mp-` MarketplacePortal, `acmp-` CampaignsTab.
 - Prefer CSS logical properties (`margin-inline-start`, `inset-inline-start`, `text-align: start`) for RTL safety. Never use `margin-left` / `margin-right`.
-- For user-facing text, wire through i18n (`t(...)`) instead of hardcoded strings.
-- If touching language switch behavior, keep single-button 4-language cycle: `EN -> AR -> ES -> FR` (never 4 separate buttons).
+- For user-facing text, wire through i18n (`t(...)`) instead of hardcoded strings. Public site: en, it, fr, es, ar, chosen from the Navbar dropdown (`Navbar.jsx`). A new string needs all five. Brand phrases such as "VIP Access Key" stay in English inside translations.
+- Unified Dashboard language control is one button that cycles `region.languages` via `nextLang` (`UnifiedLayout.jsx`). It is not a fixed EN→AR→ES→FR cycle and it is not four buttons. Region language lists live in `regionConfig.js` (Gulf ar/en, USA en/es, Mexico es/en, Canada en/fr).
 - Region-aware design tokens come from `useRegion()`. Do not hardcode Gulf gold, Canada navy, or Mexico terracotta in page CSS.
-- Components over 500 lines should be split. After editing a file >500 lines, verify: `wc -l`, `tail`, `npm run build`.
+- Components over 500 lines should be split. After editing a file >500 lines, check line count and the last 40 lines in PowerShell: `(Get-Content "path").Length` and `Get-Content "path" -Tail 40`, then `npm run build` in `frontend/`.
 - When defining section components inside a render, call them as `{SectionIdentity()}` not `<SectionIdentity />` — the JSX form causes unmount/remount on every keystroke.
 - Demo routes must work without auth (`/enterprise/crmdemo/*`, `/automotive/demo/*`).
 - Demo interactions must write to Firestore via `services/firestoreTracking.js` — this powers dashboard analytics. Never add "demo only" flags that skip tracking.

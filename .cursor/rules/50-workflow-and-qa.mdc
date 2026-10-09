@@ -20,6 +20,27 @@ alwaysApply: true
 - No `console.log` left in frontend code (functions logging is allowed).
 - No broken `href="#"` links.
 - Adjacent pages that share components still work.
+- When a page or shared component changed, finish from `frontend/` with `npm run lint`, `npm run build`, `npm test`, and `npm run e2e`. An unrun check is NOT RUN, never PASS.
+
+## Mutual audit (2026-10-07)
+- Cursor does the bulk implementation. Claude writes directives and audits Cursor's output.
+- When Claude wrote the code, Cursor audits it from a `docs/directives/CURSOR_AUDIT_*.md` file. Audits are READ-ONLY: no fixes, no commits, no deploys.
+- Audit reports follow `docs/AUDIT_REPORT_TEMPLATE.md`. An unrun check is NOT RUN, never PASS. Every FAIL needs a file path plus a line or key.
+- Nothing is committed until the audit report is back and its blockers are closed.
+
+## Deploy (2026-10-07)
+- Cursor never deploys. Do not run `firebase deploy`, `npm run deploy`, or `gcloud`.
+- Manual hosting: Oguzhan runs `npm run deploy` from the repo root.
+- Automatic hosting: `.github/workflows/deploy.yml` on `main`, and only after `GCP_WORKLOAD_IDENTITY_PROVIDER` and `GCP_SERVICE_ACCOUNT` are set. Setup notes: `docs/CI_DEPLOY_SETUP.md`.
+- Functions, rules, and indexes: Oguzhan runs the `firebase deploy --only … --project dynamicnfc-prod-68b4e` commands in `CLAUDE.md` §16.
+
+## Where things live
+- Directives: `docs/directives/`. Decisions: `memory/`.
+
+## Languages (2026-10-06)
+- Public site has five languages: en, it, fr, es, ar. Any new user-facing string needs all five.
+- Page text lives in the page's `TR` object plus a sibling `*Translations.js` (it/fr/es). `npm test` checks key parity.
+- Legal entity is exactly "NFC Software Systems Inc."; "DynamicNFC" is the product brand.
 
 ## Incident Protocol
 F12 Console → capture full error stack → identify whether issue is frontend (bundle hash mismatch) or function (Cloud Functions logs) → rebuild + redeploy hosting BEFORE deep-diving into code.

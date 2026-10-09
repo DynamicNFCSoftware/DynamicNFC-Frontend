@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, doc, getDocs, query, where, orderBy, limit, Timestamp, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDocs, query, limit, Timestamp, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import './AdminCampaigns.css';
 import { useTranslation } from '../../../i18n';

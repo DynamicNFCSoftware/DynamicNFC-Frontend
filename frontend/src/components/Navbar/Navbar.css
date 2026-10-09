@@ -150,39 +150,6 @@
   flex-shrink: 0;
 }
 
-/* Language switcher */
-.nav-lang {
-  display: flex;
-  gap: 3px;
-}
-
-.nav-lang-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1px solid var(--lang-btn-border, rgba(0, 0, 0, 0.06));
-  background: var(--lang-btn-bg, #ffffff);
-  color: var(--muted, #6b7280);
-  font-size: 0.72rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.nav-lang-btn:hover {
-  border-color: var(--border-h, rgba(0, 0, 0, 0.1));
-  color: var(--text, #1a1a1f);
-}
-
-.nav-lang-btn.active {
-  background: rgba(69, 123, 157, 0.07);
-  border-color: rgba(69, 123, 157, 0.2);
-  color: #457b9d;
-}
 
 /* Auth button */
 .nav-auth-btn {
@@ -365,18 +332,23 @@
     padding: 1.5rem 1.5rem;
     gap: 1.5rem;
     margin-inline-start: 0;
-    transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Closed state fades instead of sliding off-screen: an off-canvas drawer widened the page on phones */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
     overflow-y: auto;
   }
 
-  .nav-bar[dir="rtl"] .nav-menu {
-    transform: translateX(-100%);
-    flex-direction: column;
+  .nav-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
   }
 
-  .nav-menu.open {
-    transform: translateX(0);
+  /* The desktop RTL rule sets row-reverse; the mobile menu must stay a column in Arabic too. */
+  .nav-bar[dir="rtl"] .nav-menu {
+    flex-direction: column;
   }
 
   .nav-links {
@@ -513,4 +485,18 @@
   width: 18px;
   height: 18px;
   transition: transform 0.3s ease;
+}
+
+/* Language dropdown (EN / IT / FR / ES / AR) */
+.nav-lang-select {
+  height: 36px;
+  padding: 0 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--lang-btn-border, rgba(0, 0, 0, 0.06));
+  background: var(--lang-btn-bg, #ffffff);
+  color: var(--text, #1a1a1f);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
 }

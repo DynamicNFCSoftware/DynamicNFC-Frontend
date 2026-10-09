@@ -21,7 +21,7 @@ import '../../i18n/portals/marketplacePortal';
 // ─── SESSION & TRACKING ──────────────────────────────────────────
 const _sessionId = (() => {
   let sid = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("dnfc_session") : null;
-  if (!sid) { sid = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`; try { sessionStorage.setItem("dnfc_session", sid); } catch(e) {} }
+  if (!sid) { sid = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`; try { sessionStorage.setItem("dnfc_session", sid); } catch { /* storage unavailable */ } }
   return sid;
 })();
 // ─── BILINGUAL ───────────────────────────────────────────────────

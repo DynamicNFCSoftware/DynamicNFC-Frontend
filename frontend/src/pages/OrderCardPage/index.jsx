@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Footer } from './components/Footer';
 import { TR } from './i18n';
@@ -6,11 +6,7 @@ import '../../assets/css/ordercard.css?ver=9';
 import './styles/OrderCardPage.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/orderCard';
-
-function detectLang() {
-  const n = navigator.language || navigator.userLanguage || 'en';
-  return n.startsWith('ar') ? 'ar' : 'en';
-}
+import { useLanguage } from '../../i18n';
 
 /* ── Icons ── */
 const CheckIcon = () => (
@@ -21,7 +17,7 @@ const DashIcon = () => (
 );
 
 export default function OrderCardPage() {
-  const [lang, setLang] = useState(detectLang);
+  const { lang } = useLanguage();
   const isRTL = lang === 'ar';
   const t = useCallback((k) => TR[lang]?.[k] || TR.en[k] || k, [lang]);
 

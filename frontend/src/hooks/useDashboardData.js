@@ -105,7 +105,7 @@ export default function useDashboardData() {
     _setShowFamilyBuyers((prev) => {
       const value = typeof next === "function" ? next(prev) : next;
       try { localStorage.setItem("ud:vip:showFamily", value ? "1" : "0"); }
-      catch {}
+      catch { /* storage unavailable */ }
       return value;
     });
   };
@@ -126,7 +126,7 @@ export default function useDashboardData() {
   const [rawDeals, setRawDeals] = useState([]);
   const [rawCards, setRawCards] = useState([]);
   const [rawCampaigns, setRawCampaigns] = useState([]);
-  const [rawSettings, setRawSettings] = useState(null);
+  const [, setRawSettings] = useState(null);
   const [tutorialState, setTutorialState] = useState(null);
   const [tutorialLoaded, setTutorialLoaded] = useState(false);
   const [velocityMetrics, setVelocityMetrics] = useState(null);
@@ -588,56 +588,6 @@ export default function useDashboardData() {
       }));
   }, [scoredVips, deals]);
 
-  // Auto-advance: check existing deals against VIP events and sectorConfig rules
-  const pendingAdvances = useMemo(() => {
-    const config = getSectorConfig(sectorId);
-    const rules = config.pipeline?.autoAdvanceRules || [];
-    if (rules.length === 0 || deals.length === 0) return [];
-
-    const stageOrder = (config.pipeline?.stages || []).map((s) => s.id);
-    const stageIdx = (id) => stageOrder.indexOf(id);
-    const now = Date.now();
-    const advances = [];
-
-    deals.forEach((deal) => {
-      if (!deal.vipLinked || !deal.leadName) return;
-      const vip = vipByName[(deal.leadName || "").toLowerCase()];
-      if (!vip) return;
-
-      const vipEvents = normalizedEvents.filter(
-        (e) => e.vipName === vip.name || e.personName === vip.name
-      );
-
-      for (const rule of rules) {
-        // Only advance forward
-        if (rule.onlyForward && stageIdx(rule.targetStage) <= stageIdx(deal.stage)) continue;
-
-        // Count matching events in window
-        const windowMs = (rule.windowHours || 168) * 3600000;
-        const matchCount = vipEvents.filter((e) => {
-          const ts = safeDate(e.timestamp).getTime();
-          return rule.events.includes(e.type) && (now - ts) < windowMs;
-        }).length;
-
-        if (matchCount >= (rule.minCount || 1)) {
-          advances.push({
-            dealId: deal.id,
-            dealName: deal.name,
-            leadName: deal.leadName,
-            currentStage: deal.stage,
-            targetStage: rule.targetStage,
-            targetLabel: (config.pipeline?.stages || []).find((s) => s.id === rule.targetStage)?.label || { en: rule.targetStage },
-            reason: rule.events.join(" + "),
-            matchCount,
-          });
-          break; // One advance per deal (highest priority rule first)
-        }
-      }
-    });
-
-    return advances;
-  }, [deals, normalizedEvents, sectorId, vipByName]);
-
   const cards = useMemo(() => {
     const byUnit = {};
     const now = Date.now();
@@ -734,35 +684,6 @@ export default function useDashboardData() {
   }, [normalizedEvents, sectorEvents, vipByName, deals, sectorRawCards]);
 
   const campaigns = useMemo(() => sectorRawCampaigns.map((c) => ({ id: c.id, ...c })), [sectorRawCampaigns]);
-
-  // Campaign benchmark: avg conversion rate across all active campaigns
-  const campaignBenchmark = useMemo(() => {
-    const active = campaigns.filter((c) => c.status === "active");
-    if (active.length === 0) return { avgConvRate: 0, totalActive: 0 };
-    const totalTaps = active.reduce((s, c) => s + Number(c.sent || c.totalCards || 0), 0);
-    const totalConv = active.reduce((s, c) => s + Number(c.converted || 0), 0);
-    return {
-      avgConvRate: totalTaps > 0 ? Math.round((totalConv / totalTaps) * 1000) / 10 : 0,
-      totalActive: active.length,
-    };
-  }, [campaigns]);
-
-  // Expiring campaigns: endDate set and < 7 days away or already expired
-  const expiringCampaigns = useMemo(() => {
-    const now = Date.now();
-    const SEVEN_DAYS = 7 * 86400000;
-    return campaigns
-      .filter((c) => {
-        if (!c.endDate || c.status === "archived") return false;
-        const end = c.endDate.toDate ? c.endDate.toDate().getTime() : new Date(c.endDate).getTime();
-        return !isNaN(end) && (end - now) < SEVEN_DAYS;
-      })
-      .map((c) => {
-        const end = c.endDate.toDate ? c.endDate.toDate().getTime() : new Date(c.endDate).getTime();
-        const daysLeft = Math.ceil((end - now) / 86400000);
-        return { ...c, daysLeft, expired: daysLeft < 0 };
-      });
-  }, [campaigns]);
 
   const loadMoreCampaigns = useCallback(async () => {
     if (!user?.uid || campaignsLoadingMore || !campaignsHasMore || !campaignsCursorRef.current) return;

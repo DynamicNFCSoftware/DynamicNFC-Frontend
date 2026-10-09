@@ -10,6 +10,29 @@ export default function OutreachModal({ vip, onClose }) {
   const { config, st } = useSector();
   const { lang } = useLanguage();
 
+  useEffect(() => {
+    if (!vip) return undefined;
+    previousFocusRef.current = document.activeElement;
+    const timer = setTimeout(() => {
+      dialogRef.current?.querySelector("button, a, input, textarea, select")?.focus();
+    }, 40);
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("keydown", onKeyDown);
+      previousFocusRef.current?.focus?.();
+    };
+  }, [onClose, vip]);
+
+  useEffect(() => {
+    if (!toast) return undefined;
+    const timer = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
   if (!vip) return null;
 
   const projectName = st(config.identity.defaultProject.name);
@@ -44,38 +67,8 @@ export default function OutreachModal({ vip, onClose }) {
   const activeScript = scripts[activeTab]?.[lang] || scripts[activeTab]?.en;
   const demoPhone = "+966 50 123 4567";
 
-  useEffect(() => {
-    previousFocusRef.current = document.activeElement;
-    const timer = setTimeout(() => {
-      dialogRef.current?.querySelector("button, a, input, textarea, select")?.focus();
-    }, 40);
-    const onKeyDown = (event) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("keydown", onKeyDown);
-      previousFocusRef.current?.focus?.();
-    };
-  }, [onClose]);
-
-  useEffect(() => {
-    if (!toast) return undefined;
-    const timer = setTimeout(() => setToast(null), 4000);
-    return () => clearTimeout(timer);
-  }, [toast]);
-
   const showToast = (message, type = "success") => {
     setToast({ message, type });
-  };
-
-  const handleCall = () => {
-    showToast(({ ar: "وضع تجريبي: تمت محاكاة المكالمة", es: "Modo demo: llamada simulada", en: "Demo mode: call simulated", fr: "Mode démo : appel simulé" }[lang] || "Demo mode: call simulated"));
-  };
-
-  const handleWhatsApp = () => {
-    showToast(({ ar: "وضع تجريبي: تمت محاكاة الرسالة", es: "Modo demo: WhatsApp simulado", en: "Demo mode: WhatsApp simulated", fr: "Mode démo : WhatsApp simulé" }[lang] || "Demo mode: WhatsApp simulated"));
   };
 
   return (

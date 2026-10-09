@@ -4,9 +4,10 @@ import { useRegion } from "../../hooks/useRegion";
 import { getPersonas, REGION_LIST } from "../../config/regionConfig";
 import './AutoGateway.css';
 import SEO from '../../components/SEO/SEO';
+import { AUTOGATEWAY_TR_EXTRA, AUTOGATEWAY_REGION_LABEL } from './autoGatewayTranslations';
 
 const REGION_CODE = { gulf: "KSA", usa: "USA", mexico: "MEX", canada: "CAN" };
-const LANG_LABEL = { en: "English", ar: "العربية", es: "Español", fr: "Français" };
+const LANG_LABEL = { en: "English", it: "Italiano", fr: "Français", es: "Español", ar: "العربية" };
 
 const T = {
   en: {
@@ -46,6 +47,10 @@ const T = {
     footerEnd: "automotive technology showcase. No tracking on this gateway page.",
     langBtn: "العربية",
     homeBtn: "Home",
+    seoTitle: "Automotive Demo Gateway",
+    seoDesc: "Explore personalized automotive buyer experiences powered by NFC technology.",
+    regionAria: "Region",
+    langAria: "Language",
   },
   ar: {
     badge: "بيئة العرض المباشر",
@@ -84,8 +89,13 @@ const T = {
     footerEnd: "عرض تكنولوجيا السيارات. لا يوجد تتبع على هذه الصفحة.",
     langBtn: "العربية",
     homeBtn: "الرئيسية",
+    seoTitle: "بوابة العرض التجريبي للسيارات",
+    seoDesc: "استكشف تجارب مشترٍ مخصصة للسيارات مدعومة بتقنية NFC.",
+    regionAria: "المنطقة",
+    langAria: "اللغة",
   },
 };
+Object.assign(T, AUTOGATEWAY_TR_EXTRA);
 
 
 export default function AutoGateway() {
@@ -128,7 +138,7 @@ export default function AutoGateway() {
 
   return (
     <div className="ag" dir={isRtl ? "rtl" : "ltr"} style={{ "--ag-accent": accent }}>
-      <SEO title="Automotive Demo Gateway" description="Explore personalized automotive buyer experiences powered by NFC technology." path="/automotive/demo" />
+      <SEO title={t.seoTitle} description={t.seoDesc} path="/automotive/demo" />
       <div className="ag-bg" />
       <div className="ag-particles" ref={particlesRef} />
 
@@ -136,20 +146,20 @@ export default function AutoGateway() {
         <div className="ag-logo"><img src="/assets/images/logo.png" alt="DynamicNFC" style={{ height: '52px', width: 'auto' }} /></div>
         <div className="ag-badge"><span>{t.badge}</span></div>
         <div className="ag-hd-right">
-          <div className="ag-region" role="group" aria-label="Region">
+          <div className="ag-region" role="group" aria-label={t.regionAria}>
             {REGION_LIST.map((r) => (
               <button
                 key={r.id}
                 className={`ag-region-btn${regionId === r.id ? " act" : ""}`}
                 onClick={() => switchRegion(r.id)}
                 aria-pressed={regionId === r.id}
-                title={r.label[lang] || r.label.en}
+                title={r.label[lang] || AUTOGATEWAY_REGION_LABEL[lang]?.[r.id] || r.label.en}
               >
                 {REGION_CODE[r.id]}
               </button>
             ))}
           </div>
-          <button className="ag-lang" onClick={() => setLang(nextL)} aria-label={`Language — ${LANG_LABEL[nextL]}`}>
+          <button className="ag-lang" onClick={() => setLang(nextL)} aria-label={`${t.langAria} — ${LANG_LABEL[nextL]}`}>
             {LANG_LABEL[nextL]}
           </button>
           <a href="/automotive" className="ag-home">

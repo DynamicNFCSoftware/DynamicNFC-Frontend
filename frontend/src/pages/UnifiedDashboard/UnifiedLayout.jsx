@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLanguage } from "../../i18n";
 import "../../i18n/eventDisplayMap";
@@ -749,7 +749,6 @@ function LayoutContent({
 }) {
   const { dataMode, events, seedingInProgress } = useDashboard();
   const { sectorId } = useSector();
-  const navigate = useNavigate();
   const tx = LAYOUT_TEXT[lang] || LAYOUT_TEXT.en;
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showOverflowMenu, setShowOverflowMenu] = useState(false);

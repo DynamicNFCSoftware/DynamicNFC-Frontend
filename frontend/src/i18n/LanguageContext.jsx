@@ -3,14 +3,11 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 const LanguageContext = createContext();
 
 const STORAGE_KEY = "dnfc_lang";
-const SUPPORTED_LANGS = ["en", "ar", "es", "fr"];
+const SUPPORTED_LANGS = ["en", "it", "fr", "es", "ar"];
 
 function detectBrowserLang() {
   const nav = (navigator.language || navigator.userLanguage || "en").toLowerCase();
-  if (nav.startsWith("ar")) return "ar";
-  if (nav.startsWith("es")) return "es";
-  if (nav.startsWith("fr")) return "fr";
-  return "en";
+  return SUPPORTED_LANGS.find((l) => nav.startsWith(l)) || "en";
 }
 
 export function LanguageProvider({ children }) {
@@ -27,13 +24,9 @@ export function LanguageProvider({ children }) {
   const setLang = useCallback((l) => {
     if (SUPPORTED_LANGS.includes(l)) {
       setLangState(l);
-      try { localStorage.setItem(STORAGE_KEY, l); } catch {}
+      try { localStorage.setItem(STORAGE_KEY, l); } catch { /* storage unavailable */ }
     }
   }, []);
-
-  const toggle = useCallback(() => {
-    setLang(lang === "en" ? "ar" : lang === "ar" ? "es" : "en");
-  }, [lang, setLang]);
 
   useEffect(() => {
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
@@ -41,7 +34,7 @@ export function LanguageProvider({ children }) {
   }, [lang]);
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, toggle, isAr: lang === "ar", isEs: lang === "es", supportedLangs: SUPPORTED_LANGS }}>
+    <LanguageContext.Provider value={{ lang, setLang, isAr: lang === "ar", isEs: lang === "es", supportedLangs: SUPPORTED_LANGS }}>
       {children}
     </LanguageContext.Provider>
   );

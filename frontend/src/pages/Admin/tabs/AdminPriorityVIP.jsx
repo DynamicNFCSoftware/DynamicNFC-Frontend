@@ -38,7 +38,6 @@ function calcScore(events, cfg) {
     payment_plan: c.paymentPlanPoints || 15, book_viewing: c.bookViewingPoints || 25,
     contact_advisor: c.contactAdvisorPoints || 20, whatsapp_click: c.contactAdvisorPoints || 20,
   };
-  const raw = score;
   Object.entries(intentMap).forEach(([evt, pts]) => { if (events.some(e => e.event === evt)) score += pts; });
   const rawTotal = score;
   score = Math.min(score, 100);

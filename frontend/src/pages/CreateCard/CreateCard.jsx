@@ -71,8 +71,6 @@ function qrFallbackUrl(text) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(text)}&bgcolor=ffffff&color=1a1a1f&margin=16`;
 }
 
-function socUrl(s, handle) { if (!handle) return ""; return "https://" + s.base + handle; }
-
 const TEMPLATES = [
   { id:"blank", label:"Blank", icon:"\u2795", desc:"Start from scratch", data:{} },
   { id:"realtor", label:"Real Estate", icon:"\u{1F3E0}", desc:"Agent / Broker", data:{ prefix:"", name:"Sarah Johnson", title:"Senior Property Advisor", company:"Vista Residences", department:"Luxury Sales", email:"sarah@vista.ae", phoneCode:"+971", location:"Dubai Marina, UAE", bio:"Helping clients find their dream home in Dubai since 2015.", licenseNo:"DLD-54321", languages:"English, Arabic", theme:"dark", accentColor:"#C5A467" } },
@@ -103,8 +101,6 @@ const EM = { name:"Required (min 2 chars)", email:"Invalid email", phone:"Enter 
 
 function fmtPh(raw) { const d = raw.replace(/\D/g, ""); if (d.length <= 3) return d; if (d.length <= 6) return d.slice(0,3)+" "+d.slice(3); return d.slice(0,3)+" "+d.slice(3,6)+" "+d.slice(6,10); }
 function fullPh(code, num) { return num ? code + " " + fmtPh(num) : ""; }
-function webHref(v) { if (!v) return ""; return v.match(/^https?:\/\//) ? v : "https://" + v; }
-
 const MAX_IMG = 1*1024*1024;
 const IMG_OK = ["image/jpeg","image/png","image/webp"];
 const resizeImg = (file, maxW) => new Promise((res, rej) => {
@@ -138,7 +134,7 @@ export default function CreateCard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [card, setCard] = useState(() => {
-    try { const d = JSON.parse(localStorage.getItem("dnfc_card_draft")); if (d?.name !== undefined) return { ...DEFAULT, ...d }; } catch {}
+    try { const d = JSON.parse(localStorage.getItem("dnfc_card_draft")); if (d?.name !== undefined) return { ...DEFAULT, ...d }; } catch { /* stored draft is unreadable — start from the default card */ }
     return { ...DEFAULT };
   });
   const [step, setStep] = useState(1);       // main step: 1=design, 2=preview, 3=share

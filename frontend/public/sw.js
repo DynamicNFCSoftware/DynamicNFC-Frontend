@@ -36,7 +36,7 @@ self.addEventListener('push', (event) => {
   let data = { title: 'DynamicNFC', body: 'You have a new notification', url: '/' };
   try {
     if (event.data) data = { ...data, ...event.data.json() };
-  } catch {}
+  } catch { /* malformed push payload — keep the default notification */ }
 
   event.waitUntil(
     self.registration.showNotification(data.title, {

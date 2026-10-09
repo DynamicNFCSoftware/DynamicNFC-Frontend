@@ -35,7 +35,7 @@ export default function AdminLayout() {
 
   const handleSectorChange = (value) => {
     setSector(value);
-    try { localStorage.setItem('dnfc_sector', value); } catch {};
+    try { localStorage.setItem('dnfc_sector', value); } catch { /* storage unavailable */ };
   };
 
   const PORTALS = [
@@ -128,7 +128,7 @@ export default function AdminLayout() {
   const toggleSidebar = () => {
     const next = !sidebarOpen;
     setSidebarOpen(next);
-    try { localStorage.setItem('ap_sidebar', next ? 'open' : 'collapsed'); } catch {}
+    try { localStorage.setItem('ap_sidebar', next ? 'open' : 'collapsed'); } catch { /* storage unavailable */ }
   };
 
   const handleLogout = async () => {

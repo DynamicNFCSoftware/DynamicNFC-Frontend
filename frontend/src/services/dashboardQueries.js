@@ -89,7 +89,7 @@ export async function fetchPipelineDeals(sectorId) {
     const q = query(collection(db, "pipeline"), where("sectorId", "==", sectorId), limit(100));
     const snap = await getDocs(q);
     return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-  } catch (err) {
+  } catch {
     console.warn("fetchPipelineDeals: collection may not exist yet");
     return [];
   }

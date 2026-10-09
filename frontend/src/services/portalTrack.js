@@ -33,7 +33,7 @@ export function trackPortalEvent(portalType, persona, event, data = {}) {
     const events = JSON.parse(localStorage.getItem("dnfc_events") || "[]");
     events.push(ev);
     localStorage.setItem("dnfc_events", JSON.stringify(events));
-  } catch (e) { /* localStorage full/disabled — tracking must not block UI */ }
+  } catch { /* localStorage full/disabled — tracking must not block UI */ }
   _bc?.postMessage(ev);
   bridgeEventToFirestore(ev);
 }

@@ -196,12 +196,6 @@ export default function AdminCards() {
     } catch (e) { setFormError(e.message); } finally { setSaving(false); }
   };
 
-  const copyUrl = (cardId) => {
-    navigator.clipboard.writeText(`dynamicnfc.ca/c/${cardId}`).then(() => {
-      showToast(t('urlCopied'));
-    }).catch(() => { showToast(t('copyFailed'), true); });
-  };
-
   const filtered = filterCampaign === 'all' ? cards : cards.filter(c => c.campaignId === filterCampaign);
 
   if (loading) return <div className="ca-loading"><div className="ca-spinner" /></div>;

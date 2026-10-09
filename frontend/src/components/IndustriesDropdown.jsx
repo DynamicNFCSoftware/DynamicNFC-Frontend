@@ -45,6 +45,42 @@ export default function IndustriesDropdown({ lang = "en", triggerClassName = "" 
       enterprise: "Enterprise Overview",
       devHub: "Developer Hub",
     },
+    it: {
+      label: "Settori",
+      groupSales: "Sales velocity per",
+      groupPlatform: "Piattaforma",
+      reDev: "Sviluppatori e agenti immobiliari",
+      reAgent: "Agenti immobiliari",
+      auto: "Automotive",
+      yacht: "Brokeraggio yacht",
+      yachtNew: "NUOVO",
+      enterprise: "Panoramica Enterprise",
+      devHub: "Hub sviluppatori",
+    },
+    fr: {
+      label: "Secteurs",
+      groupSales: "Vélocité des ventes pour",
+      groupPlatform: "Plateforme",
+      reDev: "Promoteurs et agents immobiliers",
+      reAgent: "Agents immobiliers",
+      auto: "Automobile",
+      yacht: "Courtage de yachts",
+      yachtNew: "NOUVEAU",
+      enterprise: "Aperçu Entreprise",
+      devHub: "Centre des développeurs",
+    },
+    es: {
+      label: "Industrias",
+      groupSales: "Velocidad de ventas para",
+      groupPlatform: "Plataforma",
+      reDev: "Desarrolladores y agentes inmobiliarios",
+      reAgent: "Agentes inmobiliarios",
+      auto: "Automotriz",
+      yacht: "Corretaje de yates",
+      yachtNew: "NUEVO",
+      enterprise: "Resumen para empresas",
+      devHub: "Centro de desarrolladores",
+    },
     ar: {
       label: "القطاعات",
       groupSales: "تسريع المبيعات لـ",
@@ -58,7 +94,7 @@ export default function IndustriesDropdown({ lang = "en", triggerClassName = "" 
       devHub: "مركز المطوّرين",
     },
   };
-  const t = (k) => (T[isAr ? "ar" : "en"] || T.en)[k] || k;
+  const t = (k) => (T[lang] || T.en)[k] || k;
 
   const AnchorIcon = (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>

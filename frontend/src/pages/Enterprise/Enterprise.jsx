@@ -5,6 +5,7 @@ import { common } from '../../i18n/common';
 import './Enterprise.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/enterprise';
+import { ENTERPRISE_TR_EXTRA } from './enterpriseTranslations';
 
 /* ═══════════════════════════════════════════
    TRANSLATIONS (EN + AR) — Full enterprise copy
@@ -93,7 +94,7 @@ const TR = {
     faq5Q:'How fast can we deploy?',
     faq5A:'A pilot program can launch within 2–4 weeks. We configure your portals, design the premium box experience, program the NFC cards, and connect the analytics dashboard.',
     faq6Q:"What's the real ROI here?",
-    faq6A:'It\'s about cutting the time from "Interested" to "Viewing" in half. When your sales team engages at the right moment with the right context, decisions accelerate.',
+    faq6A:'It\'s about shortening the time from "Interested" to "Viewing". When your sales team engages at the right moment with the right context, decisions accelerate.',
 
     ctaLabel:'Ready to Deploy',
     ctaTitle:"You're Not Handing Out NFC Cards. You're Issuing Private Invitations.",
@@ -107,7 +108,7 @@ const TR = {
     successTitle:'Pilot Request Submitted',
     successDesc:'Thank you. Our enterprise team will review your project details and reach out within 24 hours to design your custom pilot program.',
     successClose:'Close',
-    footerText:'© 2026 DynamicNFC Card Inc. — Sales Velocity Engine for Real Estate, Automotive & Yacht',
+    footerText:'© 2026 NFC Software Systems Inc. — Sales Velocity Engine for Real Estate, Automotive & Yacht',
     indChoose:'Choose Your Industry', indAll:'All Industries', indRE:'Real Estate Developers & Agents', indAuto:'Automotive', indYacht:'Yacht',
     prob1Desc_auto:'Most showroom visitors browse anonymously.',
     prob2Desc_auto:'Sales teams follow up too late, with no insight into which models, configurations, or financing options prospects explored',
@@ -133,6 +134,21 @@ const TR = {
     faq2A_auto:'One metric: increase in test drive bookings among VIP cardholders versus your walk-in control group. Not clicks, not pageviews — real showroom activity.',
     roiFlow5_auto:'More Test Drive Bookings',
     modalIndustry:'Industry', modalIndustryPlaceholder:'Select your industry',
+    badgeVipClient:'VIP Client', badgePublic:'Public', badgeVipYacht:'VIP YACHT', badgeFleet:'FLEET', badgeAiConcierge:'AI CONCIERGE',
+    seoDesc:'Sales Velocity Engine for real estate, automotive, and yacht teams. Private VIP portals with behavioral intelligence.',
+    errSubmit:'Error submitting. Please try again.',
+    footerTagline:'Sales Velocity Engine for Real Estate, Automotive & Yacht',
+    indOptDev:'Real Estate Developer', indOptAgent:'Real Estate Agent / Brokerage', indOptAuto:'Automotive Dealership', indOptYacht:'Yacht Brokerage', optOther:'Other',
+    fFirstName:'First Name', fLastName:'Last Name', fEmail:'Business Email', fPhone:'Phone',
+    fCompany:'Company', fRole:'Role', fProject:'Project Name', fProjectType:'Project Type',
+    fTotalUnits:'Total Units', fLocation:'Location', fChallenge:'Biggest sales challenge?', fNotes:'Notes',
+    optSelectRole:'Select role', optSelectType:'Select type', optSelectRange:'Select range', optSelectChallenge:'Select challenge',
+    roleCeo:'CEO / Chairman', roleCso:'Chief Sales Officer', roleCmo:'Chief Marketing Officer',
+    roleVpSales:'VP of Sales', roleDirSales:'Director of Sales', roleGm:'General Manager',
+    ptTower:'Residential Tower', ptBranded:'Branded Residences', ptVilla:'Luxury Villas',
+    ptMega:'Mega-Project', ptMixed:'Mixed-Use', ptCommercial:'Commercial',
+    unitsUnder50:'Under 50',
+    chalAnon:'Anonymous website traffic', chalSlow:'Slow follow-up', chalLowConv:'Low conversion to viewings', chalGeneric:'Generic outreach',
   },
   ar: {
     navChallenge:"التحدي", navHow:"كيف تعمل", navDemo:"العرض التجريبي المباشر", navImpact:"التأثير", navPilot:"طلب تجربة تجريبية",
@@ -199,7 +215,7 @@ const TR = {
     faq3Q:"ماذا عن خصوصية البيانات والامتثال؟", faq3A:"يتم تضمين الموافقة ضمن التجربة المادية. عندما يقوم العميل المحتمل بالنقر على بطاقة تلقاها عن قصد، فهذا يعني موافقة صريحة. لا أنماط مظلمة، ولا تتبع خفي. النقر هو الموافقة.",
     faq4Q:"ماذا يحصل عليه العميل المحتمل فعليًا؟", faq4A:"صندوق فاخر يحتوي على مفتاح وصول كبار الشخصيات مزود بتقنية الاتصال قريب المدى ورسالة شخصية. ليست مادة تسويقية — بل دعوة خاصة.",
     faq5Q:"ما مدى سرعة التنفيذ؟", faq5A:"يمكن إطلاق برنامج تجريبي خلال 2–4 أسابيع. نقوم بإعداد بواباتك، وتصميم تجربة الصندوق الفاخر، وبرمجة بطاقات الاتصال قريب المدى، وربط لوحة التحليلات.",
-    faq6Q:"ما هو العائد الحقيقي هنا؟", faq6A:"الأمر يتعلق بتقليل الوقت من \"مهتم\" إلى \"زيارة\" للنصف. عندما يتواصل فريق المبيعات في الوقت المناسب ومع السياق الصحيح، تتسارع القرارات.",
+    faq6Q:"ما هو العائد الحقيقي هنا؟", faq6A:"الأمر يتعلق بتقليل الوقت من \"مهتم\" إلى \"زيارة\". عندما يتواصل فريق المبيعات في الوقت المناسب ومع السياق الصحيح، تتسارع القرارات.",
     ctaLabel:"جاهز للتنفيذ", ctaTitle:"أنت لا توزع بطاقات الاتصال قريب المدى. أنت تصدر دعوات خاصة.",
     ctaDesc:"حوّل النية الرقمية إلى زخم حقيقي في المبيعات. ابدأ تجربة مع 100 دعوة لكبار الشخصيات وقِس الفرق في الزيارات المحجوزة خلال 30 يومًا.",
     ctaPilot:"طلب برنامج تجريبي →", ctaDemo:"استكشف العرض التجريبي المباشر",
@@ -209,7 +225,7 @@ const TR = {
     modalNote:"نرد خلال 24 ساعة. معلوماتك محفوظة بسرية تامة.",
     successTitle:"تم تقديم طلب تجربة تجريبية", successDesc:"شكرًا لك. سيقوم فريق الشركات بمراجعة تفاصيل مشروعك والتواصل خلال 24 ساعة لتصميم برنامجك التجريبي المخصص.",
     successClose:"إغلاق",
-    footerText:"© 2026 DynamicNFC Card Inc. — محرك تسريع المبيعات للعقارات والسيارات واليخوت",
+    footerText:"© 2026 NFC Software Systems Inc. — محرك تسريع المبيعات للعقارات والسيارات واليخوت",
     indChoose:"اختر قطاعك", indAll:"جميع القطاعات", indRE:"العقارات", indAuto:"السيارات", indYacht:"اليخوت",
     prob1Desc_auto:"يتصفح معظم زوار صالة العرض دون الكشف عن هويتهم.",
     prob2Desc_auto:"يتواصل فرق المبيعات متأخرًا، دون معرفة الموديلات أو التكوينات أو خيارات التمويل التي استكشفها العملاء",
@@ -235,8 +251,24 @@ const TR = {
     faq2A_auto:"مؤشر واحد: زيادة حجوزات تجارب القيادة بين حاملي بطاقات VIP مقارنة بالمجموعة الضابطة من الزوار العاديين. ليست النقرات، ولا مشاهدات الصفحة — بل النشاط الفعلي لصالة العرض.",
     roiFlow5_auto:"حجوزات تجارب قيادة أكثر",
     modalIndustry:"القطاع", modalIndustryPlaceholder:"اختر قطاعك",
+    badgeVipClient:"عميل VIP", badgePublic:"عام", badgeVipYacht:"يخت VIP", badgeFleet:"الأسطول", badgeAiConcierge:"كونسيرج الذكاء الاصطناعي",
+    seoDesc:"محرك تسريع المبيعات لفرق العقارات والسيارات واليخوت. بوابات VIP خاصة مع ذكاء سلوكي.",
+    errSubmit:"حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.",
+    footerTagline:"محرك تسريع المبيعات للعقارات والسيارات واليخوت",
+    indOptDev:"مطوّر عقاري", indOptAgent:"وكيل عقاري / شركة وساطة", indOptAuto:"وكالة سيارات", indOptYacht:"وساطة يخوت", optOther:"أخرى",
+    fFirstName:"الاسم الأول", fLastName:"اسم العائلة", fEmail:"البريد الإلكتروني للعمل", fPhone:"الهاتف",
+    fCompany:"الشركة", fRole:"الدور الوظيفي", fProject:"اسم المشروع", fProjectType:"نوع المشروع",
+    fTotalUnits:"إجمالي الوحدات", fLocation:"الموقع", fChallenge:"ما أكبر تحدٍّ في المبيعات؟", fNotes:"ملاحظات",
+    optSelectRole:"اختر الدور", optSelectType:"اختر النوع", optSelectRange:"اختر النطاق", optSelectChallenge:"اختر التحدي",
+    roleCeo:"الرئيس التنفيذي / رئيس مجلس الإدارة", roleCso:"الرئيس التنفيذي للمبيعات", roleCmo:"الرئيس التنفيذي للتسويق",
+    roleVpSales:"نائب رئيس المبيعات", roleDirSales:"مدير المبيعات", roleGm:"المدير العام",
+    ptTower:"برج سكني", ptBranded:"مساكن ذات علامة تجارية", ptVilla:"فلل فاخرة",
+    ptMega:"مشروع ضخم", ptMixed:"متعدد الاستخدامات", ptCommercial:"تجاري",
+    unitsUnder50:"أقل من 50",
+    chalAnon:"حركة مرور مجهولة على الموقع", chalSlow:"متابعة بطيئة", chalLowConv:"تحويل منخفض إلى زيارات", chalGeneric:"تواصل عام",
   },
 };
+Object.assign(TR, ENTERPRISE_TR_EXTRA);
 
 const PROB_ICONS = [
   <svg key="p1" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.5-3.5 4-5 7-5s5.5 1.5 7 5"/><path d="M19 4l1.5 1.5M19 4l-1.5 1.5M19 4v3"/></svg>,
@@ -315,12 +347,12 @@ export default function Enterprise() {
           event_label: data.company || 'unknown',
         });
       }
-    } catch { alert('Error submitting. Please try again.'); }
+    } catch { alert(t('errSubmit')); }
     setSubmitting(false);
   };
 
   /* Particles */
-  const particles = Array.from({ length: 20 }, (_, i) => ({
+  const particles = Array.from({ length: 20 }, () => ({
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
     animationDelay: `${Math.random() * 20}s`,
@@ -339,7 +371,7 @@ export default function Enterprise() {
 
   return (
     <div className="ent-page" dir={isRTL ? 'rtl' : 'ltr'}>
-      <SEO title="Enterprise" description="Sales Velocity Engine for real estate, automotive, and yacht teams. Private VIP portals with behavioral intelligence." path="/enterprise" />
+      <SEO title="Enterprise" description={t('seoDesc')} path="/enterprise" />
       <div className="ent-bg-mesh" />
       <div className="ent-particles">
         {particles.map((p, i) => <div key={i} className="ent-particle" style={p} />)}
@@ -532,21 +564,21 @@ export default function Enterprise() {
             {/* ── AUTOMOTIVE DEMO PORTALS ── */}
             {(isOverview || isAuto) && (<>
               <a href="/automotive/demo/khalid" className="ent-demo-portal">
-                <div className="ent-portal-badge gold">&#9733; VIP Client</div>
+                <div className="ent-portal-badge gold">&#9733; {t('badgeVipClient')}</div>
                 <div className="ent-portal-avatar red">KM</div>
                 <h4>{t('autoDemo1Title')}</h4>
                 <p>{t('autoDemo1Desc')}</p>
                 <div className="ent-portal-arrow"><ArrowIcon /></div>
               </a>
               <a href="/automotive/demo/sultan" className="ent-demo-portal">
-                <div className="ent-portal-badge gold">&#9733; VIP Client</div>
+                <div className="ent-portal-badge gold">&#9733; {t('badgeVipClient')}</div>
                 <div className="ent-portal-avatar blue">SD</div>
                 <h4>{t('autoDemo2Title')}</h4>
                 <p>{t('autoDemo2Desc')}</p>
                 <div className="ent-portal-arrow"><ArrowIcon /></div>
               </a>
               <a href="/automotive/demo/showroom" className="ent-demo-portal">
-                <div className="ent-portal-badge teal">&#127760; Public</div>
+                <div className="ent-portal-badge teal">&#127760; {t('badgePublic')}</div>
                 <div className="ent-portal-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{color:'var(--teal)'}}>
                     <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
@@ -561,7 +593,7 @@ export default function Enterprise() {
 
             {(isOverview || isYacht) && (<>
               <a href="/yacht/demo" target="_blank" rel="noreferrer" className="ent-demo-portal">
-                <div className="ent-portal-badge gold">VIP YACHT</div><div className="ent-portal-avatar blue">Y</div>
+                <div className="ent-portal-badge gold">{t('badgeVipYacht')}</div><div className="ent-portal-avatar blue">Y</div>
                 <h4>{t('yachtDemo1Title')}</h4><p>{t('yachtDemo1Desc')}</p><div className="ent-portal-arrow"><ArrowIcon /></div>
               </a>
               <a href="/yacht/demo/vip" target="_blank" rel="noreferrer" className="ent-demo-portal">
@@ -569,11 +601,11 @@ export default function Enterprise() {
                 <h4>{t('yachtDemo2Title')}</h4><p>{t('yachtDemo2Desc')}</p><div className="ent-portal-arrow"><ArrowIcon /></div>
               </a>
               <a href="/yacht/demo/showroom" target="_blank" rel="noreferrer" className="ent-demo-portal">
-                <div className="ent-portal-badge teal">FLEET</div><div className="ent-portal-icon">⚓</div>
+                <div className="ent-portal-badge teal">{t('badgeFleet')}</div><div className="ent-portal-icon">⚓</div>
                 <h4>{t('yachtDemo3Title')}</h4><p>{t('yachtDemo3Desc')}</p><div className="ent-portal-arrow"><ArrowIcon /></div>
               </a>
               <a href="/yacht/demo/ai" target="_blank" rel="noreferrer" className="ent-demo-portal ent-demo-portal-featured">
-                <div className="ent-portal-badge purple">AI CONCIERGE</div><div className="ent-portal-icon">AI</div>
+                <div className="ent-portal-badge purple">{t('badgeAiConcierge')}</div><div className="ent-portal-icon">AI</div>
                 <h4>{t('yachtDemo4Title')}</h4><p>{t('yachtDemo4Desc')}</p><div className="ent-portal-arrow"><ArrowIcon /></div>
               </a>
             </>)}
@@ -596,7 +628,7 @@ export default function Enterprise() {
             )}
             {(isOverview || isAuto) && (
               <a href="/unified" className="ent-demo-portal ent-demo-portal-featured">
-                <div className="ent-portal-badge gold">&#128202; Analytics</div>
+                <div className="ent-portal-badge gold">&#128202; {t('demoBadge4')}</div>
                 <div className="ent-portal-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{color:'var(--gold)'}}>
                     <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
@@ -714,32 +746,32 @@ export default function Enterprise() {
                   <label className="ent-pilot-label">{t('modalIndustry')} <span className="req">*</span></label>
                   <select className="ent-pilot-select" name="industry" required defaultValue="">
                     <option value="" disabled>{t('modalIndustryPlaceholder')}</option>
-                    <option value="real_estate_developer">Real Estate Developer</option>
-                    <option value="real_estate_agent">Real Estate Agent / Brokerage</option>
-                    <option value="automotive">Automotive Dealership</option>
-                    <option value="yacht_brokerage">Yacht Brokerage</option>
-                    <option value="other">Other</option>
+                    <option value="real_estate_developer">{t('indOptDev')}</option>
+                    <option value="real_estate_agent">{t('indOptAgent')}</option>
+                    <option value="automotive">{t('indOptAuto')}</option>
+                    <option value="yacht_brokerage">{t('indOptYacht')}</option>
+                    <option value="other">{t('optOther')}</option>
                   </select>
                 </div>
 
                 <div className="ent-pilot-section-label">{t('modalSec1')}</div>
                 <div className="ent-pilot-row">
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">First Name <span className="req">*</span></label>
+                    <label className="ent-pilot-label">{t('fFirstName')} <span className="req">*</span></label>
                     <input className="ent-pilot-input" type="text" name="firstName" required />
                   </div>
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Last Name <span className="req">*</span></label>
+                    <label className="ent-pilot-label">{t('fLastName')} <span className="req">*</span></label>
                     <input className="ent-pilot-input" type="text" name="lastName" required />
                   </div>
                 </div>
                 <div className="ent-pilot-row">
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Business Email <span className="req">*</span></label>
+                    <label className="ent-pilot-label">{t('fEmail')} <span className="req">*</span></label>
                     <input className="ent-pilot-input" type="email" name="email" required />
                   </div>
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Phone</label>
+                    <label className="ent-pilot-label">{t('fPhone')}</label>
                     <input className="ent-pilot-input" type="tel" name="phone" />
                   </div>
                 </div>
@@ -748,20 +780,20 @@ export default function Enterprise() {
                 <div className="ent-pilot-section-label">{t('modalSec2')}</div>
                 <div className="ent-pilot-row">
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Company <span className="req">*</span></label>
+                    <label className="ent-pilot-label">{t('fCompany')} <span className="req">*</span></label>
                     <input className="ent-pilot-input" type="text" name="company" required />
                   </div>
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Role <span className="req">*</span></label>
+                    <label className="ent-pilot-label">{t('fRole')} <span className="req">*</span></label>
                     <select className="ent-pilot-select" name="role" required defaultValue="">
-                      <option value="" disabled>Select role</option>
-                      <option value="ceo">CEO / Chairman</option>
-                      <option value="cso">Chief Sales Officer</option>
-                      <option value="cmo">Chief Marketing Officer</option>
-                      <option value="vp-sales">VP of Sales</option>
-                      <option value="director-sales">Director of Sales</option>
-                      <option value="gm">General Manager</option>
-                      <option value="other">Other</option>
+                      <option value="" disabled>{t('optSelectRole')}</option>
+                      <option value="ceo">{t('roleCeo')}</option>
+                      <option value="cso">{t('roleCso')}</option>
+                      <option value="cmo">{t('roleCmo')}</option>
+                      <option value="vp-sales">{t('roleVpSales')}</option>
+                      <option value="director-sales">{t('roleDirSales')}</option>
+                      <option value="gm">{t('roleGm')}</option>
+                      <option value="other">{t('optOther')}</option>
                     </select>
                   </div>
                 </div>
@@ -770,36 +802,36 @@ export default function Enterprise() {
                 <div className="ent-pilot-section-label">{t('modalSec3')}</div>
                 <div className="ent-pilot-row">
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Project Name <span className="req">*</span></label>
+                    <label className="ent-pilot-label">{t('fProject')} <span className="req">*</span></label>
                     <input className="ent-pilot-input" type="text" name="project" required />
                   </div>
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Project Type <span className="req">*</span></label>
+                    <label className="ent-pilot-label">{t('fProjectType')} <span className="req">*</span></label>
                     <select className="ent-pilot-select" name="projectType" required defaultValue="">
-                      <option value="" disabled>Select type</option>
-                      <option value="tower-highrise">Residential Tower</option>
-                      <option value="branded-residences">Branded Residences</option>
-                      <option value="luxury-villa">Luxury Villas</option>
-                      <option value="mega-project">Mega-Project</option>
-                      <option value="mixed-use">Mixed-Use</option>
-                      <option value="commercial">Commercial</option>
-                      <option value="other">Other</option>
+                      <option value="" disabled>{t('optSelectType')}</option>
+                      <option value="tower-highrise">{t('ptTower')}</option>
+                      <option value="branded-residences">{t('ptBranded')}</option>
+                      <option value="luxury-villa">{t('ptVilla')}</option>
+                      <option value="mega-project">{t('ptMega')}</option>
+                      <option value="mixed-use">{t('ptMixed')}</option>
+                      <option value="commercial">{t('ptCommercial')}</option>
+                      <option value="other">{t('optOther')}</option>
                     </select>
                   </div>
                 </div>
                 <div className="ent-pilot-row">
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Total Units</label>
+                    <label className="ent-pilot-label">{t('fTotalUnits')}</label>
                     <select className="ent-pilot-select" name="totalUnits" defaultValue="">
-                      <option value="" disabled>Select range</option>
-                      <option value="under-50">Under 50</option>
+                      <option value="" disabled>{t('optSelectRange')}</option>
+                      <option value="under-50">{t('unitsUnder50')}</option>
                       <option value="50-100">50 – 100</option>
                       <option value="100-500">100 – 500</option>
                       <option value="500+">500+</option>
                     </select>
                   </div>
                   <div className="ent-pilot-field">
-                    <label className="ent-pilot-label">Location</label>
+                    <label className="ent-pilot-label">{t('fLocation')}</label>
                     <input className="ent-pilot-input" type="text" name="location" />
                   </div>
                 </div>
@@ -807,18 +839,18 @@ export default function Enterprise() {
                 <div className="ent-pilot-divider" />
                 <div className="ent-pilot-section-label">{t('modalSec4')}</div>
                 <div className="ent-pilot-field full">
-                  <label className="ent-pilot-label">Biggest sales challenge?</label>
+                  <label className="ent-pilot-label">{t('fChallenge')}</label>
                   <select className="ent-pilot-select" name="challenge" defaultValue="">
-                    <option value="" disabled>Select challenge</option>
-                    <option value="anonymous-traffic">Anonymous website traffic</option>
-                    <option value="slow-followup">Slow follow-up</option>
-                    <option value="low-conversion">Low conversion to viewings</option>
-                    <option value="generic-outreach">Generic outreach</option>
-                    <option value="other">Other</option>
+                    <option value="" disabled>{t('optSelectChallenge')}</option>
+                    <option value="anonymous-traffic">{t('chalAnon')}</option>
+                    <option value="slow-followup">{t('chalSlow')}</option>
+                    <option value="low-conversion">{t('chalLowConv')}</option>
+                    <option value="generic-outreach">{t('chalGeneric')}</option>
+                    <option value="other">{t('optOther')}</option>
                   </select>
                 </div>
                 <div className="ent-pilot-field full">
-                  <label className="ent-pilot-label">Notes</label>
+                  <label className="ent-pilot-label">{t('fNotes')}</label>
                   <textarea className="ent-pilot-textarea" name="notes" />
                 </div>
 
@@ -842,7 +874,7 @@ export default function Enterprise() {
       {/* ═══ FOOTER ═══ */}
       <footer className="ent-footer">
         <p>{t('footerText').includes('DynamicNFC') ? (
-          <>© 2026 <a href="https://dynamicnfc.ca" >DynamicNFC Card Inc.</a> — {lang === 'ar' ? 'محرك تسريع المبيعات للعقارات والسيارات واليخوت' : 'Sales Velocity Engine for Real Estate, Automotive & Yacht'}</>
+          <>© 2026 <a href="https://dynamicnfc.ca" >NFC Software Systems Inc.</a> — {t('footerTagline')}</>
         ) : t('footerText')}</p>
       </footer>
     </div>

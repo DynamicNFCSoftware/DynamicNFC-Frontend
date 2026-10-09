@@ -22,8 +22,6 @@ export default function SvgFunnel({ data = [] }) {
   const totalHeight = data.length * (stageHeight + gap) + 20;
 
   const pctLabel = lang === "ar" ? "معدل التحويل" : lang === "fr" ? "Conversion" : lang === "es" ? "Conversion" : "Conversion";
-  const dropLabel = lang === "ar" ? "تراجع" : lang === "fr" ? "Perte" : lang === "es" ? "Caida" : "Drop-off";
-
   return (
     <div style={{ overflowX: "auto", padding: "4px 0" }}>
       <svg

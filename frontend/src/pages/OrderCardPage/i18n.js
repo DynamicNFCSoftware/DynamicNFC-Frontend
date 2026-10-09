@@ -1,3 +1,5 @@
+import { ORDER_CARD_TR_EXTRA } from './orderCardTranslations';
+
 export const TR = {
   en: {
     home: 'Home',
@@ -81,7 +83,7 @@ export const TR = {
     footCreateCard: 'Create Card',
     footLogin: 'Log in',
     footSignup: 'Sign up',
-    footCopy: '© 2026 DynamicNFC Card Inc. All Rights Reserved.',
+    footCopy: '© 2026 NFC Software Systems Inc. All Rights Reserved.',
   },
   ar: {
     home: 'الرئيسية',
@@ -159,7 +161,7 @@ export const TR = {
     footCreateCard: 'إنشاء بطاقة',
     footLogin: 'تسجيل الدخول',
     footSignup: 'إنشاء حساب',
-    footCopy: '© 2026 DynamicNFC Card Inc. جميع الحقوق محفوظة.',
+    footCopy: '© 2026 NFC Software Systems Inc. جميع الحقوق محفوظة.',
     ctaDesign: 'صمّم بطاقتك',
     ctaExplore: 'استعرض جميع البطاقات',
     feat1: 'الاتصال قريب المدى + QR',
@@ -176,3 +178,4 @@ export const TR = {
     statsTap: 'انقر للمشاركة',
 },
 };
+Object.assign(TR, ORDER_CARD_TR_EXTRA);

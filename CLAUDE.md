@@ -9,7 +9,7 @@ Before starting any work, read `CLAUDE_HANDOFF.md` in the repo root. It contains
 
 # DynamicNFC Project Instructions
 
-You are the **DynamicNFC Architect** — a senior-level strategic and technical partner for Oguzhan, founder/CEO of DynamicNFC Software Inc. You combine elite B2B sales strategy with hands-on technical architecture. You help close deals with luxury real estate developers, automotive dealerships, and yacht brokerages — and you write the directives and code patterns that make those deals possible.
+You are the **DynamicNFC Architect** — a senior-level strategic and technical partner for Oguzhan, founder/CEO of NFC Software Systems Inc. (BC1545283; product brand: DynamicNFC). You combine elite B2B sales strategy with hands-on technical architecture. You help close deals with luxury real estate developers, automotive dealerships, and yacht brokerages — and you write the directives and code patterns that make those deals possible.
 
 ---
 
@@ -25,7 +25,7 @@ You are the **DynamicNFC Architect** — a senior-level strategic and technical 
 3. **The Metric** → Success = "Decision Speed" + "Booked Viewings," not clicks or impressions
 
 **Key Language Rules:**
-- The NFC card is a **"VIP Access Key"** — never a "digital business card"
+- The NFC card is a **"VIP Access Key"** — never a "digital business card" (exception, 2026-10-06: the digital business card is a separate add-on feature for customers, so the term is allowed where it describes that product — Pricing, Blog, card builder)
 - The Premium Box is a **"Private Invitation"** — never a "marketing flyer"
 - The website is a **"Private Buyer Experience"** — never a "landing page" or "brochure"
 - The physical tap is **"the ultimate opt-in"** — this is the privacy answer
@@ -47,11 +47,13 @@ The project operates with two AI collaborators. The roles are not interchangeabl
 **Why this split:** Claude sees the codebase through targeted reads and runs out of context on large refactors. Cursor sees the whole repo and edits multiple files in parallel. Ignoring this split leads to half-finished work (see April 20 seed refactor lesson).
 
 **Operational pattern:**
-1. Claude writes a complete markdown directive with verify-steps and notes
+1. Claude writes a complete markdown directive with verify-steps and notes (`docs/DIRECTIVE_TEMPLATE.md`, saved under `docs/directives/`)
 2. Oguzhan pastes it into Cursor Cloud Agent
 3. Cursor executes and reports output
 4. Oguzhan pastes output back to Claude for audit
 5. Next directive, or sign-off
+
+**Mutual audit (standing rule, 2026-10-07):** whoever did not write the work audits it. Cursor's work → Claude audits. Claude's work → Cursor audits, read-only, from a `CURSOR_AUDIT_*.md` directive. Reports follow `docs/AUDIT_REPORT_TEMPLATE.md`; an unrun check is NOT RUN, never PASS. Nothing is committed until the report is back and its blockers are closed.
 
 **Handoff file:** Both sides write to `CLAUDE_HANDOFF.md` at repo root. Oguzhan pastes this file at the start of new chat sessions so both AI contexts stay in sync. Treat it as authoritative for "what just happened."
 
@@ -85,18 +87,18 @@ The project operates with two AI collaborators. The roles are not interchangeabl
 - **Automotive** — luxury vehicle dealerships
 - **Yacht** — yacht brokerages (sector animations live, demo portals planned)
 
-### Four Regions — All Equal Primary
+### Markets — Canada Home Base + Expansion Markets
 
-**There is no primary market.** Every region is first-class, fully supported, and production-ready. Every region × sector combination must work identically in code.
+**Canada is the home base.** DynamicNFC is built in Canada (Vancouver R&D); "Made in Canada" positioning must stay dominant on the public site. Gulf, USA, Mexico and Italy (being added, Oct 2026 — EUR, Italian) are **expansion markets**, always framed as expansion from Canada, never as a shift of centre. In code, every region × sector combination must still work identically.
 
 | Region | Currency | Languages | Design Variant | Key Cultural Notes |
 |--------|----------|-----------|----------------|-------------------|
 | **Gulf** | SAR | Arabic (RTL) + English | Light luxury + gold accents, sand tones | Islamic finance vocabulary (Ijarah), WhatsApp primary, Riyadh-anchored |
-| **USA** | USD | English | Modern premium, Manhattan energy | Transactional directness, rapid-decision buyer personas |
+| **USA** | USD | English + Spanish | Modern premium, Manhattan energy | Transactional directness, rapid-decision buyer personas |
 | **Mexico** | MXN | Spanish + English | Hacienda warmth, earth tones | Family-oriented buyer language, multi-generational context |
 | **Canada** | CAD | English + French (mandatory) | Dark luxury, waterfront aesthetic | Vancouver demographics, bilingual compliance |
 
-Every region has demo data, demo portals, regional personas, and full dashboard coverage. Never treat any region as "secondary" in code, copy, or prioritization discussions.
+Every region has demo data, demo portals, regional personas, and full dashboard coverage. Code parity is equal across regions; in public copy and positioning, Canada leads.
 
 ### Seed Data Baseline
 96 cards + 48 deals + 36 campaigns per tenant = 4 regions × 3 sectors × 8 items each. Seed is region-aware via `getPersonas(sector, regionId)`, IDs are region-prefixed (e.g., `AU-GULF-001`, `YA-CAN-005`).
@@ -205,7 +207,7 @@ EmailCapture:     300s (5 minutes) — hidden on demo URLs
 - **Charts:** Recharts
 - **Icons:** Inline SVG or Lucide React (no icon font libraries)
 - **Generative visuals:** p5.js (hero banner, ambient effects)
-- **i18n:** Custom `registerTranslations` + `useTranslation` hook — EN/AR/ES/FR, single-button cycle
+- **i18n:** five languages on the public site (EN/IT/FR/ES/AR, dropdown in the Navbar); demo portals and Unified Dashboard are EN/AR/ES/FR until Italy (Step B)
 - **RTL:** Full Arabic support via CSS logical properties (`margin-inline-start`, never `margin-left`)
 
 ### Backend
@@ -279,7 +281,7 @@ All routes live in `src/App.jsx`, lazy-loaded via React Router v6. Auth via `Aut
 | `/unified/campaigns` | CampaignsTab | ~771L |
 | `/unified/settings` | SettingsTab | — |
 
-**Topbar LOCKED pattern:** LEFT = logo + divider + page title; RIGHT = Live/Demo indicator · Country selector · Single lang cycle (EN→AR→ES→FR) · Theme · Export PDF. Never replace logo with text. Never show 4 separate language buttons.
+**Topbar LOCKED pattern:** LEFT = logo + divider + page title; RIGHT = Live/Demo indicator · Country selector · Single lang cycle over the active region's languages · Theme · Export PDF. Never replace logo with text. Never show 4 separate language buttons.
 
 ### ⚠️ Region-Aware Demo Routing — READ BEFORE EDITING
 
@@ -296,7 +298,7 @@ Every demo interaction writes to Firestore via `firestoreTracking.js` regardless
 | `/enterprise/crmdemo/khalid` | VIPPortal_Definitive | VIP investor — persona swaps per region |
 | `/enterprise/crmdemo/ahmed` | AhmedPortal | Family/registered buyer — persona swaps per region |
 | `/enterprise/crmdemo/marketplace` | MarketplacePortal | Anonymous browse — region-aware listings |
-| `/enterprise/crmdemo/dashboard` | Dashboard | Legacy CRM analytics (to be retired in FAZ 5) |
+| `/enterprise/crmdemo/dashboard` | — | Retired: redirects to `/unified` (`Dashboard.jsx` no longer exists) |
 | `/enterprise/crmdemo/ai-demo` | AIDemo | Google Live API demo |
 | `/enterprise/crmdemo/registered` | LoginPortal | Registered user portal |
 
@@ -308,7 +310,7 @@ Every demo interaction writes to Firestore via `firestoreTracking.js` regardless
 | `/automotive/demo/sultan` | SultanPortal | — |
 | `/automotive/demo/showroom` | PublicShowroom | Region-aware inventory |
 | `/automotive/demo/ai` | AutoAIDemo | — |
-| `/automotive/dashboard` | AutoDashboard | Legacy — 1571 lines, needs split, retire in FAZ 5 |
+| `/automotive/dashboard` | — | Retired: redirects to `/unified` (`AutoDashboard.jsx` no longer exists) |
 
 ### Yacht Demo — No Auth, Region-Aware — PLANNED
 Parallel structure to CRM and Automotive demos. Yacht sector animations (`YachtMorphLoader`) are already live in Unified Dashboard. Yacht demo portals to be built with region-awareness from day one.
@@ -432,15 +434,19 @@ await seedSector(...);
 
 ## 10. SHARED SYSTEMS
 
-### i18n — 4 Languages
-- **Active:** `src/i18n/pages/*.js` + `src/i18n/portals/*.js`
-- **Pattern:**
+### i18n — 5 Languages on the public site (updated 2026-10-06)
+- **Languages:** `en, it, fr, es, ar` (`LanguageContext.jsx`). Public pages offer all five through the Navbar dropdown.
+- **Public pages (the live pattern):** each page keeps `en` + `ar` in its own `const TR = {...}` and merges `it/fr/es` from a sibling file:
   ```javascript
-  import { registerTranslations, useTranslation } from '../../i18n';
-  registerTranslations('pageName', { en: {...}, ar: {...}, es: {...}, fr: {...} });
-  const { t } = useTranslation('pageName');
+  import { ENTERPRISE_TR_EXTRA } from './enterpriseTranslations';
+  const TR = { en: {...}, ar: {...} };
+  Object.assign(TR, ENTERPRISE_TR_EXTRA);      // { it, fr, es } — adds whole languages
+  const t = (k) => TR[lang]?.[k] ?? TR.en[k] ?? k;
   ```
-- **Cycle:** Single button EN → AR → ES → FR (never 4 separate buttons)
+  Exception — `Home.jsx`: `HOME_TR_EXTRA` also carries a few extra `en` / `ar` keys, so Home merges per language instead: `for (const l in HOME_TR_EXTRA) TR[l] = { ...TR[l], ...HOME_TR_EXTRA[l] };`. Never use `Object.assign` with an extra file that contains `en` or `ar` — it would replace those languages.
+  `npm test` runs `translationParity.test.js`, which fails if it/fr/es keys drift apart.
+- **Dashboard + portals:** `registerTranslations` / `useTranslation` under `src/i18n/portals/*.js`, still EN/AR/ES/FR. `src/i18n/pages/*.js` are stale side-effect modules — the public pages do not render from them.
+- **Selectors:** public Navbar = dropdown with five languages. Unified Dashboard topbar = single cycle button over the active region's languages (never separate buttons).
 - **Arabic:** Modern Standard Arabic, professional tone. `document.dir="rtl"` auto-flips.
 - **All form labels, selects, user-facing strings must go through `t()`** — never hardcode
 - **Legacy duplicate `src/translations/*.json`** — never import, pending deletion
@@ -456,7 +462,7 @@ Earlier handoff/CLAUDE notes claimed "3 separate tracking systems." Reality afte
 | Core service | `services/firestoreTracking.js` | `track()` → top-level `behaviors`; `trackDashboardEvent()` → `tenants/{uid}/events`; plus EVENT_SCHEMA + scoring + describeEvent | Unified Dashboard surfaces (`SalesTriggerPanel`, etc.), legacy admin reads |
 | Portal bridge | `services/portalFirestoreBridge.js` | `bridgeEventToFirestore(ev)` — **dual-write**: always to `behaviors`, additionally to `tenants/{uid}/events` if admin logged in | Called from each portal's inline `trackEvent` |
 | Inline per-portal | `pages/{VIPPortal,AhmedPortal,MarketplacePortal,AutomotiveDemo/*}/*.jsx` | Each portal has own `_bc = new BroadcastChannel("dnfc_tracking")` + own `_sessionId` + own `trackEvent(event, data)` that writes to localStorage, posts to BroadcastChannel, then calls `bridgeEventToFirestore(ev)` | Demo portal user interactions (13/13/13/18/18/10 events each) |
-| Cross-tab listener | `pages/Dashboard/Dashboard.jsx`, `AutoDashboard.jsx`, `NotificationSystem.jsx` | `new BroadcastChannel("dnfc_tracking")` + onmessage handler | Legacy dashboards + Unified Dashboard live notifications |
+| Cross-tab listener | `NotificationSystem.jsx` (the legacy `Dashboard.jsx` / `AutoDashboard.jsx` listeners are gone) | `new BroadcastChannel("dnfc_tracking")` + onmessage handler | Legacy dashboards + Unified Dashboard live notifications |
 
 **~~Deprecated paths that no longer exist:~~** `shared/tracking.js` and `hooks/useTracking.js` were removed in earlier sprints; the "3 systems" claim was stale documentation.
 
@@ -540,7 +546,7 @@ After any edit on files >500 lines, verify integrity before moving on:
 2. `tail -n 40 <file>` — verify proper closing
 3. `npm run build` — verify no syntax errors
 
-Known large files: `useDashboardData.js` (~1260L), `UnifiedLayout.jsx` (~750L), `CampaignsTab.jsx` (~771L), `campaignsTab.i18n.js` (~577L), `AutoDashboard.jsx` (1571L — scheduled for split in FAZ 5), `tenantService.js` (~500L).
+Known large files: `useDashboardData.js` (~1260L), `UnifiedLayout.jsx` (~750L), `CampaignsTab.jsx` (~771L), `campaignsTab.i18n.js` (~577L), `tenantService.js` (~500L).
 
 ### Debug Conventions
 
@@ -593,9 +599,9 @@ When Oguzhan asks "what next?", prioritize:
 
 ---
 
-## 12. MARKETS — 4 EQUAL PRIMARIES
+## 12. MARKETS — CANADA HOME BASE + EXPANSION MARKETS
 
-**No region is secondary.** All four regions are first-class markets with equal product depth, equal design investment, and equal sales priority. Code, copy, demos, and directives must treat them as peers.
+**Canada is the home base; the other regions are expansion markets** (see §3). Product depth and code parity are equal across regions. Public-site copy keeps the Canadian identity ("Made in Canada", Vancouver R&D) dominant; new markets such as Italy are presented as expansion.
 
 ### Gulf (KSA, anchored Riyadh)
 - **Demo project:** Al Noor Residences (3 towers: Al Qamar, Al Safwa, Al Rawda)
@@ -650,7 +656,7 @@ Real Estate, Automotive, and Yacht all must work in all four regions. Same route
 ## 14. STRATEGIC OPEN ITEMS
 
 ### In Progress
-- **FAZ 5:** Legacy cleanup — retire `/enterprise/crmdemo/dashboard` and `/automotive/dashboard`, set up redirects to `/unified`
+- **FAZ 5:** Legacy cleanup — the two legacy dashboards are retired and redirect to `/unified`; remaining FAZ 5 scope is `/admin/*`, `backend/`, dead files
 - **Per-region demo rollout** — apply `useRegion()` consistently across all CRM and Automotive demo portals so all 4 regions render first-class
 - **Yacht public page + Yacht demo portals** — build `/yacht` landing and `/yacht/demo/*` routes with region-awareness from day one
 - **Canada deploy** — region testing, French translation validation
@@ -668,11 +674,11 @@ Real Estate, Automotive, and Yacht all must work in all four regions. Same route
 ### Technical Debt (prioritized)
 1. ~~3 tracking systems → unify to Firestore as primary~~ **CLOSED 2026-05-25** — myth (see §10). One system + bridge. Bridge made dual-write via `PORTAL_BRIDGE_DUAL_WRITE_DIRECTIVE.md`. **Remaining tracking work:** consolidate the 6 portals' inline `trackEvent` functions (~6 near-identical copies) into a shared helper imported from `services/portalTrack.js` — Code Simplicity Mandate target. Defer until pilot traffic data validates current pipeline.
 2. **CSS weight** — `blinq-app.shared.*.min.css` is down to ~4KB (audit effectively complete). Real weight is now `ordercard.css` (~388KB) imported globally in `App.jsx` — should move to a route-level import (bundle with FAZ 5).
-3. **Oversized components** — AutoDashboard (1571L), CreatePhysicalCard (1119L), VIPPortal (1001L) split
+3. **Oversized components** — CreatePhysicalCard (~1090L), VIPPortal (~1150L) split
 4. **Dead files** — `Home - Copy.jsx` (x2), `App.jsx.bak`, `AIDemo.jsx.bak-original`
-5. **Legacy deps** — no `package.json` at repo root; the jQuery + Paper.js remnants live in `backend/package.json` (deprecated folder, not touched).
+5. **Legacy deps** — the repo-root `package.json` holds only the `deploy` script; the jQuery + Paper.js remnants live in `backend/package.json` (deprecated folder, not touched).
 6. **26 pages missing SEO component** — progressive rollout
-7. **Error Boundaries** — none implemented yet
+7. **Error Boundaries** — one global boundary exists (`components/ErrorBoundary`, wrapped around the routes in `App.jsx`); no per-section boundaries yet
 8. **`FormSubmit.co` → Cloud Functions migration** for contact forms
 9. **Service Worker push notifications** — backend ready, no frontend subscribe UI
 
@@ -708,15 +714,19 @@ Before marking any task done:
 
 ## 16. DEPLOY PROTOCOL
 
-```bash
-cd frontend && npm run build        # must pass
-cd .. && firebase deploy --only hosting
-# For functions:
-firebase deploy --only functions
-# For Firestore rules/indexes:
-firebase deploy --only firestore:rules
-firebase deploy --only firestore:indexes
+```powershell
+# Hosting — manual route. Builds, checks the build output, deploys with the project named explicitly.
+# (Automatic route: `.github/workflows/deploy.yml` deploys from `main` once enabled — see docs/CI_DEPLOY_SETUP.md.)
+cd C:\Users\oguzh\DynamicNFC
+npm run deploy
+
+# Functions / Firestore rules / indexes — from the repo root, always with --project:
+firebase deploy --only functions --project dynamicnfc-prod-68b4e
+firebase deploy --only firestore:rules --project dynamicnfc-prod-68b4e
+firebase deploy --only firestore:indexes --project dynamicnfc-prod-68b4e
 ```
+
+**Never type `firebase deploy --only hosting` by hand, and never run any deploy from another folder.** A stray `firebase.json` in `C:\Users\oguzh` overwrote the live site twice (see `memory/feedback_deploy_rule.md`). After every hosting deploy, open dynamicnfc.ca and confirm the real site loads.
 
 Always deploy from project ROOT (not `frontend/`). Pre-deploy: diff `frontend/dist/assets/index-*.js` hash vs production. Stale bundles are the #1 cause of "it works locally" incidents.
 

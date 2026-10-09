@@ -32,11 +32,12 @@ export function useTranslation(page) {
   const t = useCallback(
     (key) => {
       const pm = pageModules[page];
-      // Check page-specific first
+      // Page-specific in the active language first
       if (pm && pm[lang] && pm[lang][key] !== undefined) return pm[lang][key];
-      if (pm && pm.en && pm.en[key] !== undefined && lang === "en") return pm.en[key];
-      // Then common
+      // Then common in the active language
       if (common[lang] && common[lang][key] !== undefined) return common[lang][key];
+      // Then English (page first, then common)
+      if (pm && pm.en && pm.en[key] !== undefined) return pm.en[key];
       if (common.en && common.en[key] !== undefined) return common.en[key];
       // Fallback
       return key;
@@ -55,6 +56,7 @@ export function translate(page, lang, key) {
   const pm = pageModules[page];
   if (pm && pm[lang] && pm[lang][key] !== undefined) return pm[lang][key];
   if (common[lang] && common[lang][key] !== undefined) return common[lang][key];
+  if (pm && pm.en && pm.en[key] !== undefined) return pm.en[key];
   if (common.en && common.en[key] !== undefined) return common.en[key];
   return key;
 }

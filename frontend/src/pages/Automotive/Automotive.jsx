@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
 import { common } from '../../i18n/common';
+import { AUTOMOTIVE_TR_EXTRA } from './automotiveTranslations';
 import './Automotive.css';
 import SEO from '../../components/SEO/SEO';
 
 /* ═══════════════════════════════════════════
-   TRANSLATIONS (EN + AR) — Full automotive copy
+   TRANSLATIONS (EN + AR; IT/FR/ES in automotiveTranslations.js) — Full automotive copy
    ═══════════════════════════════════════════ */
 const TR = {
   en: {
@@ -93,7 +94,7 @@ const TR = {
     faq5Q:'How fast can we deploy?',
     faq5A:'A pilot program launches within 2–4 weeks. We configure your portals, design the experience, program the NFC keys, and connect analytics.',
     faq6Q:'What\'s the ROI?',
-    faq6A:'It\'s about cutting the time from "interested" to "signed" in half. When your sales team engages with context, deals close faster.',
+    faq6A:'It\'s about shortening the time from "interested" to "signed". When your sales team engages with context, deals close faster.',
 
     ctaLabel:'Ready to Deploy',
     ctaTitle:"You're Not Handing Out Business Cards. You're Issuing VIP Access Keys.",
@@ -108,7 +109,64 @@ const TR = {
     successDesc:'Thank you. Our automotive team will review your details and reach out within 24 hours to design your custom pilot.',
     successClose:'Close',
     closeLabel:'Close dialog',
-    footerText:'© 2026 DynamicNFC Card Inc. — Sales Velocity Engine for Automotive',
+
+    /* Section nav aria, live demo block, footer, pilot form */
+    navAria:'Page sections',
+    demoLabel:'LIVE DEMO',
+    demoTitle:'Experience the Portals Yourself',
+    demoDesc:'See how DynamicNFC works end-to-end — from the buyer\'s private portal to the dealer intelligence dashboard.',
+    demo1Badge:'VIP BUYER',
+    demo1Title:'Khalid Portal — Luxury Buyer',
+    demo1Desc:'Personalized luxury buyer experience — model comparisons, configuration tools, financing calculator.',
+    demo2Badge:'FAMILY BUYER',
+    demo2Title:'Sultan Portal — Family Buyer',
+    demo2Desc:'Family buyer experience — safety ratings, space, payment plans, test-drive booking.',
+    demo3Badge:'PUBLIC ACCESS',
+    demo3Title:'Public Showroom',
+    demo3Desc:'Anonymous browsing experience — lead capture and progressive engagement signals.',
+    demo4Badge:'ANALYTICS',
+    demo4Title:'Dealer Intelligence Dashboard',
+    demo4Desc:'Real-time behavioral analytics — lead scoring, behavior tracking, conversion funnels, A/B testing.',
+    footerTagline:'Sales Velocity Engine for Automotive',
+    fFirstName:'First Name',
+    fLastName:'Last Name',
+    fEmail:'Business Email',
+    fPhone:'Phone',
+    fDealership:'Dealership / Group',
+    fRole:'Role',
+    fBrands:'Brand(s)',
+    fSegment:'Segment Focus',
+    fTraffic:'Monthly Showroom Traffic',
+    fLocation:'Location',
+    fChallenge:'Biggest sales challenge?',
+    fNotes:'Notes',
+    fRoleSelect:'Select role',
+    roleGm:'General Manager',
+    roleSalesDirector:'Sales Director',
+    roleSalesManager:'Sales Manager',
+    roleMarketingDirector:'Marketing Director',
+    roleDigitalManager:'Digital Manager',
+    roleOwner:'Dealer Principal / Owner',
+    fSegmentSelect:'Select segment',
+    segLuxury:'Luxury / Premium',
+    segPerformance:'Performance / Sports',
+    segSuv:'SUV / Crossover',
+    segEv:'EV / New Energy',
+    segFleet:'Fleet / Corporate',
+    segCpo:'Certified Pre-Owned',
+    segMulti:'Multi-Segment',
+    fTrafficSelect:'Select range',
+    trafficUnder200:'Under 200',
+    fChallengeSelect:'Select challenge',
+    chAnon:'Anonymous showroom traffic',
+    chTestDrive:'Low test-drive conversion',
+    chFollowup:'Slow follow-up after visits',
+    chGeneric:'Generic outreach / no personalization',
+    chGap:'Online-to-showroom gap',
+    optOther:'Other',
+    fBrandsPh:'e.g. Mercedes-Benz, BMW',
+    submitError:'Error submitting. Please try again.',
+    footerText:'© 2026 NFC Software Systems Inc. — Sales Velocity Engine for Automotive',
   },
   ar: {
     seoTitle:'السيارات — محرك تسريع المبيعات',
@@ -190,7 +248,7 @@ const TR = {
     faq5Q:'ما مدى سرعة التنفيذ؟',
     faq5A:'يمكن إطلاق برنامج تجريبي خلال 2–4 أسابيع. نقوم بإعداد بواباتك وتصميم التجربة وبرمجة مفاتيح NFC وربط التحليلات.',
     faq6Q:'ما هو العائد على الاستثمار؟',
-    faq6A:'الأمر يتعلق بتقليل الوقت من "مهتم" إلى "موقّع" للنصف. عندما يتواصل فريق المبيعات بالسياق، تُغلق الصفقات أسرع.',
+    faq6A:'الأمر يتعلق بتقليل الوقت من "مهتم" إلى "موقّع". عندما يتواصل فريق المبيعات بالسياق، تُغلق الصفقات أسرع.',
 
     ctaLabel:'جاهز للتنفيذ', ctaTitle:'أنت لا توزع بطاقات عمل. أنت تصدر مفاتيح وصول VIP.',
     ctaDesc:'حوّل حركة صالة العرض إلى صفقات مُغلقة. ابدأ تجربة مع 50 مفتاح VIP وقِس الفرق في التحويل خلال 30 يومًا.',
@@ -202,10 +260,68 @@ const TR = {
     modalNote:'نرد خلال 24 ساعة. معلوماتك محفوظة بسرية تامة.',
     successTitle:'تم تقديم طلب التجربة', successDesc:'شكرًا لك. سيقوم فريق السيارات بمراجعة تفاصيلك والتواصل خلال 24 ساعة لتصميم تجربتك المخصصة.',
     successClose:'إغلاق',
-    footerText:'© 2026 DynamicNFC Card Inc. — محرك تسريع المبيعات لقطاع السيارات',
+    footerText:'© 2026 NFC Software Systems Inc. — محرك تسريع المبيعات لقطاع السيارات',
     closeLabel:'إغلاق الحوار',
+
+    /* Section nav aria, live demo block, footer, pilot form */
+    navAria:'أقسام الصفحة',
+    demoLabel:'العرض التجريبي المباشر',
+    demoTitle:'جرّب البوابات بنفسك',
+    demoDesc:'استكشف كيف يعمل النظام — من تجربة المشتري الخاصة إلى لوحة تحكم الوكيل.',
+    demo1Badge:'مشتري VIP',
+    demo1Title:'بوابة خالد — مشتري فاخر',
+    demo1Desc:'تجربة مخصصة للمشتري الفاخر — مقارنات الموديلات، أدوات التهيئة، حاسبة التمويل.',
+    demo2Badge:'مشتري عائلي',
+    demo2Title:'بوابة سلطان — مشتري عائلي',
+    demo2Desc:'تجربة المشتري العائلي — الأمان، المساحة، خطط الدفع، حجز تجربة قيادة.',
+    demo3Badge:'وصول عام',
+    demo3Title:'صالة العرض العامة',
+    demo3Desc:'تجربة التصفح المجهول — التقاط العملاء المحتملين وإشارات التفاعل التلقائية.',
+    demo4Badge:'لوحة التحليلات',
+    demo4Title:'لوحة تحكم الوكيل',
+    demo4Desc:'تحليلات سلوكية في الوقت الحقيقي — تسجيل العملاء المحتملين، تتبع السلوك، مسارات التحويل.',
+    footerTagline:'محرك تسريع المبيعات لقطاع السيارات',
+    fFirstName:'الاسم الأول',
+    fLastName:'اسم العائلة',
+    fEmail:'البريد الإلكتروني للعمل',
+    fPhone:'الهاتف',
+    fDealership:'الوكالة / المجموعة',
+    fRole:'الدور',
+    fBrands:'العلامة (العلامات) التجارية',
+    fSegment:'الفئة المستهدفة',
+    fTraffic:'عدد زوار صالة العرض شهريًا',
+    fLocation:'الموقع',
+    fChallenge:'ما أكبر تحدٍّ في المبيعات؟',
+    fNotes:'ملاحظات',
+    fRoleSelect:'اختر الدور',
+    roleGm:'المدير العام',
+    roleSalesDirector:'مدير إدارة المبيعات',
+    roleSalesManager:'مدير المبيعات',
+    roleMarketingDirector:'مدير التسويق',
+    roleDigitalManager:'مدير القنوات الرقمية',
+    roleOwner:'مالك الوكالة',
+    fSegmentSelect:'اختر الفئة',
+    segLuxury:'فاخرة / راقية',
+    segPerformance:'أداء عالٍ / رياضية',
+    segSuv:'SUV / كروس أوفر',
+    segEv:'كهربائية / طاقة جديدة',
+    segFleet:'أساطيل / شركات',
+    segCpo:'مستعملة معتمدة',
+    segMulti:'فئات متعددة',
+    fTrafficSelect:'اختر النطاق',
+    trafficUnder200:'أقل من 200',
+    fChallengeSelect:'اختر التحدي',
+    chAnon:'زوار مجهولون في صالة العرض',
+    chTestDrive:'ضعف التحويل بعد تجربة القيادة',
+    chFollowup:'متابعة بطيئة بعد الزيارات',
+    chGeneric:'تواصل عام / بدون تخصيص',
+    chGap:'فجوة بين الإنترنت وصالة العرض',
+    optOther:'أخرى',
+    fBrandsPh:'مثال: Mercedes-Benz، BMW',
+    submitError:'حدث خطأ أثناء الإرسال. يُرجى المحاولة مرة أخرى.',
   },
 };
+Object.assign(TR, AUTOMOTIVE_TR_EXTRA);
 
 /* ═══════════════════════════════════════════
    MAIN COMPONENT
@@ -305,12 +421,12 @@ export default function Automotive() {
           event_label: data.dealership || 'unknown',
         });
       }
-    } catch { alert('Error submitting. Please try again.'); }
+    } catch { alert(t('submitError')); }
     setSubmitting(false);
   };
 
   /* Particles */
-  const particles = Array.from({ length: 20 }, (_, i) => ({
+  const particles = Array.from({ length: 20 }, () => ({
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
     animationDelay: `${Math.random() * 20}s`,
@@ -358,7 +474,7 @@ export default function Automotive() {
         </div>
       </section>
 
-      <nav className="auto-section-nav" aria-label={lang === 'ar' ? 'أقسام الصفحة' : 'Page sections'}>
+      <nav className="auto-section-nav" aria-label={t('navAria')}>
         <div className="auto-section-nav-inner">
           {AUTO_SECTION_NAV.map(({ id, labelKey }) => (
             <button type="button" key={id} className="auto-section-nav-btn" onClick={() => scrollTo(id)}>
@@ -509,32 +625,32 @@ export default function Automotive() {
 
       {/* ═══ LIVE DEMO PORTALS ═══ */}
       <section className="auto-section auto-reveal auto-scroll-target" id="demo-portals">
-        <div className="auto-section-label blue">{lang === 'ar' ? 'العرض التجريبي المباشر' : 'LIVE DEMO'}</div>
-        <div className="auto-section-title">{lang === 'ar' ? 'جرّب البوابات بنفسك' : 'Experience the Portals Yourself'}</div>
-        <p className="auto-section-desc">{lang === 'ar' ? 'استكشف كيف يعمل النظام — من تجربة المشتري الخاصة إلى لوحة تحكم الوكيل.' : 'See how DynamicNFC works end-to-end — from the buyer\'s private portal to the dealer intelligence dashboard.'}</p>
+        <div className="auto-section-label blue">{t('demoLabel')}</div>
+        <div className="auto-section-title">{t('demoTitle')}</div>
+        <p className="auto-section-desc">{t('demoDesc')}</p>
         <div className="auto-demo-grid">
           <a href="/automotive/demo/khalid" className="auto-demo-portal auto-reveal">
-            <div className="auto-demo-badge red">{lang === 'ar' ? 'مشتري VIP' : 'VIP BUYER'}</div>
-            <h4>{lang === 'ar' ? 'بوابة خالد — مشتري فاخر' : 'Khalid Portal — Luxury Buyer'}</h4>
-            <p>{lang === 'ar' ? 'تجربة مخصصة للمشتري الفاخر — مقارنات الموديلات، أدوات التهيئة، حاسبة التمويل.' : 'Personalized luxury buyer experience — model comparisons, configuration tools, financing calculator.'}</p>
+            <div className="auto-demo-badge red">{t('demo1Badge')}</div>
+            <h4>{t('demo1Title')}</h4>
+            <p>{t('demo1Desc')}</p>
             <div className="auto-demo-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </a>
           <a href="/automotive/demo/sultan" className="auto-demo-portal auto-reveal">
-            <div className="auto-demo-badge blue">{lang === 'ar' ? 'مشتري عائلي' : 'FAMILY BUYER'}</div>
-            <h4>{lang === 'ar' ? 'بوابة سلطان — مشتري عائلي' : 'Sultan Portal — Family Buyer'}</h4>
-            <p>{lang === 'ar' ? 'تجربة المشتري العائلي — الأمان، المساحة، خطط الدفع، حجز تجربة قيادة.' : 'Family buyer experience — safety ratings, space, payment plans, test-drive booking.'}</p>
+            <div className="auto-demo-badge blue">{t('demo2Badge')}</div>
+            <h4>{t('demo2Title')}</h4>
+            <p>{t('demo2Desc')}</p>
             <div className="auto-demo-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </a>
           <a href="/automotive/demo/showroom" className="auto-demo-portal auto-reveal">
-            <div className="auto-demo-badge blue">{lang === 'ar' ? 'وصول عام' : 'PUBLIC ACCESS'}</div>
-            <h4>{lang === 'ar' ? 'صالة العرض العامة' : 'Public Showroom'}</h4>
-            <p>{lang === 'ar' ? 'تجربة التصفح المجهول — التقاط العملاء المحتملين وإشارات التفاعل التلقائية.' : 'Anonymous browsing experience — lead capture and progressive engagement signals.'}</p>
+            <div className="auto-demo-badge blue">{t('demo3Badge')}</div>
+            <h4>{t('demo3Title')}</h4>
+            <p>{t('demo3Desc')}</p>
             <div className="auto-demo-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </a>
           <a href="/unified" className="auto-demo-portal auto-demo-featured auto-reveal">
-            <div className="auto-demo-badge red">{lang === 'ar' ? 'لوحة التحليلات' : 'ANALYTICS'}</div>
-            <h4>{lang === 'ar' ? 'لوحة تحكم الوكيل' : 'Dealer Intelligence Dashboard'}</h4>
-            <p>{lang === 'ar' ? 'تحليلات سلوكية في الوقت الحقيقي — تسجيل العملاء المحتملين، تتبع السلوك، مسارات التحويل.' : 'Real-time behavioral analytics — lead scoring, behavior tracking, conversion funnels, A/B testing.'}</p>
+            <div className="auto-demo-badge red">{t('demo4Badge')}</div>
+            <h4>{t('demo4Title')}</h4>
+            <p>{t('demo4Desc')}</p>
             <div className="auto-demo-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </a>
         </div>
@@ -672,21 +788,21 @@ export default function Automotive() {
                 <div className="auto-pilot-section-label">{t('modalSec1')}</div>
                 <div className="auto-pilot-row">
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">First Name <span className="req">*</span></label>
+                    <label className="auto-pilot-label">{t('fFirstName')} <span className="req">*</span></label>
                     <input className="auto-pilot-input" type="text" name="firstName" required />
                   </div>
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Last Name <span className="req">*</span></label>
+                    <label className="auto-pilot-label">{t('fLastName')} <span className="req">*</span></label>
                     <input className="auto-pilot-input" type="text" name="lastName" required />
                   </div>
                 </div>
                 <div className="auto-pilot-row">
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Business Email <span className="req">*</span></label>
+                    <label className="auto-pilot-label">{t('fEmail')} <span className="req">*</span></label>
                     <input className="auto-pilot-input" type="email" name="email" required />
                   </div>
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Phone</label>
+                    <label className="auto-pilot-label">{t('fPhone')}</label>
                     <input className="auto-pilot-input" type="tel" name="phone" />
                   </div>
                 </div>
@@ -695,20 +811,20 @@ export default function Automotive() {
                 <div className="auto-pilot-section-label">{t('modalSec2')}</div>
                 <div className="auto-pilot-row">
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Dealership / Group <span className="req">*</span></label>
+                    <label className="auto-pilot-label">{t('fDealership')} <span className="req">*</span></label>
                     <input className="auto-pilot-input" type="text" name="dealership" required />
                   </div>
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Role <span className="req">*</span></label>
+                    <label className="auto-pilot-label">{t('fRole')} <span className="req">*</span></label>
                     <select className="auto-pilot-select" name="role" required defaultValue="">
-                      <option value="" disabled>Select role</option>
-                      <option value="gm">General Manager</option>
-                      <option value="sales-director">Sales Director</option>
-                      <option value="sales-manager">Sales Manager</option>
-                      <option value="marketing-director">Marketing Director</option>
-                      <option value="digital-manager">Digital Manager</option>
-                      <option value="owner">Dealer Principal / Owner</option>
-                      <option value="other">Other</option>
+                      <option value="" disabled>{t('fRoleSelect')}</option>
+                      <option value="gm">{t('roleGm')}</option>
+                      <option value="sales-director">{t('roleSalesDirector')}</option>
+                      <option value="sales-manager">{t('roleSalesManager')}</option>
+                      <option value="marketing-director">{t('roleMarketingDirector')}</option>
+                      <option value="digital-manager">{t('roleDigitalManager')}</option>
+                      <option value="owner">{t('roleOwner')}</option>
+                      <option value="other">{t('optOther')}</option>
                     </select>
                   </div>
                 </div>
@@ -717,36 +833,36 @@ export default function Automotive() {
                 <div className="auto-pilot-section-label">{t('modalSec3')}</div>
                 <div className="auto-pilot-row">
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Brand(s) <span className="req">*</span></label>
-                    <input className="auto-pilot-input" type="text" name="brands" required placeholder="e.g. Mercedes-Benz, BMW" />
+                    <label className="auto-pilot-label">{t('fBrands')} <span className="req">*</span></label>
+                    <input className="auto-pilot-input" type="text" name="brands" required placeholder={t('fBrandsPh')} />
                   </div>
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Segment Focus</label>
+                    <label className="auto-pilot-label">{t('fSegment')}</label>
                     <select className="auto-pilot-select" name="segment" defaultValue="">
-                      <option value="" disabled>Select segment</option>
-                      <option value="luxury">Luxury / Premium</option>
-                      <option value="performance">Performance / Sports</option>
-                      <option value="suv-crossover">SUV / Crossover</option>
-                      <option value="ev">EV / New Energy</option>
-                      <option value="fleet">Fleet / Corporate</option>
-                      <option value="cpo">Certified Pre-Owned</option>
-                      <option value="multi">Multi-Segment</option>
+                      <option value="" disabled>{t('fSegmentSelect')}</option>
+                      <option value="luxury">{t('segLuxury')}</option>
+                      <option value="performance">{t('segPerformance')}</option>
+                      <option value="suv-crossover">{t('segSuv')}</option>
+                      <option value="ev">{t('segEv')}</option>
+                      <option value="fleet">{t('segFleet')}</option>
+                      <option value="cpo">{t('segCpo')}</option>
+                      <option value="multi">{t('segMulti')}</option>
                     </select>
                   </div>
                 </div>
                 <div className="auto-pilot-row">
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Monthly Showroom Traffic</label>
+                    <label className="auto-pilot-label">{t('fTraffic')}</label>
                     <select className="auto-pilot-select" name="traffic" defaultValue="">
-                      <option value="" disabled>Select range</option>
-                      <option value="under-200">Under 200</option>
+                      <option value="" disabled>{t('fTrafficSelect')}</option>
+                      <option value="under-200">{t('trafficUnder200')}</option>
                       <option value="200-500">200 – 500</option>
                       <option value="500-1000">500 – 1,000</option>
                       <option value="1000+">1,000+</option>
                     </select>
                   </div>
                   <div className="auto-pilot-field">
-                    <label className="auto-pilot-label">Location</label>
+                    <label className="auto-pilot-label">{t('fLocation')}</label>
                     <input className="auto-pilot-input" type="text" name="location" />
                   </div>
                 </div>
@@ -754,19 +870,19 @@ export default function Automotive() {
                 <div className="auto-pilot-divider" />
                 <div className="auto-pilot-section-label">{t('modalSec4')}</div>
                 <div className="auto-pilot-field full">
-                  <label className="auto-pilot-label">Biggest sales challenge?</label>
+                  <label className="auto-pilot-label">{t('fChallenge')}</label>
                   <select className="auto-pilot-select" name="challenge" defaultValue="">
-                    <option value="" disabled>Select challenge</option>
-                    <option value="anonymous-traffic">Anonymous showroom traffic</option>
-                    <option value="low-test-drive">Low test-drive conversion</option>
-                    <option value="slow-followup">Slow follow-up after visits</option>
-                    <option value="generic-outreach">Generic outreach / no personalization</option>
-                    <option value="online-offline-gap">Online-to-showroom gap</option>
-                    <option value="other">Other</option>
+                    <option value="" disabled>{t('fChallengeSelect')}</option>
+                    <option value="anonymous-traffic">{t('chAnon')}</option>
+                    <option value="low-test-drive">{t('chTestDrive')}</option>
+                    <option value="slow-followup">{t('chFollowup')}</option>
+                    <option value="generic-outreach">{t('chGeneric')}</option>
+                    <option value="online-offline-gap">{t('chGap')}</option>
+                    <option value="other">{t('optOther')}</option>
                   </select>
                 </div>
                 <div className="auto-pilot-field full">
-                  <label className="auto-pilot-label">Notes</label>
+                  <label className="auto-pilot-label">{t('fNotes')}</label>
                   <textarea className="auto-pilot-textarea" name="notes" />
                 </div>
 
@@ -789,7 +905,7 @@ export default function Automotive() {
 
       {/* ═══ FOOTER ═══ */}
       <footer className="auto-footer">
-        <p>© 2026 <a href="https://dynamicnfc.ca">DynamicNFC Card Inc.</a> — {lang === 'ar' ? 'محرك تسريع المبيعات لقطاع السيارات' : 'Sales Velocity Engine for Automotive'}</p>
+        <p>© 2026 <a href="https://dynamicnfc.ca">NFC Software Systems Inc.</a> — {t('footerTagline')}</p>
       </footer>
     </div>
   );

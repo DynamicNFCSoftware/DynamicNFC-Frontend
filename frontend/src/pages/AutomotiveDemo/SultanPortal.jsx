@@ -458,7 +458,7 @@ export default function SultanPortal() {
         method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ _subject: `Auto Demo — Family Test Drive — ${form.name}`, _template: "table", Name: form.name, Email: form.email, Phone: form.phone, Vehicle: form.vehicle, Date: form.date, Time: form.time, Notes: form.notes, Reference: ref }),
       });
-    } catch (e) {}
+    } catch { /* request failed — the booking reference is still shown */ }
     setBookingRef(ref);
     setBookingOk(true);
     showToast(t.toast.booking, "🚙");
@@ -780,7 +780,7 @@ export default function SultanPortal() {
                   </div>
                   <button className="sp-btn-g" style={{ width: "100%", justifyContent: "center", marginTop: "1.5rem" }} onClick={() => {
                     trackEvent("config_save", { vehicleId: selectedVehicle.id, color: vColorName(selectedVehicle.colors[selColor], lang), interior: vColorName(selectedVehicle.interiors[selInterior], lang) });
-                    try { localStorage.setItem(`sp_config_${selectedVehicle.id}`, JSON.stringify({ color: selColor, interior: selInterior })); } catch(e){}
+                    try { localStorage.setItem(`sp_config_${selectedVehicle.id}`, JSON.stringify({ color: selColor, interior: selInterior })); } catch { /* storage unavailable */ }
                     showToast(t.toast.configSaved, "✓");
                   }}>
                     {t.configure.saveConfig}

@@ -335,7 +335,7 @@ function HotUnitCard({ unit, tx, isZeroEngagement }) {
 }
 
 /* ─── Unit Detail Drawer ─── */
-function UnitDrawer({ cat, tx, st, formatValue, onClose, onCreateDeal }) {
+function UnitDrawer({ cat, tx, st, onClose, onCreateDeal }) {
   const { lang } = useLanguage();
   if (!cat) return null;
   return (
@@ -455,7 +455,7 @@ export default function InventoryTab() {
   const { config, st, sectorId, activeSectorId } = useSector();
   const { lang } = useLanguage();
   const navigate = useNavigate();
-  const { analytics, loading, inventoryMetrics, formatValue, cards } = useDashboard();
+  const { loading, inventoryMetrics, formatValue, cards } = useDashboard();
   const tx = { ...UI.en, ...(UI[lang] || {}) };
   const schema = useMemo(() => getSectorSchema(activeSectorId || sectorId, lang), [activeSectorId, sectorId, lang]);
 

@@ -11,6 +11,27 @@ const TR = {
     home: 'Back to Home',
     demo: 'Try Live Demo',
   },
+  it: {
+    title: 'Pagina non trovata',
+    heading: '404',
+    message: 'La pagina che stai cercando non esiste o è stata spostata.',
+    home: 'Torna alla Home',
+    demo: 'Prova la demo live',
+  },
+  fr: {
+    title: 'Page introuvable',
+    heading: '404',
+    message: 'La page que vous cherchez n\'existe pas ou a été déplacée.',
+    home: 'Retour à l\'accueil',
+    demo: 'Essayer la démo en direct',
+  },
+  es: {
+    title: 'Página no encontrada',
+    heading: '404',
+    message: 'La página que buscas no existe o fue movida.',
+    home: 'Volver al inicio',
+    demo: 'Prueba la demo en vivo',
+  },
   ar: {
     title: 'الصفحة غير موجودة',
     heading: '404',

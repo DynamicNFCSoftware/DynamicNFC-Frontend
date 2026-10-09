@@ -2,7 +2,7 @@
  * Security tests for ProtectedRoute component.
  * Verifies that unauthenticated users are redirected.
  */
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 
 // We test the concept rather than the component directly,
 // since ProtectedRoute depends on Firebase auth context.

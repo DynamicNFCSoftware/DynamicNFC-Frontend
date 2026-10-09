@@ -16,7 +16,7 @@ import "./YachtShowroom.css";
 
 const _sessionId = (() => {
   let sid = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("dnfc_session") : null;
-  if (!sid) { sid = `anon_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`; try { sessionStorage.setItem("dnfc_session", sid); } catch (e) { /* ignore */ } }
+  if (!sid) { sid = `anon_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`; try { sessionStorage.setItem("dnfc_session", sid); } catch { /* storage unavailable */ } }
   return sid;
 })();
 
@@ -63,7 +63,7 @@ const LANG = {
 
 export default function YachtShowroom() {
   const [lang, setLang] = useState("en");
-  const { projectName, fmtCurrency, regionId, region } = usePortalRegion("yacht", lang);
+  const { projectName, fmtCurrency, region } = usePortalRegion("yacht", lang);
   const accent = region?.sidebarAccent || "#457b9d";
   const yachts = usePortalYachts("showroom");
 

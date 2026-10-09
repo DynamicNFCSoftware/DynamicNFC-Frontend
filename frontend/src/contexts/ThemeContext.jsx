@@ -22,7 +22,7 @@ export function ThemeProvider({ children }) {
 
   const setTheme = useCallback((t) => {
     setThemeState(t);
-    try { localStorage.setItem(STORAGE_KEY, t); } catch {}
+    try { localStorage.setItem(STORAGE_KEY, t); } catch { /* storage unavailable */ }
   }, []);
 
   const toggle = useCallback(() => {

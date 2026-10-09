@@ -4,6 +4,7 @@ import "../../assets/css/enterprise-light.css";
 import { useLanguage } from "../../i18n";
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/createPhysicalCard';
+import { CREATE_PHYSICAL_CARD_TR_EXTRA } from './createPhysicalCardTranslations';
 
 /* ═══════════════════════════════════════════════════════ */
 /* i18n — English / Arabic Translation System             */
@@ -113,6 +114,10 @@ const TRANSLATIONS = {
     rosterBack: "Back",
     rosterSubmit: "Review & Submit Order →",
     rosterSkip: "Skip — I'll assign team members later",
+    csvNoRows: "No valid rows found. Format: name, title, email, phone, company",
+    csvParseError: "Could not parse CSV file. Please check the format.",
+    logoLabel: "Logo",
+    remove: "Remove",
     freeShipping: "Free Shipping", qrIncluded: "QR Included", nfcEnabled: "NFC Enabled", noAppRequired: "No App Required",
     aboutProduct: "About Product", aboutTitle: "DynamicNFC Digital Business Card with Durable and Prestigious Representation",
     aboutP1: "DynamicNFC digital business card combines professional presence with advanced digital technology in one seamless solution.",
@@ -123,7 +128,7 @@ const TRANSLATIONS = {
     customQR: "Custom QR Code", customQRDesc: "Encoded QR code printed on the card front. Scannable by any camera.",
     premiumMaterials: "Premium Materials", premiumMaterialsDesc: "PVC, brushed metal, 24K gold, bamboo, and wood. ISO 7810 standard.",
     universalCompat: "Universal Compatibility", universalCompatDesc: "iPhone XS+, all Android, any QR scanner. No app required.",
-    securePrivate: "Secure & Private", securePrivateDesc: "Encrypted servers in Canada. GDPR and CCPA compliant.",
+    securePrivate: "Secure & Private", securePrivateDesc: "Data stored encrypted in Canada. Designed around PIPEDA and GDPR principles.",
     aiPlatform: "AI-Powered Platform", aiPlatformDesc: "Real-time analytics and smart contact management.",
     footerText: "AI-Powered Digital Business Cards. Developed in Canada.",
   },
@@ -231,6 +236,10 @@ const TRANSLATIONS = {
     rosterBack: "رجوع",
     rosterSubmit: "مراجعة وإرسال الطلب ←",
     rosterSkip: "تخطي — سأعيّن الأعضاء لاحقاً",
+    csvNoRows: "لم يتم العثور على صفوف صالحة. الصيغة: الاسم، المسمى الوظيفي، البريد الإلكتروني، الهاتف، الشركة",
+    csvParseError: "تعذّرت قراءة ملف CSV. يرجى التحقق من الصيغة.",
+    logoLabel: "الشعار",
+    remove: "إزالة",
     freeShipping: "شحن مجاني", qrIncluded: "يتضمن رمز QR", nfcEnabled: "مفعّل بتقنية الاتصال قريب المدى", noAppRequired: "لا يتطلب تطبيق",
     aboutProduct: "حول المنتج", aboutTitle: "بطاقة الأعمال الرقمية DynamicNFC مع تمثيل متين ومرموق",
     aboutP1: "بطاقة الأعمال الرقمية DynamicNFC تجمع بين الحضور المهني والتكنولوجيا الرقمية المتقدمة في حل متكامل واحد.",
@@ -241,11 +250,12 @@ const TRANSLATIONS = {
     customQR: "رمز QR مخصص", customQRDesc: "رمز QR مشفّر مطبوع على واجهة البطاقة. قابل للمسح بواسطة أي كاميرا.",
     premiumMaterials: "مواد مميزة", premiumMaterialsDesc: "PVC، معدن مصقول، ذهب عيار 24، بامبو، وخشب. معيار ISO 7810.",
     universalCompat: "توافق عالمي", universalCompatDesc: "iPhone XS وما بعده، جميع أجهزة أندرويد، أي ماسح QR. لا يتطلب تطبيق.",
-    securePrivate: "آمن وخاص", securePrivateDesc: "خوادم مشفرة في كندا. متوافق مع GDPR و CCPA.",
+    securePrivate: "آمن وخاص", securePrivateDesc: "بيانات مخزَّنة ومشفَّرة في كندا. مصمَّم وفق مبادئ PIPEDA و GDPR.",
     aiPlatform: "منصة مدعومة بالذكاء الاصطناعي", aiPlatformDesc: "تحليلات فورية وإدارة ذكية لجهات الاتصال.",
     footerText: "بطاقات أعمال رقمية مدعومة بالذكاء الاصطناعي. تم تطويرها في كندا.",
   },
 };
+Object.assign(TRANSLATIONS, CREATE_PHYSICAL_CARD_TR_EXTRA);
 
 const CARD_NAME_KEYS = { white: "cardWhite", black: "cardBlack", golden: "cardGolden", silver: "cardSilver", "metal-golden": "cardMetalGold", "metal-silver": "cardMetalSilver", "metal-black": "cardMetalBlack", "metal-rosegold": "cardRoseGold", "24k-gold": "card24k", bambu: "cardBamboo", wooden: "cardWood", transparent: "cardTransparent" };
 const CARD_SHORT_KEYS = { white: "shortWhite", black: "shortBlack", golden: "shortGolden", silver: "shortSilver", "metal-golden": "shortMetalGold", "metal-silver": "shortMetalSilver", "metal-black": "shortMetalBlack", "metal-rosegold": "shortRoseGold", "24k-gold": "short24k", bambu: "shortBamboo", wooden: "shortWood", transparent: "shortTransparent" };
@@ -359,7 +369,7 @@ export default function CreatePhysicalCard() {
   const handleCardMouseLeave = () => setSpecularPos({ x: 50, y: 50 });
 
   // ── QR verified badge ──
-  const [qrVerified, setQrVerified] = useState(false);
+  const [, setQrVerified] = useState(false);
   const prevUrlValidRef = useRef(false);
 
   const handleLogoChange = (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onloadend = () => setLogoPreview(reader.result); reader.readAsDataURL(file); };
@@ -426,9 +436,9 @@ export default function CreatePhysicalCard() {
             parsed.push({ id: Date.now() + i, name: cols[0] || "", title: cols[1] || "", email: cols[2] || "", phone: cols[3] || "", company: cols[4] || "" });
           }
         }
-        if (parsed.length === 0) { setCsvError("No valid rows found. Format: name, title, email, phone, company"); return; }
+        if (parsed.length === 0) { setCsvError(t("csvNoRows")); return; }
         setTeamMembers(prev => [...prev, ...parsed]);
-      } catch { setCsvError("Could not parse CSV file. Please check the format."); }
+      } catch { setCsvError(t("csvParseError")); }
     };
     reader.readAsText(file);
     e.target.value = "";
@@ -831,7 +841,7 @@ export default function CreatePhysicalCard() {
                     <div><span>{t("inqCardType")}: </span><strong>{cardShort(selectedCard)}</strong></div>
                     <div><span>{t("fullName")}: </span><strong>{fullName || "—"}</strong></div>
                     <div><span>{t("inqQrLink")}: </span><strong>{qrUrl || "—"}</strong></div>
-                    <div><span>Logo: </span><strong>{logoPreview ? "✓" : "—"}</strong></div>
+                    <div><span>{t("logoLabel")}: </span><strong>{logoPreview ? "✓" : "—"}</strong></div>
                   </div>
                   {(companyName || jobTitle || phoneNumber || emailAddress) && (
                     <div style={{ marginTop: ".75rem", paddingTop: ".75rem", borderTop: "1px solid rgba(0,0,0,0.06)" }}>
@@ -1043,7 +1053,7 @@ export default function CreatePhysicalCard() {
                         <div style={{ padding: "4px 6px", textAlign: "center" }}>
                           <button onClick={() => removeTeamMember(member.id)}
                             style={{ background: "none", border: "none", color: "#9ca3af", cursor: "pointer", fontSize: "1rem", fontFamily: "inherit", padding: "4px", lineHeight: 1 }}
-                            title="Remove">×</button>
+                            title={t("remove")}>×</button>
                         </div>
                       </div>
                     ))}
@@ -1086,7 +1096,7 @@ export default function CreatePhysicalCard() {
       )}
 
       <footer className="el-footer">
-        <p>&copy; 2026 <a href="https://dynamicnfc.ca" target="_blank" rel="noreferrer">DynamicNFC Card Inc.</a> — {t("footerText")}</p>
+        <p>&copy; 2026 <a href="https://dynamicnfc.ca" target="_blank" rel="noreferrer">NFC Software Systems Inc.</a> — {t("footerText")}</p>
       </footer>
     </div>
   );

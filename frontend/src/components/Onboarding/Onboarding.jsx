@@ -65,6 +65,101 @@ const STEPS = {
       desc: 'هذا كل ما تحتاجه للبدء. أنشئ بطاقتك الأولى الآن، أو استكشف المنصة بالطريقة التي تناسبك.',
     },
   ],
+  it: [
+    {
+      icon: '\u{1F44B}',
+      title: 'Benvenuto in DynamicNFC!',
+      desc: 'Ti facciamo fare un giro. Questo breve tour ti aiuterà a ottenere il massimo dal tuo account.',
+      features: [
+        { icon: '\u{1F4B3}', title: 'Crea card NFC', desc: 'Progetta card digitali con i tuoi dati e i tuoi social' },
+        { icon: '\u{1F4CA}', title: 'Monitora le analytics', desc: 'Scopri chi fa tap sulla tua card e quando' },
+        { icon: '\u{1F310}', title: 'Condividi ovunque', desc: 'Un link, un tap — connessione immediata' },
+      ],
+    },
+    {
+      icon: '\u{1F3A8}',
+      title: 'Crea la tua prima card',
+      desc: 'Vai su Crea card per costruire la tua identità digitale. Aggiungi nome, foto e link social, poi scegli un tema in linea con il tuo brand.',
+      nav: '/create-card',
+    },
+    {
+      icon: '\u{1F4CB}',
+      title: 'La tua dashboard',
+      desc: 'Tutte le tue card sono qui. Visualizzale, modificale o condividile. Controlla quanti tap riceve ogni card e gestisci la tua presenza digitale.',
+      nav: '/dashboard',
+    },
+    {
+      icon: '\u{1F680}',
+      title: 'Tutto pronto!',
+      desc: 'È tutto ciò che ti serve per iniziare. Crea subito la tua prima card oppure esplora la piattaforma con i tuoi tempi.',
+    },
+  ],
+  fr: [
+    {
+      icon: '\u{1F44B}',
+      title: 'Bienvenue chez DynamicNFC !',
+      desc: 'Laissez-nous vous faire visiter. Cette courte visite vous aidera à tirer le meilleur parti de votre compte.',
+      features: [
+        { icon: '\u{1F4B3}', title: 'Créez des cartes NFC', desc: 'Concevez des cartes numériques avec vos coordonnées et vos réseaux sociaux' },
+        { icon: '\u{1F4CA}', title: 'Suivez vos statistiques', desc: 'Voyez qui fait un tap sur votre carte, et quand' },
+        { icon: '\u{1F310}', title: 'Partagez partout', desc: 'Un lien, un tap — une connexion instantanée' },
+      ],
+    },
+    {
+      icon: '\u{1F3A8}',
+      title: 'Créez votre première carte',
+      desc: 'Rendez-vous dans Créer une carte pour bâtir votre identité numérique. Ajoutez votre nom, votre photo et vos liens sociaux, puis choisissez un thème à l\'image de votre marque.',
+      nav: '/create-card',
+    },
+    {
+      icon: '\u{1F4CB}',
+      title: 'Votre dashboard',
+      desc: 'Toutes vos cartes se trouvent ici. Consultez-les, modifiez-les ou partagez-les. Suivez le nombre de taps de chaque carte et gérez votre présence numérique.',
+      nav: '/dashboard',
+    },
+    {
+      icon: '\u{1F680}',
+      title: 'Tout est prêt !',
+      desc: 'C\'est tout ce qu\'il vous faut pour commencer. Créez votre première carte dès maintenant ou explorez la plateforme à votre rythme.',
+    },
+  ],
+  es: [
+    {
+      icon: '\u{1F44B}',
+      title: '¡Te damos la bienvenida a DynamicNFC!',
+      desc: 'Te mostramos cómo funciona. Este recorrido rápido te ayudará a sacarle el máximo provecho a tu cuenta.',
+      features: [
+        { icon: '\u{1F4B3}', title: 'Crea tarjetas NFC', desc: 'Diseña tarjetas digitales con tus datos y redes sociales' },
+        { icon: '\u{1F4CA}', title: 'Mide tu analítica', desc: 'Ve quién hace tap en tu tarjeta y cuándo' },
+        { icon: '\u{1F310}', title: 'Comparte donde sea', desc: 'Un enlace, un tap — conexión instantánea' },
+      ],
+    },
+    {
+      icon: '\u{1F3A8}',
+      title: 'Crea tu primera tarjeta',
+      desc: 'Ve a Crear tarjeta para construir tu identidad digital. Agrega tu nombre, foto y enlaces sociales, y elige un tema que vaya con tu marca.',
+      nav: '/create-card',
+    },
+    {
+      icon: '\u{1F4CB}',
+      title: 'Tu dashboard',
+      desc: 'Aquí viven todas tus tarjetas. Míralas, edítalas o compártelas. Revisa cuántos taps recibe cada tarjeta y gestiona tu presencia digital.',
+      nav: '/dashboard',
+    },
+    {
+      icon: '\u{1F680}',
+      title: '¡Todo listo!',
+      desc: 'Eso es todo lo que necesitas para empezar. Crea tu primera tarjeta ahora o explora la plataforma a tu ritmo.',
+    },
+  ],
+};
+
+const UI = {
+  en: { go: 'Go there now', skip: 'Skip', start: "Let's go!", next: 'Next' },
+  it: { go: 'Vai subito', skip: 'Salta', start: 'Iniziamo!', next: 'Avanti' },
+  fr: { go: 'Y aller maintenant', skip: 'Passer', start: "C'est parti !", next: 'Suivant' },
+  es: { go: 'Ir ahora', skip: 'Omitir', start: '¡Vamos!', next: 'Siguiente' },
+  ar: { go: 'اذهب الآن', skip: 'تخطي', start: 'ابدأ الآن', next: 'التالي' },
 };
 
 export default function Onboarding() {
@@ -81,19 +176,20 @@ export default function Onboarding() {
     if (!isAuthenticated()) return;
     try {
       if (localStorage.getItem(STORAGE_KEY)) return;
-    } catch {}
+    } catch { /* storage unavailable */ }
     // Small delay so dashboard loads first
     const timer = setTimeout(() => setVisible(true), 800);
     return () => clearTimeout(timer);
   }, [isAuthenticated, location.pathname]);
 
   const steps = STEPS[lang] || STEPS.en;
+  const t = (k) => UI[lang]?.[k] ?? UI.en[k] ?? k;
   const current = steps[step];
   const isLast = step === steps.length - 1;
 
   const finish = useCallback(() => {
     setVisible(false);
-    try { localStorage.setItem(STORAGE_KEY, '1'); } catch {}
+    try { localStorage.setItem(STORAGE_KEY, '1'); } catch { /* storage unavailable */ }
   }, []);
 
   const next = useCallback(() => {
@@ -148,7 +244,7 @@ export default function Onboarding() {
               style={{ width: '100%', justifyContent: 'center', padding: '0.75rem' }}
               onClick={() => goAndFinish(current.nav)}
             >
-              {lang === 'ar' ? 'اذهب الآن' : 'Go there now'} →
+              {t('go')} →
             </button>
           </div>
         )}
@@ -161,12 +257,10 @@ export default function Onboarding() {
           </div>
           <div className="ob-btns">
             <button className="ob-btn-skip" onClick={skip}>
-              {lang === 'ar' ? 'تخطي' : 'Skip'}
+              {t('skip')}
             </button>
             <button className="ob-btn-next" onClick={next}>
-              {isLast
-                ? (lang === 'ar' ? 'ابدأ الآن' : "Let's go!")
-                : (lang === 'ar' ? 'التالي' : 'Next')}
+              {isLast ? t('start') : t('next')}
               {!isLast && <span>→</span>}
             </button>
           </div>

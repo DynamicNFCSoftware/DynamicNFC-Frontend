@@ -6,6 +6,7 @@ import { REGION_LIST } from '../../config/regionConfig';
 import './CRMGateway.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/portals/crmGateway';
+import { CRMGATEWAY_TR_EXTRA } from './crmGatewayTranslations';
 
 const T = {
   en: {
@@ -58,6 +59,20 @@ const T = {
     trustBuilt: "Built in Canada",
     demoCta: "Planning an NFC-powered sales motion for your team?",
     demoCtaBtn: "Contact sales",
+
+    seoTitle: "CRM Demo",
+    seoDesc: "Live demo of DynamicNFC CRM intelligence — VIP portals, behavioral dashboard, and AI sales pipeline.",
+    regionAria: "Region",
+    ftNote: "Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and enterprise.",
+    ftIndustries: "Industries",
+    ftDevelopers: "Developers & Agents",
+    ftAutomotive: "Automotive",
+    ftCards: "NFC Cards",
+    ftResources: "Resources",
+    ftLiveDemo: "Live Demo",
+    ftContact: "Contact Sales",
+    ftLogin: "Log in",
+    ftRights: "© 2026 NFC Software Systems Inc. All Rights Reserved.",
   },
   ar: {
     badge: "بيئة العرض المباشر",
@@ -109,8 +124,23 @@ const T = {
     trustBuilt: "صُمّم في كندا",
     demoCta: "تخطط لفريق مبيعات يعتمد على NFC؟",
     demoCtaBtn: "تواصل مع المبيعات",
+
+    seoTitle: "عرض CRM التجريبي",
+    seoDesc: "عرض مباشر لذكاء CRM من DynamicNFC — بوابات VIP ولوحة تحكم سلوكية ومسار مبيعات بالذكاء الاصطناعي.",
+    regionAria: "المنطقة",
+    ftNote: "المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات والمؤسسات.",
+    ftIndustries: "القطاعات",
+    ftDevelopers: "المطورين والوكلاء",
+    ftAutomotive: "السيارات",
+    ftCards: "بطاقات NFC",
+    ftResources: "الموارد",
+    ftLiveDemo: "عرض مباشر",
+    ftContact: "تواصل مع المبيعات",
+    ftLogin: "تسجيل الدخول",
+    ftRights: "© ٢٠٢٦ NFC Software Systems Inc. جميع الحقوق محفوظة.",
   },
 };
+Object.assign(T, CRMGATEWAY_TR_EXTRA);
 
 const TRUST_ROWS = [
   {
@@ -251,7 +281,7 @@ export default function CRMGateway() {
 
   return (
     <div className="gw" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <SEO title="CRM Demo" description="Live demo of DynamicNFC CRM intelligence — VIP portals, behavioral dashboard, and AI sales pipeline." path="/enterprise/crmdemo" />
+      <SEO title={t.seoTitle} description={t.seoDesc} path="/enterprise/crmdemo" />
       <div className="gw-ambient" aria-hidden />
       <div className="gw-particles" ref={particlesRef} />
 
@@ -263,7 +293,7 @@ export default function CRMGateway() {
           </Link>
           <div className="gw-badge"><span>{t.badge}</span></div>
           <div className="gw-hd-right">
-            <div className="gw-region" role="group" aria-label="Region">
+            <div className="gw-region" role="group" aria-label={t.regionAria}>
               {REGION_LIST.map((region) => (
                 <button key={region.id} type="button" className={`gw-region-btn${regionId === region.id ? " act" : ""}`} onClick={() => switchRegion(region.id)} aria-pressed={regionId === region.id}>
                   {region.id === "gulf" ? "KSA" : region.id === "usa" ? "USA" : region.id === "mexico" ? "MEX" : "CAN"}
@@ -393,7 +423,7 @@ export default function CRMGateway() {
                   <h3>{p.title}</h3>
                   <p>{p.desc}</p>
                   <div className="gw-card-tags">{p.tags.map((tag, i) => {
-                    const isRoiTag = tag === "ROI Calculator" || tag === "حاسبة العائد";
+                    const isRoiTag = tag === t.c1tags[0];
                     return isRoiTag ? (
                       <a href="/enterprise/crmdemo/roi-calculator" target="_blank" rel="noreferrer" className="gw-tag gw-tag-link" key={i} onClick={(e) => e.stopPropagation()}>{tag}</a>
                     ) : (
@@ -419,24 +449,24 @@ export default function CRMGateway() {
         <div className="gw-ft-inner">
           <div className="gw-ft-brand">
             <Link to="/"><img src="/assets/images/logo.png" alt="DynamicNFC" className="gw-ft-logo" /></Link>
-            <p className="gw-ft-note">{lang === 'ar' ? 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات والمؤسسات.' : 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and enterprise.'}</p>
+            <p className="gw-ft-note">{t.ftNote}</p>
           </div>
           <div className="gw-ft-cols">
             <div className="gw-ft-col">
-              <h5>{lang === 'ar' ? 'القطاعات' : 'Industries'}</h5>
-              <Link to="/developers">{lang === 'ar' ? 'المطورين والوكلاء' : 'Developers & Agents'}</Link>
-              <Link to="/automotive">{lang === 'ar' ? 'السيارات' : 'Automotive'}</Link>
-              <Link to="/nfc-cards">{lang === 'ar' ? 'بطاقات NFC' : 'NFC Cards'}</Link>
+              <h5>{t.ftIndustries}</h5>
+              <Link to="/developers">{t.ftDevelopers}</Link>
+              <Link to="/automotive">{t.ftAutomotive}</Link>
+              <Link to="/nfc-cards">{t.ftCards}</Link>
             </div>
             <div className="gw-ft-col">
-              <h5>{lang === 'ar' ? 'الموارد' : 'Resources'}</h5>
-              <Link to="/enterprise/crmdemo">{lang === 'ar' ? 'عرض مباشر' : 'Live Demo'}</Link>
-              <Link to="/contact-sales">{lang === 'ar' ? 'تواصل مع المبيعات' : 'Contact Sales'}</Link>
-              <Link to="/login">{lang === 'ar' ? 'تسجيل الدخول' : 'Log in'}</Link>
+              <h5>{t.ftResources}</h5>
+              <Link to="/enterprise/crmdemo">{t.ftLiveDemo}</Link>
+              <Link to="/contact-sales">{t.ftContact}</Link>
+              <Link to="/login">{t.ftLogin}</Link>
             </div>
           </div>
         </div>
-        <div className="gw-ft-bottom"><p>{lang === 'ar' ? '© ٢٠٢٦ DynamicNFC Card Inc. جميع الحقوق محفوظة.' : '© 2026 DynamicNFC Card Inc. All Rights Reserved.'}</p></div>
+        <div className="gw-ft-bottom"><p>{t.ftRights}</p></div>
       </footer>
     </div>
   );

@@ -94,9 +94,9 @@
   right: auto;
   left: 1.25rem;
 }
-.auth-lang-btn {
-  width: 34px;
+.auth-lang-select {
   height: 30px;
+  padding: 0 0.5rem;
   border-radius: 6px;
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.8);
@@ -104,14 +104,8 @@
   cursor: pointer;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-muted);
-  transition: all 0.2s;
+  color: var(--text-primary);
   font-family: inherit;
-}
-.auth-lang-btn.active {
-  background: var(--text-primary);
-  color: white;
-  border-color: var(--text-primary);
 }
 
 /* === MAIN CONTAINER === */

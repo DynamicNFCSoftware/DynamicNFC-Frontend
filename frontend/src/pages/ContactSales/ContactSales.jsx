@@ -4,6 +4,7 @@ import { useLanguage } from '../../i18n';
 import './ContactSales.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/contactSales';
+import { CONTACT_SALES_TR_EXTRA } from './contactSalesTranslations';
 
 /* ═══════════════════════════════════════════
    TRANSLATIONS (EN + AR)
@@ -129,7 +130,10 @@ const TR = {
     sideQuote:'"You are not handing out NFC cards. You are issuing private invitations — and turning digital intent into real sales momentum."',
 
     /* Footer */
-    footerText:'© 2026 DynamicNFC Card Inc. — Sales Velocity Engine',
+    footerText:'© 2026 NFC Software Systems Inc. — Sales Velocity Engine',
+    footTagline:'Sales Velocity Engine',
+    cityPlaceholder:'e.g. Vancouver, Dubai',
+    submitError:'Error submitting. Please try again.',
   },
 
   ar: {
@@ -220,9 +224,13 @@ const TR = {
     side3Title:"مقترح مخصص", side3Desc:"خلال 48 ساعة، ستتلقى خطة تجريبية مخصصة — تصميم البوابة، وعدد مفاتيح الوصول لكبار الشخصيات، والجدول الزمني، والتسعير.",
     side4Title:"الإطلاق", side4Desc:"من أسبوعين إلى أربعة أسابيع من الموافقة حتى وصول أول البطاقات إلى أيدي العملاء المميزين.",
     sideQuote:"\"أنت لا توزع بطاقات الاتصال قريب المدى. أنت تصدر دعوات خاصة — وتحول الاهتمام الرقمي إلى زخم حقيقي في المبيعات.\"",
-    footerText:'© 2026 DynamicNFC Card Inc. — محرك تسريع المبيعات',
+    footerText:'© 2026 NFC Software Systems Inc. — محرك تسريع المبيعات',
+    footTagline:'محرك تسريع المبيعات',
+    cityPlaceholder:'مثال: فانكوفر، دبي',
+    submitError:'حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.',
 },
 };
+Object.assign(TR, CONTACT_SALES_TR_EXTRA);
 
 /* ── Helper: get per-industry translation key suffix ── */
 function indSuffix(industry) {
@@ -274,7 +282,7 @@ export default function ContactSales() {
         });
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch { alert('Error submitting. Please try again.'); }
+    } catch { alert(t('submitError')); }
     setSubmitting(false);
   };
 
@@ -340,7 +348,7 @@ export default function ContactSales() {
               </div>
               <div className="cs-row">
                 <Input label={t('lblPhone')} name="phone" type="tel" />
-                <Input label={t('lblCity')} name="city" placeholder="e.g. Vancouver, Dubai" />
+                <Input label={t('lblCity')} name="city" placeholder={t('cityPlaceholder')} />
               </div>
 
               {/* Section 2: Business */}
@@ -442,7 +450,7 @@ export default function ContactSales() {
 
       {/* FOOTER */}
       <footer className="cs-footer">
-        <p>© 2026 <a href="https://dynamicnfc.ca">DynamicNFC Card Inc.</a> — {lang === 'ar' ? 'محرك تسريع المبيعات' : 'Sales Velocity Engine'}</p>
+        <p>© 2026 <a href="https://dynamicnfc.ca">NFC Software Systems Inc.</a> — {t('footTagline')}</p>
       </footer>
     </div>
   );

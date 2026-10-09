@@ -56,7 +56,7 @@ export default function CardAdmin() {
         return tb - ta;
       }));
       setCampaigns(campSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-    } catch (err) {
+    } catch {
       toast.error('Failed to load cards');
     } finally {
       setLoading(false);

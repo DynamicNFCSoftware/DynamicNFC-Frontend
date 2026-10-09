@@ -327,7 +327,7 @@ export function initCardCreate(root = document) {
 // =======================
 // DESTROY FUNCTION
 // =======================
-export function destroyCardCreate(root = document) {
+export function destroyCardCreate() {
   initialized = false;
   // Note: For simplicity, this version does not remove all listeners individually,
   // but you can store handlers in arrays if you want full cleanup on unmount.
