@@ -42,7 +42,7 @@ const BASE_MAP_REGION_DATA = {
     accent: "#007a3d",
     gold: "#c5a467",
     coords: { lat: "45.46° N", lng: "9.19° E", short: "45.5N / 9.2E" },
-    miniMap: { x: 52, y: 48, countryId: "mm-italy" },
+    miniMap: { x: 110, y: 38, countryId: "mm-italy" },
   },
 };
 

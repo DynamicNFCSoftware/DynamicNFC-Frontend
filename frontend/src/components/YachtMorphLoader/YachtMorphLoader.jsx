@@ -90,7 +90,7 @@ const REGION_DATA = {
     anchorStartX: 170,
     anchorStartY: 220,
     coords: { lat: '44.30° N', lng: '9.21° E', short: '44.3N / 9.2E' },
-    miniMap: { x: 108, y: 48, countryId: 'mm-italy' },
+    miniMap: { x: 107, y: 40, countryId: 'mm-italy' },
   },
 };
 

@@ -106,7 +106,7 @@ const REGION_DATA = {
   },
   italy: {
     client: "Residenze del Lario",
-    location: "Cernobbio e Milano",
+    location: "Lake Como & Milan",
     reps: [
       { id: "rep_ita_01", name: "Elena Russo" },
       { id: "rep_ita_02", name: "Davide Moretti" },

@@ -80,7 +80,7 @@ const REGION_DATA = {
   },
   italy: {
     client: "Riviera Ligure Yachts",
-    location: "Portofino e Porto Cervo",
+    location: "Portofino & Porto Cervo",
     reps: [
       { id: "rep_ita_yacht_01", name: "Giorgio Bruno" },
       { id: "rep_ita_yacht_02", name: "Silvia Gallo" },

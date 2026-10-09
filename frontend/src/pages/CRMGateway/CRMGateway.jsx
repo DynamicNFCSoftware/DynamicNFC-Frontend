@@ -298,7 +298,7 @@ export default function CRMGateway() {
             <div className="gw-region" role="group" aria-label={t.regionAria}>
               {REGION_LIST.map((region) => (
                 <button key={region.id} type="button" className={`gw-region-btn${regionId === region.id ? " act" : ""}`} onClick={() => switchRegion(region.id)} aria-pressed={regionId === region.id}>
-                  {REGION_CODE[region.id] || region.id.slice(0, 3).toUpperCase()}
+                  {REGION_CODE[region.id]}
                 </button>
               ))}
             </div>
