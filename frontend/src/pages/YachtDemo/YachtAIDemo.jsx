@@ -441,7 +441,7 @@ export default function YachtAIDemo() {
       const token = await requestToken();
       const user = await getUserInfo(token);
       setGoogleToken(token); setGoogleUser(user);
-    } catch (err) {
+    } catch {
       setConnectError(true);
     } finally { setConnecting(false); }
   };

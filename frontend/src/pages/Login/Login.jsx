@@ -14,6 +14,7 @@ import {
 } from 'firebase/auth';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/login';
+import { LOGIN_TR_EXTRA } from './loginTranslations';
 
 /* ═══════════════════════════════════════════
    TRANSLATIONS (EN + AR)
@@ -52,9 +53,20 @@ const TR = {
     networkError: 'Network error. Please try again.',
     resetSent: 'Password reset email sent. Check your inbox.',
     resetError: 'Enter your email address first.',
-    trustLine: 'End-to-end encrypted · PIPEDA compliant · Data stays in Canada',
+    trustLine: 'Encrypted in transit and at rest · Built on PIPEDA principles · Data stored in Canada',
     guestLine: 'Just exploring?',
     guestCta: 'Try the live demo →',
+    passwordsMismatch: 'Passwords do not match',
+    signedIn: 'Signed in successfully!',
+    accountCreated: 'Account created successfully!',
+    emailInUse: 'Email is already in use.',
+    invalidCredentials: 'Invalid email or password.',
+    weakPassword: 'Password is too weak. Use at least 6 characters.',
+    googleSignedIn: 'Signed in with Google!',
+    googleFailed: 'Google sign-in failed. Please try again.',
+    noAccountFound: 'No account found with this email.',
+    success: 'Success!',
+    langLabel: 'Language',
   },
   ar: {
     loginTitle: "مرحبًا بعودتك",
@@ -90,11 +102,22 @@ const TR = {
     resetSent: "تم إرسال بريد إعادة تعيين كلمة المرور. تحقق من صندوق الوارد الخاص بك.",
     resetError: "أدخل بريدك الإلكتروني أولاً.",
     passwordsMismatch: "كلمات المرور غير متطابقة",
-    trustLine: 'تشفير شامل · متوافق مع PIPEDA · البيانات تبقى في كندا',
+    trustLine: 'تشفير أثناء النقل وفي التخزين · مبني على مبادئ PIPEDA · البيانات مخزَّنة في كندا',
     guestLine: 'تستكشف فقط؟',
     guestCta: 'جرّب العرض التجريبي ←',
+    signedIn: 'تم تسجيل الدخول بنجاح!',
+    accountCreated: 'تم إنشاء الحساب بنجاح!',
+    emailInUse: 'البريد الإلكتروني مستخدم بالفعل',
+    invalidCredentials: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+    weakPassword: 'كلمة المرور ضعيفة جداً',
+    googleSignedIn: 'تم تسجيل الدخول عبر Google!',
+    googleFailed: 'فشل تسجيل الدخول عبر Google',
+    noAccountFound: 'لم يتم العثور على حساب بهذا البريد',
+    success: 'تم بنجاح!',
+    langLabel: 'اللغة',
 },
 };
+Object.assign(TR, LOGIN_TR_EXTRA);
 
 /* ═══════════════════════════════════════════
    ICONS
@@ -128,7 +151,7 @@ const Login = () => {
   const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
-  const { lang, setLanguage } = useLanguage();
+  const { lang, setLang } = useLanguage();
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -158,7 +181,7 @@ const Login = () => {
     setInfo('');
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
-      setError(lang === 'ar' ? 'كلمات المرور غير متطابقة' : 'Passwords do not match');
+      setError(t('passwordsMismatch'));
       setLoading(false);
       return;
     }
@@ -171,7 +194,7 @@ const Login = () => {
         
         login({ sessionId: user.uid, email: user.email, accountId: user.uid });
         setLoginSuccess(true);
-        toast.success(lang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : 'Signed in successfully!');
+        toast.success(t('signedIn'));
         setTimeout(() => navigate('/dashboard'), 800);
       } else {
         /* ── FIREBASE REGISTER ── */
@@ -180,18 +203,18 @@ const Login = () => {
 
         login({ sessionId: user.uid, email: user.email, accountId: user.uid });
         setLoginSuccess(true);
-        toast.success(lang === 'ar' ? 'تم إنشاء الحساب بنجاح!' : 'Account created successfully!');
+        toast.success(t('accountCreated'));
         setTimeout(() => navigate('/dashboard'), 800);
       }
     } catch (err) {
       console.error("Auth Error:", err);
       let msg;
       if (err.code === 'auth/email-already-in-use') {
-         msg = lang === 'ar' ? 'البريد الإلكتروني مستخدم بالفعل' : 'Email is already in use.';
+         msg = t('emailInUse');
       } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-         msg = lang === 'ar' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة' : 'Invalid email or password.';
+         msg = t('invalidCredentials');
       } else if (err.code === 'auth/weak-password') {
-         msg = lang === 'ar' ? 'كلمة المرور ضعيفة جداً' : 'Password is too weak. Use at least 6 characters.';
+         msg = t('weakPassword');
       } else {
          msg = t('networkError');
       }
@@ -213,12 +236,12 @@ const Login = () => {
       
       login({ sessionId: user.uid, email: user.email, accountId: user.uid });
       setLoginSuccess(true);
-      toast.success(lang === 'ar' ? 'تم تسجيل الدخول عبر Google!' : 'Signed in with Google!');
+      toast.success(t('googleSignedIn'));
       setTimeout(() => navigate('/dashboard'), 800);
 
     } catch (err) {
       console.error("Google Auth Error:", err);
-      const msg = lang === 'ar' ? 'فشل تسجيل الدخول عبر Google' : 'Google sign-in failed. Please try again.';
+      const msg = t('googleFailed');
       setError(msg);
       toast.error(msg);
     } finally {
@@ -239,7 +262,7 @@ const Login = () => {
       toast.success(t('resetSent'));
     } catch (err) {
       if (err.code === 'auth/user-not-found') {
-        setError(lang === 'ar' ? 'لم يتم العثور على حساب بهذا البريد' : 'No account found with this email.');
+        setError(t('noAccountFound'));
       } else {
         setError(t('networkError'));
       }
@@ -267,8 +290,13 @@ const Login = () => {
 
       {/* Language toggle */}
       <div className="auth-lang-toggle">
-        <button className={`auth-lang-btn${lang === 'en' ? ' active' : ''}`} onClick={() => setLanguage('en')}>EN</button>
-        <button className={`auth-lang-btn${lang === 'ar' ? ' active' : ''}`} onClick={() => setLanguage('ar')}>ع</button>
+        <select className="auth-lang-select" value={lang} onChange={(e) => setLang(e.target.value)} aria-label={t('langLabel')}>
+          <option value="en">English</option>
+          <option value="it">Italiano</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="ar">العربية</option>
+        </select>
       </div>
 
       <div className="auth-container">
@@ -397,7 +425,7 @@ const Login = () => {
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M20 6 9 17l-5-5"/>
                     </svg>
-                    <span>{lang === 'ar' ? 'تم بنجاح!' : 'Success!'}</span>
+                    <span>{t('success')}</span>
                   </>
                 ) : loading ? (
                   <><span className="auth-spinner" />{t('btnLoading')}</>

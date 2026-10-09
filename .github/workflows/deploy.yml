@@ -1,0 +1,49 @@
+name: Deploy hosting
+# Deploys dynamicnfc.ca from main, after the same checks as CI.
+# Stays switched off until the two repository variables below exist (see docs/CI_DEPLOY_SETUP.md).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-hosting
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write   # keyless login to Google Cloud — no JSON key file (blocked by org policy anyway)
+
+jobs:
+  deploy:
+    if: vars.GCP_WORKLOAD_IDENTITY_PROVIDER != '' && vars.GCP_SERVICE_ACCOUNT != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run lint
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
+      - run: npm test
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium && npm run e2e
+        working-directory: frontend
+      - run: node scripts/predeploy-check.mjs
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+      - run: npx firebase-tools@15 deploy --only hosting --project dynamicnfc-prod-68b4e --non-interactive
+      - name: Confirm the real site is live
+        run: |
+          sleep 20
+          html=$(curl -sL https://dynamicnfc.ca)
+          echo "$html" | grep -q "Welcome to Firebase Hosting" && { echo "Live site shows the Firebase placeholder"; exit 1; }
+          echo "$html" | grep -q "/assets/index-" || { echo "Live site does not look like the app"; exit 1; }

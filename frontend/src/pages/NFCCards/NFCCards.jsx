@@ -4,6 +4,7 @@ import { useLanguage } from '../../i18n';
 import './NFCCards.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/nfcCards';
+import { NFC_CARDS_TR_EXTRA } from './nfcCardsTranslations';
 
 /* ── Card images: update these paths to your actual assets ── */
 import cardFrontImg from './assets/card-front.jpg';
@@ -78,7 +79,8 @@ faq6a: 'All iPhones from iPhone 7 onward and virtually all modern Android device
     footProduct: 'Product', footEnterprise: 'Enterprise', footNfcCards: 'NFC Business Cards',
     footOrderCard: 'Order Card', footDevAgents: 'Developers & Agents', footAccount: 'Account', footCreateCard: 'Create Card',
     footLogin: 'Log in', footSignup: 'Sign up',
-    footCopy: '© 2026 DynamicNFC Card Inc. All Rights Reserved.',
+    footCopy: '© 2026 NFC Software Systems Inc. All Rights Reserved.',
+    altFront: 'DynamicNFC Card Front', altBack: 'DynamicNFC Card Back',
   },
   ar: {
     home: 'الرئيسية', enterprise: 'المؤسسات', nfcCards: 'بطاقات NFC', login: 'تسجيل الدخول',
@@ -136,14 +138,11 @@ faq6a: "جميع أجهزة iPhone من iPhone 7 وما بعده ومعظم أج
     footProduct: 'المنتج', footEnterprise: 'المؤسسات', footNfcCards: 'بطاقات NFC للأعمال',
     footOrderCard: "اطلب بطاقة", footDevAgents: 'المطورين والوكلاء', footAccount: 'الحساب', footCreateCard: 'إنشاء بطاقة',
     footLogin: 'تسجيل الدخول', footSignup: 'إنشاء حساب',
-    footCopy: '© 2026 DynamicNFC Card Inc. جميع الحقوق محفوظة.',
+    footCopy: '© 2026 NFC Software Systems Inc. جميع الحقوق محفوظة.',
+    altFront: 'الوجه الأمامي لبطاقة DynamicNFC', altBack: 'الوجه الخلفي لبطاقة DynamicNFC',
   },
 };
-
-function detectLang() {
-  const n = navigator.language || navigator.userLanguage || 'en';
-  return n.startsWith('ar') ? 'ar' : 'en';
-}
+Object.assign(TR, NFC_CARDS_TR_EXTRA);
 
 /* ═══════════════════════════════════════════
    COMPONENTS
@@ -169,7 +168,7 @@ function FAQItem({ question, answer, isOpen, onClick }) {
 }
 
 /* ── Card Flip ── */
-function CardShowcase({ frontImg, backImg, hint, onCardClick }) {
+function CardShowcase({ frontImg, backImg, frontAlt, backAlt, hint, onCardClick }) {
   const [flipped, setFlipped] = useState(false);
   return (
     <div className="nfc-card-showcase">
@@ -183,10 +182,10 @@ function CardShowcase({ frontImg, backImg, hint, onCardClick }) {
         >
           <div className="nfc-flip-inner">
             <div className="nfc-flip-face nfc-flip-front">
-              <img src={frontImg} alt="DynamicNFC Card Front" className="nfc-card-img" />
+              <img src={frontImg} alt={frontAlt} className="nfc-card-img" />
             </div>
             <div className="nfc-flip-face nfc-flip-back">
-              <img src={backImg} alt="DynamicNFC Card Back" className="nfc-card-img" />
+              <img src={backImg} alt={backAlt} className="nfc-card-img" />
             </div>
           </div>
         </div>
@@ -265,6 +264,8 @@ function NFCCards() {
           <CardShowcase
             frontImg={cardFrontImg}
             backImg={cardBackImg}
+            frontAlt={t('altFront')}
+            backAlt={t('altBack')}
             hint={t('flipHint')}
             onCardClick={() => navigate('/create-physical-card')}
           />

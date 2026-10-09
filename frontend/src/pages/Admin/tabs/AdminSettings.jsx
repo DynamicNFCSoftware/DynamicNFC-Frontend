@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { doc, getDoc, setDoc, collection, getDocs, deleteDoc, writeBatch, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useAdmin } from '../../../hooks/useAdmin';
@@ -183,7 +183,7 @@ export default function AdminSettings() {
   const removeTriggerRef = useRef(null);
 
   useEffect(() => {
-    try { setMfaEnabled(get2FAStatus()); } catch {}
+    try { setMfaEnabled(get2FAStatus()); } catch { /* 2FA status unreadable — leave the toggle as-is */ }
   }, [get2FAStatus]);
 
   useEffect(() => {
@@ -408,7 +408,7 @@ export default function AdminSettings() {
       setAdmins(prev => [...prev, { email: newAdminEmail, role: 'admin' }]);
       setNewAdminEmail('');
       showToast(t('adminAdded'));
-    } catch (err) {
+    } catch {
       showToast(t('addAdminFailed'), 'error');
     }
   };
@@ -419,29 +419,9 @@ export default function AdminSettings() {
       await deleteDoc(doc(db, 'admins', email));
       setAdmins(prev => prev.filter(a => a.email !== email));
       showToast(t('adminRemoved'));
-    } catch (err) {
+    } catch {
       showToast(t('removeAdminFailed'), 'error');
     }
-  };
-
-  const clearBehaviors = async () => {
-    if (!window.confirm(t('clearBehaviorConfirm1'))) return;
-    if (!window.confirm(t('clearBehaviorConfirm2'))) return;
-    try {
-      const snap = await getDocs(collection(db, 'behaviors'));
-      const batch = writeBatch(db);
-      snap.docs.forEach(d => batch.delete(d.ref));
-      await batch.commit();
-      showToast(t('behaviorCleared'));
-    } catch (err) {
-      showToast(t('clearDataFailed'), 'error');
-    }
-  };
-
-  const resetScoring = () => {
-    if (!window.confirm(t('resetScoringConfirm'))) return;
-    setScoring({ ...DEFAULT_SCORING });
-    showToast(t('scoringResetPending'));
   };
 
   const getPreviewLabel = (score) => {
@@ -551,7 +531,7 @@ export default function AdminSettings() {
                   setMfaCode('');
                   setToast({ type: 'success', message: t('twoFactorEnabled') });
                   setTimeout(() => setToast(null), 3000);
-                } catch (e) {
+                } catch {
                   setToast({ type: 'error', message: t('invalidCode') });
                   setTimeout(() => setToast(null), 3000);
                 }
@@ -563,7 +543,7 @@ export default function AdminSettings() {
             try {
               const result = await setup2FA();
               setMfaSetup(result);
-            } catch (e) {
+            } catch {
               setToast({ type: 'error', message: t('twoFactorSetupFailed') });
               setTimeout(() => setToast(null), 3000);
             }

@@ -248,7 +248,7 @@ export default function NotificationSystem({
         lastCrossTabEventRef.current = key;
         pushLiveNotification(payload);
       };
-    } catch (_) {
+    } catch {
       // BroadcastChannel may be unavailable in older/private browser contexts.
     }
 

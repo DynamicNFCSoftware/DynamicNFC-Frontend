@@ -140,7 +140,6 @@ export default function CampaignsTab() {
     deals = [],
     analytics = {},
     loading,
-    dataMode,
     campaignsHasMore,
     campaignsLoadingMore,
     loadMoreCampaigns,

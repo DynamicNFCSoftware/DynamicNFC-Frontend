@@ -28,7 +28,7 @@ export function bridgeEventToFirestore(ev) {
     if (user?.uid) {
       addDoc(collection(db, "tenants", user.uid, "events"), doc).catch(() => {});
     }
-  } catch (_) {
+  } catch {
     // Never block portal UX
   }
 }

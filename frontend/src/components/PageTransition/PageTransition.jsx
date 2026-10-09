@@ -25,14 +25,15 @@ const pageVariants = {
 };
 
 export default function PageTransition({ children }) {
+  const MotionDiv = motion.div;
   return (
-    <motion.div
+    <MotionDiv
       variants={pageVariants}
       initial="initial"
       animate="animate"
       exit="exit"
     >
       {children}
-    </motion.div>
+    </MotionDiv>
   );
 }

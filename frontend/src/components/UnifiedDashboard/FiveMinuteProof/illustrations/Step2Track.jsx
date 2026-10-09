@@ -1,4 +1,4 @@
-export default function Step2Track({ className = "", personaName: _personaName = "" }) {
+export default function Step2Track({ className = "" }) {
   return (
     <svg className={`fmp-svg ${className}`} viewBox="0 0 480 240" role="img" aria-hidden="true">
       <defs>

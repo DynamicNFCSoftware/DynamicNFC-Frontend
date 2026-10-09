@@ -1,5 +1,5 @@
 # DynamicNFC Cursor Rules (Entrypoint)
-# Last updated: 2026-04-23
+# Last updated: 2026-10-07
 #
 # This file is intentionally short.
 # Source rules live in `.cursor/rules/*.mdc`.

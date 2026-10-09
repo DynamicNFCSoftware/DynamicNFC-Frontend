@@ -16,6 +16,8 @@ build
 .env.production
 .env.development
 .firebase
+test-results/
+playwright-report/
 
 # Editor directories and files
 .vscode/*

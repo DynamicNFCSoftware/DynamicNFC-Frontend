@@ -6,6 +6,7 @@ import '../Developers/Developers.css';
 import './RealEstate.css';
 import '../../i18n/pages/realEstate';
 import SEO from '../../components/SEO/SEO';
+import { REAL_ESTATE_TR_EXTRA } from './realEstateTranslations';
 
 /* ═══════════════════════════════════════════
    TRANSLATIONS (EN + AR)
@@ -198,7 +199,20 @@ const TR = {
     fldNotes:'Notes', fldNotesHint:'Tell us about your current project, sales goals, or pilot ideas...',
     fldError:'Something went wrong. Please try again.',
 
-    footerText:'© 2026 DynamicNFC Card Inc. — Sales Velocity Engine for Real Estate Professionals',
+    footerText:'© 2026 NFC Software Systems Inc. — Sales Velocity Engine for Real Estate Professionals',
+
+    sectionsAria: 'Page sections',
+    ftNote: 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and enterprise.',
+    ftIndustries: 'Industries',
+    ftDevelopers: 'Developers',
+    ftRealEstate: 'Real Estate',
+    ftAutomotive: 'Automotive',
+    ftNfcCards: 'NFC Cards',
+    ftResources: 'Resources',
+    ftLiveDemo: 'Live Demo',
+    ftContactSales: 'Contact Sales',
+    ftLogin: 'Log in',
+    ftRights: '© 2026 NFC Software Systems Inc. All Rights Reserved.',
   },
 
   ar: {
@@ -310,9 +324,23 @@ const TR = {
     fldNotes:'ملاحظات', fldNotesHint:'أخبرنا عن مشروعك الحالي وأهداف المبيعات...',
     fldError:'حدث خطأ. يرجى المحاولة مرة أخرى.',
 
-    footerText:"© 2026 DynamicNFC Card Inc. — محرك سرعة المبيعات للمحترفين العقاريين",
+    footerText:"© 2026 NFC Software Systems Inc. — محرك سرعة المبيعات للمحترفين العقاريين",
+
+    sectionsAria: 'أقسام الصفحة',
+    ftNote: 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات والمؤسسات.',
+    ftIndustries: 'القطاعات',
+    ftDevelopers: 'المطورين',
+    ftRealEstate: 'العقارات',
+    ftAutomotive: 'السيارات',
+    ftNfcCards: 'بطاقات NFC',
+    ftResources: 'الموارد',
+    ftLiveDemo: 'عرض مباشر',
+    ftContactSales: 'تواصل مع المبيعات',
+    ftLogin: 'تسجيل الدخول',
+    ftRights: '© ٢٠٢٦ NFC Software Systems Inc. جميع الحقوق محفوظة.',
   },
 };
+Object.assign(TR, REAL_ESTATE_TR_EXTRA);
 
 export default function RealEstate() {
   const { lang } = useLanguage();
@@ -374,7 +402,7 @@ export default function RealEstate() {
     setSubmitting(false);
   };
 
-  const particles = Array.from({ length: 20 }, (_, i) => ({
+  const particles = Array.from({ length: 20 }, () => ({
     left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`,
     animationDelay: `${Math.random() * 20}s`, animationDuration: `${15 + Math.random() * 10}s`,
   }));
@@ -419,7 +447,7 @@ export default function RealEstate() {
         </div>
       </section>
 
-      <nav className="dev-section-nav" aria-label={lang === 'ar' ? 'أقسام الصفحة' : 'Page sections'}>
+      <nav className="dev-section-nav" aria-label={t('sectionsAria')}>
         <div className="dev-section-nav-inner">
           {RE_SECTION_NAV.map(({ id, labelKey }) => (
             <button type="button" key={id} className="dev-section-nav-btn" onClick={() => scrollTo(id)}>
@@ -886,25 +914,25 @@ export default function RealEstate() {
         <div className="dev-ft-inner">
           <div className="dev-ft-brand">
             <Link to="/"><img src="/assets/images/logo.png" alt="DynamicNFC" className="dev-ft-logo" /></Link>
-            <p className="dev-ft-note">{isRTL ? 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات والمؤسسات.' : 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and enterprise.'}</p>
+            <p className="dev-ft-note">{t('ftNote')}</p>
           </div>
           <div className="dev-ft-cols">
             <div className="dev-ft-col">
-              <h5>{isRTL ? 'القطاعات' : 'Industries'}</h5>
-              <Link to="/developers">{isRTL ? 'المطورين' : 'Developers'}</Link>
-              <Link to="/real-estate">{isRTL ? 'العقارات' : 'Real Estate'}</Link>
-              <Link to="/automotive">{isRTL ? 'السيارات' : 'Automotive'}</Link>
-              <Link to="/nfc-cards">{isRTL ? 'بطاقات NFC' : 'NFC Cards'}</Link>
+              <h5>{t('ftIndustries')}</h5>
+              <Link to="/developers">{t('ftDevelopers')}</Link>
+              <Link to="/real-estate">{t('ftRealEstate')}</Link>
+              <Link to="/automotive">{t('ftAutomotive')}</Link>
+              <Link to="/nfc-cards">{t('ftNfcCards')}</Link>
             </div>
             <div className="dev-ft-col">
-              <h5>{isRTL ? 'الموارد' : 'Resources'}</h5>
-              <Link to="/enterprise/crmdemo">{isRTL ? 'عرض مباشر' : 'Live Demo'}</Link>
-              <Link to="/contact-sales">{isRTL ? 'تواصل مع المبيعات' : 'Contact Sales'}</Link>
-              <Link to="/login">{isRTL ? 'تسجيل الدخول' : 'Log in'}</Link>
+              <h5>{t('ftResources')}</h5>
+              <Link to="/enterprise/crmdemo">{t('ftLiveDemo')}</Link>
+              <Link to="/contact-sales">{t('ftContactSales')}</Link>
+              <Link to="/login">{t('ftLogin')}</Link>
             </div>
           </div>
         </div>
-        <div className="dev-ft-bottom"><p>{isRTL ? '© ٢٠٢٦ DynamicNFC Card Inc. جميع الحقوق محفوظة.' : '© 2026 DynamicNFC Card Inc. All Rights Reserved.'}</p></div>
+        <div className="dev-ft-bottom"><p>{t('ftRights')}</p></div>
       </footer>
     </div>
   );

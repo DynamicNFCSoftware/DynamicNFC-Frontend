@@ -7,6 +7,10 @@
 - Each item includes date + "Do instead".
 
 ## Execution & Validation (Highest Priority)
+0. **[2026-10-06] Hosting deploy only with `npm run deploy` from the repo root**
+   Do instead: never type `firebase deploy`; never deploy from another folder. Afterwards open dynamicnfc.ca and confirm the real site loads.
+0. **[2026-10-07] The other AI audits before commit**
+   Do instead: Claude's work → Cursor read-only audit (`docs/directives/CURSOR_AUDIT_*.md`); Cursor's work → Claude audit. NOT RUN is never PASS.
 1. **[2026-07-15] AI demo events need sector switch in Unified**
    Do instead: after Auto/Yacht AI pipeline runs, switch Unified sector to Automotive/Yacht to see feed — auto events are invisible under RE view.
 2. **[2026-07-13] Cursor verify = build + TEST**
@@ -27,8 +31,8 @@
    Do instead: when adding portal events, check both global EVENT_ALIAS and SECTOR_EVENT_ALIAS.automotive — contact_advisor→contact_agent needs auto reverse map or events vanish.
 2. **[2026-07-13] Stale i18n registry ≠ live page copy**
    Do instead: when cleaning unused `registerTranslations` files, rewrite only obvious myth keys; do not gut files or touch `src/shared/translations.js`.
-3. **[2026-04-24] FR is missing from language toggle cycle**
-   Do instead: use direct language selector for FR testing until FAZ 6 fixes `LanguageContext` toggle order.
+3. **[2026-10-06] Public site has five languages (en, it, fr, es, ar)**
+   Do instead: add every new string in all five; it/fr/es live in the page's sibling `*Translations.js`. Portals and Unified Dashboard have no Italian yet.
 
 ## User Directives
 1. **[2026-04-24] Preserve existing dirty worktree changes**

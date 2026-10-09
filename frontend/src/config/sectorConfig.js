@@ -631,7 +631,7 @@ export function calculateDecayedScore(events, sectorId) {
  * @param {string} sectorId
  * @returns {{ idleDays: number, totalSessions: number, eventsPerDay: number }}
  */
-export function calculateVelocity(events, sectorId) {
+export function calculateVelocity(events) {
   if (!events || events.length === 0) {
     return { idleDays: Infinity, totalSessions: 0, eventsPerDay: 0 };
   }
@@ -670,7 +670,7 @@ export function calculateVelocity(events, sectorId) {
  * @param {string} lang - 'en' or 'ar'
  * @returns {Array<{type: string, severity: 'high'|'medium'|'low', message: object}>}
  */
-export function detectSalesTriggers(events, sectorId, lang = "en") {
+export function detectSalesTriggers(events, sectorId) {
   const config = getSectorConfig(sectorId);
   const triggers = [];
   const now = Date.now();

@@ -1,4 +1,4 @@
-- **Session startup**: read `CLAUDE_HANDOFF.md` at repo root before starting any work. It holds the latest infrastructure state, in-flight work, and recent completions. Treat HANDOFF as authoritative when it conflicts with older docs (CLAUDE.md, memory, rules).
+- **Session startup**: read `CLAUDE_HANDOFF.md` at repo root before starting any work. It holds the latest infrastructure state, in-flight work, and recent completions. HANDOFF wins when it conflicts with older docs on drift (deployed functions, last commit, pending work). `CLAUDE.md` stays authoritative for stable rules (brand, architecture, role split). Decisions live in `memory/`. Directives live in `docs/directives/`.
 
 ---
 description: Core safety and repo boundaries
@@ -13,8 +13,8 @@ alwaysApply: true
 - Do not change Firestore `cards` collection structure.
 - Do not edit `frontend/src/firebase.js` or `frontend/src/App.jsx` routing without explicit user request.
 - Do not edit `.cursor/rules/*.mdc` or `.cursorrules` — user maintains these manually.
-- Do not touch `blinq-app.shared.423b915ad.min.css` (35K-line legacy, audit pending).
-- Do not import `src/translations/*.json` (legacy duplicates, pending deletion). Use `src/i18n/pages/*.js` + `src/i18n/portals/*.js` only.
+- Do not touch `frontend/src/assets/css/blinq-app.shared.423b915ad.min.css` (legacy vendor CSS, about 800 bytes).
+- Do not import `frontend/src/translations/*.json` (legacy). Public pages keep `en`/`ar` in a page `TR` object and merge `it`/`fr`/`es` from a sibling `*Translations.js`. `frontend/src/i18n/pages/*.js` are stale and are not what the public pages render. Portals still use `frontend/src/i18n/portals/*.js`.
 - Treat `functions/index.js` as primary functions entry point. If another functions entry file appears, verify with user before editing.
 - Prefer existing architecture and naming conventions over introducing new patterns.
 - Use beginner-friendly explanations when proposing non-trivial changes.

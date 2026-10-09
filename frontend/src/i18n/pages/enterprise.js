@@ -217,7 +217,7 @@ const enterprise = {
 
     /* ── Footer ── */
     footerText:
-      "© 2026 DynamicNFC Card Inc. — Sales Velocity Engine for Real Estate Developers",
+      "© 2026 NFC Software Systems Inc. — Sales Velocity Engine for Real Estate Developers",
   },
 
   ar: {

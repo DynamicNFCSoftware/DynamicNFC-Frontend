@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../../i18n';
 import './PushNotification.css';
+
+const TR = {
+  en: { title: 'Stay Updated', text: 'Get notified about new card taps and VIP activity.', enable: 'Enable', notNow: 'Not now' },
+  it: { title: 'Resta aggiornato', text: 'Ricevi una notifica per i nuovi tap sulle card e per l\'attività dei VIP.', enable: 'Attiva', notNow: 'Non ora' },
+  fr: { title: 'Restez informé', text: 'Recevez une notification pour les nouveaux taps de carte et l\'activité VIP.', enable: 'Activer', notNow: 'Plus tard' },
+  es: { title: 'Mantente al día', text: 'Recibe notificaciones sobre nuevos taps de tarjeta y actividad VIP.', enable: 'Activar', notNow: 'Ahora no' },
+  ar: { title: 'ابقَ على اطلاع', text: 'احصل على إشعارات عند تقريب البطاقات ونشاط عملاء VIP.', enable: 'تفعيل', notNow: 'ليس الآن' },
+};
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 
@@ -13,10 +22,12 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 export default function PushNotification() {
-  const [permission, setPermission] = useState('default');
+  const [, setPermission] = useState('default');
   const [subscribed, setSubscribed] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [show, setShow] = useState(false);
+  const { lang } = useLanguage();
+  const t = (k) => TR[lang]?.[k] ?? TR.en[k] ?? k;
 
   useEffect(() => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
@@ -40,7 +51,7 @@ export default function PushNotification() {
         setSubscribed(true);
         localStorage.setItem('push_subscribed', '1');
       }
-    } catch {}
+    } catch { /* subscription lookup failed — banner can still be offered */ }
   };
 
   const subscribe = async () => {
@@ -64,7 +75,7 @@ export default function PushNotification() {
       }
 
       const reg = await navigator.serviceWorker.ready;
-      const subscription = await reg.pushManager.subscribe({
+      await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       });
@@ -99,12 +110,12 @@ export default function PushNotification() {
         </svg>
       </div>
       <div className="pn-content">
-        <span className="pn-title">Stay Updated</span>
-        <span className="pn-text">Get notified about new card taps and VIP activity.</span>
+        <span className="pn-title">{t('title')}</span>
+        <span className="pn-text">{t('text')}</span>
       </div>
       <div className="pn-actions">
-        <button onClick={subscribe} className="pn-allow">Enable</button>
-        <button onClick={dismiss} className="pn-dismiss">Not now</button>
+        <button onClick={subscribe} className="pn-allow">{t('enable')}</button>
+        <button onClick={dismiss} className="pn-dismiss">{t('notNow')}</button>
       </div>
     </div>
   );

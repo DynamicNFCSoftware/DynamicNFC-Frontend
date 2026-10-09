@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 
 /**
  * Cache card data for offline viewing via Service Worker.

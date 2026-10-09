@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { collection, query, orderBy, limit, getDocs, where, Timestamp } from 'firebase/firestore';
+import { collection, query, orderBy, limit, getDocs, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
 import { db } from '../../firebase';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -40,7 +40,7 @@ export default function TapAnalytics() {
       setCards(cardsSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       setTaps(tapsSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       setLastRefresh(new Date());
-    } catch (err) {
+    } catch {
       toast.error('Failed to load analytics data');
     } finally {
       setLoading(false);
@@ -60,7 +60,7 @@ export default function TapAnalytics() {
   }, [autoRefresh, fetchData]);
 
   // Computed stats (memoized to avoid recalculation on every render)
-  const { tapsWithMs, last24h, last7d, uniqueCards, barData, deviceMap, pieData } = useMemo(() => {
+  const { last24h, last7d, uniqueCards, barData, deviceMap, pieData } = useMemo(() => {
     const now = Date.now();
     const withMs = taps.map(t => ({ ...t, ms: t.timestamp?.toMillis?.() || 0 }));
     const l24h = withMs.filter(t => now - t.ms < 86400000).length;

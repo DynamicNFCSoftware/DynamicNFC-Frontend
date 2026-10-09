@@ -12,7 +12,7 @@ import SEO from '../../components/SEO/SEO';
    ═══════════════════════════════════════════════════════ */
 
 export default function CardDashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [cards, setCards] = useState([]);
   const [deleting, setDeleting] = useState(null);
@@ -31,7 +31,6 @@ export default function CardDashboard() {
 
   const primaryCard = cards[0] || null;
   const otherCards = cards.slice(1);
-  const totalScans = cards.reduce((s, c) => s + (Number(c.scans) || 0), 0);
 
   const handleDelete = async (cardId) => {
     if (!window.confirm("Delete this card?")) return;

@@ -4,12 +4,16 @@ import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firesto
 import DOMPurify from 'dompurify';
 import { db } from '../../firebase';
 import SEO from '../../components/SEO/SEO';
+import { useLanguage } from '../../i18n';
+import { BLOG_TR as TR } from './blogTranslations';
 import './Blog.css';
 
 export default function BlogPost() {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { lang } = useLanguage();
+  const t = (k) => TR[lang]?.[k] ?? TR.en[k] ?? k;
 
   useEffect(() => {
     async function fetch() {
@@ -34,8 +38,8 @@ export default function BlogPost() {
   if (!post) return (
     <div className="bl-page">
       <div className="bl-empty">
-        <p>Article not found.</p>
-        <Link to="/blog" style={{ color: '#e63946', textDecoration: 'none', marginTop: '1rem', display: 'inline-block' }}>Back to Blog</Link>
+        <p>{t('notFound')}</p>
+        <Link to="/blog" style={{ color: '#e63946', textDecoration: 'none', marginTop: '1rem', display: 'inline-block' }}>{t('back')}</Link>
       </div>
     </div>
   );
@@ -44,13 +48,13 @@ export default function BlogPost() {
     <div className="bl-page">
       <SEO title={`${post.title} — DynamicNFC Blog`} description={post.excerpt || ''} />
       <article className="bp-article">
-        <Link to="/blog" className="bp-back">Back to Blog</Link>
+        <Link to="/blog" className="bp-back">{t('back')}</Link>
         {post.category && <span className="bl-card-cat">{post.category}</span>}
         <h1 className="bp-title">{post.title}</h1>
         <div className="bp-meta">
           <span>{post.author || 'DynamicNFC'}</span>
-          <span>{post.publishedAt?.toDate ? post.publishedAt.toDate().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''}</span>
-          {post.readTime && <span>{post.readTime} min read</span>}
+          <span>{post.publishedAt?.toDate ? post.publishedAt.toDate().toLocaleDateString(t('dateLocale'), { month: 'long', day: 'numeric', year: 'numeric' }) : ''}</span>
+          {post.readTime && <span>{post.readTime} {t('minRead')}</span>}
         </div>
         {post.coverImage && <img src={post.coverImage} alt="" className="bp-cover" />}
         <div className="bp-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }} />

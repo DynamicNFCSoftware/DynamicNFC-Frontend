@@ -7,7 +7,7 @@ alwaysApply: false
 # Brand and Content Rules
 
 ## Product Vocabulary (in customer-facing text)
-- NFC card → "VIP Access Key" (never "digital business card").
+- NFC card in the VIP flow → "VIP Access Key". "Digital business card" is allowed only where it names the separate customer add-on (Pricing, Blog, card builder).
 - Premium Box → "Private Invitation" (never "flyer" or "marketing flyer").
 - Website / personalized experience → "Private Buyer Experience" (never "landing page" or "brochure").
 - Physical tap → "the ultimate opt-in" (this is the privacy answer).
@@ -17,7 +17,11 @@ alwaysApply: false
 
 ## Framing
 - Frame every feature as a revenue driver, not a tech feature.
-- Avoid fake numeric claims without source (for example "3.2x", "47%", "100%"). Use qualitative language instead: Named, Intent, Real-Time, Zero Guesswork.
+- Legal entity is exactly "NFC Software Systems Inc." "DynamicNFC" is the product brand.
+- Canada is the home base. Gulf, USA, Mexico, and Italy are expansion markets.
+- Avoid invented metrics (for example "3.2x", "47%", "100%"). Use qualitative language: Named, Intent, Real-Time, Zero Guesswork.
+- Data-location copy says "stored in Canada" only. Do not say data stays in each country's region. Firestore is `northamerica-northeast1` (Montréal); Cloud Functions run in `us-central1`.
+- Do not say "compliant" or "certified". "Built on / designed around PIPEDA (and GDPR) principles" is the allowed wording until a lawyer signs off.
 
 ## Visual
 - Brand blue is `#457b9d`. Never `#365f8a` or any other blue as brand primary — recurring drift source, verify before commit.

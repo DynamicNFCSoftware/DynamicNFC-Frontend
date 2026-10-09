@@ -2,27 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import './ROICalculator.css';
 import SEO from '../../components/SEO/SEO';
+import { useLanguage } from '../../i18n';
+import { ROI_TR as TR } from './roiCalculatorTranslations';
 
-/* ─── Industry Presets ─── */
+/* ─── Industry Presets (labels live in roiCalculatorTranslations.js under ind[key]) ─── */
 const INDUSTRIES = {
   real_estate: {
-    label: 'Real Estate',
-    viewingLabel: 'viewings',
-    priceLabel: 'Average Unit Price',
-    viewLabel: 'Current Monthly Viewings',
-    dayLabel: 'Days to First Viewing',
-    titleLabel: 'Your Real Estate Numbers',
     defaults: { vip: 100, price: 750000, views: 40, days: 21, conv: 4 },
     priceMin: 200000, priceMax: 5000000, priceStep: 50000,
     viewMax: 200, dayMax: 60,
   },
   automotive: {
-    label: 'Automotive',
-    viewingLabel: 'test drives',
-    priceLabel: 'Average Vehicle Price',
-    viewLabel: 'Current Monthly Test Drives',
-    dayLabel: 'Days to First Test Drive',
-    titleLabel: 'Your Automotive Numbers',
     defaults: { vip: 75, price: 85000, views: 60, days: 14, conv: 6 },
     priceMin: 20000, priceMax: 500000, priceStep: 5000,
     viewMax: 300, dayMax: 45,
@@ -103,6 +93,9 @@ export default function ROICalculator() {
 
   const [industry, setIndustry] = useState(initialIndustry);
   const ind = INDUSTRIES[industry];
+  const { lang } = useLanguage();
+  const t = (k) => TR[lang]?.[k] ?? TR.en[k] ?? k;
+  const indText = t('ind')[industry];
 
   const [vipInvites, setVipInvites] = useState(INDUSTRIES[initialIndustry].defaults.vip);
   const [avgPrice, setAvgPrice] = useState(INDUSTRIES[initialIndustry].defaults.price);
@@ -140,7 +133,7 @@ export default function ROICalculator() {
 
   return (
     <div className="rc-page">
-      <SEO title="Sales Velocity Calculator" description="An illustrative sales velocity model for real estate, automotive, and yacht teams. Build a pilot around your own numbers." path="/sales/roi-calculator" />
+      <SEO title={t('seoTitle')} description={t('seoDesc')} path="/sales/roi-calculator" />
       {/* Nav */}
       <nav className="rc-nav">
         <a href="/" className="rc-nav-logo">
@@ -149,19 +142,19 @@ export default function ROICalculator() {
             <path d="M9.5 8.5a5 5 0 0 1 0 7" /><path d="M13 6a9 9 0 0 1 0 12" /><path d="M16.5 3.5a13 13 0 0 1 0 17" />
           </svg>
         </a>
-        <div className="rc-nav-badge"><span className="rc-pulse" />Sales Velocity Calculator — {ind.label}</div>
+        <div className="rc-nav-badge"><span className="rc-pulse" />{t('navBadge')} — {indText.label}</div>
       </nav>
 
       {/* Header */}
       <div className="rc-header">
-        <h1 className="rc-title">What happens when you send<br /><span className="rc-accent">{vipInvites.toLocaleString('en-US')} VIP invitations</span>?</h1>
-        <p className="rc-subtitle">Enter your project numbers. Watch the projected sales velocity impact update in real time.</p>
+        <h1 className="rc-title">{t('title1')}<br /><span className="rc-accent">{vipInvites.toLocaleString('en-US')} {t('titleInv')}</span>{t('titleEnd')}</h1>
+        <p className="rc-subtitle">{t('subtitle')}</p>
       </div>
 
       {/* Industry Switcher */}
       <div className="rc-industry-switcher">
-        {Object.entries(INDUSTRIES).map(([key, val]) => (
-          <button key={key} className={`rc-industry-btn${industry === key ? ' active' : ''}`} onClick={() => switchIndustry(key)}>{val.label}</button>
+        {Object.entries(INDUSTRIES).map(([key]) => (
+          <button key={key} className={`rc-industry-btn${industry === key ? ' active' : ''}`} onClick={() => switchIndustry(key)}>{t('ind')[key].label}</button>
         ))}
       </div>
 
@@ -169,76 +162,76 @@ export default function ROICalculator() {
         {/* Inputs */}
         <div className="rc-inputs">
           <div className="rc-card rc-card-input">
-            <h2 className="rc-card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e63946" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>{ind.titleLabel}</h2>
-            <Slider label="VIP Invitations to Send" desc="Premium boxes delivered to selected prospects" value={vipInvites} min={25} max={500} step={25} onChange={setVipInvites} />
-            <Slider label={ind.priceLabel} value={avgPrice} min={ind.priceMin} max={ind.priceMax} step={ind.priceStep} onChange={setAvgPrice} prefix="$" />
-            <Slider label={ind.viewLabel} desc={`Across all channels before DynamicNFC`} value={currentViewings} min={5} max={ind.viewMax} step={5} onChange={setCurrentViewings} />
-            <Slider label={ind.dayLabel} value={currentDaysToView} min={3} max={ind.dayMax} step={1} onChange={setCurrentDaysToView} suffix=" days" />
-            <Slider label="Current Conversion Rate" desc={`${ind.viewingLabel} that convert to a sale`} value={currentConversion} min={1} max={15} step={0.5} onChange={setCurrentConversion} suffix="%" />
+            <h2 className="rc-card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e63946" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>{indText.titleLabel}</h2>
+            <Slider label={t('sliderVip')} desc={t('sliderVipDesc')} value={vipInvites} min={25} max={500} step={25} onChange={setVipInvites} />
+            <Slider label={indText.priceLabel} value={avgPrice} min={ind.priceMin} max={ind.priceMax} step={ind.priceStep} onChange={setAvgPrice} prefix="$" />
+            <Slider label={indText.viewLabel} desc={t('viewDesc')} value={currentViewings} min={5} max={ind.viewMax} step={5} onChange={setCurrentViewings} />
+            <Slider label={indText.dayLabel} value={currentDaysToView} min={3} max={ind.dayMax} step={1} onChange={setCurrentDaysToView} suffix={t('daysSuffix')} />
+            <Slider label={t('convLabel')} desc={indText.convDesc} value={currentConversion} min={1} max={15} step={0.5} onChange={setCurrentConversion} suffix="%" />
           </div>
         </div>
 
         {/* Results */}
         <div className="rc-results">
           <div className="rc-kpi-grid">
-            <KPI label={`Estimated additional ${ind.viewingLabel} / mo`} accent="rc-kpi-blue"><AnimNum value={additionalViewings} prefix="+" /></KPI>
-            <KPI label="Estimated days saved per deal" accent="rc-kpi-red"><AnimNum value={daysSaved} /></KPI>
-            <KPI label="Estimated additional sales" accent="rc-kpi-green"><AnimNum value={vipSales} prefix="+" /></KPI>
-            <KPI label="Estimated revenue range" accent="rc-kpi-gold" sub={<>Illustrative investment: $<AnimNum value={investment} /></>}><AnimNum value={revenueImpact} prefix="$" /></KPI>
+            <KPI label={indText.kpiAdditional} accent="rc-kpi-blue"><AnimNum value={additionalViewings} prefix="+" /></KPI>
+            <KPI label={t('kpiDays')} accent="rc-kpi-red"><AnimNum value={daysSaved} /></KPI>
+            <KPI label={t('kpiSales')} accent="rc-kpi-green"><AnimNum value={vipSales} prefix="+" /></KPI>
+            <KPI label={t('kpiRevenue')} accent="rc-kpi-gold" sub={<>{t('kpiInvestment')}<AnimNum value={investment} /></>}><AnimNum value={revenueImpact} prefix="$" /></KPI>
           </div>
 
           <div className="rc-roi-hero">
-            <div className="rc-roi-label">Estimated Return on Investment</div>
+            <div className="rc-roi-label">{t('roiLabel')}</div>
             <div className="rc-roi-value"><AnimNum value={roi} decimals={0} suffix="×" /></div>
-            <div className="rc-roi-sub">For every $1 invested in DynamicNFC</div>
+            <div className="rc-roi-sub">{t('roiSub')}</div>
           </div>
 
           <div className="rc-card">
-            <h2 className="rc-card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#457b9d" strokeWidth="2"><path d="M22 2L2 2l7 9v7l6 3V11z"/></svg>VIP Conversion Funnel</h2>
-            <FunnelBar label="Invitations sent" value={vipInvites} max={vipInvites} color="#457b9d" />
-            <FunnelBar label="Cards tapped (68%)" value={taps} max={vipInvites} color="#5a9bbd" />
-            <FunnelBar label="Highly engaged" value={engagedVIPs} max={vipInvites} color="#d4a017" />
-            <FunnelBar label={`Booked ${ind.viewingLabel}`} value={additionalViewings} max={vipInvites} color="#e67317" />
-            <FunnelBar label="Closed sales" value={vipSales} max={vipInvites} color="#e63946" />
+            <h2 className="rc-card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#457b9d" strokeWidth="2"><path d="M22 2L2 2l7 9v7l6 3V11z"/></svg>{t('funnelTitle')}</h2>
+            <FunnelBar label={t('fSent')} value={vipInvites} max={vipInvites} color="#457b9d" />
+            <FunnelBar label={t('fTapped')} value={taps} max={vipInvites} color="#5a9bbd" />
+            <FunnelBar label={t('fEngaged')} value={engagedVIPs} max={vipInvites} color="#d4a017" />
+            <FunnelBar label={indText.fBooked} value={additionalViewings} max={vipInvites} color="#e67317" />
+            <FunnelBar label={t('fClosed')} value={vipSales} max={vipInvites} color="#e63946" />
           </div>
 
           <div className="rc-card">
-            <h2 className="rc-card-title">Model assumptions (illustrative)</h2>
+            <h2 className="rc-card-title">{t('assumeTitle')}</h2>
             <ul className="rc-assumptions">
-              <li>Tap rate: {(TAP_RATE * 100).toFixed(0)}% of VIP invitations</li>
-              <li>Engagement lift: {(ENGAGEMENT_LIFT * 100).toFixed(0)}% after a tap</li>
-              <li>Conversion multiplier: {CONVERSION_MULTIPLIER}× baseline conversion</li>
-              <li>Decision-speed improvement: {(SPEED_REDUCTION * 100).toFixed(0)}%</li>
-              <li>VIP invitation cost: ${COST_PER_VIP} per invitation</li>
+              <li>{t('aTap')((TAP_RATE * 100).toFixed(0))}</li>
+              <li>{t('aEng')((ENGAGEMENT_LIFT * 100).toFixed(0))}</li>
+              <li>{t('aConv')(CONVERSION_MULTIPLIER)}</li>
+              <li>{t('aSpeed')((SPEED_REDUCTION * 100).toFixed(0))}</li>
+              <li>{t('aCost')(COST_PER_VIP)}</li>
             </ul>
           </div>
 
           <div className="rc-compare">
             <div className="rc-compare-col rc-compare-before">
-              <div className="rc-compare-tag">Without DynamicNFC</div>
-              <div className="rc-compare-row"><span>Monthly {ind.viewingLabel}</span><strong>{currentViewings}</strong></div>
-              <div className="rc-compare-row"><span>Days to first {ind.viewingLabel.replace(/s$/, '')}</span><strong>{currentDaysToView} days</strong></div>
-              <div className="rc-compare-row"><span>Conversion rate</span><strong>{currentConversion}%</strong></div>
-              <div className="rc-compare-row"><span>Monthly sales</span><strong>{baseSales}</strong></div>
+              <div className="rc-compare-tag">{t('without')}</div>
+              <div className="rc-compare-row"><span>{indText.monthly}</span><strong>{currentViewings}</strong></div>
+              <div className="rc-compare-row"><span>{indText.daysToFirst}</span><strong>{currentDaysToView}{t('daysSuffix')}</strong></div>
+              <div className="rc-compare-row"><span>{t('convRate')}</span><strong>{currentConversion}%</strong></div>
+              <div className="rc-compare-row"><span>{t('monthlySales')}</span><strong>{baseSales}</strong></div>
             </div>
             <div className="rc-compare-col rc-compare-after">
-              <div className="rc-compare-tag rc-tag-active">With DynamicNFC</div>
-              <div className="rc-compare-row"><span>Monthly {ind.viewingLabel}</span><strong>{totalViewings}</strong></div>
-              <div className="rc-compare-row"><span>Days to first {ind.viewingLabel.replace(/s$/, '')}</span><strong>{newDaysToView} days</strong></div>
-              <div className="rc-compare-row"><span>VIP conversion rate</span><strong>{(vipConvRate * 100).toFixed(1)}%</strong></div>
-              <div className="rc-compare-row"><span>Monthly sales</span><strong>{totalSales} <span className="rc-lift">+{salesLift.toFixed(0)}%</span></strong></div>
+              <div className="rc-compare-tag rc-tag-active">{t('withDnfc')}</div>
+              <div className="rc-compare-row"><span>{indText.monthly}</span><strong>{totalViewings}</strong></div>
+              <div className="rc-compare-row"><span>{indText.daysToFirst}</span><strong>{newDaysToView}{t('daysSuffix')}</strong></div>
+              <div className="rc-compare-row"><span>{t('vipConvRate')}</span><strong>{(vipConvRate * 100).toFixed(1)}%</strong></div>
+              <div className="rc-compare-row"><span>{t('monthlySales')}</span><strong>{totalSales} <span className="rc-lift">+{salesLift.toFixed(0)}%</span></strong></div>
             </div>
           </div>
 
           <div className="rc-cta">
-            <p className="rc-cta-text">Ready to turn digital intent into booked {ind.viewingLabel}?</p>
-            <a href="/contact-sales" className="rc-cta-btn">Talk to Sales</a>
-            <a href="/enterprise/crmdemo" className="rc-cta-link">See live CRM demo →</a>
+            <p className="rc-cta-text">{indText.ctaText}</p>
+            <a href="/contact-sales" className="rc-cta-btn">{t('ctaBtn')}</a>
+            <a href="/enterprise/crmdemo" className="rc-cta-link">{t('ctaLink')}</a>
           </div>
         </div>
       </div>
 
-      <p className="rc-disclaimer">This is an illustrative model — not measured results. Your pilot will define your numbers.</p>
+      <p className="rc-disclaimer">{t('disclaimer')}</p>
     </div>
   );
 }

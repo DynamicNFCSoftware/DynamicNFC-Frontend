@@ -5,12 +5,13 @@ import { initRemoteConfig, getConfigValue } from '../../firebase';
 import './Home.css';
 import SEO from '../../components/SEO/SEO';
 import '../../i18n/pages/home';
+import { HOME_TR_EXTRA } from './homeTranslations';
 
 import cardFrontImg from '../NFCCards/assets/card-front.jpg';
 import cardBackImg  from '../NFCCards/assets/card-back.jpg';
 
 /* ═══════════════════════════════════════════
-   TRANSLATIONS (EN + AR) — Trimmed to 8 sections
+   TRANSLATIONS — EN + AR here; IT / FR / ES in homeTranslations.js
    ═══════════════════════════════════════════ */
 const TR = {
   en: {
@@ -152,7 +153,7 @@ const TR = {
     footContact: 'Contact Sales', footResources: 'Resources',
     footLogin: 'Log in', footDev: 'Developers & Agents', footRe: 'Real Estate',
     footAutomotive: 'Automotive', footLiveDemo: 'Live Demo',
-    footCopy: '© 2026 DynamicNFC Card Inc. All Rights Reserved.',
+    footCopy: '© 2026 NFC Software Systems Inc. All Rights Reserved.',
     footNote: 'Headquartered in Vancouver, Canada. NFC-powered sales intelligence for real estate, automotive, and yacht sales.',
   },
   ar: {
@@ -256,10 +257,11 @@ const TR = {
     footContact: 'تواصل مع المبيعات', footResources: 'الموارد',
     footLogin: 'تسجيل الدخول', footDev: 'المطورين والوكلاء', footRe: 'العقارات',
     footAutomotive: 'السيارات', footLiveDemo: 'عرض تجريبي مباشر',
-    footCopy: '© ٢٠٢٦ DynamicNFC Card Inc. جميع الحقوق محفوظة.',
+    footCopy: '© ٢٠٢٦ NFC Software Systems Inc. جميع الحقوق محفوظة.',
     footNote: 'المقر الرئيسي في فانكوفر، كندا. ذكاء مبيعات NFC للعقارات والسيارات واليخوت.',
   },
 };
+for (const l in HOME_TR_EXTRA) TR[l] = { ...TR[l], ...HOME_TR_EXTRA[l] };
 
 /* ── SVG Icons ── */
 const Arrow = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>;
@@ -322,7 +324,7 @@ export default function Home() {
   const [flipped, setFlipped] = useState(false);
 
   const [heroReady, setHeroReady] = useState(false);
-  const [abCta, setAbCta] = useState('');
+  const [, setAbCta] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -469,11 +471,11 @@ export default function Home() {
           <h1>{t('heroLine1')}<br /><em>{t('heroLine2')}</em></h1>
           <p>
             {t('heroSub')}
-            {isRTL ? ' — بـ' : ' — by '}
+            {t('heroBy1')}
             {(TR[lang]?.heroSubWords || TR.en.heroSubWords).map((w, i, arr) => (
               <React.Fragment key={i}>
                 <strong>{w}</strong>
-                {i < arr.length - 1 ? (isRTL ? '، بـ' : ', by ') : '.'}
+                {i < arr.length - 1 ? t('heroBy2') : '.'}
               </React.Fragment>
             ))}
           </p>
@@ -566,9 +568,9 @@ export default function Home() {
     <section className="hp-showcase hp-reveal">
       <div className="hp-showcase-inner">
         <div className="hp-showcase-text">
-          <h2>{isRTL ? 'هذا ما يراه فريق مبيعاتك' : 'This is what your sales team sees.'}</h2>
-          <p>{isRTL ? 'كل نقرة، كل زيارة، كل نية شراء — في لوحة تحكم واحدة.' : 'Every tap, every visit, every buying signal — in one dashboard.'}</p>
-          <button className="hp-btn red" onClick={() => navigate('/enterprise/crmdemo')}>{Arrow}{isRTL ? 'استكشف لوحة التحكم' : 'Explore the dashboard'}</button>
+          <h2>{t('showTitle')}</h2>
+          <p>{t('showSub')}</p>
+          <button className="hp-btn red" onClick={() => navigate('/enterprise/crmdemo')}>{Arrow}{t('showCta')}</button>
         </div>
         <div className="hp-showcase-browser">
           <div className="hp-browser-bar">
@@ -662,6 +664,24 @@ export default function Home() {
       </section>
     );
   };
+
+  const CanadaSection = () => (
+    <section className="hp-section hp-section-wide hp-reveal">
+      <div className="hp-label red">{t('caLabel')}</div>
+      <div className="hp-section-header">
+        <h2>{t('caTitle')}</h2>
+        <p>{t('caSub')}</p>
+      </div>
+      <div className="hp-canada-grid">
+        {['ca1', 'ca2', 'ca3'].map((k) => (
+          <div className="hp-canada-card" key={k}>
+            <h4>{t(k + 't')}{k === 'ca3' && <span className="hp-canada-tag">{t('ca3tag')}</span>}</h4>
+            <p>{t(k + 'd')}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 
   const HowItWorksSection = () => (
     <section className="hp-section hp-section-wide hp-reveal">
@@ -905,6 +925,9 @@ export default function Home() {
 
       <HowItWorksSection />
 
+      {/* ═══ MADE IN CANADA ═══ */}
+      <CanadaSection />
+
       {/* ═══ 5-6: LIVE DEMO & INDUSTRIES ── */}
       <LiveDemoSection />
 
@@ -940,7 +963,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="hp-footer-bottom"><p>{t('footCopy')}</p></div>
+        <div className="hp-footer-bottom"><p>{t('footCopy')} · {t('footMade')}</p></div>
       </footer>
     </div>
   );

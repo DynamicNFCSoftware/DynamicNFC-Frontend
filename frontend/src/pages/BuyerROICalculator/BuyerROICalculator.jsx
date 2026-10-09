@@ -12,6 +12,7 @@ const TR = {
     back: "Back to Portal",
     badge: "INVESTMENT TOOL",
     title: "ROI Calculator",
+    seoDesc: "Calculate real estate investment returns with adjustable parameters.",
     subtitle: "Estimate your return on investment for premium real estate properties. Adjust the parameters below to see projected returns.",
     propPrice: "Property Price",
     downPayment: "Down Payment",
@@ -19,6 +20,7 @@ const TR = {
     appreciation: "Annual Appreciation",
     holdYears: "Investment Period",
     years: "years",
+    perYear: " / yr",
     calculate: "Calculate ROI",
     results: "Investment Projection",
     totalInvested: "Total Invested",
@@ -41,10 +43,116 @@ const TR = {
     studio: "Studio Apartment",
     custom: "Custom",
   },
+  it: {
+    back: "Torna al portale",
+    badge: "STRUMENTO DI INVESTIMENTO",
+    title: "Calcolatore ROI",
+    seoDesc: "Calcola i rendimenti degli investimenti immobiliari con parametri regolabili.",
+    subtitle: "Stima il ritorno sull'investimento per immobili di pregio. Regola i parametri qui sotto per vedere i rendimenti previsti.",
+    propPrice: "Prezzo dell'immobile",
+    downPayment: "Acconto",
+    annualRent: "Reddito annuo da locazione",
+    appreciation: "Rivalutazione annua",
+    holdYears: "Periodo di investimento",
+    years: "anni",
+    perYear: " / anno",
+    calculate: "Calcola il ROI",
+    results: "Proiezione dell'investimento",
+    totalInvested: "Totale investito",
+    propertyValueEnd: "Valore dell'immobile",
+    totalRentalIncome: "Reddito totale da locazione",
+    totalReturn: "Rendimento totale",
+    netProfit: "Utile netto",
+    roi: "ROI",
+    annualRoi: "ROI annuo",
+    breakdownTitle: "Dettaglio anno per anno",
+    year: "Anno",
+    value: "Valore dell'immobile",
+    rentCum: "Locazione cumulativa",
+    totalVal: "Valore totale",
+    disclaimer: "Questo calcolatore fornisce stime a solo scopo informativo. I rendimenti effettivi possono variare in base alle condizioni di mercato, alle imposte, ai costi di manutenzione e ad altri fattori. Consulta un consulente finanziario prima di prendere decisioni di investimento.",
+    currency: "$",
+    unitTypes: "Tipo di unità",
+    penthouse: "Attico",
+    standard: "Residenza standard",
+    studio: "Monolocale",
+    custom: "Personalizzato",
+  },
+  fr: {
+    back: "Retour au portail",
+    badge: "OUTIL D'INVESTISSEMENT",
+    title: "Calculateur de ROI",
+    seoDesc: "Calculez le rendement d'un investissement immobilier avec des paramètres ajustables.",
+    subtitle: "Estimez le rendement de votre investissement dans l'immobilier haut de gamme. Ajustez les paramètres ci-dessous pour voir les rendements projetés.",
+    propPrice: "Prix de la propriété",
+    downPayment: "Mise de fonds",
+    annualRent: "Revenu locatif annuel",
+    appreciation: "Appréciation annuelle",
+    holdYears: "Période d'investissement",
+    years: "ans",
+    perYear: " / an",
+    calculate: "Calculer le ROI",
+    results: "Projection de l'investissement",
+    totalInvested: "Total investi",
+    propertyValueEnd: "Valeur de la propriété",
+    totalRentalIncome: "Revenu locatif total",
+    totalReturn: "Rendement total",
+    netProfit: "Profit net",
+    roi: "ROI",
+    annualRoi: "ROI annuel",
+    breakdownTitle: "Détail année par année",
+    year: "Année",
+    value: "Valeur de la propriété",
+    rentCum: "Loyers cumulés",
+    totalVal: "Valeur totale",
+    disclaimer: "Ce calculateur fournit des estimations à titre informatif seulement. Les rendements réels peuvent varier selon les conditions du marché, les impôts, les frais d'entretien et d'autres facteurs. Consultez un conseiller financier avant de prendre des décisions d'investissement.",
+    currency: "$",
+    unitTypes: "Type d'unité",
+    penthouse: "Penthouse",
+    standard: "Résidence standard",
+    studio: "Studio",
+    custom: "Personnalisé",
+  },
+  es: {
+    back: "Volver al portal",
+    badge: "HERRAMIENTA DE INVERSIÓN",
+    title: "Calculadora de ROI",
+    seoDesc: "Calcula los rendimientos de inversiones inmobiliarias con parámetros ajustables.",
+    subtitle: "Estima el retorno de tu inversión en propiedades inmobiliarias premium. Ajusta los parámetros a continuación para ver los rendimientos proyectados.",
+    propPrice: "Precio de la propiedad",
+    downPayment: "Enganche",
+    annualRent: "Ingreso anual por renta",
+    appreciation: "Plusvalía anual",
+    holdYears: "Periodo de inversión",
+    years: "años",
+    perYear: " / año",
+    calculate: "Calcular ROI",
+    results: "Proyección de la inversión",
+    totalInvested: "Total invertido",
+    propertyValueEnd: "Valor de la propiedad",
+    totalRentalIncome: "Ingreso total por renta",
+    totalReturn: "Rendimiento total",
+    netProfit: "Ganancia neta",
+    roi: "ROI",
+    annualRoi: "ROI anual",
+    breakdownTitle: "Desglose año por año",
+    year: "Año",
+    value: "Valor de la propiedad",
+    rentCum: "Renta acumulada",
+    totalVal: "Valor total",
+    disclaimer: "Esta calculadora ofrece estimaciones únicamente con fines informativos. Los rendimientos reales pueden variar según las condiciones del mercado, los impuestos, los costos de mantenimiento y otros factores. Consulta a un asesor financiero antes de tomar decisiones de inversión.",
+    currency: "$",
+    unitTypes: "Tipo de unidad",
+    penthouse: "Penthouse",
+    standard: "Residencia estándar",
+    studio: "Estudio",
+    custom: "Personalizado",
+  },
   ar: {
     back: "العودة إلى البوابة",
     badge: "أداة استثمارية",
     title: "حاسبة العائد على الاستثمار",
+    seoDesc: "احسب عوائد الاستثمار العقاري بمعطيات قابلة للتعديل.",
     subtitle: "قدّر عائد استثمارك في العقارات الفاخرة. عدّل المعطيات أدناه لعرض العوائد المتوقعة.",
     propPrice: "سعر العقار",
     downPayment: "الدفعة المقدمة",
@@ -52,6 +160,7 @@ const TR = {
     appreciation: "التقدير السنوي",
     holdYears: "فترة الاستثمار",
     years: "سنوات",
+    perYear: " / سنة",
     calculate: "احسب العائد",
     results: "توقعات الاستثمار",
     totalInvested: "إجمالي المستثمر",
@@ -267,7 +376,8 @@ function fmt(n) {
 
 function detectLang() {
   const n = navigator.language || navigator.userLanguage || "en";
-  return n.startsWith("ar") ? "ar" : "en";
+  const l = n.slice(0, 2);
+  return TR[l] ? l : "en";
 }
 
 export default function ROICalculator() {
@@ -314,7 +424,7 @@ export default function ROICalculator() {
 
   return (
     <div className="roi-page" dir={isRTL ? "rtl" : "ltr"}>
-      <SEO title="ROI Calculator" description="Calculate real estate investment returns with adjustable parameters." path="/enterprise/crmdemo/roi-calculator" />
+      <SEO title={t("title")} description={t("seoDesc")} path="/enterprise/crmdemo/roi-calculator" />
       <style>{CSS}</style>
 
       <nav className="roi-nav">
@@ -323,8 +433,13 @@ export default function ROICalculator() {
         </Link>
         <div className="roi-nav-right">
           <div className="roi-lang">
-            <button className={lang === "en" ? "active" : ""} onClick={() => setLang("en")}>EN</button>
-            <button className={lang === "ar" ? "active" : ""} onClick={() => setLang("ar")}>ع</button>
+            <select value={lang} onChange={(e) => setLang(e.target.value)} aria-label="Language">
+              <option value="en">English</option>
+              <option value="it">Italiano</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="ar">العربية</option>
+            </select>
           </div>
           <Link to="/enterprise/crmdemo/khalid" className="roi-nav-back">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
@@ -419,7 +534,7 @@ export default function ROICalculator() {
             />
             <div className="roi-slider-val">
               <span className="roi-slider-num">{apprPct}%</span>
-              <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)" }}>{fmt(price * apprPct / 100)}{" / yr"}</span>
+              <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)" }}>{fmt(price * apprPct / 100)}{t("perYear")}</span>
             </div>
           </div>
 

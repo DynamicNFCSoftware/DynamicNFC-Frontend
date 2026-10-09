@@ -1,0 +1,7 @@
+{
+  "name": "dynamicnfc-root",
+  "private": true,
+  "scripts": {
+    "deploy": "npm --prefix frontend run build && node scripts/predeploy-check.mjs && firebase deploy --only hosting --project dynamicnfc-prod-68b4e"
+  }
+}

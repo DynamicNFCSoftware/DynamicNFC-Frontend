@@ -1100,3 +1100,11 @@
   .hp-hero-ctas { justify-content:center; }
   .hp-hero-visual { min-height:280px; }
 }
+
+/* ═══ MADE IN CANADA ═══ */
+.hp-canada-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; }
+.hp-canada-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.5rem; text-align:start; }
+.hp-canada-card h4 { font-family:'Playfair Display', serif; font-size:1.05rem; font-weight:600; color:var(--charcoal); margin-bottom:0.5rem; }
+.hp-canada-card p { font-size:0.85rem; line-height:1.65; color:var(--muted); }
+.hp-canada-tag { display:inline-block; margin-inline-start:0.5rem; padding:0.15rem 0.55rem; border-radius:50px; background:var(--blue-soft); color:var(--blue-deep); font-family:'Outfit', sans-serif; font-size:0.62rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; vertical-align:middle; }
+@media (max-width: 768px) { .hp-canada-grid { grid-template-columns:1fr; } }

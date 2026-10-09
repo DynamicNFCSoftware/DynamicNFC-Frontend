@@ -171,7 +171,7 @@ async function updateSessionSummary(durationSeconds) {
         : 'browse',
       totalTaps: increment(0),
     });
-  } catch (err) {
+  } catch {
     // Silent fail
   }
 }

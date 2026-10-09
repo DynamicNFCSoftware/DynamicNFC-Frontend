@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase';
 import SEO from '../../components/SEO/SEO';
+import { useLanguage } from '../../i18n';
+import { BLOG_TR as TR } from './blogTranslations';
 import './Blog.css';
 
 export default function Blog() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const { lang } = useLanguage();
+  const t = (k) => TR[lang]?.[k] ?? TR.en[k] ?? k;
 
   useEffect(() => {
     getDocs(query(collection(db, 'blog_posts'), orderBy('publishedAt', 'desc')))
@@ -25,20 +29,20 @@ export default function Blog() {
   return (
     <div className="bl-page">
       <SEO
-        title="Blog — DynamicNFC"
-        description="Insights on NFC technology, digital business cards, sales strategies, and customer engagement."
+        title={t('seoTitle')}
+        description={t('seoDesc')}
       />
 
       <section className="bl-hero">
-        <h1 className="bl-title">Blog & Insights</h1>
-        <p className="bl-subtitle">Expert insights on NFC technology, digital transformation, and sales intelligence.</p>
+        <h1 className="bl-title">{t('title')}</h1>
+        <p className="bl-subtitle">{t('subtitle')}</p>
       </section>
 
       {categories.length > 1 && (
         <div className="bl-filters">
           {categories.map(c => (
             <button key={c} className={`bl-filter${filter === c ? ' active' : ''}`} onClick={() => setFilter(c)}>
-              {c === 'all' ? 'All' : c}
+              {c === 'all' ? t('all') : c}
             </button>
           ))}
         </div>
@@ -48,7 +52,7 @@ export default function Blog() {
         <div className="bl-loading"><div className="bl-spinner" /></div>
       ) : filtered.length === 0 ? (
         <div className="bl-empty">
-          <p>No articles yet. Check back soon!</p>
+          <p>{t('empty')}</p>
         </div>
       ) : (
         <div className="bl-grid">
@@ -63,7 +67,7 @@ export default function Blog() {
                 <p className="bl-card-excerpt">{post.excerpt}</p>
                 <div className="bl-card-meta">
                   <span>{post.author || 'DynamicNFC'}</span>
-                  <span>{post.publishedAt?.toDate ? post.publishedAt.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</span>
+                  <span>{post.publishedAt?.toDate ? post.publishedAt.toDate().toLocaleDateString(t('dateLocale'), { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</span>
                 </div>
               </div>
             </Link>

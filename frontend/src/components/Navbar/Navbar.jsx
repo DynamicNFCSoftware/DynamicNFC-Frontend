@@ -17,6 +17,7 @@ const TR = {
     logout: 'Logout',
     myCard: 'My Card',
     createCard: 'Create Card',
+    language: 'Language',
   },
   ar: {
     home: 'الرئيسية',
@@ -28,8 +29,47 @@ const TR = {
     logout: 'تسجيل الخروج',
     myCard: 'بطاقتي',
     createCard: 'إنشاء بطاقة',
+    language: 'اللغة',
+  },
+  it: {
+    home: 'Home',
+    nfcCards: 'Card NFC',
+    contactSales: 'Contatta il commerciale',
+    liveDemo: 'Demo live',
+    aiTap: 'AI Tap',
+    login: 'Accedi',
+    logout: 'Esci',
+    myCard: 'La mia card',
+    createCard: 'Crea card',
+    language: 'Lingua',
+  },
+  fr: {
+    home: 'Accueil',
+    nfcCards: 'Cartes NFC',
+    contactSales: 'Contacter les ventes',
+    liveDemo: 'Démo en direct',
+    aiTap: 'AI Tap',
+    login: 'Connexion',
+    logout: 'Déconnexion',
+    myCard: 'Ma carte',
+    createCard: 'Créer une carte',
+    language: 'Langue',
+  },
+  es: {
+    home: 'Inicio',
+    nfcCards: 'Tarjetas NFC',
+    contactSales: 'Contactar a ventas',
+    liveDemo: 'Demo en vivo',
+    aiTap: 'AI Tap',
+    login: 'Iniciar sesión',
+    logout: 'Cerrar sesión',
+    myCard: 'Mi tarjeta',
+    createCard: 'Crear tarjeta',
+    language: 'Idioma',
   },
 };
+
+const LANG_NAMES = { en: 'English', it: 'Italiano', fr: 'Français', es: 'Español', ar: 'العربية' };
 
 export default function Navbar() {
   const { lang, setLang, isAr } = useLanguage();
@@ -141,22 +181,16 @@ export default function Navbar() {
           </div>
 
           <div className="nav-right">
-            <div className="nav-lang">
-              <button
-                className={`nav-lang-btn${lang === 'en' ? ' active' : ''}`}
-                onClick={() => setLang('en')}
-                aria-label="Switch to English"
-              >
-                EN
-              </button>
-              <button
-                className={`nav-lang-btn${lang === 'ar' ? ' active' : ''}`}
-                onClick={() => setLang('ar')}
-                aria-label="التبديل إلى العربية"
-              >
-                ع
-              </button>
-            </div>
+            <select
+              className="nav-lang-select"
+              value={lang}
+              onChange={(e) => setLang(e.target.value)}
+              aria-label={t('language')}
+            >
+              {Object.entries(LANG_NAMES).map(([code, name]) => (
+                <option key={code} value={code}>{name}</option>
+              ))}
+            </select>
             {isAuthenticated() ? (
               <>
                 <span className="nav-user-email">{user?.email || ''}</span>

@@ -314,8 +314,6 @@ export default function OverviewTab() {
   const weeklyTrendLabels = tx.weeklyTrend?.[config.id] || tx.weeklyTrend?.realEstate;
   const accentColor = region?.sidebarAccent || "var(--ud-accent)";
 
-  const labelCategory = st(config.inventory.categoryLabel).toLowerCase();
-
   const hasAlertActivity = (alerts?.hotLeads || 0) > 0 || (alerts?.activeAlerts || 0) > 0;
   const nfcRoiDisplay = useMemo(() => {
     const totalDealValueClosed = (deals || [])
@@ -343,7 +341,7 @@ export default function OverviewTab() {
   const handleRefreshAi = async () => {
     await refreshDailyBriefAi(lang);
   };
-  const avgSessionDisplay = useMemo(() => {
+  const _avgSessionDisplay = useMemo(() => {
     const SESSION_IDLE_GAP_MS = 30 * 60 * 1000;
     const MAX_SESSION_MS = 4 * 60 * 60 * 1000;
     const userEvents = new Map();

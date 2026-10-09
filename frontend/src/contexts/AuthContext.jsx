@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
       if (uid && email) {
         return { uid, email, sessionId: uid, accountId: uid };
       }
-    } catch {}
+    } catch { /* storage unavailable */ }
     return null;
   });
   const [loading, setLoading] = useState(true);
