@@ -3,14 +3,15 @@ import { useSector } from "../../../hooks/useSector";
 import { useLanguage } from "../../../i18n";
 import { useRegion } from "../../../hooks/useRegion";
 import { getEffectiveLocale } from "../../../config/regionConfig";
+import { timeAgo as relativeTime, toMillis } from "../lib/timeAgo";
 import AiBadge from "./AiBadge";
 import LeadBadge from "./LeadBadge";
 
 /* ── Velocity icon helper ── */
 const VELOCITY_TITLES = {
-  hot: { en: "Active now", ar: "نشط الآن", es: "Activo ahora", fr: "Actif maintenant" },
-  warm: { en: (days) => `Active ${days}d ago`, ar: (days) => `نشط منذ ${days}ي`, es: (days) => `Activo hace ${days}d`, fr: (days) => `Actif il y a ${days}j` },
-  cold: { en: (days) => `Idle ${days}d`, ar: (days) => `خامل ${days}ي`, es: (days) => `Inactivo ${days}d`, fr: (days) => `Inactif ${days}j` },
+  hot: { en: "Active now", it: "Attivo ora", ar: "نشط الآن", es: "Activo ahora", fr: "Actif maintenant" },
+  warm: { en: (days) => `Active ${days}d ago`, it: (days) => `Attivo ${days} g fa`, ar: (days) => `نشط منذ ${days}ي`, es: (days) => `Activo hace ${days}d`, fr: (days) => `Actif il y a ${days}j` },
+  cold: { en: (days) => `Idle ${days}d`, it: (days) => `Inattivo ${days} g`, ar: (days) => `خامل ${days}ي`, es: (days) => `Inactivo ${days}d`, fr: (days) => `Inactif ${days}j` },
 };
 
 const VelocityIcon = ({ velocity, lang }) => {
@@ -36,14 +37,14 @@ function humanizeTriggerType(type) {
 
 const TriggerChip = ({ trigger, lang }) => {
   const LABELS = {
-    idle_lead: { en: "Idle lead", ar: "عميل خامل", es: "Lead inactivo", fr: "Prospect inactif" },
-    repeat_visitor: { en: "Repeat visitor", ar: "زائر متكرر", es: "Visitante recurrente", fr: "Visiteur récurrent" },
-    pricing_3x: { en: "Pricing \u00d73", ar: "\u062a\u0633\u0639\u064a\u0631 \u00d73", es: "Precio \u00d73", fr: "Prix \u00d73" },
-    booking_request: { en: "Viewing req", ar: "\u0637\u0644\u0628 \u0645\u0639\u0627\u064a\u0646\u0629", es: "Solicitud visita", fr: "Demande visite" },
-    quote_requested: { en: "Quote req", ar: "\u0637\u0644\u0628 \u0639\u0631\u0636", es: "Cotizaci\u00f3n", fr: "Devis demand\u00e9" },
-    test_drive: { en: "Test drive", ar: "\u062a\u062c\u0631\u0628\u0629 \u0642\u064a\u0627\u062f\u0629", es: "Prueba manejo", fr: "Essai routier" },
-    idle_warning: { en: "Going cold", ar: "\u064a\u0628\u0631\u062f", es: "Enfri\u00e1ndose", fr: "Refroidissement" },
-    high_velocity: { en: "Fast mover", ar: "\u0633\u0631\u064a\u0639", es: "R\u00e1pido", fr: "Rapide" },
+    idle_lead: { en: "Idle lead", it: "Lead inattivo", ar: "عميل خامل", es: "Lead inactivo", fr: "Prospect inactif" },
+    repeat_visitor: { en: "Repeat visitor", it: "Visitatore di ritorno", ar: "زائر متكرر", es: "Visitante recurrente", fr: "Visiteur récurrent" },
+    pricing_3x: { en: "Pricing \u00d73", it: "Prezzo ×3", ar: "\u062a\u0633\u0639\u064a\u0631 \u00d73", es: "Precio \u00d73", fr: "Prix \u00d73" },
+    booking_request: { en: "Viewing req", it: "Richiesta visita", ar: "\u0637\u0644\u0628 \u0645\u0639\u0627\u064a\u0646\u0629", es: "Solicitud visita", fr: "Demande visite" },
+    quote_requested: { en: "Quote req", it: "Richiesta preventivo", ar: "\u0637\u0644\u0628 \u0639\u0631\u0636", es: "Cotizaci\u00f3n", fr: "Devis demand\u00e9" },
+    test_drive: { en: "Test drive", it: "Test drive", ar: "\u062a\u062c\u0631\u0628\u0629 \u0642\u064a\u0627\u062f\u0629", es: "Prueba manejo", fr: "Essai routier" },
+    idle_warning: { en: "Going cold", it: "Si sta raffreddando", ar: "\u064a\u0628\u0631\u062f", es: "Enfri\u00e1ndose", fr: "Refroidissement" },
+    high_velocity: { en: "Fast mover", it: "In accelerazione", ar: "\u0633\u0631\u064a\u0639", es: "R\u00e1pido", fr: "Rapide" },
   };
   const label =
     LABELS[trigger.type]?.[lang] ||
@@ -156,7 +157,7 @@ export default function KanbanBoard({ deals: initialDeals, suggestedDeals, curre
       await onStageChange?.(dealId, newStageId, oldStageId);
     } catch {
       setDeals((prev) => prev.map((d) => (d.id === dealId ? { ...d, stage: oldStageId } : d)));
-      const rollbackText = ({ en: "rollback", ar: "تراجع", es: "reversion", fr: "retour" }[lang] || "rollback");
+      const rollbackText = ({ en: "rollback", it: "rollback", ar: "تراجع", es: "reversion", fr: "retour" }[lang] || "rollback");
       setToast({ message: `${dealName}: ${rollbackText} \u2192 ${fromLabel}`, type: "error" });
     }
   }, [pipelineStages, lang, onStageChange, st]);
@@ -181,15 +182,7 @@ export default function KanbanBoard({ deals: initialDeals, suggestedDeals, curre
   const totalValue = deals.reduce((sum, d) => sum + (d.value || 0), 0);
 
   /* relative time helper */
-  const timeAgo = (ts) => {
-    if (!ts) return "";
-    const diff = Date.now() - new Date(ts).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h`;
-    return `${Math.floor(hrs / 24)}d`;
-  };
+  const timeAgo = (ts) => relativeTime(ts, lang);
 
   return (
     <div>
@@ -198,8 +191,8 @@ export default function KanbanBoard({ deals: initialDeals, suggestedDeals, curre
         <div className="ud-kb-suggestions">
           <div className="ud-kb-suggestions-title">
             <span>&#x1F3AF;</span>
-            {({ en: "AI-Suggested Deals", ar: "\u0635\u0641\u0642\u0627\u062a \u0645\u0642\u062a\u0631\u062d\u0629", es: "Tratos sugeridos por IA", fr: "Affaires sugg\u00e9r\u00e9es par l\u2019IA" }[lang] || "AI-Suggested Deals")}
-            <AiBadge text={({ en: "Auto-detect", ar: "\u0643\u0634\u0641 \u062a\u0644\u0642\u0627\u0626\u064a", es: "Detecci\u00f3n auto", fr: "D\u00e9tection auto" }[lang] || "Auto-detect")} />
+            {({ en: "AI-Suggested Deals", it: "Deal suggeriti dall'AI", ar: "\u0635\u0641\u0642\u0627\u062a \u0645\u0642\u062a\u0631\u062d\u0629", es: "Tratos sugeridos por IA", fr: "Affaires sugg\u00e9r\u00e9es par l\u2019IA" }[lang] || "AI-Suggested Deals")}
+            <AiBadge text={({ en: "Auto-detect", it: "Rilevamento auto", ar: "\u0643\u0634\u0641 \u062a\u0644\u0642\u0627\u0626\u064a", es: "Detecci\u00f3n auto", fr: "D\u00e9tection auto" }[lang] || "Auto-detect")} />
           </div>
           <div className="ud-kb-suggestions-list">
             {suggestedDeals.map((s) => (
@@ -220,7 +213,7 @@ export default function KanbanBoard({ deals: initialDeals, suggestedDeals, curre
                     className="ud-kb-suggestion-accept"
                     onClick={() => onAcceptSuggestion?.(s)}
                   >
-                    + {({ en: "Add", ar: "\u0625\u0636\u0627\u0641\u0629", es: "Agregar", fr: "Ajouter" }[lang] || "Add")}
+                    + {({ en: "Add", it: "Aggiungi", ar: "\u0625\u0636\u0627\u0641\u0629", es: "Agregar", fr: "Ajouter" }[lang] || "Add")}
                   </button>
                 </div>
               </div>
@@ -233,15 +226,15 @@ export default function KanbanBoard({ deals: initialDeals, suggestedDeals, curre
       <div className="ud-kanban-summary">
         <div>
           <span className="ud-kanban-total-label">
-            {({ en: "Total Pipeline Value", ar: "\u0625\u062c\u0645\u0627\u0644\u064a \u0642\u064a\u0645\u0629 \u062e\u0637 \u0627\u0644\u0623\u0646\u0627\u0628\u064a\u0628", es: "Valor total del pipeline", fr: "Valeur totale du pipeline" }[lang] || "Total Pipeline Value")}
+            {({ en: "Total Pipeline Value", it: "Valore totale della pipeline", ar: "\u0625\u062c\u0645\u0627\u0644\u064a \u0642\u064a\u0645\u0629 \u062e\u0637 \u0627\u0644\u0623\u0646\u0627\u0628\u064a\u0628", es: "Valor total del pipeline", fr: "Valeur totale du pipeline" }[lang] || "Total Pipeline Value")}
           </span>
           <span className="ud-kanban-total-value">{formatValue(totalValue)}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 12, color: "var(--ud-text-muted)" }}>
-            {deals.length} {({ en: "deals", ar: "\u0635\u0641\u0642\u0629", es: "tratos", fr: "affaires" }[lang] || "deals")}
+            {deals.length} {({ en: "deals", it: "deal", ar: "\u0635\u0641\u0642\u0629", es: "tratos", fr: "affaires" }[lang] || "deals")}
           </span>
-          <AiBadge text={({ en: "AI-ranked", ar: "\u062a\u0631\u062a\u064a\u0628 \u0630\u0643\u064a", es: "Ranking IA", fr: "Classement IA" }[lang] || "AI-ranked")} />
+          <AiBadge text={({ en: "AI-ranked", it: "Ordinato dall'AI", ar: "\u062a\u0631\u062a\u064a\u0628 \u0630\u0643\u064a", es: "Ranking IA", fr: "Classement IA" }[lang] || "AI-ranked")} />
         </div>
       </div>
 
@@ -309,29 +302,29 @@ export default function KanbanBoard({ deals: initialDeals, suggestedDeals, curre
                       <div className="ud-kb-enrichment">
                         {deal.vipLinked && <span className="ud-kb-vip-badge">VIP</span>}
                         {deal.lastSeen && (
-                          <span className="ud-kb-last-seen" title={new Date(deal.lastSeen).toLocaleString()}>
-                            {timeAgo(deal.lastSeen)} {({ en: "ago", ar: "\u0645\u0636\u0649", es: "atr\u00e1s", fr: "pass\u00e9" }[lang] || "ago")}
+                          <span className="ud-kb-last-seen" title={(() => { const ms = toMillis(deal.lastSeen); return ms == null ? "" : new Date(ms).toLocaleString(); })()}>
+                            {timeAgo(deal.lastSeen)}
                           </span>
                         )}
                         {deal.atRisk && (
-                          <span className="ud-kb-risk-flag" title={({ en: "Reactivation Required", ar: "إعادة التفعيل مطلوبة", es: "Reactivacion requerida", fr: "Reactivation requise" }[lang] || "Reactivation Required")}>
+                          <span className="ud-kb-risk-flag" title={({ en: "Reactivation Required", it: "Riattivazione necessaria", ar: "إعادة التفعيل مطلوبة", es: "Reactivacion requerida", fr: "Reactivation requise" }[lang] || "Reactivation Required")}>
                             {"⚠"}
                           </span>
                         )}
                         {(() => {
-                          const stageTs = deal.updatedAt || deal.createdAt;
-                          if (!stageTs) return null;
-                          const daysIn = Math.floor((Date.now() - new Date(stageTs).getTime()) / 86400000);
+                          const stageMs = toMillis(deal.updatedAt || deal.createdAt);
+                          if (stageMs == null) return null;
+                          const daysIn = Math.floor((Date.now() - stageMs) / 86400000);
                           if (daysIn < 2) return null;
                           const staleClass = daysIn >= 7 ? "ud-kb-stale--critical" : daysIn >= 4 ? "ud-kb-stale--warning" : "ud-kb-stale--ok";
-                          return <span className={`ud-kb-stale ${staleClass}`}>{daysIn}d</span>;
+                          return <span className={`ud-kb-stale ${staleClass}`}>{daysIn}{lang === "it" ? "g" : "d"}</span>;
                         })()}
                       </div>
                       {/* Outreach shortcuts */}
                       <div className="ud-kb-outreach" onClick={(ev) => ev.stopPropagation()}>
-                        <button type="button" className="ud-kb-outreach-btn" title={({ en: "Call", ar: "\u0627\u062a\u0635\u0627\u0644", es: "Llamar", fr: "Appeler" }[lang] || "Call")} onClick={() => setToast({ message: `${({ en: "Call", ar: "\u0627\u062a\u0635\u0627\u0644", es: "Llamar", fr: "Appeler" }[lang] || "Call")}: ${deal.leadName || deal.name}`, type: "action" })}>{"📞"}</button>
-                        <button type="button" className="ud-kb-outreach-btn" title={({ en: "Email", ar: "\u0628\u0631\u064a\u062f", es: "Correo", fr: "E-mail" }[lang] || "Email")} onClick={() => setToast({ message: `${({ en: "Email", ar: "\u0628\u0631\u064a\u062f", es: "Correo", fr: "E-mail" }[lang] || "Email")}: ${deal.leadName || deal.name}`, type: "action" })}>{"✉️"}</button>
-                        <button type="button" className="ud-kb-outreach-btn" title={({ en: "WhatsApp", ar: "\u0648\u0627\u062a\u0633\u0627\u0628", es: "WhatsApp", fr: "WhatsApp" }[lang] || "WhatsApp")} onClick={() => setToast({ message: `${({ en: "WhatsApp", ar: "\u0648\u0627\u062a\u0633\u0627\u0628", es: "WhatsApp", fr: "WhatsApp" }[lang] || "WhatsApp")}: ${deal.leadName || deal.name}`, type: "action" })}>{"💬"}</button>
+                        <button type="button" className="ud-kb-outreach-btn" title={({ en: "Call", it: "Chiama", ar: "\u0627\u062a\u0635\u0627\u0644", es: "Llamar", fr: "Appeler" }[lang] || "Call")} onClick={() => setToast({ message: `${({ en: "Call", it: "Chiama", ar: "\u0627\u062a\u0635\u0627\u0644", es: "Llamar", fr: "Appeler" }[lang] || "Call")}: ${deal.leadName || deal.name}`, type: "action" })}>{"📞"}</button>
+                        <button type="button" className="ud-kb-outreach-btn" title={({ en: "Email", it: "Email", ar: "\u0628\u0631\u064a\u062f", es: "Correo", fr: "E-mail" }[lang] || "Email")} onClick={() => setToast({ message: `${({ en: "Email", it: "Email", ar: "\u0628\u0631\u064a\u062f", es: "Correo", fr: "E-mail" }[lang] || "Email")}: ${deal.leadName || deal.name}`, type: "action" })}>{"✉️"}</button>
+                        <button type="button" className="ud-kb-outreach-btn" title={({ en: "WhatsApp", it: "WhatsApp", ar: "\u0648\u0627\u062a\u0633\u0627\u0628", es: "WhatsApp", fr: "WhatsApp" }[lang] || "WhatsApp")} onClick={() => setToast({ message: `${({ en: "WhatsApp", it: "WhatsApp", ar: "\u0648\u0627\u062a\u0633\u0627\u0628", es: "WhatsApp", fr: "WhatsApp" }[lang] || "WhatsApp")}: ${deal.leadName || deal.name}`, type: "action" })}>{"💬"}</button>
                       </div>
                     </div>
                   );

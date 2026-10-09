@@ -30,6 +30,27 @@ registerTranslations("settingsTab", {
     switchSector: "Switch Sector",
     switchSectorSubtitle: "Switch between Real Estate and Automotive",
   },
+  it: {
+    section: "Impostazioni",
+    profile: "Profilo",
+    email: "Email",
+    sector: "Settore",
+    project: "Progetto",
+    dataMode: "Modalità dati",
+    tenantData: "Dati tenant",
+    demoData: "Dati demo",
+    accountPreferences: "Preferenze account",
+    savedToFirestorePrefs: "Salvato nelle preferenze",
+    language: "Lingua",
+    theme: "Tema",
+    notifications: "Notifiche",
+    light: "Chiaro",
+    dark: "Scuro",
+    enabled: "Attivo",
+    disabled: "Disattivo",
+    switchSector: "Cambia settore",
+    switchSectorSubtitle: "Passa dall'immobiliare all'automotive",
+  },
   ar: {
     section: "الإعدادات",
     profile: "الملف الشخصي",
@@ -194,7 +215,7 @@ export default function SettingsTab() {
       setToast({
         type: "success",
         message: tl({
-          en: "Demo data restored successfully.",
+          en: "Demo data restored successfully.", it: "Dati demo ripristinati.",
           ar: "تمت إعادة بيانات العرض التجريبي بنجاح.",
           es: "Datos demo restaurados correctamente.",
           fr: "Données démo restaurées avec succès.",
@@ -203,7 +224,7 @@ export default function SettingsTab() {
       setShowResetConfirm(false);
     } catch (err) {
       setResetError(err?.message || tl({
-        en: "Reset failed. Please try again.",
+        en: "Reset failed. Please try again.", it: "Reimpostazione non riuscita. Riprova.",
         ar: "فشلت إعادة التهيئة. حاول مرة أخرى.",
         es: "Fallo el reinicio. Intenta de nuevo.",
         fr: "La réinitialisation a échoué. Veuillez réessayer.",
@@ -211,7 +232,7 @@ export default function SettingsTab() {
       setToast({
         type: "error",
         message: tl({
-          en: "Reset failed. Please try again.",
+          en: "Reset failed. Please try again.", it: "Reimpostazione non riuscita. Riprova.",
           ar: "فشلت إعادة التهيئة. حاول مرة أخرى.",
           es: "Fallo el reinicio. Intenta de nuevo.",
           fr: "La réinitialisation a échoué. Veuillez réessayer.",
@@ -247,12 +268,12 @@ export default function SettingsTab() {
 
   const handleExportCSV = () => {
     const headers = [
-      tl({ en: "Name", ar: "الاسم", es: "Nombre", fr: "Nom" }),
-      tl({ en: "Email", ar: "البريد الإلكتروني", es: "Correo", fr: "E-mail" }),
-      tl({ en: "Score", ar: "الدرجة", es: "Puntaje", fr: "Score" }),
-      tl({ en: "Top Item", ar: "العنصر الأعلى", es: "Elemento principal", fr: "Article principal" }),
-      tl({ en: "Last Seen", ar: "آخر ظهور", es: "Última actividad", fr: "Dernière activité" }),
-      tl({ en: "Status", ar: "الحالة", es: "Estado", fr: "Statut" }),
+      tl({ en: "Name", it: "Nome", ar: "الاسم", es: "Nombre", fr: "Nom" }),
+      tl({ en: "Email", it: "Email", ar: "البريد الإلكتروني", es: "Correo", fr: "E-mail" }),
+      tl({ en: "Score", it: "Punteggio", ar: "الدرجة", es: "Puntaje", fr: "Score" }),
+      tl({ en: "Top Item", it: "Articolo top", ar: "العنصر الأعلى", es: "Elemento principal", fr: "Article principal" }),
+      tl({ en: "Last Seen", it: "Ultimo accesso", ar: "آخر ظهور", es: "Última actividad", fr: "Dernière activité" }),
+      tl({ en: "Status", it: "Stato", ar: "الحالة", es: "Estado", fr: "Statut" }),
     ];
     const rows = vips.map((v) => [
       v.name,
@@ -261,8 +282,8 @@ export default function SettingsTab() {
       v.topItem || "",
       v.lastSeen instanceof Date ? v.lastSeen.toISOString() : "",
       v.atRisk
-        ? tl({ en: "At Risk", ar: "معرّض للخطر", es: "En riesgo", fr: "À risque" })
-        : tl({ en: "Active", ar: "نشط", es: "Activo", fr: "Actif" }),
+        ? tl({ en: "At Risk", it: "A rischio", ar: "معرّض للخطر", es: "En riesgo", fr: "À risque" })
+        : tl({ en: "Active", it: "Attivo", ar: "نشط", es: "Activo", fr: "Actif" }),
     ]);
     const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -275,7 +296,7 @@ export default function SettingsTab() {
     setToast({
       type: "success",
       message: tl({
-        en: "CSV exported successfully.",
+        en: "CSV exported successfully.", it: "CSV esportato.",
         ar: "تم تصدير CSV بنجاح.",
         es: "CSV exportado correctamente.",
         fr: "CSV exporté avec succès.",
@@ -379,12 +400,12 @@ export default function SettingsTab() {
       </div>
 
       <div className="ud-card" style={{ marginBottom: 16 }}>
-        <div className="ud-card-title">{tl({ en: "Scoring Configuration", ar: "إعدادات التسجيل", es: "Configuracion de scoring", fr: "Configuration du scoring" })}</div>
-        <div className="ud-card-subtitle">{tl({ en: "Adjust lead classification thresholds", ar: "تعديل عتبات تصنيف العملاء", es: "Ajustar umbrales de clasificacion de leads", fr: "Ajuster les seuils de classification des leads" })}</div>
+        <div className="ud-card-title">{tl({ en: "Scoring Configuration", it: "Configurazione punteggio", ar: "إعدادات التسجيل", es: "Configuracion de scoring", fr: "Configuration du scoring" })}</div>
+        <div className="ud-card-subtitle">{tl({ en: "Adjust lead classification thresholds", it: "Regola le soglie di classificazione dei lead", ar: "تعديل عتبات تصنيف العملاء", es: "Ajustar umbrales de clasificacion de leads", fr: "Ajuster les seuils de classification des leads" })}</div>
 
         <div style={{ marginTop: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontSize: 12, color: "var(--ud-text-secondary)" }}>🔥 {tl({ en: "Hot threshold", ar: "عتبة ساخن", es: "Umbral caliente", fr: "Seuil chaud" })}</span>
+            <span style={{ fontSize: 12, color: "var(--ud-text-secondary)" }}>🔥 {tl({ en: "Hot threshold", it: "Soglia caldo", ar: "عتبة ساخن", es: "Umbral caliente", fr: "Seuil chaud" })}</span>
             <span style={{ fontSize: 14, fontWeight: 600, color: "#e63946" }}>{effectiveThresholds.hot}</span>
           </div>
           <input
@@ -399,7 +420,7 @@ export default function SettingsTab() {
 
         <div style={{ marginTop: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontSize: 12, color: "var(--ud-text-secondary)" }}>🟡 {tl({ en: "Warm threshold", ar: "عتبة دافئ", es: "Umbral tibio", fr: "Seuil tiède" })}</span>
+            <span style={{ fontSize: 12, color: "var(--ud-text-secondary)" }}>🟡 {tl({ en: "Warm threshold", it: "Soglia tiepido", ar: "عتبة دافئ", es: "Umbral tibio", fr: "Seuil tiède" })}</span>
             <span style={{ fontSize: 14, fontWeight: 600, color: "#eab308" }}>{effectiveThresholds.warm}</span>
           </div>
           <input
@@ -414,7 +435,7 @@ export default function SettingsTab() {
 
         <div style={{ marginTop: 12, padding: 10, borderRadius: 6, background: "var(--ud-bg-secondary)", fontSize: 12, color: "var(--ud-text-muted)" }}>
           {tl({
-            en: `≥${effectiveThresholds.hot} = Hot | ${effectiveThresholds.warm}-${effectiveThresholds.hot - 1} = Warm | <${effectiveThresholds.warm} = Cold`,
+            en: `≥${effectiveThresholds.hot} = Hot | ${effectiveThresholds.warm}-${effectiveThresholds.hot - 1} = Warm | <${effectiveThresholds.warm} = Cold`, it: `≥${effectiveThresholds.hot}= Caldo |${effectiveThresholds.warm}-${effectiveThresholds.hot - 1}= Tiepido | <${effectiveThresholds.warm}= Freddo`,
             ar: `≥${effectiveThresholds.hot} = ساخن | ${effectiveThresholds.warm}-${effectiveThresholds.hot - 1} = دافئ | <${effectiveThresholds.warm} = بارد`,
             es: `≥${effectiveThresholds.hot} = Caliente | ${effectiveThresholds.warm}-${effectiveThresholds.hot - 1} = Tibio | <${effectiveThresholds.warm} = Frio`,
             fr: `≥${effectiveThresholds.hot} = Chaud | ${effectiveThresholds.warm}-${effectiveThresholds.hot - 1} = Tiède | <${effectiveThresholds.warm} = Froid`,
@@ -423,10 +444,10 @@ export default function SettingsTab() {
       </div>
 
       <div className="ud-card" style={{ marginBottom: 16 }}>
-        <div className="ud-card-title">{tl({ en: "Data Export", ar: "تصدير البيانات", es: "Exportar datos", fr: "Export de données" })}</div>
+        <div className="ud-card-title">{tl({ en: "Data Export", it: "Esporta dati", ar: "تصدير البيانات", es: "Exportar datos", fr: "Export de données" })}</div>
         <div className="ud-card-subtitle">
           {tl({
-            en: `${vips.length} VIPs, ${events.length} events`,
+            en: `${vips.length} VIPs, ${events.length} events`, it: `${vips.length}VIPs,${events.length}eventi`,
             ar: `${vips.length} VIP، ${events.length} حدث`,
             es: `${vips.length} VIP, ${events.length} eventos`,
             fr: `${vips.length} VIP, ${events.length} événements`,
@@ -451,14 +472,14 @@ export default function SettingsTab() {
           }}
           type="button"
         >
-          📊 {tl({ en: "Export VIPs as CSV", ar: "تصدير VIP كـ CSV", es: "Exportar VIPs como CSV", fr: "Exporter les VIP en CSV" })}
+          📊 {tl({ en: "Export VIPs as CSV", it: "Esporta VIP in CSV", ar: "تصدير VIP كـ CSV", es: "Exportar VIPs como CSV", fr: "Exporter les VIP en CSV" })}
         </button>
       </div>
 
       <div className="ud-card">
         <div style={{ marginBottom: 12, padding: 10, borderRadius: 8, background: "rgba(69,123,157,0.12)", border: "1px solid rgba(69,123,157,0.25)", fontSize: 12, color: "var(--ud-text-secondary)" }}>
           {tl({
-            en: "Retention policy: tenant data is marked after 15 days of inactivity, then permanently deleted after an extra 1-day grace period.",
+            en: "Retention policy: tenant data is marked after 15 days of inactivity, then permanently deleted after an extra 1-day grace period.", it: "Policy di conservazione: i dati del tenant vengono segnati dopo 15 giorni di inattività, poi eliminati dopo 1 giorno di grazia.",
             ar: "سياسة الاحتفاظ: بعد 15 يوماً بدون نشاط يتم وضع الحساب بانتظار الحذف، ثم يُحذف نهائياً بعد يوم إضافي (فترة سماح).",
             es: "Politica de retencion: los datos del tenant se marcan tras 15 dias sin actividad y se eliminan definitivamente tras 1 dia de gracia.",
             fr: "Politique de rétention : les données locataire sont marquées après 15 jours d'inactivité puis supprimées définitivement après 1 jour de grâce.",
@@ -488,7 +509,7 @@ export default function SettingsTab() {
             transition: "all 0.15s",
           }}
         >
-          🔄 {tl({ en: "Reset to Demo Data", ar: "إعادة التهيئة للعرض التجريبي", es: "Reiniciar datos demo", fr: "Réinitialiser les données démo" })}
+          🔄 {tl({ en: "Reset to Demo Data", it: "Reimposta i dati demo", ar: "إعادة التهيئة للعرض التجريبي", es: "Reiniciar datos demo", fr: "Réinitialiser les données démo" })}
         </button>
         {resetError && (
           <div style={{ marginTop: 8, fontSize: 12, color: "#e63946" }}>{resetError}</div>
@@ -508,13 +529,13 @@ export default function SettingsTab() {
           >
             <div className="ud-modal-header">
               <h3 className="ud-modal-title" id="reset-confirm-title">
-                {tl({ en: "Confirm Reset", ar: "تأكيد إعادة التهيئة", es: "Confirmar reinicio", fr: "Confirmer la réinitialisation" })}
+                {tl({ en: "Confirm Reset", it: "Conferma reimpostazione", ar: "تأكيد إعادة التهيئة", es: "Confirmar reinicio", fr: "Confirmer la réinitialisation" })}
               </h3>
             </div>
             <div className="ud-modal-body" style={{ padding: "16px 20px" }}>
               <p style={{ fontSize: 13, color: "var(--ud-text-secondary)", margin: 0, lineHeight: 1.5 }}>
                 {tl({
-                  en: "This will replace all your current data with fresh demo data. This action cannot be undone.",
+                  en: "This will replace all your current data with fresh demo data. This action cannot be undone.", it: "Sostituisce tutti i dati attuali con dati demo nuovi. L'azione non si può annullare.",
                   ar: "سيؤدي هذا إلى استبدال جميع بياناتك الحالية ببيانات تجريبية جديدة. لا يمكن التراجع عن هذا الإجراء.",
                   es: "Esto reemplazara todos tus datos actuales con datos demo nuevos. Esta accion no se puede deshacer.",
                   fr: "Cela remplacera toutes vos données actuelles par de nouvelles données démo. Cette action est irréversible.",
@@ -528,7 +549,7 @@ export default function SettingsTab() {
                 className="ud-btn-secondary"
                 style={{ fontSize: 12 }}
               >
-                {({ en: "Cancel", ar: "إلغاء", es: "Cancelar", fr: "Annuler" }[lang] || "Cancel")}
+                {({ en: "Cancel", it: "Annulla", ar: "إلغاء", es: "Cancelar", fr: "Annuler" }[lang] || "Cancel")}
               </button>
               <button
                 type="button"
@@ -536,7 +557,7 @@ export default function SettingsTab() {
                 className="ud-btn-danger"
                 style={{ fontSize: 12 }}
               >
-                {({ en: "Reset", ar: "إعادة تعيين", es: "Resetear", fr: "Réinitialiser" }[lang] || "Reset")}
+                {({ en: "Reset", it: "Reimposta", ar: "إعادة تعيين", es: "Resetear", fr: "Réinitialiser" }[lang] || "Reset")}
               </button>
             </div>
           </div>

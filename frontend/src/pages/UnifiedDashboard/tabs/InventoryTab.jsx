@@ -6,6 +6,7 @@ import { getSectorSchema } from "../../../config/developerThemes";
 import { useDashboard } from "../useDashboard";
 import { SkeletonCard } from "../components/LoadingSkeleton";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import { timeAgo as relativeTime } from "../lib/timeAgo";
 
 /* ─── i18n ─── */
 const UI = {
@@ -54,6 +55,52 @@ const UI = {
     typeBreakdown: "Interest by Type",
     zeroEngagement: "Zero Engagement",
     zeroEngagementFilter: "Zero Engagement",
+  },
+  it: {
+    sectionSuffix: "Distribuzione",
+    count: "Conteggio",
+    status: "Disponibilità stimata",
+    interest: "Interesse",
+    available: "disponibili",
+    share: "Condividi",
+    note: "La disponibilità è stimata dalla densità di interazione attuale.",
+    kpiMostViewed: "Più visti",
+    kpiRising: "In crescita più rapida",
+    kpiLowStock: "Rischio scorte basse",
+    kpiVipShare: "Interesse VIP",
+    wow: "WoW",
+    activeDeals: "Deal attivi",
+    vips: "VIPs",
+    pipelineVal: "Valore pipeline",
+    trend: "Trend",
+    action: "Azione",
+    viewUnits: "Vedi unità",
+    hotUnits: "Unità calde",
+    hotUnitsDesc: "Unità con il volume di interazione più alto in questo momento.",
+    views: "visite",
+    pricing: "prezzo",
+    bookings: "prenotazioni",
+    downloads: "download",
+    interestedVips: "VIP interessati",
+    linkedDeals: "Deal collegati",
+    createDeal: "Crea deal",
+    noDeals: "Nessun deal collegato",
+    unitDetail: "Dettaglio unità",
+    close: "Chiudi",
+    allTypes: "Tutti",
+    sortBy: "Ordina per",
+    noData: "Nessun dato di inventario. Le interazioni riempiranno questa vista.",
+    categories: "categorie",
+    lowStockAlert: "Domanda alta + scorte basse",
+    healthy: "Offerta sana",
+    attention: "Serve attenzione",
+    critical: "Scorte basse",
+    lastActivity: "Ultima attività",
+    topUnit: "Unità principale",
+    sparkline7d: "7d",
+    typeBreakdown: "Interesse per tipo",
+    zeroEngagement: "Zero engagement",
+    zeroEngagementFilter: "Zero engagement",
   },
   ar: {
     sectionSuffix: "التوزيع",
@@ -198,13 +245,7 @@ const UI = {
 /* ─── Helpers ─── */
 function timeAgo(ts, lang = "en") {
   if (!ts) return "-";
-  const d = Date.now() - new Date(ts).getTime();
-  const mins = Math.floor(d / 60000);
-  if (mins < 60) return lang === "ar" ? `منذ ${mins} د` : lang === "es" ? `hace ${mins}m` : lang === "fr" ? `il y a ${mins}m` : `${mins}m`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return lang === "ar" ? `منذ ${hrs} س` : lang === "es" ? `hace ${hrs}h` : lang === "fr" ? `il y a ${hrs}h` : `${hrs}h`;
-  const days = Math.floor(hrs / 24);
-  return lang === "ar" ? `منذ ${days} ي` : lang === "es" ? `hace ${days}d` : lang === "fr" ? `il y a ${days}j` : `${days}d`;
+  return relativeTime(ts, lang) || "-";
 }
 
 function TrendArrow({ value, label }) {
@@ -444,10 +485,10 @@ function UnitDrawer({ cat, tx, st, onClose, onCreateDeal }) {
 
 /* ─── SORT options ─── */
 const SORT_OPTIONS = [
-  { id: "interest", label: { en: "Interest", ar: "الاهتمام", es: "Interés", fr: "Intérêt" } },
-  { id: "available", label: { en: "Availability", ar: "التوفر", es: "Disponibilidad", fr: "Disponibilité" } },
-  { id: "deals", label: { en: "Deals", ar: "الصفقات", es: "Tratos", fr: "Affaires" } },
-  { id: "trend", label: { en: "Trend", ar: "الاتجاه", es: "Tendencia", fr: "Tendance" } },
+  { id: "interest", label: { en: "Interest", it: "Interesse", ar: "الاهتمام", es: "Interés", fr: "Intérêt" } },
+  { id: "available", label: { en: "Availability", it: "Disponibilità", ar: "التوفر", es: "Disponibilidad", fr: "Disponibilité" } },
+  { id: "deals", label: { en: "Deals", it: "Deal", ar: "الصفقات", es: "Tratos", fr: "Affaires" } },
+  { id: "trend", label: { en: "Trend", it: "Trend", ar: "الاتجاه", es: "Tendencia", fr: "Tendance" } },
 ];
 
 /* ═══════════════════ MAIN COMPONENT ═══════════════════ */

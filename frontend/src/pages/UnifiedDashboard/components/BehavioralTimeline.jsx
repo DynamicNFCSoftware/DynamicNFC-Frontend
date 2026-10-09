@@ -3,6 +3,7 @@ import { useLanguage, useTranslation } from "../../../i18n";
 import { useMemo, useState } from "react";
 import { decayFactor } from "../../../utils/scoring";
 import { getEventLabel as getSectorEventLabel } from "../../../i18n/eventDisplayMap";
+import { timeAgo } from "../lib/timeAgo";
 
 const EVENT_ICONS = {
   portalEntry: "🚪",
@@ -33,6 +34,20 @@ const EVENT_LABELS = {
     floor_plan: "Floor plan",
     comparison: "Comparison",
     favorites: "Favorites",
+  },
+  it: {
+    portal_entry: "Portale ingresso",
+    item_view: "Articolo vista",
+    item_detail: "Articolo dettagli",
+    pricing_request: "Prezzo richiesta",
+    brochure_download: "Brochure download",
+    booking: "Prenotazione",
+    calculator: "Calcolatore",
+    payment_plan: "Pagamento piano",
+    contact_agent: "Contatta il consulente",
+    floor_plan: "Planimetria",
+    comparison: "Confronto",
+    favorites: "Preferiti",
   },
   ar: {
     portal_entry: "دخول البوابة",
@@ -93,17 +108,7 @@ export default function BehavioralTimeline({ events = [], title = "" }) {
     return "📌";
   };
 
-  const formatTime = (ts) => {
-    const d = ts instanceof Date ? ts : new Date(ts);
-    const diff = Date.now() - d.getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return lang === "ar" ? "الآن" : lang === "es" ? "ahora" : lang === "fr" ? "a l'instant" : "just now";
-    if (mins < 60) return `${mins}${lang === "ar" ? " د" : lang === "fr" ? " min" : "m"}`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}${lang === "ar" ? " س" : "h"}`;
-    const days = Math.floor(hrs / 24);
-    return `${days}${lang === "ar" ? " ي" : lang === "fr" ? " j" : "d"}`;
-  };
+  const formatTime = (ts) => timeAgo(ts, lang);
 
   const normalizeEventKey = (value) => (
     String(value || "")
@@ -175,13 +180,13 @@ export default function BehavioralTimeline({ events = [], title = "" }) {
     fr: priorityFirst ? "Priorite d'abord : ON" : "Priorite d'abord",
   }[lang] || (priorityFirst ? "Priority first: ON" : "Priority first"));
   const sortHint = ({
-    en: "Sorted by severity",
+    en: "Sorted by severity", it: "Ordinato per gravità",
     ar: "مرتب حسب الاولوية",
     es: "Ordenado por severidad",
     fr: "Trie par severite",
   }[lang] || "Sorted by severity");
   const decayTooltip = ({
-    en: "Time-decay score multiplier (half-life: 7 days)",
+    en: "Time-decay score multiplier (half-life: 7 days)", it: "Moltiplicatore di decadimento (emivita: 7 giorni)",
     ar: "معامل تضاؤل الدرجة بمرور الوقت (نصف العمر: 7 أيام)",
     es: "Multiplicador de decaimiento de puntuacion (vida media: 7 dias)",
     fr: "Multiplicateur de decroissance temporelle (demi-vie : 7 jours)",

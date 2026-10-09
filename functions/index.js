@@ -947,8 +947,8 @@ exports.aggregateVelocityMetrics = functions
       const marketplaceTraffic = deriveMarketplaceTraffic(taps);
       const alerts = deriveAlerts(deals, events);
 
-      // Generate brief for all 4 languages so UI lang toggle is instant (no LLM cost — templates only)
-      const SUPPORTED_LANGS = ["en", "ar", "es", "fr"];
+      // Generate brief for all 5 languages so UI lang toggle is instant (no LLM cost — templates only)
+      const SUPPORTED_LANGS = ["en", "it", "fr", "es", "ar"];
       const dailyBriefRef = tenantRef.collection("aggregates").doc("dailyBrief");
       const existingBrief = await dailyBriefRef.get();
       const existing = existingBrief.exists ? existingBrief.data() : null;

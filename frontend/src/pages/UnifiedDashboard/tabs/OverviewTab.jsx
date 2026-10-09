@@ -73,6 +73,54 @@ const UI = {
     kpiNfcRoiSub: "Closed value vs card cost",
     kpiAvgSessionSub: "Identified visitor sessions",
   },
+  it: {
+    section: "Panoramica",
+    execTitle: "Riepilogo per la direzione",
+    execSub: "Intelligence di conversione: prima l'identità",
+    conversionActions: "Azioni di conversione",
+    vipVsStandard: "Visitatori VIP vs standard",
+    liveActivity: "Attività in tempo reale",
+    recentEvents: "Eventi recenti",
+    hotLeads: "Lead caldi",
+    activeAlerts: "Avvisi attivi",
+    avgLeadScore: "Punteggio medio dei lead",
+    ai: "Con DynamicNFC Intelligence",
+    now: "ora",
+    minute: "m",
+    hour: "h",
+    day: "d",
+    ago: "fa",
+    empty: "Nessuna attività recente",
+    unitCount: "conteggio",
+    chartWindow: "Finestra dati",
+    last500Events: "eventi più recenti",
+    conversionLegendVip: "VIP",
+    conversionLegendStandard: "Standard",
+    conversionHint: "Ogni riga confronta i conteggi VIP e non VIP per la stessa azione.",
+    liveWindow: "Nuovi eventi (10 min)",
+    noConversionData: "Nessuna azione di conversione",
+    todayWorkflow: "Flusso di oggi",
+    weeklyTrend: {
+      title: "Ultime 8 settimane",
+      realEstate: { vip: "Tap VIP", standard: "Tap pubblici" },
+      automotive: { vip: "Sessioni VIP", standard: "Sessioni standard" },
+      yacht: { vip: "Richieste VIP", standard: "Richieste pubbliche" },
+      empty: {
+        title: "Dati ancora insufficienti",
+        desc: "I tap compariranno qui quando gli invitati VIP interagiscono.",
+      },
+    },
+    topConfigs: {
+      title: "Configurazioni salvate più richieste",
+      saves: "salvataggi",
+      empty: "Nessuna configurazione salvata",
+      unknown: "Configurazione sconosciuta",
+    },
+    kpiNfcRoi: "ROI NFC",
+    kpiAvgSession: "Sessione VIP media",
+    kpiNfcRoiSub: "Valore chiuso rispetto al costo card",
+    kpiAvgSessionSub: "Sessioni di visitatori identificati",
+  },
   ar: {
     section: "نظرة عامة",
     execTitle: "ملخص تنفيذي",
@@ -401,11 +449,11 @@ export default function OverviewTab() {
   }, [events]);
   const conversionWindowText = `${tx.chartWindow}: ${Math.min(events.length, 500)} ${tx.last500Events}`;
   const FEED_FILTERS = [
-    { id: "all", label: { en: "All", ar: "الكل", es: "Todos", fr: "Tous" } },
-    { id: "vip", label: { en: tActivity("personLabels.vip"), ar: tActivity("personLabels.vip"), es: tActivity("personLabels.vip"), fr: tActivity("personLabels.vip") } },
-    { id: "registered", label: { en: tActivity("personLabels.registered"), ar: tActivity("personLabels.registered"), es: tActivity("personLabels.registered"), fr: tActivity("personLabels.registered") } },
-    { id: "lead", label: { en: tActivity("personLabels.lead"), ar: tActivity("personLabels.lead"), es: tActivity("personLabels.lead"), fr: tActivity("personLabels.lead") } },
-    { id: "anonymous", label: { en: tActivity("personLabels.anonymous"), ar: tActivity("personLabels.anonymous"), es: tActivity("personLabels.anonymous"), fr: tActivity("personLabels.anonymous") } },
+    { id: "all", label: { en: "All", it: "Tutti", ar: "الكل", es: "Todos", fr: "Tous" } },
+    { id: "vip", label: { en: tActivity("personLabels.vip"), it: tActivity("personLabels.vip"), ar: tActivity("personLabels.vip"), es: tActivity("personLabels.vip"), fr: tActivity("personLabels.vip") } },
+    { id: "registered", label: { en: tActivity("personLabels.registered"), it: tActivity("personLabels.registered"), ar: tActivity("personLabels.registered"), es: tActivity("personLabels.registered"), fr: tActivity("personLabels.registered") } },
+    { id: "lead", label: { en: tActivity("personLabels.lead"), it: tActivity("personLabels.lead"), ar: tActivity("personLabels.lead"), es: tActivity("personLabels.lead"), fr: tActivity("personLabels.lead") } },
+    { id: "anonymous", label: { en: tActivity("personLabels.anonymous"), it: tActivity("personLabels.anonymous"), ar: tActivity("personLabels.anonymous"), es: tActivity("personLabels.anonymous"), fr: tActivity("personLabels.anonymous") } },
   ];
   const filteredEvents = useMemo(() => {
     if (feedFilter === "all") return events;
@@ -417,11 +465,11 @@ export default function OverviewTab() {
   const conversionBars = useMemo(() => {
     const conv = analytics?.conv || {};
     const rows = [
-      { id: "view_unit", label: { en: "Unit viewed", ar: "عرض الوحدة", es: "Unidad vista", fr: "Unité consultée" }, keys: ["view_unit", "vehicle_view", "unit_detail_opened", "vehicle_detail_opened"] },
-      { id: "request_pricing", label: { en: "Pricing / quote", ar: "السعر / العرض", es: "Precio / cotizacion", fr: "Tarif / devis" }, keys: ["request_pricing", "request_quote", "pricing_request", "quote_request"] },
-      { id: "download_brochure", label: { en: "Brochure", ar: "البروشور", es: "Folleto", fr: "Brochure" }, keys: ["download_brochure", "brochure_download"] },
-      { id: "book_viewing", label: { en: "Booking", ar: "الحجز", es: "Reserva", fr: "Réservation" }, keys: ["book_viewing", "test_drive_request"] },
-      { id: "contact_agent", label: { en: "Contact agent", ar: "تواصل مع الوكيل", es: "Contactar asesor", fr: "Contacter conseiller" }, keys: ["contact_agent", "contact_advisor"] },
+      { id: "view_unit", label: { en: "Unit viewed", it: "Unità visualizzate", ar: "عرض الوحدة", es: "Unidad vista", fr: "Unité consultée" }, keys: ["view_unit", "vehicle_view", "unit_detail_opened", "vehicle_detail_opened"] },
+      { id: "request_pricing", label: { en: "Pricing / quote", it: "Prezzo / preventivo", ar: "السعر / العرض", es: "Precio / cotizacion", fr: "Tarif / devis" }, keys: ["request_pricing", "request_quote", "pricing_request", "quote_request"] },
+      { id: "download_brochure", label: { en: "Brochure", it: "Brochure", ar: "البروشور", es: "Folleto", fr: "Brochure" }, keys: ["download_brochure", "brochure_download"] },
+      { id: "book_viewing", label: { en: "Booking", it: "Prenotazione", ar: "الحجز", es: "Reserva", fr: "Réservation" }, keys: ["book_viewing", "test_drive_request"] },
+      { id: "contact_agent", label: { en: "Contact agent", it: "Contatta il consulente", ar: "تواصل مع الوكيل", es: "Contactar asesor", fr: "Contacter conseiller" }, keys: ["contact_agent", "contact_advisor"] },
     ];
     return rows
       .map((row) => {
@@ -524,25 +572,25 @@ export default function OverviewTab() {
   const WORKFLOW_STEPS = [
     {
       id: "hot",
-      label: { en: "Review hot leads", ar: "مراجعة العملاء الساخنين", es: "Revisar leads calientes", fr: "Vérifier les leads chauds" },
+      label: { en: "Review hot leads", it: "Rivedi i lead caldi", ar: "مراجعة العملاء الساخنين", es: "Revisar leads calientes", fr: "Vérifier les leads chauds" },
       action: () => navigate("/unified/priority"),
       check: () => (callQueue?.length || 0) === 0,
     },
     {
       id: "idle",
-      label: { en: "Check idle VIPs", ar: "تحقق من VIP الخاملين", es: "Revisar VIP inactivos", fr: "Vérifier les VIP inactifs" },
+      label: { en: "Check idle VIPs", it: "Controlla i VIP inattivi", ar: "تحقق من VIP الخاملين", es: "Revisar VIP inactivos", fr: "Vérifier les VIP inactifs" },
       action: () => navigate("/unified/vip-crm"),
       check: () => !(vips || []).some((v) => v.atRisk),
     },
     {
       id: "outreach",
-      label: { en: "Send outreach to triggered contacts", ar: "تواصل مع جهات الاتصال المنبهة", es: "Contactar leads activados", fr: "Contacter les leads déclenchés" },
+      label: { en: "Send outreach to triggered contacts", it: "Invia outreach ai contatti con trigger", ar: "تواصل مع جهات الاتصال المنبهة", es: "Contactar leads activados", fr: "Contacter les leads déclenchés" },
       action: null,
       check: () => false,
     },
     {
       id: "pipeline",
-      label: { en: "Update pipeline stages", ar: "تحديث مراحل خط الأنابيب", es: "Actualizar etapas del pipeline", fr: "Mettre à jour les étapes pipeline" },
+      label: { en: "Update pipeline stages", it: "Aggiorna le fasi della pipeline", ar: "تحديث مراحل خط الأنابيب", es: "Actualizar etapas del pipeline", fr: "Mettre à jour les étapes pipeline" },
       action: () => navigate("/unified/pipeline"),
       check: () => false,
     },

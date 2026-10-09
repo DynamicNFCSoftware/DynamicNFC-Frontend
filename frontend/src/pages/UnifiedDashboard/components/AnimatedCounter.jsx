@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "../../../i18n";
+import { useRegion } from "../../../hooks/useRegion";
+import { getEffectiveLocale } from "../../../config/regionConfig";
 
 export default function AnimatedCounter({ value, suffix = "", prefix = "", duration = 1000 }) {
   const [display, setDisplay] = useState(0);
   const { lang } = useLanguage();
+  const { regionId } = useRegion();
 
   useEffect(() => {
     if (value === null || value === undefined || Number.isNaN(Number(value))) return;
@@ -28,7 +31,7 @@ export default function AnimatedCounter({ value, suffix = "", prefix = "", durat
   return (
     <>
       {prefix}
-      {Number(display).toLocaleString(lang === "ar" ? "ar-AE" : "en-AE")}
+      {Number(display).toLocaleString(getEffectiveLocale(regionId, lang))}
       {suffix}
     </>
   );

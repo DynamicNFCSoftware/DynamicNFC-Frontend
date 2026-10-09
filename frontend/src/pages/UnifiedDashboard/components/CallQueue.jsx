@@ -1,4 +1,5 @@
 import { useLanguage } from "../../../i18n";
+import { idleSuffix } from "../lib/timeAgo";
 
 export default function CallQueue({ queue = [], onOutreach }) {
   const { lang } = useLanguage();
@@ -11,7 +12,7 @@ export default function CallQueue({ queue = [], onOutreach }) {
           {({
             ar: "لا توجد اتصالات مطلوبة اليوم — جميع VIP متفاعلون",
             es: "No se necesitan llamadas hoy — todos los VIP estan comprometidos",
-            en: "No calls needed today — all VIPs are engaged",
+            en: "No calls needed today — all VIPs are engaged", it: "Nessuna chiamata oggi — tutti i VIP sono attivi",
             fr: "Aucun appel nécessaire aujourd'hui — tous les VIP sont engagés",
           }[lang] || "No calls needed today — all VIPs are engaged")}
         </div>
@@ -23,7 +24,7 @@ export default function CallQueue({ queue = [], onOutreach }) {
     <div className="ud-card">
       <div className="ud-card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span style={{ fontSize: 14 }}>📞</span>
-        {({ ar: "من تتصل به اليوم", es: "A quién llamar hoy", en: "Who to call today", fr: "Qui appeler aujourd'hui" }[lang] || "Who to call today")}
+        {({ ar: "من تتصل به اليوم", es: "A quién llamar hoy", en: "Who to call today", it: "Chi chiamare oggi", fr: "Qui appeler aujourd'hui" }[lang] || "Who to call today")}
         <span
           style={{
             fontSize: 10,
@@ -73,7 +74,7 @@ export default function CallQueue({ queue = [], onOutreach }) {
                 {vip.idleDays > 0 ? (
                   <span style={{ marginInlineStart: 8, color: vip.idleDays >= 5 ? "#e63946" : "inherit" }}>
                     {vip.idleDays}
-                    {lang === "ar" ? " يوم خمول" : lang === "es" ? "d inactivo" : lang === "fr" ? "j inactif" : "d idle"}
+                    {idleSuffix(lang)}
                   </span>
                 ) : null}
               </div>
@@ -105,7 +106,7 @@ export default function CallQueue({ queue = [], onOutreach }) {
               }}
               type="button"
             >
-              {({ ar: "تواصل", es: "Contactar", en: "Reach out", fr: "Contacter" }[lang] || "Reach out")}
+              {({ ar: "تواصل", es: "Contactar", en: "Reach out", it: "Contatta", fr: "Contacter" }[lang] || "Reach out")}
             </button>
           </div>
         ))}

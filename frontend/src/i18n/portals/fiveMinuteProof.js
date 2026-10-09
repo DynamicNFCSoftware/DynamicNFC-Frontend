@@ -37,6 +37,42 @@ registerTranslations("fiveMinuteProof", {
       },
     ],
   },
+  it: {
+    "banner.title": "Prova in cinque minuti — da un tap a un deal chiuso",
+    "banner.cta": "Inizia il tutorial",
+    "card.title": "Prova in cinque minuti",
+    "card.subtitle": "Come DynamicNFC trasforma un tap in un deal chiuso",
+    "card.closeAria": "Chiudi tutorial",
+    progress: "Passo {current} di {total}",
+    back: "Indietro",
+    next: "Avanti",
+    finish: "Fine",
+    "settings.replayTitle": "Rivedi la prova in cinque minuti",
+    "settings.replayHelp": "Riapri il tutorial in Panoramica. Utile nei meeting di vendita.",
+    "settings.replayCta": "Rivedi tutorial",
+    steps: [
+      {
+        label: "Identità",
+        body: "{persona} riceve una Premium Box. Il tap sulla VIP Access Key è l'opt-in definitivo: l'identità è nota prima che l'acquirente apra l'esperienza.",
+      },
+      {
+        label: "Traccia",
+        body: "I segnali arrivano in tempo reale. Planimetrie, brochure, clic sul piano di pagamento: ogni azione entra in pipeline prima che l'acquirente lasci la pagina.",
+      },
+      {
+        label: "Punteggio",
+        body: "Ogni segnale aggiorna il punteggio Velocity di {persona}. I lead caldi emergono da soli. Non indovini più chi chiamare per primo: lo dicono i dati.",
+      },
+      {
+        label: "Avviso",
+        body: "Quando {persona} supera una soglia, il consulente viene avvisato subito. Non a fine settimana. Non nel riepilogo di domani. Nel momento in cui l'intento è al massimo.",
+      },
+      {
+        label: "Chiudi",
+        body: "Il consulente contatta {persona} con il contesto: cosa ha visto, cosa ha scaricato, a cosa è pronto. Poi arriva la visita prenotata. La velocità di decisione si somma.",
+      },
+    ],
+  },
   ar: {
     "banner.title": "إثبات خلال خمس دقائق - كيف تتحول النقرة إلى صفقة مغلقة",
     "banner.cta": "ابدأ الشرح",

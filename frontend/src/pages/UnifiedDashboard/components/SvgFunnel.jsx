@@ -8,7 +8,7 @@ export default function SvgFunnel({ data = [] }) {
   if (!data || data.length === 0 || data.every((d) => d.value === 0)) {
     return (
       <div style={{ textAlign: "center", padding: "40px 0", color: "var(--ud-text-muted)", fontSize: 13 }}>
-        {lang === "ar" ? "لا توجد بيانات قمع بعد" : lang === "fr" ? "Aucune donnee d'entonnoir" : "No funnel data yet"}
+        {lang === "ar" ? "لا توجد بيانات قمع بعد" : lang === "it" ? "Nessun dato funnel" : lang === "fr" ? "Aucune donnee d'entonnoir" : "No funnel data yet"}
       </div>
     );
   }
@@ -21,7 +21,7 @@ export default function SvgFunnel({ data = [] }) {
   const innerWidth = totalWidth - sidePadding * 2;
   const totalHeight = data.length * (stageHeight + gap) + 20;
 
-  const pctLabel = lang === "ar" ? "معدل التحويل" : lang === "fr" ? "Conversion" : lang === "es" ? "Conversion" : "Conversion";
+  const pctLabel = lang === "ar" ? "معدل التحويل" : lang === "it" ? "Conversione" : lang === "fr" ? "Conversion" : lang === "es" ? "Conversion" : "Conversion";
   return (
     <div style={{ overflowX: "auto", padding: "4px 0" }}>
       <svg

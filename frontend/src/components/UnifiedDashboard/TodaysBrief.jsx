@@ -9,7 +9,7 @@ const SANITIZE_CONFIG = {
 };
 
 const LANG_LOCALE = {
-  en: "en-CA",
+  en: "en-CA", it: "it-IT",
   ar: "ar-SA",
   es: "es-MX",
   fr: "fr-CA",

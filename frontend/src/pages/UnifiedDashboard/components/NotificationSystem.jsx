@@ -83,6 +83,13 @@ const UI = {
     dismiss: "Dismiss",
     visitor: "Visitor",
   },
+  it: {
+    liveTitle: "Nuova attività in tempo reale",
+    liveBody: "È stato registrato un nuovo evento",
+    notifications: "Notifiche",
+    dismiss: "Chiudi",
+    visitor: "Visitatore",
+  },
   ar: {
     liveTitle: "نشاط مباشر جديد",
     liveBody: "تم تسجيل حدث جديد",

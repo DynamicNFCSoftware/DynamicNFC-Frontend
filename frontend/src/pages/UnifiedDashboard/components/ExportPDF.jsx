@@ -5,6 +5,7 @@ import { useDashboard } from "../DashboardContext";
 
 const LABELS = {
   en: { export: "Export PDF", exporting: "Generating...", section: "Section", exportFailed: "PDF export failed. Check console." },
+  it: { export: "Esporta PDF", exporting: "Generazione...", section: "Sezione", exportFailed: "Esportazione PDF non riuscita." },
   ar: { export: "تصدير PDF", exporting: "جارٍ الإنشاء...", section: "القسم", exportFailed: "فشل تصدير PDF. يرجى مراجعة وحدة التحكم." },
   fr: { export: "Exporter PDF", exporting: "Génération...", section: "Section", exportFailed: "Échec de l'export PDF. Vérifiez la console." },
   es: { export: "Exportar PDF", exporting: "Generando...", section: "Sección", exportFailed: "Falló la exportación de PDF. Revisa la consola." },
@@ -13,6 +14,7 @@ const LABELS = {
 
 const MODE_LABELS = {
   en: { standard: "Standard", readable: "Readable", mode: "Mode", on: "ON", off: "OFF" },
+  it: { standard: "Standard", readable: "Leggibile", mode: "Modalità", on: "ON", off: "OFF" },
   ar: { standard: "قياسي", readable: "مقروء", mode: "الوضع", on: "تشغيل", off: "إيقاف" },
   fr: { standard: "Standard", readable: "Lisible", mode: "Mode", on: "ON", off: "OFF" },
   es: { standard: "Estandar", readable: "Legible", mode: "Modo", on: "ON", off: "OFF" },
