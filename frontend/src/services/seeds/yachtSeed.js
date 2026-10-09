@@ -9,6 +9,7 @@ const REGION_DATA = {
   gulf: {
     client: "Gulf Marina Yachts",
     location: "Dubai, UAE",
+    brokerName: "Dubai Marina Brokers",
     reps: [
       { id: "rep_gulf_yacht_01", name: "Khalid Al-Maktoum" },
       { id: "rep_gulf_yacht_02", name: "Mohammed Al-Hammadi" },
@@ -27,6 +28,7 @@ const REGION_DATA = {
   usa: {
     client: "Pacific Coast Yachts",
     location: "San Diego, CA",
+    brokerName: "Harbor Island Brokers",
     reps: [
       { id: "rep_usa_yacht_01", name: "Robert Harrison" },
       { id: "rep_usa_yacht_02", name: "Ashley Chen" },
@@ -45,6 +47,7 @@ const REGION_DATA = {
   mexico: {
     client: "Marina del Caribe",
     location: "Cancun & Cabo",
+    brokerName: "Cabo Yacht Brokers",
     reps: [
       { id: "rep_mex_yacht_01", name: "Ricardo Hernandez" },
       { id: "rep_mex_yacht_02", name: "Valentina Cruz" },
@@ -63,6 +66,7 @@ const REGION_DATA = {
   canada: {
     client: "Pacific Marina Yachts",
     location: "Vancouver, BC",
+    brokerName: "Coal Harbour Brokerage",
     reps: [
       { id: "rep_can_yacht_01", name: "William Sullivan" },
       { id: "rep_can_yacht_02", name: "Rebecca Nakamura" },
@@ -81,6 +85,7 @@ const REGION_DATA = {
   italy: {
     client: "Riviera Ligure Yachts",
     location: "Portofino & Porto Cervo",
+    brokerName: "Broker Portofino",
     reps: [
       { id: "rep_ita_yacht_01", name: "Giorgio Bruno" },
       { id: "rep_ita_yacht_02", name: "Silvia Gallo" },
@@ -145,7 +150,7 @@ function buildLeads(baseTimeMs, regionId, config, personas) {
   return [
     { id: `lead_${regionId}_yacht_vip1`, name: vip1?.name || "VIP Owner", email: vip1?.email || "", phone: "", source: "broker", status: "qualified", assignedRep: config.reps[0].id, score: 92, createdAt: toIso(baseTimeMs - 8.5 * DAY_MS), updatedAt: toIso(baseTimeMs - 1 * DAY_MS), lastContactAt: toIso(baseTimeMs - 1.3 * DAY_MS), notes: "Ownership track with superyacht shortlist.", sector: SECTOR, region: regionId },
     { id: `lead_${regionId}_yacht_vip2`, name: vip2?.name || "VIP Charter", email: vip2?.email || "", phone: "", source: "event", status: "contacted", assignedRep: config.reps[1].id, score: 78, createdAt: toIso(baseTimeMs - 7.5 * DAY_MS), updatedAt: toIso(baseTimeMs - 2 * DAY_MS), lastContactAt: toIso(baseTimeMs - 1.8 * DAY_MS), notes: "Charter-first, buy-path possible.", sector: SECTOR, region: regionId },
-    { id: `lead_${regionId}_yacht_broker`, name: "Broker Referral", email: "", phone: "", source: "broker", status: "qualified", assignedRep: config.reps[0].id, score: 66, createdAt: toIso(baseTimeMs - 6 * DAY_MS), updatedAt: toIso(baseTimeMs - 2.4 * DAY_MS), lastContactAt: toIso(baseTimeMs - 2.4 * DAY_MS), notes: "Representing private family office.", sector: SECTOR, region: regionId },
+    { id: `lead_${regionId}_yacht_broker`, name: config.brokerName, email: "", phone: "", source: "broker", status: "qualified", assignedRep: config.reps[0].id, score: 66, createdAt: toIso(baseTimeMs - 6 * DAY_MS), updatedAt: toIso(baseTimeMs - 2.4 * DAY_MS), lastContactAt: toIso(baseTimeMs - 2.4 * DAY_MS), notes: "Representing private family office.", sector: SECTOR, region: regionId },
     { id: `lead_${regionId}_yacht_new`, name: "Marina Visitor", email: "", phone: "", source: "marketplace", status: "new", assignedRep: config.reps[1].id, score: 50, createdAt: toIso(baseTimeMs - 2 * DAY_MS), updatedAt: toIso(baseTimeMs - 0.7 * DAY_MS), lastContactAt: toIso(baseTimeMs - 0.7 * DAY_MS), notes: "Lead captured from charter listing.", sector: SECTOR, region: regionId },
   ];
 }
@@ -156,7 +161,7 @@ function buildDeals(baseTimeMs, regionId, cards, config, personas) {
   const templates = [
     { stage: "negotiation", score: 90, velocity: 10, probability: 0.82, atRisk: false, leadName: vip1, triggers: ["book_viewing", "request_pricing"] },
     { stage: "viewing_scheduled", score: 79, velocity: 14, probability: 0.67, atRisk: false, leadName: vip2, triggers: ["comparison_view", "download_brochure"] },
-    { stage: "comparison", score: 69, velocity: 21, probability: 0.54, atRisk: false, leadName: "Broker Referral", triggers: ["view_floorplan", "explore_payment_plan"] },
+    { stage: "comparison", score: 69, velocity: 21, probability: 0.54, atRisk: false, leadName: config.brokerName, triggers: ["view_floorplan", "explore_payment_plan"] },
     { stage: "inquiry", score: 52, velocity: 30, probability: 0.33, atRisk: true, leadName: "Marina Visitor", triggers: ["lead_captured", "cta_explore"] },
   ];
   return templates.map((tpl, index) => {
@@ -227,7 +232,7 @@ function buildCampaigns(baseTimeMs, regionId, config, cards) {
   });
 }
 
-function buildEvents(baseTimeMs, regionId, cards, personas) {
+function buildEvents(baseTimeMs, regionId, cards, personas, config) {
   const vip1 = personas.find((p) => p.id === "vip1")?.name || "VIP Owner";
   const vip2 = personas.find((p) => p.id === "vip2")?.name || "VIP Charter";
   const events = [];
@@ -267,7 +272,7 @@ function buildEvents(baseTimeMs, regionId, cards, personas) {
     push(`ev_${regionId}_yacht_tail_${idx + 1}`, 4.6 - idx * 0.35, {
       event,
       portalType,
-      ...(portalType === "registered" && { userName: "Broker Referral" }),
+      ...(portalType === "registered" && { userName: config.brokerName }),
       ...(portalType === "lead" && { leadName: "Marina Visitor" }),
       ...(portalType === "anonymous" && { sessionId: `${regionId}_yacht_sess_${idx + 1}` }),
       unitName: yacht.yachtName,
@@ -286,6 +291,6 @@ export function buildYachtSeed(baseTimeMs = Date.now(), regionId = DEFAULT_REGIO
   const leads = buildLeads(baseTimeMs, regionId, config, personas);
   const deals = buildDeals(baseTimeMs, regionId, cards, config, personas);
   const campaigns = buildCampaigns(baseTimeMs, regionId, config, cards);
-  const events = buildEvents(baseTimeMs, regionId, cards, personas);
+  const events = buildEvents(baseTimeMs, regionId, cards, personas, config);
   return { cards, leads, deals, campaigns, events };
 }

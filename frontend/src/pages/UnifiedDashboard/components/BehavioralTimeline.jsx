@@ -44,7 +44,7 @@ const EVENT_LABELS = {
     booking: "Prenotazione",
     calculator: "Calcolatore",
     payment_plan: "Pagamento piano",
-    contact_agent: "Contatta il consulente",
+    contact_agent: "Contatto con il consulente",
     floor_plan: "Planimetria",
     comparison: "Confronto",
     favorites: "Preferiti",
