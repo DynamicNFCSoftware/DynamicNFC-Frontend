@@ -24,7 +24,8 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Capitalised names are React components; JSX use (<Icon />) is invisible to this rule without eslint-plugin-react.
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^[A-Z_]' }],
       // React Compiler advisories: fixing them means behaviour-changing refactors, so they warn instead of block.
       'react-hooks/purity': 'warn',
       'react-hooks/static-components': 'warn',
