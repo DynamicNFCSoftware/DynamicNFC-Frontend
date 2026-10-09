@@ -43,3 +43,7 @@ design-previews/
 debug/
 
 shareholders/
+
+/Claude outputs/
+/Ex Files/**/package-lock.json
+
