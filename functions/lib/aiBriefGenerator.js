@@ -13,6 +13,7 @@ const COOLDOWN_MS = 5 * 60 * 1000;
 
 const LANG_INSTRUCTIONS = {
   en: "Write all output in English.",
+  it: "Write all output in Italian, professional business tone. Translate inline span content too. Preserve HTML tags exactly.",
   ar: "Write all output in Modern Standard Arabic (فصحى), professional tone. Translate inline span content too (e.g., 'Top VIP' → 'كبار العملاء'). Preserve HTML tags exactly.",
   es: "Write all output in neutral Latin American Spanish, professional business tone. Translate inline span content too. Preserve HTML tags exactly.",
   fr: "Write all output in formal Canadian French, professional business tone. Translate inline span content too. Preserve HTML tags exactly.",

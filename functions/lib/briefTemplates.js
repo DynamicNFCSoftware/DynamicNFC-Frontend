@@ -13,6 +13,7 @@ function pluralize(count, singular, plural) {
 
 const HOURS_LABEL = {
   en: (n) => `${n} ${pluralize(n, "hour", "hours")}`,
+  it: (n) => `${n} ${pluralize(n, "ora", "ore")}`,
   ar: (n) => `${n} ${pluralize(n, "ساعة", "ساعات")}`,
   es: (n) => `${n} ${pluralize(n, "hora", "horas")}`,
   fr: (n) => `${n} ${pluralize(n, "heure", "heures")}`,
@@ -20,6 +21,7 @@ const HOURS_LABEL = {
 
 const DAYS_LABEL = {
   en: (n) => `${n} ${pluralize(n, "day", "days")}`,
+  it: (n) => `${n} ${pluralize(n, "giorno", "giorni")}`,
   ar: (n) => `${n} ${pluralize(n, "يوم", "أيام")}`,
   es: (n) => `${n} ${pluralize(n, "día", "días")}`,
   fr: (n) => `${n} ${pluralize(n, "jour", "jours")}`,
@@ -27,6 +29,7 @@ const DAYS_LABEL = {
 
 const TAPS_LABEL = {
   en: (n) => `${n} ${pluralize(n, "tap", "taps")}`,
+  it: (n) => `${n} tap`,
   ar: (n) => `${n} ${pluralize(n, "نقرة", "نقرات")}`,
   es: (n) => `${n} ${pluralize(n, "toque", "toques")}`,
   fr: (n) => `${n} ${pluralize(n, "interaction", "interactions")}`,
@@ -40,6 +43,14 @@ const VIP_SIGNAL_TEMPLATES = {
       "<span class=\"vip-name\">{name}</span> has gone {daysLabel} without engagement. Last action: {lastAction}. <span class=\"score-change\">Score dropped from {prevScore} to {score}</span>. {tone}",
     plateau:
       "<span class=\"vip-name\">{name}</span> continues steady engagement — {tapsLabel} this week, no new behavioral signals. <span class=\"score-change\">Score holding at {score}</span>.",
+  },
+  it: {
+    rising:
+      "<span class=\"vip-name\">{name}</span> ha fatto {tapsLabel} nelle ultime {hoursLabel} — {firstAction}. <span class=\"score-change\">Score ora {score}</span> (ieri {prevScore}). {tone}",
+    cooling:
+      "<span class=\"vip-name\">{name}</span> è senza attività da {daysLabel}. Ultima azione: {lastAction}. <span class=\"score-change\">Lo score è sceso da {prevScore} a {score}</span>. {tone}",
+    plateau:
+      "<span class=\"vip-name\">{name}</span> tiene un'attività stabile — {tapsLabel} questa settimana, senza nuovi segnali. <span class=\"score-change\">Score fermo a {score}</span>.",
   },
   ar: {
     rising:
@@ -73,6 +84,11 @@ const TONE_PHRASES = {
     cooling: ["Cooling rapidly — re-engagement needed.", "Interest fading, intervention recommended."],
     plateau: ["Stable interest profile.", "Steady consideration mode."],
   },
+  it: {
+    rising: ["Segnale di acquisto forte, nessun contatto del consulente.", "Interesse concentrato.", "L'attività accelera."],
+    cooling: ["Si raffredda in fretta — serve un nuovo contatto.", "L'interesse cala, conviene intervenire."],
+    plateau: ["Profilo di interesse stabile.", "Valutazione costante."],
+  },
   ar: {
     rising: ["إشارة شراء قوية دون تواصل من المندوب حتى الآن.", "نمط اهتمام مركز.", "التفاعل يتسارع."],
     cooling: ["الاهتمام يبرد بسرعة — يلزم إعادة التفاعل.", "الاهتمام يتلاشى ويوصى بالتدخل."],
@@ -92,6 +108,7 @@ const TONE_PHRASES = {
 
 const PIPELINE_DELTA_TEMPLATES = {
   en: "Pipeline added <strong>{pipelineDelta}</strong> in qualified value today across {newVipCount} new VIPs. Marketplace traffic up {trafficDelta}% — {anonVisitors} anonymous visitors spent >3min on {topUnit}.",
+  it: "La pipeline ha aggiunto <strong>{pipelineDelta}</strong> di valore qualificato oggi su {newVipCount} nuovi VIP. Il traffico del marketplace è salito del {trafficDelta}% — {anonVisitors} visitatori anonimi hanno passato più di 3 min su {topUnit}.",
   ar: "أضاف خط الأنابيب <strong>{pipelineDelta}</strong> من القيمة المؤهلة اليوم عبر {newVipCount} من كبار الشخصيات الجدد. ارتفعت زيارات السوق بنسبة {trafficDelta}% — وقضى {anonVisitors} زائرًا مجهولًا أكثر من 3 دقائق على {topUnit}.",
   es: "El pipeline agregó <strong>{pipelineDelta}</strong> en valor calificado hoy con {newVipCount} VIP nuevos. El tráfico del marketplace subió {trafficDelta}% — {anonVisitors} visitantes anónimos pasaron más de 3 min en {topUnit}.",
   fr: "Le pipeline a ajouté <strong>{pipelineDelta}</strong> de valeur qualifiée aujourd'hui avec {newVipCount} nouveaux VIP. Le trafic marketplace a augmenté de {trafficDelta}% — {anonVisitors} visiteurs anonymes ont passé plus de 3 min sur {topUnit}.",
@@ -103,6 +120,12 @@ const ZERO_STATE_TEMPLATES = {
       "Your private buyer experiences are warming up. The first VIP signals will appear here as soon as buyers tap their invitations and start exploring.",
     paragraph2:
       "Pipeline movement and marketplace activity refresh every cycle — once today's first interactions land, this brief will narrate them in real time.",
+  },
+  it: {
+    paragraph1:
+      "Le esperienze private per gli acquirenti si stanno scaldando. I primi segnali VIP compaiono qui appena gli acquirenti fanno tap sull'invito e iniziano a esplorare.",
+    paragraph2:
+      "La pipeline e il marketplace si aggiornano a ogni ciclo — appena arrivano le prime interazioni di oggi, questo brief le racconta in tempo reale.",
   },
   ar: {
     paragraph1:
@@ -129,6 +152,11 @@ const CHIP_LABELS = {
     atRisk: "{count} alerts at risk",
     hotLeadsNew: "{count} hot leads new",
     followUpsOverdue: "{count} follow-up overdue",
+  },
+  it: {
+    atRisk: "{count} avvisi a rischio",
+    hotLeadsNew: "{count} nuovi lead caldi",
+    followUpsOverdue: "{count} follow-up in ritardo",
   },
   ar: {
     atRisk: "{count} تنبيهات معرضة للخطر",
