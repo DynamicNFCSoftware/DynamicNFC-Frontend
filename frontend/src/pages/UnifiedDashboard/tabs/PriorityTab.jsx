@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLanguage, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
+import { useRegion } from "../../../hooks/useRegion";
+import { getEffectiveLocale } from "../../../config/regionConfig";
+import { idleSuffix } from "../lib/timeAgo";
 import { useDashboard } from "../useDashboard";
 import AiBadge from "../components/AiBadge";
 import LeadBadge from "../components/LeadBadge";
@@ -30,6 +33,30 @@ const UI = {
     suggestedScript: "Suggested Script",
     reachOut: "Reach Out",
     viewProfile: "View Full Profile",
+  },
+  it: {
+    section: "Priorità VIP Elenco",
+    rank: "#",
+    name: "Nome",
+    score: "Punteggio",
+    triggers: "Trigger",
+    idle: "Inattivo",
+    action: "Azione",
+    call: "Chiama",
+    closeDetail: "Chiudi",
+    aiAdvice: "AI Raccomandazione",
+    whyNow: "Perché agire ora?",
+    behaviorSummary: "Comportamento Riepilogo",
+    sessions: "Sessioni",
+    events: "Eventi",
+    topInterest: "Top Interesse",
+    riskLevel: "Rischio Livello",
+    highRisk: "Rischio alto",
+    mediumRisk: "Rischio medio",
+    lowRisk: "Rischio basso",
+    suggestedScript: "Suggerito Script",
+    reachOut: "Contatta",
+    viewProfile: "Vista Completo Profilo",
   },
   ar: {
     section: "قائمة VIP ذات الأولوية",
@@ -115,7 +142,7 @@ function generateAdvice(vip, lang) {
       icon: "🚨",
       severity: "high",
       text: {
-        en: `${name} has been inactive for ${vip.velocity?.idleDays || 0} days and is at risk of churning. Immediate personal outreach recommended — reference their interest in ${vip.topItem || "your top unit"}.`,
+        en: `${name} has been inactive for ${vip.velocity?.idleDays || 0} days and is at risk of churning. Immediate personal outreach recommended — reference their interest in ${vip.topItem || "your top unit"}.`, it: `${name}has been inactive for${vip.velocity?.idleDays || 0}giorni and è at rischio di churning. Immediate personal outreach recommended — reference their interesse in${vip.topItem || "your top unit"}.`,
         ar: `${name} غير نشط منذ ${vip.velocity?.idleDays || 0} يوم ومعرض لخطر الفقدان. يُنصح بالتواصل الشخصي الفوري — اذكر اهتمامه بـ${vip.topItem || "الوحدة المميزة"}.`,
         es: `${name} lleva ${vip.velocity?.idleDays || 0} dias inactivo y esta en riesgo. Se recomienda contacto personal inmediato — menciona su interes en ${vip.topItem || "la unidad principal"}.`,
         fr: `${name} est inactif depuis ${vip.velocity?.idleDays || 0} jours et risque de partir. Contact personnel immédiat recommandé — mentionnez son intérêt pour ${vip.topItem || "l'unité principale"}.`,
@@ -128,7 +155,7 @@ function generateAdvice(vip, lang) {
       icon: "💰",
       severity: "high",
       text: {
-        en: `${name} viewed pricing 3+ times — strong purchase intent. Send a personalized payment plan with urgency incentive (limited availability or price lock).`,
+        en: `${name} viewed pricing 3+ times — strong purchase intent. Send a personalized payment plan with urgency incentive (limited availability or price lock).`, it: `${name}visto prezzo 3+ times — strong purchase intent. Invia a personalized pagamento piano with urgency incentive (limited availability or price lock).`,
         ar: `${name} شاهد التسعير أكثر من 3 مرات — نية شراء قوية. أرسل خطة دفع مخصصة مع حافز عاجل.`,
         es: `${name} vio precios mas de 3 veces — alta intencion de compra. Envia un plan de pago personalizado con incentivo de urgencia.`,
         fr: `${name} a consulté les prix plus de 3 fois — forte intention d'achat. Envoyez un plan de paiement personnalisé avec incitation à l'urgence.`,
@@ -141,7 +168,7 @@ function generateAdvice(vip, lang) {
       icon: "📋",
       severity: "medium",
       text: {
-        en: `${name} requested a viewing/booking. Confirm within 2 hours to maintain momentum. Prepare unit-specific materials in advance.`,
+        en: `${name} requested a viewing/booking. Confirm within 2 hours to maintain momentum. Prepare unit-specific materials in advance.`, it: `${name}requested a visita/booking. Conferma within 2 ore a maintain momentum. Prepare unità-specific materials in advance.`,
         ar: `${name} طلب معاينة/حجز. أكد خلال ساعتين للحفاظ على الزخم. جهّز مواد خاصة بالوحدة مسبقاً.`,
         es: `${name} solicito una visita. Confirma en 2 horas para mantener el impulso. Prepara materiales especificos.`,
         fr: `${name} a demandé une visite. Confirmez sous 2 heures pour maintenir l'élan. Préparez les documents spécifiques.`,
@@ -154,7 +181,7 @@ function generateAdvice(vip, lang) {
       icon: "⏰",
       severity: "medium",
       text: {
-        en: `${name} has gone quiet after initial interest. Send a "thinking of you" touchpoint — new project update, market insight, or exclusive preview.`,
+        en: `${name} has gone quiet after initial interest. Send a "thinking of you" touchpoint — new project update, market insight, or exclusive preview.`, it: `${name}has gone quiet dopo initial interest. Invia a "thinking di you" touchpoint — nuovo project aggiorna, market insight, or exclusive preview.`,
         ar: `${name} توقف عن التفاعل بعد اهتمام أولي. أرسل رسالة "نفكر بك" — تحديث مشروع، رؤية سوقية، أو معاينة حصرية.`,
         es: `${name} dejo de interactuar tras interes inicial. Envia un mensaje de seguimiento — actualizacion, insight de mercado o vista previa exclusiva.`,
         fr: `${name} s'est tu après un intérêt initial. Envoyez un message de suivi — mise à jour, aperçu exclusif ou étude de marché.`,
@@ -167,7 +194,7 @@ function generateAdvice(vip, lang) {
       icon: "🔥",
       severity: "high",
       text: {
-        en: `${name} is a hot lead (score ${vip.score}). They're highly engaged — prioritize direct contact. Consider VIP-exclusive offer or private viewing.`,
+        en: `${name} is a hot lead (score ${vip.score}). They're highly engaged — prioritize direct contact. Consider VIP-exclusive offer or private viewing.`, it: `${name}è a caldo lead (punteggio${vip.score}). They're highly engaged — prioritize direct contact. Consider VIP-exclusive offer or private viewing.`,
         ar: `${name} عميل ساخن (درجة ${vip.score}). مشاركة عالية — أولوية التواصل المباشر. فكر بعرض حصري أو معاينة خاصة.`,
         es: `${name} es un lead caliente (score ${vip.score}). Alta participacion — prioriza contacto directo. Considera oferta VIP exclusiva.`,
         fr: `${name} est un lead chaud (score ${vip.score}). Très engagé — priorisez le contact direct. Envisagez une offre VIP exclusive.`,
@@ -180,7 +207,7 @@ function generateAdvice(vip, lang) {
       icon: "📊",
       severity: "low",
       text: {
-        en: `${name} is in monitoring mode. Continue nurturing with relevant content. Watch for engagement spikes.`,
+        en: `${name} is in monitoring mode. Continue nurturing with relevant content. Watch for engagement spikes.`, it: `${name}è in monitoring mode. Continue nurturing with relevant content. Osserva for engagement spikes.`,
         ar: `${name} في وضع المراقبة. استمر بالرعاية بمحتوى ذي صلة. راقب أي ارتفاع في التفاعل.`,
         es: `${name} esta en modo monitoreo. Continua nutriendo con contenido relevante. Observa picos de actividad.`,
         fr: `${name} est en mode surveillance. Continuez à nourrir avec du contenu pertinent. Surveillez les pics d'engagement.`,
@@ -196,7 +223,7 @@ function generateScript(vip, lang) {
   const unit = vip.topItem || "";
   if (vip.atRisk) {
     return {
-      en: `"Hi ${name}, I noticed it's been a while since we connected. I wanted to personally share some exciting updates about ${unit || "our latest offerings"}. Would you have 10 minutes this week for a quick call?"`,
+      en: `"Hi ${name}, I noticed it's been a while since we connected. I wanted to personally share some exciting updates about ${unit || "our latest offerings"}. Would you have 10 minutes this week for a quick call?"`, it: `"Hi${name}, I noticed it's been a while da we connected. I wanted a personally condividi some exciting updates about${unit || "our latest offerings"}. Would you have 10 minutes questo settimana for a quick call?"`,
       ar: `"مرحباً ${name}، لاحظت أنه مر وقت منذ آخر تواصل. أردت أن أشاركك شخصياً بعض التحديثات المثيرة حول ${unit || "أحدث عروضنا"}. هل لديك 10 دقائق هذا الأسبوع لمكالمة سريعة؟"`,
       es: `"Hola ${name}, note que ha pasado un tiempo desde nuestra ultima conversacion. Queria compartir personalmente algunas novedades sobre ${unit || "nuestras ultimas ofertas"}. Tienes 10 minutos esta semana?"`,
       fr: `"Bonjour ${name}, j'ai remarqué que cela fait un moment que nous n'avons pas échangé. Je souhaitais vous partager personnellement des nouveautés sur ${unit || "nos dernières offres"}. Auriez-vous 10 minutes cette semaine ?"`,
@@ -204,14 +231,14 @@ function generateScript(vip, lang) {
   }
   if (vip.score >= 70) {
     return {
-      en: `"${name}, based on your interest in ${unit}, I've prepared an exclusive overview just for you — including availability, payment options, and a virtual walkthrough. When would be a good time to walk you through it?"`,
+      en: `"${name}, based on your interest in ${unit}, I've prepared an exclusive overview just for you — including availability, payment options, and a virtual walkthrough. When would be a good time to walk you through it?"`, it: `"${name}, basato su your interesse in${unit}, I've prepared an exclusive overview appena for you — including availability, pagamento options, and a virtual walkthrough. When would be a good tempo a walk you through it?"`,
       ar: `"${name}، بناءً على اهتمامك بـ${unit}، أعددت نظرة عامة حصرية لك — تشمل التوفر وخيارات الدفع وجولة افتراضية. متى يناسبك لنستعرضها معاً؟"`,
       es: `"${name}, basado en tu interes en ${unit}, prepare una vista exclusiva para ti — incluyendo disponibilidad, opciones de pago y recorrido virtual. Cuando te conviene revisarlo?"`,
       fr: `"${name}, suite à votre intérêt pour ${unit}, j'ai préparé un aperçu exclusif — disponibilité, options de paiement et visite virtuelle. Quand souhaitez-vous en discuter ?"`,
     }[lang] || `"${name}, I've prepared an exclusive overview of ${unit} for you."`;
   }
   return {
-    en: `"Hi ${name}, I wanted to check in and see if there's anything I can help with regarding your search. We have some new options that might interest you."`,
+    en: `"Hi ${name}, I wanted to check in and see if there's anything I can help with regarding your search. We have some new options that might interest you."`, it: `"Hi${name}, I wanted a check in and see if there's anything I can help with regarding your search. We have some nuovo options that might interesse you."`,
     ar: `"مرحباً ${name}، أردت الاطمئنان ومعرفة إن كان بإمكاني مساعدتك في بحثك. لدينا بعض الخيارات الجديدة التي قد تهمك."`,
     es: `"Hola ${name}, queria saber si puedo ayudarte con tu busqueda. Tenemos nuevas opciones que podrian interesarte."`,
     fr: `"Bonjour ${name}, je souhaitais prendre de vos nouvelles. Nous avons de nouvelles options qui pourraient vous intéresser."`,
@@ -221,6 +248,7 @@ function generateScript(vip, lang) {
 export default function PriorityTab() {
   const { config, st } = useSector();
   const { lang } = useLanguage();
+  const { regionId } = useRegion();
   const [ownerFilter, setOwnerFilter] = useState(null);
   const [expandedVipId, setExpandedVipId] = useState(null);
   const { vips, loading, salesReps, thresholds } = useDashboard();
@@ -233,11 +261,11 @@ export default function PriorityTab() {
   };
 
   const getNextAction = (vip) => {
-    if (vip.atRisk) return ({ ar: "اتصل فوراً — خطر فقدان", es: "Llamar ahora — alto riesgo", en: "Call now — at risk of losing", fr: "Appeler maintenant — risque de perte" }[lang] || "Call now — at risk of losing");
-    if (vip.triggers?.some((t) => t.type === "pricing_3x")) return ({ ar: "أرسل خطة دفع", es: "Enviar plan de pago", en: "Send payment plan", fr: "Envoyer le plan de paiement" }[lang] || "Send payment plan");
-    if (vip.triggers?.some((t) => t.type === "booking_request")) return ({ ar: "أكد الموعد", es: "Confirmar cita", en: "Confirm appointment", fr: "Confirmer le rendez-vous" }[lang] || "Confirm appointment");
-    if ((vip.velocity?.idleDays || 0) >= 3) return ({ ar: "أرسل تذكير", es: "Enviar recordatorio", en: "Send reminder", fr: "Envoyer un rappel" }[lang] || "Send reminder");
-    return ({ ar: "راقب", es: "Monitorear", en: "Monitor", fr: "Surveiller" }[lang] || "Monitor");
+    if (vip.atRisk) return ({ ar: "اتصل فوراً — خطر فقدان", es: "Llamar ahora — alto riesgo", en: "Call now — at risk of losing", it: "Chiama ora — a rischio", fr: "Appeler maintenant — risque de perte" }[lang] || "Call now — at risk of losing");
+    if (vip.triggers?.some((t) => t.type === "pricing_3x")) return ({ ar: "أرسل خطة دفع", es: "Enviar plan de pago", en: "Send payment plan", it: "Invia piano di pagamento", fr: "Envoyer le plan de paiement" }[lang] || "Send payment plan");
+    if (vip.triggers?.some((t) => t.type === "booking_request")) return ({ ar: "أكد الموعد", es: "Confirmar cita", en: "Confirm appointment", it: "Conferma appuntamento", fr: "Confirmer le rendez-vous" }[lang] || "Confirm appointment");
+    if ((vip.velocity?.idleDays || 0) >= 3) return ({ ar: "أرسل تذكير", es: "Enviar recordatorio", en: "Send reminder", it: "Invia promemoria", fr: "Envoyer un rappel" }[lang] || "Send reminder");
+    return ({ ar: "راقب", es: "Monitorear", en: "Monitor", it: "Monitora", fr: "Surveiller" }[lang] || "Monitor");
   };
 
   const filteredVips = useMemo(() => {
@@ -249,7 +277,7 @@ export default function PriorityTab() {
   const formatDate = (ts) => {
     if (!ts) return "-";
     const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d.toLocaleDateString(lang === "ar" ? "ar-SA" : lang === "es" ? "es-MX" : lang === "fr" ? "fr-FR" : "en-GB", {
+    return d.toLocaleDateString(getEffectiveLocale(regionId, lang), {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -269,13 +297,13 @@ export default function PriorityTab() {
       {/* Header bar */}
       <div className="ud-pv-header">
         <div className="ud-section-label" style={{ margin: 0 }}>{tx.section}</div>
-        <AiBadge text={({ ar: "ترتيب ذكي", es: "Ranking IA", en: "AI-ranked", fr: "Classement IA" }[lang] || "AI-ranked")} />
+        <AiBadge text={({ ar: "ترتيب ذكي", es: "Ranking IA", en: "AI-ranked", it: "Ordinato dall'AI", fr: "Classement IA" }[lang] || "AI-ranked")} />
       </div>
 
       {/* Owner filter chips */}
       <div className="ud-pv-chips">
         <button onClick={() => setOwnerFilter(null)} className={`ud-pv-chip ${!ownerFilter ? "ud-pv-chip--on" : ""}`} type="button">
-          {({ ar: "الكل", es: "Todos", en: "All", fr: "Tous" }[lang] || "All")}
+          {({ ar: "الكل", es: "Todos", en: "All", it: "Tutti", fr: "Tous" }[lang] || "All")}
         </button>
         {(salesReps || []).map((rep) => (
           <button
@@ -302,14 +330,14 @@ export default function PriorityTab() {
           <span className="ud-pv-col ud-pv-col--trigger">{tx.triggers}</span>
           <span className="ud-pv-col ud-pv-col--seen">{st(config.vipProfile.lastSeen)}</span>
           <span className="ud-pv-col ud-pv-col--idle">{tx.idle}</span>
-          <span className="ud-pv-col ud-pv-col--next">{({ ar: "الإجراء التالي", es: "Siguiente accion", en: "Next action", fr: "Prochaine action" }[lang] || "Next action")}</span>
+          <span className="ud-pv-col ud-pv-col--next">{({ ar: "الإجراء التالي", es: "Siguiente accion", en: "Next action", it: "Prossima azione", fr: "Prochaine action" }[lang] || "Next action")}</span>
           <span className="ud-pv-col ud-pv-col--action">{tx.action}</span>
         </div>
 
         {/* VIP rows */}
         {filteredVips.length === 0 && (
           <div style={{ padding: "32px 0", textAlign: "center", color: "var(--ud-text-muted)", fontSize: 13 }}>
-            {({ en: "No VIPs found", ar: "لا يوجد VIP", es: "Sin VIPs", fr: "Aucun VIP trouvé" }[lang] || "No VIPs found")}
+            {({ en: "No VIPs found", it: "Nessun VIP trovato", ar: "لا يوجد VIP", es: "Sin VIPs", fr: "Aucun VIP trouvé" }[lang] || "No VIPs found")}
           </div>
         )}
 
@@ -342,7 +370,7 @@ export default function PriorityTab() {
                 </span>
                 <span className="ud-pv-col ud-pv-col--seen">{formatDate(vip.lastSeen)}</span>
                 <span className={`ud-pv-col ud-pv-col--idle ${vip.atRisk ? "ud-pv-col--danger" : ""}`}>
-                  {vip.velocity?.idleDays || 0}{lang === "ar" ? " يوم" : lang === "fr" ? " j" : lang === "es" ? " d" : "d"}
+                  {vip.velocity?.idleDays || 0}{idleSuffix(lang)}
                   {vip.atRisk && " ⚠️"}
                 </span>
                 <span className={`ud-pv-col ud-pv-col--next ${vip.atRisk ? "ud-pv-col--danger" : ""}`}>{getNextAction(vip)}</span>
@@ -372,7 +400,7 @@ export default function PriorityTab() {
                       <div className="ud-pv-script">
                         <p className="ud-pv-script__text">{script}</p>
                         <button type="button" className="ud-copy-btn" onClick={() => navigator.clipboard?.writeText(script)}>
-                          {({ en: "Copy", ar: "نسخ", es: "Copiar", fr: "Copier" }[lang] || "Copy")}
+                          {({ en: "Copy", it: "Copia", ar: "نسخ", es: "Copiar", fr: "Copier" }[lang] || "Copy")}
                         </button>
                       </div>
                     </div>

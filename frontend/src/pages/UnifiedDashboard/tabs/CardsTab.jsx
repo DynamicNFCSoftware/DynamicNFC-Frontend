@@ -8,6 +8,7 @@ import { useDashboard } from "../useDashboard";
 import { SkeletonTable } from "../components/LoadingSkeleton";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { updateCardAssignment, updateCardStatus } from "../../../services/tenantService";
+import { timeAgo as relativeTime } from "../lib/timeAgo";
 
 /* ═══ i18n ═══ */
 const UI = {
@@ -97,6 +98,93 @@ const UI = {
     cancel: "Cancel",
     confirmBulkTitle: "Confirm Bulk Action",
     confirmBulkDesc: "This action will apply to selected cards.",
+  },
+  it: {
+    section: "Card Intelligence",
+    cardId: "Card",
+    assignedTo: "Titolare",
+    status: "Stato",
+    taps: "Tap",
+    views: "Visite",
+    pricing: "Prezzo",
+    bookings: "Prenotazioni",
+    trend: "7d",
+    vipSignals: "Segnali VIP",
+    actions: "Azioni",
+    lastTap: "Ultimo tap",
+    demo: "(demo dati)",
+    empty: "Nessun dato di interazione sulle card.",
+    emptyCta: "Lancia una campagna per iniziare a raccogliere dati.",
+    search: "Cerca card...",
+    allStatus: "Tutti",
+    active: "Attivo",
+    cooling: "In raffreddamento",
+    dormant: "Dormiente",
+    paused: "In pausa",
+    sortBy: "Ordina",
+    clearKpiFilter: "KPI chiari",
+    // KPIs
+    kpiTotalTaps: "Totale Tap (7d)",
+    kpiActiveCards: "Card attive",
+    kpiMostViewed: "Più visti",
+    kpiAtRisk: "Riattivazione Necessario",
+    // Detail
+    detailTitle: "Card Dettaglio",
+    engagement: "Engagement Mix",
+    downloads: "Download",
+    interestedVips: "Interessato VIPs",
+    linkedDeals: "Collegato Deal",
+    noVips: "Nessun VIP interesse ancora",
+    noDeals: "Nessun collegato deal",
+    createDeal: "Crea deal",
+    funnel: "Conversione Funnel",
+    funnelTaps: "Tap",
+    funnelViews: "Visite",
+    funnelPricing: "Prezzo",
+    funnelBookings: "Prenotazioni",
+    convRate: "Tasso conv.",
+    // Suggestions
+    suggestDeal: "Caldo lead — Crea deal",
+    suggestReactivate: "Dormiente — serve riattivazione",
+    suggestFollowUp: "Prenotazione interesse — Priorità follow-su",
+    noSuggestion: "",
+    close: "Chiudi",
+    tower: "Torre",
+    type: "Tipo",
+    lastActivity: "Ultimo Activity",
+    allTowers: "Tutte le torri",
+    reassignRep: "Riassegna Consulente",
+    selectRep: "Scegli consulente",
+    saveAssignment: "Salva Assegnazione",
+    bulkPause: "Metti in pausa",
+    bulkResume: "Riattiva card",
+    bulkLaunch: "Lancio Campagna",
+    bulkExport: "Esporta CSV",
+    campaignNameLabel: "Campagna Nome",
+    campaignNamePlaceholder: "Invio campagna nome",
+    campaignNameRequired: "Il nome della campagna è obbligatorio",
+    confirmLaunchDesc: "Imposta un nome prima di creare la campagna dalle card selezionate.",
+    selected: "selected",
+    bulkActions: "Azioni di gruppo",
+    selectedPreview: "Card selezionate",
+    moreSelected: "più",
+    clearSelection: "Pulisci",
+    assignmentSaved: "Assegnazione salvato",
+    assignmentFailed: "Assegnazione non riuscito",
+    bulkUpdateFailed: "Gruppo aggiorna non riuscito",
+    cardPaused: "Card in pausa",
+    cardResumed: "Card riattivata",
+    statusFailed: "Stato aggiorna non riuscito",
+    bulkFailed: "Gruppo azione non riuscito",
+    campaignNameTooShort: "Il nome della campagna deve avere almeno 3 caratteri",
+    bulkCampaignCreated: "Campagna creato",
+    bulkCampaignFailed: "Creazione campagna non riuscita",
+    pauseCard: "Metti in pausa",
+    resumeCard: "Riattiva card",
+    confirm: "Conferma",
+    cancel: "Annulla",
+    confirmBulkTitle: "Conferma Gruppo Action",
+    confirmBulkDesc: "Questa azione si applica alle card selezionate.",
   },
   ar: {
     section: "ذكاء البطاقات",
@@ -355,13 +443,7 @@ const UI = {
 /* ═══ Helpers ═══ */
 function timeAgo(ts, lang = "en") {
   if (!ts) return "-";
-  const d = Date.now() - new Date(ts).getTime();
-  const mins = Math.floor(d / 60000);
-  if (mins < 60) return lang === "ar" ? `منذ ${mins} د` : lang === "es" ? `hace ${mins}m` : lang === "fr" ? `il y a ${mins}m` : `${mins}m`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return lang === "ar" ? `منذ ${hrs} س` : lang === "es" ? `hace ${hrs}h` : lang === "fr" ? `il y a ${hrs}h` : `${hrs}h`;
-  const days = Math.floor(hrs / 24);
-  return lang === "ar" ? `منذ ${days} ي` : lang === "es" ? `hace ${days}d` : lang === "fr" ? `il y a ${days}j` : `${days}d`;
+  return relativeTime(ts, lang) || "-";
 }
 
 function daysAgo(ts) {
@@ -630,10 +712,10 @@ function CardDetail({ card, tx, onCreateDeal, onClose, salesReps = [], onReassig
 
 /* ═══ Sort options ═══ */
 const SORT_OPTS = [
-  { id: "taps", label: { en: "Taps", ar: "نقرات", es: "Toques", fr: "Taps" } },
-  { id: "views", label: { en: "Views", ar: "مشاهدات", es: "Vistas", fr: "Vues" } },
-  { id: "recent", label: { en: "Recent", ar: "الأحدث", es: "Reciente", fr: "Récent" } },
-  { id: "vips", label: { en: "VIPs", ar: "VIP", es: "VIPs", fr: "VIPs" } },
+  { id: "taps", label: { en: "Taps", it: "Tap", ar: "نقرات", es: "Toques", fr: "Taps" } },
+  { id: "views", label: { en: "Views", it: "Visite", ar: "مشاهدات", es: "Vistas", fr: "Vues" } },
+  { id: "recent", label: { en: "Recent", it: "Recenti", ar: "الأحدث", es: "Reciente", fr: "Récent" } },
+  { id: "vips", label: { en: "VIPs", it: "VIPs", ar: "VIP", es: "VIPs", fr: "VIPs" } },
 ];
 
 /* ═══════════════════ MAIN ═══════════════════ */
@@ -805,7 +887,7 @@ export default function CardsTab() {
         await Promise.all(selectedIds.map((id) => updateCardStatus(user.uid, id, newStatus)));
         showToast(
           ({
-            en: `${selectedIds.length} cards ${newStatus === "paused" ? "paused" : "resumed"}`,
+            en: `${selectedIds.length} cards ${newStatus === "paused" ? "paused" : "resumed"}`, it: `${selectedIds.length}card${newStatus === "paused" ? "paused" : "resumed"}`,
             ar: `${selectedIds.length} بطاقة ${newStatus === "paused" ? "تم إيقافها" : "تم استئنافها"}`,
             es: `${selectedIds.length} tarjetas ${newStatus === "paused" ? "pausadas" : "reanudades"}`,
             fr: `${selectedIds.length} cartes ${newStatus === "paused" ? "mises en pause" : "réactivées"}`,
@@ -1043,7 +1125,7 @@ export default function CardsTab() {
       {confirmAction === "pause" && (
         <ConfirmDialog
           title={tx.bulkPause}
-          description={({ en: `${selectedIds.length} cards will be paused.`, ar: `سيتم إيقاف ${selectedIds.length} بطاقة.`, es: `Se pausarán ${selectedIds.length} tarjetas.`, fr: `${selectedIds.length} cartes seront mises en pause.` }[lang] || `${selectedIds.length} cards will be paused.`)}
+          description={({ en: `${selectedIds.length} cards will be paused.`, it: `${selectedIds.length}card will be paused.`, ar: `سيتم إيقاف ${selectedIds.length} بطاقة.`, es: `Se pausarán ${selectedIds.length} tarjetas.`, fr: `${selectedIds.length} cartes seront mises en pause.` }[lang] || `${selectedIds.length} cards will be paused.`)}
           onCancel={() => setConfirmAction(null)}
           onConfirm={() => handleBulkStatusChange("paused")}
           confirmLabel={tx.bulkPause}
@@ -1054,7 +1136,7 @@ export default function CardsTab() {
       {confirmAction === "resume" && (
         <ConfirmDialog
           title={tx.bulkResume}
-          description={({ en: `${selectedIds.length} cards will be resumed.`, ar: `سيتم استئناف ${selectedIds.length} بطاقة.`, es: `Se reanudarán ${selectedIds.length} tarjetas.`, fr: `${selectedIds.length} cartes seront réactivées.` }[lang] || `${selectedIds.length} cards will be resumed.`)}
+          description={({ en: `${selectedIds.length} cards will be resumed.`, it: `${selectedIds.length}card will be resumed.`, ar: `سيتم استئناف ${selectedIds.length} بطاقة.`, es: `Se reanudarán ${selectedIds.length} tarjetas.`, fr: `${selectedIds.length} cartes seront réactivées.` }[lang] || `${selectedIds.length} cards will be resumed.`)}
           onCancel={() => setConfirmAction(null)}
           onConfirm={() => handleBulkStatusChange("active")}
           confirmLabel={tx.bulkResume}
@@ -1065,7 +1147,7 @@ export default function CardsTab() {
       {confirmAction === "campaign" && (
         <ConfirmDialog
           title={tx.bulkLaunch}
-          description={({ en: `Create a draft campaign from ${selectedIds.length} cards.`, ar: `أنشئ حملة مسودة من ${selectedIds.length} بطاقة.`, es: `Crear una campaña borrador desde ${selectedIds.length} tarjetas.`, fr: `Créer une campagne brouillon à partir de ${selectedIds.length} cartes.` }[lang] || `Create a draft campaign from ${selectedIds.length} cards.`)}
+          description={({ en: `Create a draft campaign from ${selectedIds.length} cards.`, it: `Crea a draft campagna from${selectedIds.length}cards.`, ar: `أنشئ حملة مسودة من ${selectedIds.length} بطاقة.`, es: `Crear una campaña borrador desde ${selectedIds.length} tarjetas.`, fr: `Créer une campagne brouillon à partir de ${selectedIds.length} cartes.` }[lang] || `Create a draft campaign from ${selectedIds.length} cards.`)}
           onCancel={() => { setConfirmAction(null); setBulkCampaignName(""); setBulkNameError(""); }}
           onConfirm={handleBulkCampaign}
           confirmLabel={tx.bulkLaunch}

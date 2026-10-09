@@ -1,6 +1,7 @@
 import { registerTranslations, useTranslation } from "../../../i18n";
 import { useSector } from "../../../hooks/useSector";
 import { getEventLabel } from "../../../i18n/eventDisplayMap";
+import { timeAgo } from "../lib/timeAgo";
 
 registerTranslations("activityFeed", {
   en: {
@@ -8,6 +9,14 @@ registerTranslations("activityFeed", {
     "personLabels.registered": "Registered",
     "personLabels.lead": "Lead",
     "personLabels.anonymous": "Anonymous",
+    "personLabels.vip": "VIP",
+    "status.new": "NEW",
+  },
+  it: {
+    "personLabels.walk_in_prospect": "Walk-in Prospect",
+    "personLabels.registered": "Registrato",
+    "personLabels.lead": "Lead",
+    "personLabels.anonymous": "Anonimo",
     "personLabels.vip": "VIP",
     "status.new": "NEW",
   },
@@ -38,14 +47,7 @@ registerTranslations("activityFeed", {
 });
 
 function formatRelativeTime(ts, lang = "en") {
-  const diff = Math.floor((Date.now() - (ts?.toDate?.() || new Date(ts)).getTime()) / 1000);
-  if (diff < 60) return lang === "ar" ? "منذ أقل من دقيقة" : lang === "es" ? "hace 1m" : lang === "fr" ? "il y a 1m" : "1m ago";
-  const mins = Math.floor(diff / 60);
-  if (mins < 60) return lang === "ar" ? `منذ ${mins} دقائق` : lang === "es" ? `hace ${mins}m` : lang === "fr" ? `il y a ${mins}m` : `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return lang === "ar" ? (hrs === 2 ? "منذ ساعتين" : `منذ ${hrs} ساعات`) : lang === "es" ? `hace ${hrs}h` : lang === "fr" ? `il y a ${hrs}h` : `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return lang === "ar" ? (days === 1 ? "منذ يوم" : `منذ ${days} أيام`) : lang === "es" ? `hace ${days}d` : lang === "fr" ? `il y a ${days}j` : `${days}d ago`;
+  return timeAgo(ts, lang);
 }
 
 export default function ActivityFeed({ events = [], maxItems = 15, labels, lang = "en" }) {

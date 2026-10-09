@@ -62,6 +62,39 @@ const UI = {
     referral: "Referral",
     noData: "No data yet",
   },
+  it: {
+    analytics: "Analisi",
+    ai: "AI-powered insight",
+    weeklyTrend: "Trend di engagement settimanale",
+    weeklyTrendMeta: "Ultimi 7 giorni — conteggio eventi",
+    trafficSources: "Traffico Fonti",
+    trafficSourcesMeta: "Canale condividi (%)",
+    conversionFunnel: "Conversione Funnel",
+    conversionFunnelMeta: "Finestra dati: ultimi eventi",
+    deviceBreakdown: "Dispositivo Dettaglio",
+    deviceBreakdownMeta: "Dispositivo condividi (%)",
+    scoreDistribution: "Punteggio Distribuzione",
+    scoreDistributionMeta: "VIP conteggio",
+    interest: "Interesse",
+    interestMeta: "Interazione conteggio",
+    count: "conteggio",
+    percent: "%",
+    totalEvents: "Totale eventi",
+    vipIntentHeatmap: "VIP Intent Mappa di calore",
+    vipIntentMeta: "VIP interesse da categoria",
+    propertyDemandHeatmap: "Mappa della domanda",
+    propertyDemandMeta: "Domanda da unità tipo",
+    heatmapLegendLow: "Basso",
+    heatmapLegendHigh: "Alto",
+    engagementSegment: "Engagement da Segmento",
+    engagementSegmentMeta: "Attività per fascia cliente",
+    vip: "VIP",
+    registered: "Registrato",
+    anonymous: "Anonimo",
+    direct: "Diretto",
+    referral: "Referral",
+    noData: "Nessun dato",
+  },
   ar: {
     analytics: "التحليلات",
     ai: "تحليل ذكي",
@@ -696,10 +729,10 @@ export default function AnalyticsTab() {
         </div>
         <div className="ud-card ud-funnel-analysis">
           <div className="ud-card-title">
-            {({ en: "Funnel Analysis", ar: "تحليل القمع", es: "Analisis del embudo", fr: "Analyse de l'entonnoir" }[lang] || "Funnel Analysis")}
+            {({ en: "Funnel Analysis", it: "Analisi del funnel", ar: "تحليل القمع", es: "Analisis del embudo", fr: "Analyse de l'entonnoir" }[lang] || "Funnel Analysis")}
           </div>
           <div className="ud-card-subtitle">
-            {({ en: "AI-driven stage insights", ar: "تحليل ذكي لكل مرحلة", es: "Insights IA por etapa", fr: "Analyses IA par etape" }[lang] || "AI-driven stage insights")}
+            {({ en: "AI-driven stage insights", it: "Insight di fase dall'AI", ar: "تحليل ذكي لكل مرحلة", es: "Insights IA por etapa", fr: "Analyses IA par etape" }[lang] || "AI-driven stage insights")}
           </div>
           <FunnelInsightTable data={funnelData || []} />
         </div>
@@ -720,13 +753,13 @@ export default function AnalyticsTab() {
                 <thead>
                   <tr>
                     <th className="ud-heatmap-corner">
-                      {({ en: "VIP", ar: "كبار", es: "VIP", fr: "VIP" }[lang] || "VIP")}
+                      {({ en: "VIP", it: "VIP", ar: "كبار", es: "VIP", fr: "VIP" }[lang] || "VIP")}
                     </th>
                     {categories.map((cat) => (
                       <th key={cat.id} className="ud-heatmap-col-header">{st(cat.name)}</th>
                     ))}
                     <th className="ud-heatmap-col-header ud-heatmap-total-col">
-                      {({ en: "Total", ar: "المجموع", es: "Total", fr: "Total" }[lang] || "Total")}
+                      {({ en: "Total", it: "Totale", ar: "المجموع", es: "Total", fr: "Total" }[lang] || "Total")}
                     </th>
                   </tr>
                 </thead>
@@ -760,7 +793,7 @@ export default function AnalyticsTab() {
                 <tfoot>
                   <tr className="ud-heatmap-footer-row">
                     <td className="ud-heatmap-footer-label">
-                      {({ en: "Column Total", ar: "مجموع العمود", es: "Total columna", fr: "Total colonne" }[lang] || "Column Total")}
+                      {({ en: "Column Total", it: "Totale colonna", ar: "مجموع العمود", es: "Total columna", fr: "Total colonne" }[lang] || "Column Total")}
                     </td>
                     {categories.map((cat) => (
                       <td key={cat.id} className="ud-heatmap-footer-val">{vipColTotals[cat.id] || 0}</td>
@@ -791,13 +824,13 @@ export default function AnalyticsTab() {
                 <thead>
                   <tr>
                     <th className="ud-heatmap-corner">
-                      {st(config.inventory?.categoryLabel) || ({ en: "Category", ar: "الفئة", es: "Categoría", fr: "Catégorie" }[lang] || "Category")}
+                      {st(config.inventory?.categoryLabel) || ({ en: "Category", it: "Categoria", ar: "الفئة", es: "Categoría", fr: "Catégorie" }[lang] || "Category")}
                     </th>
                     {unitTypes.map((t) => (
                       <th key={t.id} className="ud-heatmap-col-header">{st(t.label)}</th>
                     ))}
                     <th className="ud-heatmap-col-header ud-heatmap-total-col">
-                      {({ en: "Total", ar: "المجموع", es: "Total", fr: "Total" }[lang] || "Total")}
+                      {({ en: "Total", it: "Totale", ar: "المجموع", es: "Total", fr: "Total" }[lang] || "Total")}
                     </th>
                   </tr>
                 </thead>
@@ -831,7 +864,7 @@ export default function AnalyticsTab() {
                 <tfoot>
                   <tr className="ud-heatmap-footer-row">
                     <td className="ud-heatmap-footer-label">
-                      {({ en: "Column Total", ar: "مجموع العمود", es: "Total columna", fr: "Total colonne" }[lang] || "Column Total")}
+                      {({ en: "Column Total", it: "Totale colonna", ar: "مجموع العمود", es: "Total columna", fr: "Total colonne" }[lang] || "Column Total")}
                     </td>
                     {unitTypes.map((t) => (
                       <td key={t.id} className="ud-heatmap-footer-val">{colTotals[t.id] || 0}</td>

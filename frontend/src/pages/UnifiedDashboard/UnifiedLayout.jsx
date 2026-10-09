@@ -88,6 +88,56 @@ const LAYOUT_TEXT = {
     portalSignalHourShort: "h",
     portalSignalDayShort: "d",
   },
+  it: {
+    aiBadge: "Powered by DynamicNFC Intelligence",
+    userFallback: "admin@dynamicnfc.ca",
+    expandSidebar: "Espandi sidebar",
+    collapseSidebar: "Comprimi sidebar",
+    openMenu: "Apri menu",
+    closeMenu: "Chiudi menu",
+    moreActions: "Altro",
+    live: "Live",
+    demo: "Demo",
+    inviteVip: "Invita VIP",
+    tenant: "Tenant",
+    portalLinks: "Link del portale",
+    portalVip: "VIP",
+    portalRegistered: "Registrato",
+    portalAnonymous: "Anonimo",
+    portalReKhalid: "VIP Investitore (Khalid Al-Rashid)",
+    portalReAhmed: "Registrato Acquirente (Ahmed Al-Fahad)",
+    portalReMarketplace: "Anonimo Marketplace",
+    portalReLogin: "Registrato Accesso Portale",
+    portalAutoKhalid: "VIP Showroom (Khalid)",
+    portalAutoSultan: "Registrato Acquirente (Sultan)",
+    portalAutoShowroom: "Anonimo Showroom",
+    portalYachtVip: "VIP Titolare (Privato Marina)",
+    portalYachtRegistered: "Registrato Charter Cliente",
+    portalYachtShowroom: "Anonimo Marina Vetrina",
+    portalViewAll: "Vista tutti link",
+    portalShowLess: "Mostra meno",
+    setupTitle: "Preparazione dello spazio demo...",
+    setupSub: "Preparazione dei dati tenant per il primo accesso.",
+    toggleTheme: "Attiva tema",
+    close: "Chiudi",
+    languageLabel: "Lingua",
+    preparingRegionLoadingTenantData: "Preparazione della regione · caricamento dati tenant",
+    preparingShowroomLoadingTenantData: "Preparazione showroom · caricamento dati tenant",
+    helpButton: "Come Questo Funziona",
+    helpTitle: "Come Questo Funziona",
+    helpVipHeading: "Traffico VIP",
+    helpVipBody: "Enters via NFC Magic Link. Identità noto via vip_id. Use insight for 1-a-1 outreach. Goal: prenotato viewings uplift.",
+    helpStandardHeading: "Standard Traffico",
+    helpStandardBody: "Enters via Ads, SEO, Direct. Identità unknown via anon_id. Use segments and content a optimize marketing.",
+    helpRuleHeading: "Regola chiave:",
+    helpRuleBody: "Le azioni sono condivise e non lineari. L'unica differenza tra VIP e Standard è l'identità e come attivi il follow-up.",
+    portalSignalIdle: "inattivo",
+    portalSignalWeek: "questo sett.",
+    portalSignalNow: "ora",
+    portalSignalMinShort: "m",
+    portalSignalHourShort: "h",
+    portalSignalDayShort: "d",
+  },
   ar: {
     aiBadge: "مدعوم بذكاء DynamicNFC",
     userFallback: "admin@dynamicnfc.ca",
@@ -242,15 +292,15 @@ const LAYOUT_TEXT = {
 const NAVBAR_LOGO_PATH = "/assets/images/logo.png";
 
 const TAB_GROUPS = [
-  { id: "intelligence", label: { en: "Intelligence", ar: "الذكاء", es: "Inteligencia", fr: "Intelligence" }, startIdx: 0, endIdx: 3 },
-  { id: "operations", label: { en: "Operations", ar: "العمليات", es: "Operaciones", fr: "Operations" }, startIdx: 4, endIdx: 7 },
-  { id: "system", label: { en: "System", ar: "النظام", es: "Sistema", fr: "Systeme" }, startIdx: 8, endIdx: 8 },
+  { id: "intelligence", label: { en: "Intelligence", it: "Intelligence", ar: "الذكاء", es: "Inteligencia", fr: "Intelligence" }, startIdx: 0, endIdx: 3 },
+  { id: "operations", label: { en: "Operations", it: "Operazioni", ar: "العمليات", es: "Operaciones", fr: "Operations" }, startIdx: 4, endIdx: 7 },
+  { id: "system", label: { en: "System", it: "Sistema", ar: "النظام", es: "Sistema", fr: "Systeme" }, startIdx: 8, endIdx: 8 },
 ];
 
 const TABS = [
   {
     path: "",
-    label: { en: "Overview", ar: "نظرة عامة", es: "Vista general", fr: "Vue generale" },
+    label: { en: "Overview", it: "Panoramica", ar: "نظرة عامة", es: "Vista general", fr: "Vue generale" },
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="3" y="3" width="7" height="7" />
@@ -262,7 +312,7 @@ const TABS = [
   },
   {
     path: "vip-crm",
-    label: { en: "VIP CRM", ar: "إدارة VIP", es: "CRM VIP", fr: "CRM VIP" },
+    label: { en: "VIP CRM", it: "VIP CRM", ar: "إدارة VIP", es: "CRM VIP", fr: "CRM VIP" },
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -273,7 +323,7 @@ const TABS = [
   },
   {
     path: "priority",
-    label: { en: "Priority VIP", ar: "أولوية VIP", es: "VIP Prioritario", fr: "VIP prioritaire" },
+    label: { en: "Priority VIP", it: "VIP prioritari", ar: "أولوية VIP", es: "VIP Prioritario", fr: "VIP prioritaire" },
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
@@ -282,7 +332,7 @@ const TABS = [
   },
   {
     path: "analytics",
-    label: { en: "Analytics", ar: "التحليلات", es: "Analitica", fr: "Analytique" },
+    label: { en: "Analytics", it: "Analisi", ar: "التحليلات", es: "Analitica", fr: "Analytique" },
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <line x1="18" y1="20" x2="18" y2="10" />
@@ -293,7 +343,7 @@ const TABS = [
   },
   {
     path: "pipeline",
-    label: { en: "Pipeline", ar: "خط الأنابيب", es: "Pipeline", fr: "Pipeline" },
+    label: { en: "Pipeline", it: "Pipeline", ar: "خط الأنابيب", es: "Pipeline", fr: "Pipeline" },
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="1" y="3" width="6" height="18" rx="1" />
@@ -304,7 +354,7 @@ const TABS = [
   },
   {
     path: "inventory",
-    label: { en: "Units & Plans", ar: "الوحدات", es: "Unidades", fr: "Unites et plans" },
+    label: { en: "Units & Plans", it: "Unità e piani", ar: "الوحدات", es: "Unidades", fr: "Unites et plans" },
     dynamicLabel: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -316,7 +366,7 @@ const TABS = [
   },
   {
     path: "cards",
-    label: { en: "NFC Cards", ar: "بطاقات NFC", es: "Tarjetas NFC", fr: "Cartes NFC" },
+    label: { en: "NFC Cards", it: "Card NFC", ar: "بطاقات NFC", es: "Tarjetas NFC", fr: "Cartes NFC" },
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="2" y="5" width="20" height="14" rx="2" />
@@ -326,7 +376,7 @@ const TABS = [
   },
   {
     path: "campaigns",
-    label: { en: "Campaigns", ar: "الحملات", es: "Campanas", fr: "Campagnes" },
+    label: { en: "Campaigns", it: "Campagne", ar: "الحملات", es: "Campanas", fr: "Campagnes" },
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -336,7 +386,7 @@ const TABS = [
   },
   {
     path: "settings",
-    label: { en: "Settings", ar: "الإعدادات", es: "Configuracion", fr: "Parametres" },
+    label: { en: "Settings", it: "Impostazioni", ar: "الإعدادات", es: "Configuracion", fr: "Parametres" },
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="3" />

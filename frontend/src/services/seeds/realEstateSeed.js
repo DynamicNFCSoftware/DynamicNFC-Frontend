@@ -123,9 +123,9 @@ const REGION_DATA = {
     ],
     paymentPlan: { penthouse: "30/70 · mutuo 20 anni", "3br": "30/70 · mutuo 20 anni", "2br": "40/60 · mutuo 15 anni", studio: "40/60 · mutuo 15 anni", "4br": "30/70 · mutuo 20 anni" },
     campaigns: [
-      ["camp_ita_re_vip_access", "Lario VIP Access", "Invito NFC per acquirenti sul lago e a Milano", "active", "email", "viewings_booked", "high_intent_vips", 72000, 41000, 310, 205, 86, 11, 26],
-      ["camp_ita_re_private_viewing", "Brera Private Viewing", "Visite riservate per shortlist", "active", "event", "qualified_walkthroughs", "family_buyers", 48000, 26000, 220, 148, 64, 8, 20],
-      ["camp_ita_re_spring_preview", "Lario Spring Preview", "SMS di anteprima alla lista d'attesa", "draft", "sms", "early_interest", "waitlist", 18000, 0, 0, 0, 0, 0, 5],
+      ["camp_ita_re_vip_access", "Lario VIP Access", "Invite-only lake and Milan collection campaign", "active", "email", "viewings_booked", "high_intent_vips", 72000, 41000, 310, 205, 86, 11, 26],
+      ["camp_ita_re_private_viewing", "Brera Private Viewing", "Data-led shortlist viewings", "active", "event", "qualified_walkthroughs", "family_buyers", 48000, 26000, 220, 148, 64, 8, 20],
+      ["camp_ita_re_spring_preview", "Lario Spring Preview", "SMS teaser to waitlist subscribers", "draft", "sms", "early_interest", "waitlist", 18000, 0, 0, 0, 0, 0, 5],
     ],
   },
 };

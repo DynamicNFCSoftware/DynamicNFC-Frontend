@@ -1,4 +1,5 @@
 import { translate } from "../../../i18n";
+import { timeAgo as relativeTime } from "../lib/timeAgo";
 
 export const STATUS_ORDER = { draft: 0, active: 1, paused: 2, archived: 3 };
 export const STATUS_COLORS = { draft: "#6ba3c7", active: "#2a9d8f", paused: "#e9c46a", archived: "#999" };
@@ -57,14 +58,7 @@ export function formatDate(d) {
 
 export function timeAgo(d, lang = "en") {
   if (!d) return "—";
-  const date = d.toDate ? d.toDate() : new Date(d);
-  const diff = Date.now() - date.getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return lang === "ar" ? `منذ ${mins} د` : lang === "es" ? `hace ${mins}m` : lang === "fr" ? `il y a ${mins}m` : `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return lang === "ar" ? `منذ ${hrs} س` : lang === "es" ? `hace ${hrs}h` : lang === "fr" ? `il y a ${hrs}h` : `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return lang === "ar" ? `منذ ${days} ي` : lang === "es" ? `hace ${days}d` : lang === "fr" ? `il y a ${days}j` : `${days}d ago`;
+  return relativeTime(d, lang) || "—";
 }
 
 export function sourceLabel(source, tx, lang = "en") {

@@ -22,7 +22,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
   });
   const closeLabel = (
     {
-      en: "Close",
+      en: "Close", it: "Chiudi",
       ar: "إغلاق",
       es: "Cerrar",
       fr: "Fermer",
@@ -80,7 +80,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
       >
         <div className="ud-modal-header">
           <h3 id="add-deal-modal-title" className="ud-modal-title">
-            {({ en: "Add New Deal", ar: "إضافة صفقة جديدة", es: "Agregar nuevo trato", fr: "Ajouter une affaire" }[lang] || "Add New Deal")}
+            {({ en: "Add New Deal", it: "Aggiungi deal", ar: "إضافة صفقة جديدة", es: "Agregar nuevo trato", fr: "Ajouter une affaire" }[lang] || "Add New Deal")}
           </h3>
           <button className="ud-modal-close" onClick={onClose} type="button" aria-label={closeLabel}>
             ×
@@ -90,7 +90,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
         <div className="ud-modal-body">
           <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 12, color: "var(--ud-text-secondary)", display: "block", marginBottom: 4 }}>
-              {({ en: "Client Name", ar: "اسم العميل", es: "Nombre del cliente", fr: "Nom du client" }[lang] || "Client Name")} <span style={{ color: "#e63946" }}>*</span>
+              {({ en: "Client Name", it: "Nome cliente", ar: "اسم العميل", es: "Nombre del cliente", fr: "Nom du client" }[lang] || "Client Name")} <span style={{ color: "#e63946" }}>*</span>
             </label>
             <input
               type="text"
@@ -129,7 +129,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
 
           <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 12, color: "var(--ud-text-secondary)", display: "block", marginBottom: 4 }}>
-              {({ en: "Value", ar: "القيمة", es: "Valor", fr: "Valeur" }[lang] || "Value")} ({currency})
+              {({ en: "Value", it: "Valore", ar: "القيمة", es: "Valor", fr: "Valeur" }[lang] || "Value")} ({currency})
             </label>
             <input
               type="number"
@@ -149,7 +149,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
 
           <div style={{ marginBottom: 16 }}>
             <label style={{ fontSize: 12, color: "var(--ud-text-secondary)", display: "block", marginBottom: 4 }}>
-              {({ en: "Stage", ar: "المرحلة", es: "Etapa", fr: "Étape" }[lang] || "Stage")}
+              {({ en: "Stage", it: "Fase", ar: "المرحلة", es: "Etapa", fr: "Étape" }[lang] || "Stage")}
             </label>
             <select
               value={form.stage}
@@ -174,7 +174,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
 
           <div style={{ marginBottom: 16 }}>
             <label style={{ fontSize: 12, color: "var(--ud-text-secondary)", display: "block", marginBottom: 4 }}>
-              {({ en: "Campaign", ar: "الحملة", es: "Campaña", fr: "Campagne" }[lang] || "Campaign")}
+              {({ en: "Campaign", it: "Campagna", ar: "الحملة", es: "Campaña", fr: "Campagne" }[lang] || "Campaign")}
             </label>
             <select
               value={form.campaignId}
@@ -190,7 +190,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
               }}
             >
               <option value="">
-                {({ en: "— No Campaign —", ar: "— بدون حملة —", es: "— Sin Campaña —", fr: "— Sans Campagne —" }[lang] || "— No Campaign —")}
+                {({ en: "— No Campaign —", it: "— Nessuna campagna —", ar: "— بدون حملة —", es: "— Sin Campaña —", fr: "— Sans Campagne —" }[lang] || "— No Campaign —")}
               </option>
               {campaigns.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
@@ -205,7 +205,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
             onClick={onClose}
             type="button"
           >
-            {({ en: "Cancel", ar: "إلغاء", es: "Cancelar", fr: "Annuler" }[lang] || "Cancel")}
+            {({ en: "Cancel", it: "Annulla", ar: "إلغاء", es: "Cancelar", fr: "Annuler" }[lang] || "Cancel")}
           </button>
           <button
             className="ud-modal-btn ud-modal-btn--primary"
@@ -213,7 +213,7 @@ export default function AddDealModal({ currency = "AED", campaigns = [], dealSta
             type="button"
             disabled={!form.name.trim()}
           >
-            {({ en: "Create Deal", ar: "إنشاء صفقة", es: "Crear trato", fr: "Créer une affaire" }[lang] || "Create Deal")}
+            {({ en: "Create Deal", it: "Crea deal", ar: "إنشاء صفقة", es: "Crear trato", fr: "Créer une affaire" }[lang] || "Create Deal")}
           </button>
         </div>
       </div>

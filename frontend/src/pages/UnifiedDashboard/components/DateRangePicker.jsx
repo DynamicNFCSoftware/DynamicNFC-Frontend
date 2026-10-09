@@ -22,6 +22,18 @@ registerTranslations("dateRangePicker", {
     "labels.to": "To",
     "labels.group": "Date range",
   },
+  it: {
+    "presets.last7d": "Ultimi 7 giorni",
+    "presets.last30d": "Ultimo 30 giorni",
+    "presets.last90d": "Ultimo 90 giorni",
+    "presets.custom": "Personalizzato intervallo",
+    "presets.last4w": "Ultimo 4 settimane",
+    "presets.last8w": "Ultimo 8 settimane",
+    "presets.last12w": "Ultimo 12 settimane",
+    "labels.from": "Da",
+    "labels.to": "A",
+    "labels.group": "Intervallo date",
+  },
   ar: {
     "presets.last7d": "آخر 7 أيام",
     "presets.last30d": "آخر 30 يوم",

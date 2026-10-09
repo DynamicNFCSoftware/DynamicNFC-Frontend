@@ -43,7 +43,7 @@ export default function PipelineTab() {
       try {
         setPipelineError("");
         const payload = {
-          name: pending.name || ({ en: "Inventory Lead", ar: "عميل المخزون", es: "Lead de inventario", fr: "Prospect inventaire" }[lang] || "Inventory Lead"),
+          name: pending.name || ({ en: "Inventory Lead", it: "Inventario Lead", ar: "عميل المخزون", es: "Lead de inventario", fr: "Prospect inventaire" }[lang] || "Inventory Lead"),
           item: pending.item || pending.categoryName || "",
           value: Number(pending.value || 0),
           stage: pending.stage || "new_lead",
@@ -61,7 +61,7 @@ export default function PipelineTab() {
       } catch {
         setLocalDeals((prev) => prev.filter((d) => !String(d.id || "").startsWith("temp-")));
         setPipelineError(
-          ({ en: "Inventory deal auto-create failed. Please try again.", ar: "فشل إنشاء صفقة المخزون تلقائياً. حاول مرة أخرى.", es: "No se pudo crear el trato de inventario automáticamente.", fr: "La création automatique de l’affaire inventaire a échoué." }[lang] ||
+          ({ en: "Inventory deal auto-create failed. Please try again.", it: "Creazione automatica del deal non riuscita. Riprova.", ar: "فشل إنشاء صفقة المخزون تلقائياً. حاول مرة أخرى.", es: "No se pudo crear el trato de inventario automáticamente.", fr: "La création automatique de l’affaire inventaire a échoué." }[lang] ||
             "Inventory deal auto-create failed. Please try again.")
         );
       } finally {
@@ -94,7 +94,7 @@ export default function PipelineTab() {
     } catch (error) {
       setLocalDeals((prev) => prev.filter((d) => !String(d.id || "").startsWith("temp-")));
       setPipelineError(
-        ({ en: "Could not create suggested deal.", ar: "\u062a\u0639\u0630\u0631 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0635\u0641\u0642\u0629 \u0627\u0644\u0645\u0642\u062a\u0631\u062d\u0629.", es: "No se pudo crear el trato sugerido.", fr: "\u00c9chec de la cr\u00e9ation de l\u2019affaire sugg\u00e9r\u00e9e." }[lang] || "Could not create suggested deal.")
+        ({ en: "Could not create suggested deal.", it: "Impossibile creare il deal suggerito.", ar: "\u062a\u0639\u0630\u0631 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0635\u0641\u0642\u0629 \u0627\u0644\u0645\u0642\u062a\u0631\u062d\u0629.", es: "No se pudo crear el trato sugerido.", fr: "\u00c9chec de la cr\u00e9ation de l\u2019affaire sugg\u00e9r\u00e9e." }[lang] || "Could not create suggested deal.")
       );
       console.error("[PIPELINE] Suggestion accept failed", error);
     }
@@ -124,11 +124,11 @@ export default function PipelineTab() {
           }}
           type="button"
         >
-          + {({ en: "Add Deal", ar: "\u0625\u0636\u0627\u0641\u0629 \u0635\u0641\u0642\u0629", es: "Agregar trato", fr: "Ajouter une affaire" }[lang] || "Add Deal")}
+          + {({ en: "Add Deal", it: "Aggiungi deal", ar: "\u0625\u0636\u0627\u0641\u0629 \u0635\u0641\u0642\u0629", es: "Agregar trato", fr: "Ajouter une affaire" }[lang] || "Add Deal")}
         </button>
       </div>
       <div className="ud-card-subtitle" style={{ marginBottom: 10 }}>
-        {({ en: "Pipeline updates sync to tenant workspace in real-time.", ar: "\u062a\u062d\u062f\u064a\u062b\u0627\u062a \u062e\u0637 \u0627\u0644\u0623\u0646\u0627\u0628\u064a\u0628 \u062a\u062a\u0645 \u0645\u0632\u0627\u0645\u0646\u062a\u0647\u0627 \u0645\u0628\u0627\u0634\u0631\u0629 \u0645\u0639 \u0645\u0633\u0627\u062d\u0629 \u0627\u0644\u0645\u0633\u062a\u0623\u062c\u0631.", es: "Las actualizaciones del pipeline se sincronizan en tiempo real con tu tenant.", fr: "Les mises \u00e0 jour du pipeline sont synchronis\u00e9es en temps r\u00e9el avec votre espace locataire." }[lang] || "Pipeline updates sync to tenant workspace in real-time.")}
+        {({ en: "Pipeline updates sync to tenant workspace in real-time.", it: "Gli aggiornamenti della pipeline si sincronizzano in tempo reale.", ar: "\u062a\u062d\u062f\u064a\u062b\u0627\u062a \u062e\u0637 \u0627\u0644\u0623\u0646\u0627\u0628\u064a\u0628 \u062a\u062a\u0645 \u0645\u0632\u0627\u0645\u0646\u062a\u0647\u0627 \u0645\u0628\u0627\u0634\u0631\u0629 \u0645\u0639 \u0645\u0633\u0627\u062d\u0629 \u0627\u0644\u0645\u0633\u062a\u0623\u062c\u0631.", es: "Las actualizaciones del pipeline se sincronizan en tiempo real con tu tenant.", fr: "Les mises \u00e0 jour du pipeline sont synchronis\u00e9es en temps r\u00e9el avec votre espace locataire." }[lang] || "Pipeline updates sync to tenant workspace in real-time.")}
       </div>
       {pipelineError ? (
         <div
@@ -160,7 +160,7 @@ export default function PipelineTab() {
             await updateTenantDealStage(user.uid, dealId, stage, fromStage);
           } catch (error) {
             setPipelineError(
-              ({ en: "Stage update failed.", ar: "فشل تحديث المرحلة.", es: "Error al actualizar la etapa.", fr: "Échec de la mise à jour de l'étape." }[lang] || "Stage update failed.")
+              ({ en: "Stage update failed.", it: "Aggiornamento fase non riuscito.", ar: "فشل تحديث المرحلة.", es: "Error al actualizar la etapa.", fr: "Échec de la mise à jour de l'étape." }[lang] || "Stage update failed.")
             );
             console.error("[PIPELINE] Stage change failed", error);
             throw error; // Re-throw for KanbanBoard rollback
@@ -180,7 +180,7 @@ export default function PipelineTab() {
               setShowAddDeal(false);
             } catch (error) {
               setPipelineError(
-                ({ en: "Could not create deal.", ar: "تعذر إنشاء الصفقة.", es: "No se pudo crear el trato.", fr: "Impossible de créer l'affaire." }[lang] || "Could not create deal.")
+                ({ en: "Could not create deal.", it: "Impossibile creare il deal.", ar: "تعذر إنشاء الصفقة.", es: "No se pudo crear el trato.", fr: "Impossible de créer l'affaire." }[lang] || "Could not create deal.")
               );
               console.error("[PIPELINE] Add deal failed", error);
             }

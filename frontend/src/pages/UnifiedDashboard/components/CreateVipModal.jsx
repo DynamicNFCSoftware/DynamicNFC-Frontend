@@ -27,12 +27,12 @@ export default function CreateVipModal({ onClose, onSubmit }) {
   };
 
   const fields = [
-    { key: "fullName", label: { en: "Full Name", ar: "الاسم الكامل", es: "Nombre completo", fr: "Nom complet" }, type: "text", required: true },
-    { key: "email", label: { en: "Email", ar: "البريد الإلكتروني", es: "Correo electrónico", fr: "E-mail" }, type: "email" },
-    { key: "phone", label: { en: "Phone", ar: "الهاتف", es: "Teléfono", fr: "Téléphone" }, type: "tel" },
-    { key: "campaign", label: { en: "Campaign", ar: "الحملة", es: "Campaña", fr: "Campagne" }, type: "text" },
-    { key: "cardId", label: { en: "Card ID", ar: "معرف البطاقة", es: "ID de tarjeta", fr: "ID carte" }, type: "text", placeholder: "e.g. VISTA005" },
-    { key: "notes", label: { en: "Notes", ar: "ملاحظات", es: "Notas", fr: "Notes" }, type: "textarea" },
+    { key: "fullName", label: { en: "Full Name", it: "Nome e cognome", ar: "الاسم الكامل", es: "Nombre completo", fr: "Nom complet" }, type: "text", required: true },
+    { key: "email", label: { en: "Email", it: "Email", ar: "البريد الإلكتروني", es: "Correo electrónico", fr: "E-mail" }, type: "email" },
+    { key: "phone", label: { en: "Phone", it: "Telefono", ar: "الهاتف", es: "Teléfono", fr: "Téléphone" }, type: "tel" },
+    { key: "campaign", label: { en: "Campaign", it: "Campagna", ar: "الحملة", es: "Campaña", fr: "Campagne" }, type: "text" },
+    { key: "cardId", label: { en: "Card ID", it: "ID card", ar: "معرف البطاقة", es: "ID de tarjeta", fr: "ID carte" }, type: "text", placeholder: "e.g. VISTA005" },
+    { key: "notes", label: { en: "Notes", it: "Note", ar: "ملاحظات", es: "Notas", fr: "Notes" }, type: "textarea" },
   ];
 
   useEffect(() => {
@@ -63,9 +63,9 @@ export default function CreateVipModal({ onClose, onSubmit }) {
       >
         <div className="ud-modal-header">
           <h3 id="create-vip-modal-title" className="ud-modal-title">
-            {({ en: "Create New VIP", ar: "إنشاء VIP جديد", es: "Crear nuevo VIP", fr: "Créer un nouveau VIP" }[lang] || "Create New VIP")}
+            {({ en: "Create New VIP", it: "Crea nuovo VIP", ar: "إنشاء VIP جديد", es: "Crear nuevo VIP", fr: "Créer un nouveau VIP" }[lang] || "Create New VIP")}
           </h3>
-          <button className="ud-modal-close" onClick={onClose} type="button" aria-label={({ en: "Close", ar: "إغلاق", es: "Cerrar", fr: "Fermer" }[lang] || "Close")}>
+          <button className="ud-modal-close" onClick={onClose} type="button" aria-label={({ en: "Close", it: "Chiudi", ar: "إغلاق", es: "Cerrar", fr: "Fermer" }[lang] || "Close")}>
             ×
           </button>
         </div>
@@ -73,7 +73,7 @@ export default function CreateVipModal({ onClose, onSubmit }) {
         <div className="ud-modal-body">
           <p style={{ fontSize: 12, color: "var(--ud-text-muted)", marginBottom: 16 }}>
             {({
-              en: "By issuing a VIP card, the client receives a premium invitation box signaling exclusive access. This supports consent and VIP status.",
+              en: "By issuing a VIP card, the client receives a premium invitation box signaling exclusive access. This supports consent and VIP status.", it: "Con la card VIP il cliente riceve una scatola invito che segnala l'accesso esclusivo. Questo sostiene il consenso e lo status VIP.",
               ar: "عن طريق إصدار بطاقة VIP، يتلقى العميل صندوق دعوة مميز يدعم الموافقة والمكانة المميزة.",
               es: "Al emitir una tarjeta VIP, el cliente recibe una caja de invitacion premium que senala acceso exclusivo. Esto respalda el consentimiento y el estado VIP.",
               fr: "En émettant une carte VIP, le client reçoit un coffret d'invitation premium signalant un accès exclusif. Cela renforce le consentement et le statut VIP.",
@@ -129,7 +129,7 @@ export default function CreateVipModal({ onClose, onSubmit }) {
             type="button"
             style={{ width: "100%", marginTop: 8 }}
           >
-            {({ ar: "حفظ", es: "Guardar", en: "Save VIP", fr: "Enregistrer VIP" }[lang] || "Save VIP")}
+            {({ ar: "حفظ", es: "Guardar", en: "Save VIP", it: "Salva VIP", fr: "Enregistrer VIP" }[lang] || "Save VIP")}
           </button>
         </div>
       </div>
