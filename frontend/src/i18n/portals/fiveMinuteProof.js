@@ -39,8 +39,8 @@ registerTranslations("fiveMinuteProof", {
   },
   it: {
     "banner.title": "Prova in cinque minuti — da un tap a un deal chiuso",
-    "banner.cta": "Inizio tutorial",
-    "card.title": "Cinque-Minuto Prova",
+    "banner.cta": "Inizia il tutorial",
+    "card.title": "Prova in cinque minuti",
     "card.subtitle": "Come DynamicNFC trasforma un tap in un deal chiuso",
     "card.closeAria": "Chiudi tutorial",
     progress: "Passo {current} di {total}",
@@ -65,7 +65,7 @@ registerTranslations("fiveMinuteProof", {
       },
       {
         label: "Avviso",
-        body: "Quando {persona} supera una soglia, il consulente viene avvisato subito. Non a fine settimana. Non nel digest di domani. Nel momento in cui l'intent è al massimo.",
+        body: "Quando {persona} supera una soglia, il consulente viene avvisato subito. Non a fine settimana. Non nel riepilogo di domani. Nel momento in cui l'intento è al massimo.",
       },
       {
         label: "Chiudi",

@@ -13,12 +13,12 @@ registerTranslations("activityFeed", {
     "status.new": "NEW",
   },
   it: {
-    "personLabels.walk_in_prospect": "Walk-in Prospect",
+    "personLabels.walk_in_prospect": "Visitatore di passaggio",
     "personLabels.registered": "Registrato",
     "personLabels.lead": "Lead",
     "personLabels.anonymous": "Anonimo",
     "personLabels.vip": "VIP",
-    "status.new": "NEW",
+    "status.new": "NUOVO",
   },
   ar: {
     "personLabels.walk_in_prospect": "عميل محتمل زائر",

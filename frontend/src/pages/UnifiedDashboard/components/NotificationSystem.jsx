@@ -84,8 +84,8 @@ const UI = {
     visitor: "Visitor",
   },
   it: {
-    liveTitle: "Nuovo Live Activity",
-    liveBody: "A nuovo evento era catturato",
+    liveTitle: "Nuova attività in tempo reale",
+    liveBody: "È stato registrato un nuovo evento",
     notifications: "Notifiche",
     dismiss: "Chiudi",
     visitor: "Visitatore",

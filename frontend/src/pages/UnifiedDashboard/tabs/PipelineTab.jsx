@@ -43,7 +43,7 @@ export default function PipelineTab() {
       try {
         setPipelineError("");
         const payload = {
-          name: pending.name || ({ en: "Inventory Lead", it: "Inventario Lead", ar: "عميل المخزون", es: "Lead de inventario", fr: "Prospect inventaire" }[lang] || "Inventory Lead"),
+          name: pending.name || ({ en: "Inventory Lead", it: "Lead da inventario", ar: "عميل المخزون", es: "Lead de inventario", fr: "Prospect inventaire" }[lang] || "Inventory Lead"),
           item: pending.item || pending.categoryName || "",
           value: Number(pending.value || 0),
           stage: pending.stage || "new_lead",

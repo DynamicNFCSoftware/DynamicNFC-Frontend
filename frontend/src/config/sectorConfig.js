@@ -128,7 +128,7 @@ const REAL_ESTATE = {
 
   // --- Pipeline Kanban ---
   pipeline: {
-    stageLabel: { en: 'Sales Pipeline', it: "Vendite Pipeline", ar: 'خط أنابيب المبيعات', es: 'Pipeline de Ventas', fr: 'Pipeline commercial' },
+    stageLabel: { en: 'Sales Pipeline', it: "Pipeline vendite", ar: 'خط أنابيب المبيعات', es: 'Pipeline de Ventas', fr: 'Pipeline commercial' },
     stages: [
       { id: 'new_lead', label: { en: 'New Lead', it: "Nuovo lead", ar: 'عميل جديد', es: 'Nuevo Prospecto', fr: 'Nouveau prospect' }, color: '#457b9d' },
       { id: 'contacted', label: { en: 'Contacted', it: "Contattato", ar: 'تم التواصل', es: 'Contactado', fr: 'Contacté' }, color: '#6ba3c7' },
@@ -152,21 +152,21 @@ const REAL_ESTATE = {
   campaignTemplates: [
     {
       id: 'vip_launch',
-      label: { en: 'VIP Launch', it: "VIP Lancio", ar: 'إطلاق VIP', es: 'Lanzamiento VIP', fr: 'Lancement VIP' },
+      label: { en: 'VIP Launch', it: "Lancio VIP", ar: 'إطلاق VIP', es: 'Lanzamiento VIP', fr: 'Lancement VIP' },
       icon: '🚀',
       objective: 'lead_gen',
       audience: 'vip',
       channel: ['nfc', 'whatsapp'],
-      description: { en: 'Premium NFC card distribution for high-intent VIP prospects. Goal: book viewings within 14 days.', it: "Distribuzione di card NFC premium per prospect VIP ad alto intent. Obiettivo: prenotare visite entro 14 giorni.", ar: 'توزيع بطاقات NFC للعملاء VIP. الهدف: حجز معاينات خلال 14 يوماً.', es: 'Distribución de tarjetas NFC para prospectos VIP. Meta: reservar visitas en 14 días.', fr: 'Distribution de cartes NFC pour prospects VIP. Objectif : réserver des visites sous 14 jours.' },
+      description: { en: 'Premium NFC card distribution for high-intent VIP prospects. Goal: book viewings within 14 days.', it: "Distribuzione di card NFC premium per acquirenti VIP ad alto intento. Obiettivo: prenotare visite entro 14 giorni.", ar: 'توزيع بطاقات NFC للعملاء VIP. الهدف: حجز معاينات خلال 14 يوماً.', es: 'Distribución de tarjetas NFC para prospectos VIP. Meta: reservar visitas en 14 días.', fr: 'Distribution de cartes NFC pour prospects VIP. Objectif : réserver des visites sous 14 jours.' },
     },
     {
       id: 're_engage',
-      label: { en: 'Re-engagement', it: "Re-engagement", ar: 'إعادة التفاعل', es: 'Re-engagement', fr: 'Réengagement' },
+      label: { en: 'Re-engagement', it: "Riaggancio", ar: 'إعادة التفاعل', es: 'Re-engagement', fr: 'Réengagement' },
       icon: '🔄',
       objective: 're_engage',
       audience: 'warm',
       channel: ['email', 'sms'],
-      description: { en: 'Win back idle leads with personalized follow-up. Target: contacts inactive 7+ days.', it: "Recupera i lead inattivi con un follow-up personale. Target: contatti inattivi da oltre 7 giorni.", ar: 'استعادة العملاء غير النشطين بمتابعة مخصصة. الهدف: جهات اتصال غير نشطة 7+ أيام.', es: 'Recuperar leads inactivos con seguimiento personalizado. Objetivo: contactos inactivos 7+ días.', fr: 'Récupérer les leads inactifs avec un suivi personnalisé. Cible : contacts inactifs 7+ jours.' },
+      description: { en: 'Win back idle leads with personalized follow-up. Target: contacts inactive 7+ days.', it: "Recupera i lead inattivi con un follow-up personale. Obiettivo: contatti inattivi da oltre 7 giorni.", ar: 'استعادة العملاء غير النشطين بمتابعة مخصصة. الهدف: جهات اتصال غير نشطة 7+ أيام.', es: 'Recuperar leads inactivos con seguimiento personalizado. Objetivo: contactos inactivos 7+ días.', fr: 'Récupérer les leads inactifs avec un suivi personnalisé. Cible : contacts inactifs 7+ jours.' },
     },
     {
       id: 'event_invite',
@@ -175,16 +175,16 @@ const REAL_ESTATE = {
       objective: 'event',
       audience: 'all',
       channel: ['nfc', 'email', 'whatsapp'],
-      description: { en: 'Exclusive event invitation with NFC access cards. Track RSVPs and attendance via portal.', it: "Invito evento con card NFC. Segui RSVP e presenze dal portale.", ar: 'دعوة حصرية مع بطاقات NFC. تتبع الحضور عبر البوابة.', es: 'Invitación exclusiva con tarjetas NFC. Seguimiento de asistencia via portal.', fr: 'Invitation exclusive avec cartes NFC. Suivi des présences via le portail.' },
+      description: { en: 'Exclusive event invitation with NFC access cards. Track RSVPs and attendance via portal.', it: "Invito all'evento con card NFC. Segui conferme e presenze dal portale.", ar: 'دعوة حصرية مع بطاقات NFC. تتبع الحضور عبر البوابة.', es: 'Invitación exclusiva con tarjetas NFC. Seguimiento de asistencia via portal.', fr: 'Invitation exclusive avec cartes NFC. Suivi des présences via le portail.' },
     },
     {
       id: 'cold_outreach',
-      label: { en: 'Cold Outreach', it: "Freddo Outreach", ar: 'تواصل بارد', es: 'Contacto en Frío', fr: 'Prospection' },
+      label: { en: 'Cold Outreach', it: "Outreach a freddo", ar: 'تواصل بارد', es: 'Contacto en Frío', fr: 'Prospection' },
       icon: '❄️',
       objective: 'awareness',
       audience: 'cold',
       channel: ['email'],
-      description: { en: 'First-touch awareness campaign for new market segments. Low-cost email + landing page.', it: "Campagna di awareness sul primo contatto per nuovi segmenti. Email a basso costo e landing page.", ar: 'حملة تعريفية للأسواق الجديدة. بريد إلكتروني + صفحة هبوط.', es: 'Campaña de conocimiento para nuevos segmentos. Email + landing page.', fr: 'Campagne de sensibilisation pour nouveaux segments. Email + page d\'atterrissage.' },
+      description: { en: 'First-touch awareness campaign for new market segments. Low-cost email + landing page.', it: "Campagna di notorietà al primo contatto, per nuovi segmenti. Email a basso costo e pagina di atterraggio.", ar: 'حملة تعريفية للأسواق الجديدة. بريد إلكتروني + صفحة هبوط.', es: 'Campaña de conocimiento para nuevos segmentos. Email + landing page.', fr: 'Campagne de sensibilisation pour nouveaux segments. Email + page d\'atterrissage.' },
     },
   ],
 
@@ -193,14 +193,14 @@ const REAL_ESTATE = {
     {
       id: 'vip_sessions',
       label: { en: 'VIP Sessions', it: "Sessioni VIP", ar: 'جلسات VIP', es: 'Sesiones VIP', fr: 'Sessions VIP' },
-      subtitle: { en: 'Person known via NFC', it: "Persona nota via NFC", ar: 'شخص معروف عبر NFC', es: 'Persona identificada por NFC', fr: 'Personne identifiée via NFC' },
+      subtitle: { en: 'Person known via NFC', it: "Persona identificata via NFC", ar: 'شخص معروف عبر NFC', es: 'Persona identificada por NFC', fr: 'Personne identifiée via NFC' },
       icon: 'user-check',
       color: '#e63946',
     },
     {
       id: 'website_visitors',
       label: { en: 'Website Visitors', it: "Visitatori sito", ar: 'زوار الموقع', es: 'Visitantes Web', fr: 'Visiteurs du site' },
-      subtitle: { en: 'Standard traffic', it: "Standard traffico", ar: 'حركة مرور عادية', es: 'Tráfico estándar', fr: 'Trafic standard' },
+      subtitle: { en: 'Standard traffic', it: "Traffico standard", ar: 'حركة مرور عادية', es: 'Tráfico estándar', fr: 'Trafic standard' },
       icon: 'globe',
       color: '#457b9d',
     },
@@ -216,9 +216,9 @@ const REAL_ESTATE = {
   // --- VIP Profile Labels ---
   vipProfile: {
     whyCallNow: { en: 'Why Call Now?', it: "Perché chiamare ora?", ar: 'لماذا الاتصال الآن؟', es: '¿Por qué llamar ahora?', fr: 'Pourquoi appeler maintenant ?' },
-    topItem: { en: 'Top Unit', it: "Unità top", ar: 'الوحدة المفضلة', es: 'Unidad Principal', fr: 'Unité principale' },
+    topItem: { en: 'Top Unit', it: "Unità principale", ar: 'الوحدة المفضلة', es: 'Unidad Principal', fr: 'Unité principale' },
     lastSeen: { en: 'Last Seen', it: "Ultimo accesso", ar: 'آخر ظهور', es: 'Última Visita', fr: 'Dernière activité' },
-    nextBestAction: { en: 'Next Best Action', it: "Prossima azione", ar: 'أفضل إجراء تالي', es: 'Siguiente Mejor Acción', fr: 'Prochaine meilleure action' },
+    nextBestAction: { en: 'Next Best Action', it: "Prossima azione migliore", ar: 'أفضل إجراء تالي', es: 'Siguiente Mejor Acción', fr: 'Prochaine meilleure action' },
   },
 
   // --- i18n namespace ---
@@ -235,13 +235,13 @@ const AUTOMOTIVE = {
   identity: {
     sectorLabel: { en: 'Automotive', it: "Automotive", ar: 'السيارات', es: 'Automotriz', fr: 'Automobile' },
     defaultProject: {
-      name: { en: 'Prestige Motors', it: "Prestige Motori", ar: 'بريستيج موتورز', es: 'Prestige Motors', fr: 'Prestige Motors' },
+      name: { en: 'Prestige Motors', it: "Prestige Motors", ar: 'بريستيج موتورز', es: 'Prestige Motors', fr: 'Prestige Motors' },
       currency: 'SAR',
       currencySymbol: '\uFDFC',
       locale: 'ar-SA',
     },
     alternateProject: {
-      name: { en: 'Prestige Motors Vancouver', it: "Prestige Motori Vancouver", ar: 'بريستيج موتورز فانكوفر', es: 'Prestige Motors Vancouver', fr: 'Prestige Motors Vancouver' },
+      name: { en: 'Prestige Motors Vancouver', it: "Prestige Motors Vancouver", ar: 'بريستيج موتورز فانكوفر', es: 'Prestige Motors Vancouver', fr: 'Prestige Motors Vancouver' },
       currency: 'CAD',
       currencySymbol: '$',
       locale: 'en-CA',
@@ -258,7 +258,7 @@ const AUTOMOTIVE = {
     categoryLabelPlural: { en: 'Collections', it: "Collezioni", ar: 'مجموعات', es: 'Colecciones', fr: 'Collections' },
     categories: [
       { id: 'luxury_sedan', name: { en: 'Luxury Sedan', it: "Berlina di lusso", ar: 'سيدان فاخرة', es: 'Sedán de Lujo', fr: 'Berline de luxe' } },
-      { id: 'performance', name: { en: 'Performance', it: "Performance", ar: 'أداء', es: 'Alto Rendimiento', fr: 'Performance' } },
+      { id: 'performance', name: { en: 'Performance', it: "Prestazioni", ar: 'أداء', es: 'Alto Rendimiento', fr: 'Performance' } },
       { id: 'suv', name: { en: 'Luxury SUV', it: "SUV di lusso", ar: 'SUV فاخرة', es: 'SUV de Lujo', fr: 'SUV de luxe' } },
       { id: 'electric', name: { en: 'Electric', it: "Elettrico", ar: 'كهربائية', es: 'Eléctrico', fr: 'Électrique' } },
     ],
@@ -340,7 +340,7 @@ const AUTOMOTIVE = {
 
   // --- Pipeline Kanban ---
   pipeline: {
-    stageLabel: { en: 'Sales Pipeline', it: "Vendite Pipeline", ar: 'خط أنابيب المبيعات', es: 'Pipeline de Ventas', fr: 'Pipeline commercial' },
+    stageLabel: { en: 'Sales Pipeline', it: "Pipeline vendite", ar: 'خط أنابيب المبيعات', es: 'Pipeline de Ventas', fr: 'Pipeline commercial' },
     stages: [
       { id: 'new_lead', label: { en: 'New Lead', it: "Nuovo lead", ar: 'عميل جديد', es: 'Nuevo Prospecto', fr: 'Nouveau prospect' }, color: '#457b9d' },
       { id: 'contacted', label: { en: 'Contacted', it: "Contattato", ar: 'تم التواصل', es: 'Contactado', fr: 'Contacté' }, color: '#6ba3c7' },
@@ -362,7 +362,7 @@ const AUTOMOTIVE = {
   campaignTemplates: [
     {
       id: 'vip_launch',
-      label: { en: 'VIP Launch', it: "VIP Lancio", ar: 'إطلاق VIP', es: 'Lanzamiento VIP', fr: 'Lancement VIP' },
+      label: { en: 'VIP Launch', it: "Lancio VIP", ar: 'إطلاق VIP', es: 'Lanzamiento VIP', fr: 'Lancement VIP' },
       icon: '🚀',
       objective: 'lead_gen',
       audience: 'vip',
@@ -371,12 +371,12 @@ const AUTOMOTIVE = {
     },
     {
       id: 're_engage',
-      label: { en: 'Re-engagement', it: "Re-engagement", ar: 'إعادة التفاعل', es: 'Re-engagement', fr: 'Réengagement' },
+      label: { en: 'Re-engagement', it: "Riaggancio", ar: 'إعادة التفاعل', es: 'Re-engagement', fr: 'Réengagement' },
       icon: '🔄',
       objective: 're_engage',
       audience: 'warm',
       channel: ['email', 'sms'],
-      description: { en: 'Win back idle leads with personalized vehicle offers. Target: contacts inactive 7+ days.', it: "Recupera i lead inattivi con offerte veicolo personali. Target: contatti inattivi da oltre 7 giorni.", ar: 'استعادة العملاء غير النشطين بعروض مخصصة. الهدف: جهات اتصال غير نشطة 7+ أيام.', es: 'Recuperar leads inactivos con ofertas personalizadas. Objetivo: contactos inactivos 7+ días.', fr: 'Récupérer les leads inactifs avec des offres personnalisées. Cible : contacts inactifs 7+ jours.' },
+      description: { en: 'Win back idle leads with personalized vehicle offers. Target: contacts inactive 7+ days.', it: "Recupera i lead inattivi con offerte personali sui veicoli. Obiettivo: contatti inattivi da oltre 7 giorni.", ar: 'استعادة العملاء غير النشطين بعروض مخصصة. الهدف: جهات اتصال غير نشطة 7+ أيام.', es: 'Recuperar leads inactivos con ofertas personalizadas. Objetivo: contactos inactivos 7+ días.', fr: 'Récupérer les leads inactifs avec des offres personnalisées. Cible : contacts inactifs 7+ jours.' },
     },
     {
       id: 'showroom_event',
@@ -385,16 +385,16 @@ const AUTOMOTIVE = {
       objective: 'event',
       audience: 'all',
       channel: ['nfc', 'email', 'whatsapp'],
-      description: { en: 'Exclusive showroom launch event with NFC access. Track RSVPs and test drive bookings.', it: "Lancio showroom su invito con accesso NFC. Segui RSVP e prenotazioni test drive.", ar: 'حدث إطلاق حصري مع بطاقات NFC. تتبع الحضور وحجوزات تجربة القيادة.', es: 'Evento exclusivo de showroom con acceso NFC. Seguimiento de asistencia y pruebas.', fr: 'Événement exclusif showroom avec accès NFC. Suivi des présences et essais.' },
+      description: { en: 'Exclusive showroom launch event with NFC access. Track RSVPs and test drive bookings.', it: "Lancio showroom su invito, con accesso NFC. Segui conferme e prenotazioni test drive.", ar: 'حدث إطلاق حصري مع بطاقات NFC. تتبع الحضور وحجوزات تجربة القيادة.', es: 'Evento exclusivo de showroom con acceso NFC. Seguimiento de asistencia y pruebas.', fr: 'Événement exclusif showroom avec accès NFC. Suivi des présences et essais.' },
     },
     {
       id: 'cold_outreach',
-      label: { en: 'Cold Outreach', it: "Freddo Outreach", ar: 'تواصل بارد', es: 'Contacto en Frío', fr: 'Prospection' },
+      label: { en: 'Cold Outreach', it: "Outreach a freddo", ar: 'تواصل بارد', es: 'Contacto en Frío', fr: 'Prospection' },
       icon: '❄️',
       objective: 'awareness',
       audience: 'cold',
       channel: ['email'],
-      description: { en: 'First-touch awareness campaign for new market segments. Low-cost email + landing page.', it: "Campagna di awareness sul primo contatto per nuovi segmenti. Email a basso costo e landing page.", ar: 'حملة تعريفية للأسواق الجديدة. بريد إلكتروني + صفحة هبوط.', es: 'Campaña de conocimiento para nuevos segmentos. Email + landing page.', fr: 'Campagne de sensibilisation pour nouveaux segments. Email + page d\'atterrissage.' },
+      description: { en: 'First-touch awareness campaign for new market segments. Low-cost email + landing page.', it: "Campagna di notorietà al primo contatto, per nuovi segmenti. Email a basso costo e pagina di atterraggio.", ar: 'حملة تعريفية للأسواق الجديدة. بريد إلكتروني + صفحة هبوط.', es: 'Campaña de conocimiento para nuevos segmentos. Email + landing page.', fr: 'Campagne de sensibilisation pour nouveaux segments. Email + page d\'atterrissage.' },
     },
   ],
 
@@ -403,14 +403,14 @@ const AUTOMOTIVE = {
     {
       id: 'vip_sessions',
       label: { en: 'VIP Sessions', it: "Sessioni VIP", ar: 'جلسات VIP', es: 'Sesiones VIP', fr: 'Sessions VIP' },
-      subtitle: { en: 'Person known via NFC', it: "Persona nota via NFC", ar: 'شخص معروف عبر NFC', es: 'Persona identificada por NFC', fr: 'Personne identifiée via NFC' },
+      subtitle: { en: 'Person known via NFC', it: "Persona identificata via NFC", ar: 'شخص معروف عبر NFC', es: 'Persona identificada por NFC', fr: 'Personne identifiée via NFC' },
       icon: 'user-check',
       color: '#e63946',
     },
     {
       id: 'website_visitors',
       label: { en: 'Showroom Visitors', it: "Visitatori showroom", ar: 'زوار صالة العرض', es: 'Visitantes del Showroom', fr: 'Visiteurs du showroom' },
-      subtitle: { en: 'Standard traffic', it: "Standard traffico", ar: 'حركة مرور عادية', es: 'Tráfico estándar', fr: 'Trafic standard' },
+      subtitle: { en: 'Standard traffic', it: "Traffico standard", ar: 'حركة مرور عادية', es: 'Tráfico estándar', fr: 'Trafic standard' },
       icon: 'globe',
       color: '#457b9d',
     },
@@ -426,9 +426,9 @@ const AUTOMOTIVE = {
   // --- VIP Profile Labels ---
   vipProfile: {
     whyCallNow: { en: 'Why Call Now?', it: "Perché chiamare ora?", ar: 'لماذا الاتصال الآن؟', es: '¿Por qué llamar ahora?', fr: 'Pourquoi appeler maintenant ?' },
-    topItem: { en: 'Top Model', it: "Modello top", ar: 'الموديل الأعلى', es: 'Modelo Principal', fr: 'Modèle principal' },
+    topItem: { en: 'Top Model', it: "Modello principale", ar: 'الموديل الأعلى', es: 'Modelo Principal', fr: 'Modèle principal' },
     lastSeen: { en: 'Last Seen', it: "Ultimo accesso", ar: 'آخر ظهور', es: 'Última Visita', fr: 'Dernière activité' },
-    nextBestAction: { en: 'Next Best Action', it: "Prossima azione", ar: 'أفضل إجراء تالي', es: 'Siguiente Mejor Acción', fr: 'Prochaine meilleure action' },
+    nextBestAction: { en: 'Next Best Action', it: "Prossima azione migliore", ar: 'أفضل إجراء تالي', es: 'Siguiente Mejor Acción', fr: 'Prochaine meilleure action' },
   },
 
   // --- i18n namespace ---
@@ -443,13 +443,13 @@ const YACHT = {
     ...REAL_ESTATE.identity,
     sectorLabel: { en: "Yacht", it: "Yacht", ar: "اليخوت", es: "Yate", fr: "Yacht" },
     defaultProject: {
-      name: { en: "Gulf Marina Yachts", it: "Golfo Marina Yacht", ar: "يخوت مارينا الخليج", es: "Yates Marina del Golfo", fr: "Yachts Marina du Golfe" },
+      name: { en: "Gulf Marina Yachts", it: "Gulf Marina Yachts", ar: "يخوت مارينا الخليج", es: "Yates Marina del Golfo", fr: "Yachts Marina du Golfe" },
       currency: "SAR",
       currencySymbol: "\uFDFC",
       locale: "ar-SA",
     },
     alternateProject: {
-      name: { en: "Pacific Marina Yachts", it: "Pacifico Marina Yacht", ar: "يخوت مارينا الباسيفيك", es: "Yates Marina Pacífico", fr: "Yachts Marina Pacifique" },
+      name: { en: "Pacific Marina Yachts", it: "Pacific Marina Yachts", ar: "يخوت مارينا الباسيفيك", es: "Yates Marina Pacífico", fr: "Yachts Marina Pacifique" },
       currency: "CAD",
       currencySymbol: "$",
       locale: "en-CA",
@@ -491,27 +491,27 @@ const YACHT = {
     { id: "visit", label: { en: "Marina Visit", it: "Visita in marina", ar: "زيارة المرسى", es: "Visita a la Marina", fr: "Visite du port" }, color: "#457b9d" },
     { id: "browse", label: { en: "Yacht Explored", it: "Yacht esplorato", ar: "استكشاف اليخت", es: "Yate Explorado", fr: "Yacht exploré" }, color: "#6ba3c7" },
     { id: "engage", label: { en: "Pricing / Charter", it: "Prezzo / charter", ar: "التسعير / التأجير", es: "Precio / Charter", fr: "Prix / Charter" }, color: "#eab308" },
-    { id: "intent", label: { en: "Sea Trial Request", it: "Richiesta sea trial", ar: "طلب تجربة بحرية", es: "Solicitud de Prueba en Mar", fr: "Demande d'essai en mer" }, color: "#f97316" },
+    { id: "intent", label: { en: "Sea Trial Request", it: "Richiesta di prova in mare", ar: "طلب تجربة بحرية", es: "Solicitud de Prueba en Mar", fr: "Demande d'essai en mer" }, color: "#f97316" },
     { id: "convert", label: { en: "Purchase / Charter", it: "Acquisto / charter", ar: "شراء / تأجير", es: "Compra / Charter", fr: "Achat / Charter" }, color: "#22c55e" },
   ],
   kpis: [
     {
       id: "vip_sessions",
       label: { en: "VIP Sessions", it: "Sessioni VIP", ar: "جلسات VIP", es: "Sesiones VIP", fr: "Sessions VIP" },
-      subtitle: { en: "Owner known via NFC", it: "Titolare noto via NFC", ar: "مالك معروف عبر NFC", es: "Propietario identificado por NFC", fr: "Propriétaire identifié via NFC" },
+      subtitle: { en: "Owner known via NFC", it: "Titolare identificato via NFC", ar: "مالك معروف عبر NFC", es: "Propietario identificado por NFC", fr: "Propriétaire identifié via NFC" },
       icon: "user-check",
       color: "#e63946",
     },
     {
       id: "website_visitors",
       label: { en: "Showroom Visitors", it: "Visitatori showroom", ar: "زوار المعرض", es: "Visitantes del Showroom", fr: "Visiteurs du showroom" },
-      subtitle: { en: "Anonymous fleet browse", it: "Sfoglia flotta anonima", ar: "تصفح الأسطول المجهول", es: "Navegación anónima de flota", fr: "Navigation anonyme de la flotte" },
+      subtitle: { en: "Anonymous fleet browse", it: "Navigazione anonima della flotta", ar: "تصفح الأسطول المجهول", es: "Navegación anónima de flota", fr: "Navigation anonyme de la flotte" },
       icon: "globe",
       color: "#457b9d",
     },
     {
       id: "bookings",
-      label: { en: "Sea Trials Booked", it: "Sea trial prenotati", ar: "تجارب بحرية محجوزة", es: "Pruebas en Mar Reservadas", fr: "Essais en mer réservés" },
+      label: { en: "Sea Trials Booked", it: "Prove in mare prenotate", ar: "تجارب بحرية محجوزة", es: "Pruebas en Mar Reservadas", fr: "Essais en mer réservés" },
       subtitle: { en: "This month", it: "Questo mese", ar: "هذا الشهر", es: "Este mes", fr: "Ce mois-ci" },
       icon: "calendar",
       color: "#22c55e",
@@ -519,7 +519,7 @@ const YACHT = {
   ],
   vipProfile: {
     ...REAL_ESTATE.vipProfile,
-    topItem: { en: "Top Yacht", it: "Yacht top", ar: "اليخت المفضل", es: "Yate Principal", fr: "Yacht principal" },
+    topItem: { en: "Top Yacht", it: "Yacht principale", ar: "اليخت المفضل", es: "Yate Principal", fr: "Yacht principal" },
   },
   i18nNamespace: "yachtDashboard",
 };
