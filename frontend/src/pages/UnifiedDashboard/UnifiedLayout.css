@@ -6333,7 +6333,6 @@ a:focus-visible {
   gap: 6px;
   font-size: 11px;
   color: var(--ud-text-muted);
-  text-transform: capitalize;
 }
 
 .ud-sales-velocity__section-shell {
