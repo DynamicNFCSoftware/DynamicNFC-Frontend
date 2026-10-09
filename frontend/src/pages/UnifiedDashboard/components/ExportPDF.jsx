@@ -14,7 +14,7 @@ const LABELS = {
 
 const MODE_LABELS = {
   en: { standard: "Standard", readable: "Readable", mode: "Mode", on: "ON", off: "OFF" },
-  it: { standard: "Standard", readable: "Leggibile", mode: "Modalità", on: "ON", off: "OFF" },
+  it: { standard: "Standard", readable: "Leggibile", mode: "Modalità", on: "attivo", off: "disattivato" },
   ar: { standard: "قياسي", readable: "مقروء", mode: "الوضع", on: "تشغيل", off: "إيقاف" },
   fr: { standard: "Standard", readable: "Lisible", mode: "Mode", on: "ON", off: "OFF" },
   es: { standard: "Estandar", readable: "Legible", mode: "Modo", on: "ON", off: "OFF" },

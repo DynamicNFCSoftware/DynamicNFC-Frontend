@@ -65,13 +65,14 @@ async function generateBriefFromLLM({ tenantId, topVip, pipelineDelta, marketpla
   if (elapsed < COOLDOWN_MS) {
     const cachedBriefDoc = await briefRef.get();
     const cached = cachedBriefDoc.exists ? cachedBriefDoc.data() : {};
-    // Prefer per-lang slot from byLang dict; fall back to legacy top-level fields
-    const cachedForLang = cached?.byLang?.[lang] || cached;
-    return {
-      ...cachedForLang,
-      source: "cached",
-      cooldownRemaining: Math.max(0, COOLDOWN_MS - elapsed),
-    };
+    const cachedForLang = cached?.byLang?.[lang];
+    if (cachedForLang) {
+      return {
+        ...cachedForLang,
+        source: "cached",
+        cooldownRemaining: Math.max(0, COOLDOWN_MS - elapsed),
+      };
+    }
   }
 
   try {

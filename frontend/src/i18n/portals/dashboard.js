@@ -274,8 +274,8 @@ const dashboard = {
     mLeadCaptureRate: "Tasso di cattura lead", mLeadCaptureSub: "Conversione anonimo → lead",
     // Shared Conversions
     sharedConversions: "Azioni di conversione condivise", badgeVipStd: "VIP + Standard · non lineare",
-    actBookViewing: "Prenota una visita", actRequestPricing: "Richiedi il prezzo",
-    actRequestPayment: "Richiedi il piano di pagamento", actDownloadBrochure: "Scarica la brochure",
+    actBookViewing: "Visita prenotata", actRequestPricing: "Prezzo richiesto",
+    actRequestPayment: "Piano di pagamento richiesto", actDownloadBrochure: "Brochure scaricata",
     // Activity Feed
     liveActivityFeed: "Attività acquirenti in tempo reale", realtimeInteractions: "Prima le azioni più recenti — ogni vista unità e ogni pulsante che i siti catturano",
     feedAll: "Tutti", feedVip: "VIP", feedRegistered: "Registrato", feedLead: "Lead", feedAnonymous: "Anonimo",

@@ -1,4 +1,6 @@
-import { registerTranslations, useTranslation } from "../../../i18n";
+import { registerTranslations, useLanguage, useTranslation } from "../../../i18n";
+import { useRegion } from "../../../hooks/useRegion";
+import { getEffectiveLocale } from "../../../config/regionConfig";
 import "./DateRangePicker.css";
 const PRESET_MS = {
   last7d: 7,
@@ -94,6 +96,14 @@ const DEFAULT_PRESETS = ["last7d", "last30d", "last90d", "custom"];
 
 export default function DateRangePicker({ value, onChange, presets = DEFAULT_PRESETS }) {
   const t = useTranslation("dateRangePicker");
+  const { lang } = useLanguage();
+  const { regionId } = useRegion();
+  const locale = getEffectiveLocale(regionId, lang);
+  const formatDay = (ts) => new Date(ts).toLocaleDateString(locale, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
   const preset = value?.preset || "last30d";
   const { fromTs, toTs } = resolveRange(value);
 
@@ -143,9 +153,9 @@ export default function DateRangePicker({ value, onChange, presets = DEFAULT_PRE
         </div>
       ) : (
         <div className="ud-drp-range">
-          <span>{new Date(fromTs).toLocaleDateString()}</span>
+          <span>{formatDay(fromTs)}</span>
           <span>→</span>
-          <span>{new Date(toTs).toLocaleDateString()}</span>
+          <span>{formatDay(toTs)}</span>
         </div>
       )}
     </div>
