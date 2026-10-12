@@ -1,19 +1,21 @@
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
-import { REGIONS, DEFAULT_REGION, getRegion } from '../config/regionConfig';
+import { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
+import { REGIONS, REGION_LIST, detectRegion, getRegion } from '../config/regionConfig';
 
 const RegionContext = createContext(null);
 
 export function RegionProvider({ children }) {
-  const [regionId, setRegionId] = useState(
-    () => localStorage.getItem('ud-region') || DEFAULT_REGION
-  );
+  // A saved region counts only while it is still offered; otherwise pick one from the browser.
+  const [regionId, setRegionId] = useState(() => {
+    const saved = localStorage.getItem('ud-region');
+    return REGION_LIST.some((r) => r.id === saved) ? saved : detectRegion();
+  });
 
   const switchRegion = useCallback((newRegionId) => {
-    if (REGIONS[newRegionId]) {
-      setRegionId(newRegionId);
-      localStorage.setItem('ud-region', newRegionId);
-    }
+    if (REGIONS[newRegionId]) setRegionId(newRegionId);
   }, []);
+
+  // Always save the active region: tracking (portalTracking, tenantService) reads 'ud-region' directly.
+  useEffect(() => { localStorage.setItem('ud-region', regionId); }, [regionId]);
 
   const region = useMemo(() => getRegion(regionId), [regionId]);
 

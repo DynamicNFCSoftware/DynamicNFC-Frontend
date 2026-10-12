@@ -76,11 +76,11 @@ describe("getProjectName", () => {
     expect(getProjectName("real_estate", "usa", "en")).toBe("Skyline Towers");
   });
 
-  it("Italy + real_estate → Alessandro Conti and Residenze del Lario", () => {
+  it("Italy + real_estate → North American buyer Andrew Harrington and Residenze del Lario", () => {
     const personas = getPersonas("real_estate", "italy");
     expect(personas).toHaveLength(4);
-    expect(personas.find((p) => p.id === "vip1").name).toBe("Alessandro Conti");
-    expect(personas.find((p) => p.id === "vip1").email).toBe("alessandro@residenzelario.it");
+    expect(personas.find((p) => p.id === "vip1").name).toBe("Andrew Harrington");
+    expect(personas.find((p) => p.id === "vip1").email).toBe("andrew.harrington@example.com");
     expect(getProjectName("real_estate", "italy", "it")).toBe("Residenze del Lario");
   });
 

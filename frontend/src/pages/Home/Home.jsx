@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
+import { useRegion } from '../../hooks/useRegion';
+import { getPersonas } from '../../config/regionConfig';
 import { initRemoteConfig, getConfigValue } from '../../firebase';
 import './Home.css';
 import SEO from '../../components/SEO/SEO';
@@ -24,7 +26,7 @@ const TR = {
     heroLine3: '',
     heroSub: 'NFC cards that show you exactly who your buyers are',
     heroSubWords: ['name', 'interest', 'intent'],
-    cardCta: 'See what Khalid sees when he taps →',
+    cardCta: 'See what {name} sees when he taps →',
     cardHint: 'This is your VIP Access Key',
 
     /* Stats */
@@ -122,12 +124,12 @@ const TR = {
     aiTitle: 'Six platforms. Zero manual work.',
     aiSub: 'A VIP taps their NFC card. In under a minute, these six things happen without anyone lifting a finger.',
     aiCard1t: 'Canva', aiCard1d: 'A 7-page investment proposal gets designed on the spot — his name, his unit, ROI numbers, floor plans.',
-    aiCard1ex: 'Gulf-luxury layout, bilingual EN/AR, exported as PDF.',
-    aiCard2t: 'Gmail', aiCard2d: 'The proposal gets attached to a personal invite email and lands in Khalid\'s inbox automatically.',
+    aiCard1ex: 'Your brand, the buyer\'s language, exported as PDF.',
+    aiCard2t: 'Gmail', aiCard2d: 'The proposal gets attached to a personal invite email and lands in {name}\'s inbox automatically.',
     aiCard2ex: 'Real Gmail draft — open it yourself to verify.',
     aiCard3t: 'Calendar', aiCard3d: 'The system checks who\'s free, picks the best slot, and books a private showing at the sales center.',
     aiCard3ex: 'Real Google Calendar event with reminders set.',
-    aiCard4t: 'DocuSign', aiCard4d: 'An NDA gets sent before the showing. Khalid signs, exclusive pre-launch pricing unlocks in his portal.',
+    aiCard4t: 'DocuSign', aiCard4d: 'An NDA gets sent before the showing. {name} signs, exclusive pre-launch pricing unlocks in his portal.',
     aiCard4ex: 'Pre-filled, ready for e-signature, pricing auto-unlocks.',
     aiCta: 'See the full pipeline in action →',
 
@@ -140,7 +142,7 @@ const TR = {
     trustAria: 'Company credentials',
     trust1: 'Built in Canada',
     trust2: 'AI-assisted workflows',
-    trust3: 'Gulf pilot programs',
+    trust3: 'Italy · USA · Canada',
 
     /* Final CTA */
     ctaTitle: 'See it work with your own numbers.',
@@ -319,6 +321,9 @@ function FAQItem({ question, answer, isOpen, onClick }) {
 export default function Home() {
   const navigate = useNavigate();
   const { lang } = useLanguage();
+  const { regionId } = useRegion();
+  // The VIP named on the page is the active region's lead buyer, so the button and the portal show the same person.
+  const vipName = getPersonas('real_estate', regionId)[0].name;
   const [openFaq, setOpenFaq] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -376,7 +381,7 @@ export default function Home() {
 
   const [scrollPct, setScrollPct] = useState(0);
   const isRTL = lang === 'ar';
-  const t = useCallback((k) => TR[lang]?.[k] || TR.en[k] || k, [lang]);
+  const t = useCallback((k) => (TR[lang]?.[k] || TR.en[k] || k).replace('{name}', vipName), [lang, vipName]);
 
   const [bgParticles, setBgParticles] = useState([]);
   useEffect(() => {
@@ -468,6 +473,7 @@ export default function Home() {
       <div className="hp-hero-inner">
         <div className="hp-hero-text">
           <div className="hp-badge"><span className="hp-pulse" />{t('badge')}</div>
+          {lang === 'it' && <div className="hp-badge hp-it-pill"><span className="hp-it-flag hp-it-flag--ca" />{t('itPill')}<span className="hp-it-flag hp-it-flag--it" /></div>}
           <h1>{t('heroLine1')}<br /><em>{t('heroLine2')}</em></h1>
           <p>
             {t('heroSub')}
@@ -665,15 +671,16 @@ export default function Home() {
     );
   };
 
-  const CanadaSection = () => (
+  // Three-card market section: 'ca' = Made in Canada, 'na' = North American buyers (Italy only).
+  const MarketSection = (p) => (
     <section className="hp-section hp-section-wide hp-reveal">
-      <div className="hp-label red">{t('caLabel')}</div>
+      <div className="hp-label red">{t(p + 'Label')}</div>
       <div className="hp-section-header">
-        <h2>{t('caTitle')}</h2>
-        <p>{t('caSub')}</p>
+        <h2>{t(p + 'Title')}</h2>
+        <p>{t(p + 'Sub')}</p>
       </div>
       <div className="hp-canada-grid">
-        {['ca1', 'ca2', 'ca3'].map((k) => (
+        {[p + 1, p + 2, p + 3].map((k) => (
           <div className="hp-canada-card" key={k}>
             <h4>{t(k + 't')}{k === 'ca3' && <span className="hp-canada-tag">{t('ca3tag')}</span>}</h4>
             <p>{t(k + 'd')}</p>
@@ -910,7 +917,7 @@ export default function Home() {
   );
 
   return (
-    <div className="hp" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="hp" dir={isRTL ? 'rtl' : 'ltr'} data-lang={lang}>
       <SEO title="Home" description="DynamicNFC — Turn anonymous traffic into named buyers with NFC-powered private portals." path="/" />
       <div className="hp-scroll-progress" style={{ width: `${scrollPct}%` }} />
       <div className="hp-particles" aria-hidden="true">
@@ -925,8 +932,9 @@ export default function Home() {
 
       <HowItWorksSection />
 
-      {/* ═══ MADE IN CANADA ═══ */}
-      <CanadaSection />
+      {/* ═══ NORTH AMERICAN BUYERS (Italy) + MADE IN CANADA ═══ */}
+      {regionId === 'italy' && MarketSection('na')}
+      {MarketSection('ca')}
 
       {/* ═══ 5-6: LIVE DEMO & INDUSTRIES ── */}
       <LiveDemoSection />

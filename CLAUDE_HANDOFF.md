@@ -1,7 +1,27 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-08 — **Step A is LIVE** (Canada anchor + 5 public languages) via PR #19 and the new CI deploy. `main` is protected. Next: Step B (Italy region). Previous header (2026-07-20) is kept in the history below.
+**Last updated:** 2026-10-11 — market focus Italy → North American buyers (step 1, uncommitted). Previous: 2026-10-08 — **Step A is LIVE** (Canada anchor + 5 public languages) via PR #19 and the new CI deploy. `main` is protected. Next: Step B (Italy region). Previous header (2026-07-20) is kept in the history below.
 **Author of this update:** Claude (Cowork), 2026-10-08.
+
+---
+
+## IN FLIGHT 2026-10-11 — Market focus: Italy → North American buyers (step 1 done, NOT committed)
+
+- **Decision (Oguzhan):** visible regions = **Canada, Italy, USA**. Mexico + Gulf **hidden, not deleted**; Arabic hidden with them.
+  Main pitch: show **Italian real-estate developers** they can sell Italian homes to **North American buyers** with VIP
+  campaigns; DynamicNFC's Canadian company runs the North American side (technology + campaign, **not brokerage**).
+  US and Canadian realtors keep the domestic story. Public site picks the region from the browser locale; Italiano → Italy, Français → Canada.
+- **Step 1 (Claude, working tree on `fix/italy-b2-1-polish`; move to `feat/italy-na-buyers`):** `REGION_LIST` 3 regions +
+  `detectRegion()` + `LANG_REGION`; `useRegion` always saves `ud-region` (fixes tracking tagging hidden/default regions);
+  Arabic out of Navbar + Login menus; Italy RE personas → Andrew Harrington (NY), Catherine Brooks (Toronto), Daniel
+  Whitaker (Chicago), Émilie Laurent (Montréal); `SEED_VERSION` 2.4-na-buyers; Home: name from region, Gulf copy gone,
+  Italy-only "North American buyers" section. Verified: lint 0 errors, build, 146 tests, e2e 10/10, Chromium check of
+  US/CA/IT visitors + old gulf/ar storage + language switch + 375px.
+- **Audit:** `docs/directives/CURSOR_AUDIT_ITALY_NA_BUYERS_STEP1.md` (read-only). Commit only after the report.
+- **Open:** lawyer — "run by our Canadian company" wording, CASL for emailing Canadian buyers; native Italian review of the new section.
+- **Next:** step 2 — Italy demo portal tells the NA-buyer story end to end (currency: EUR only or EUR + USD/CAD estimate? undecided);
+  Five-Minute Proof video (3/9 clips; `step2-track-auto` is 480p and shows a floor plan → regenerate);
+  step 3 — ~80 Gulf mentions on Enterprise / RealEstate / Developers / card builder, page by page; then CLAUDE.md §3/§12 markets update.
 
 ---
 

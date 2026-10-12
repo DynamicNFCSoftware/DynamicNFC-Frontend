@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAdmin } from '../../hooks/useAdmin';
 import { useLanguage } from '../../i18n';
+import { useRegion } from '../../hooks/useRegion';
+import { LANG_REGION } from '../../config/regionConfig';
 import IndustriesDropdown from '../IndustriesDropdown';
 import './Navbar.css';
 
@@ -69,10 +71,11 @@ const TR = {
   },
 };
 
-const LANG_NAMES = { en: 'English', it: 'Italiano', fr: 'Français', es: 'Español', ar: 'العربية' };
+const LANG_NAMES = { en: 'English', it: 'Italiano', fr: 'Français', es: 'Español' };
 
 export default function Navbar() {
   const { lang, setLang, isAr } = useLanguage();
+  const { switchRegion } = useRegion();
   const { user, logout, isAuthenticated } = useAuth();
   const { isAdmin } = useAdmin();
   const location = useLocation();
@@ -184,7 +187,10 @@ export default function Navbar() {
             <select
               className="nav-lang-select"
               value={lang}
-              onChange={(e) => setLang(e.target.value)}
+              onChange={(e) => {
+                setLang(e.target.value);
+                if (LANG_REGION[e.target.value]) switchRegion(LANG_REGION[e.target.value]);
+              }}
               aria-label={t('language')}
             >
               {Object.entries(LANG_NAMES).map(([code, name]) => (

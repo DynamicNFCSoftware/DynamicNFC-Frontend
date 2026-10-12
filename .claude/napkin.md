@@ -31,8 +31,8 @@
    Do instead: when adding portal events, check both global EVENT_ALIAS and SECTOR_EVENT_ALIAS.automotive — contact_advisor→contact_agent needs auto reverse map or events vanish.
 2. **[2026-07-13] Stale i18n registry ≠ live page copy**
    Do instead: when cleaning unused `registerTranslations` files, rewrite only obvious myth keys; do not gut files or touch `src/shared/translations.js`.
-3. **[2026-10-06] Public site has five languages (en, it, fr, es, ar)**
-   Do instead: add every new string in all five; it/fr/es live in the page's sibling `*Translations.js`. Portals and Unified Dashboard have no Italian yet.
+3. **[2026-10-11] Public site and the Unified Dashboard have Italian**
+   Do instead: add every new public string in en/it/fr/es/ar (sibling `*Translations.js`). Dashboard Italian lives in the portal dictionaries. Demo portals are still the open language gap.
 
 ## User Directives
 1. **[2026-04-24] Preserve existing dirty worktree changes**

@@ -164,10 +164,10 @@ const ITALY = {
   },
   personas: {
     real_estate: [
-      { id: 'vip1', name: 'Alessandro Conti', gender: 'male', email: 'alessandro@residenzelario.it', type: 'vip', role: { en: 'VIP Investor', it: 'Investitore VIP', ar: 'مستثمر VIP', es: 'Inversor VIP', fr: 'Investisseur VIP' } },
-      { id: 'vip2', name: 'Giulia Romano', gender: 'female', email: 'giulia@residenzelario.it', type: 'vip', role: { en: 'VIP Buyer', it: 'Acquirente VIP', ar: 'مشترية VIP', es: 'Compradora VIP', fr: 'Acheteuse VIP' } },
-      { id: 'fam1', name: 'Marco Bianchi', gender: 'male', email: 'marco@residenzelario.it', type: 'family', role: { en: 'Family Buyer', it: 'Acquirente famiglia', ar: 'مشتري عائلي', es: 'Comprador Familiar', fr: 'Acheteur Familial' } },
-      { id: 'fam2', name: 'Francesca Ricci', gender: 'female', email: 'francesca@residenzelario.it', type: 'family', role: { en: 'Family Buyer', it: 'Acquirente famiglia', ar: 'مشتري عائلي', es: 'Comprador Familiar', fr: 'Acheteuse Familiale' } },
+      { id: 'vip1', name: 'Andrew Harrington', gender: 'male', email: 'andrew.harrington@example.com', type: 'vip', role: { en: 'VIP Investor', it: 'Investitore VIP', ar: 'مستثمر VIP', es: 'Inversor VIP', fr: 'Investisseur VIP' } },
+      { id: 'vip2', name: 'Catherine Brooks', gender: 'female', email: 'catherine.brooks@example.com', type: 'vip', role: { en: 'VIP Buyer', it: 'Acquirente VIP', ar: 'مشترية VIP', es: 'Compradora VIP', fr: 'Acheteuse VIP' } },
+      { id: 'fam1', name: 'Daniel Whitaker', gender: 'male', email: 'daniel.whitaker@example.com', type: 'family', role: { en: 'Family Buyer', it: 'Acquirente famiglia', ar: 'مشتري عائلي', es: 'Comprador Familiar', fr: 'Acheteur Familial' } },
+      { id: 'fam2', name: 'Émilie Laurent', gender: 'female', email: 'emilie.laurent@example.com', type: 'family', role: { en: 'Family Buyer', it: 'Acquirente famiglia', ar: 'مشتري عائلي', es: 'Comprador Familiar', fr: 'Acheteuse Familiale' } },
     ],
     automotive: [
       { id: 'vip1', name: 'Matteo Ferraro', gender: 'male', email: 'matteo@autosalonebrera.it', type: 'vip', role: { en: 'VIP Collector', it: 'Collezionista VIP', ar: 'جامع VIP', es: 'Coleccionista VIP', fr: 'Collectionneur VIP' } },
@@ -182,8 +182,20 @@ const ITALY = {
 };
 
 export const REGIONS = { canada: CANADA, italy: ITALY, usa: USA, mexico: MEXICO, gulf: GULF };
-export const REGION_LIST = [CANADA, ITALY, USA, MEXICO, GULF];
+// Regions offered in every selector. Mexico and Gulf stay in REGIONS (data kept) but are hidden (2026-10-11).
+export const REGION_LIST = [CANADA, ITALY, USA];
 export const DEFAULT_REGION = 'canada';
+
+// Picking a language that belongs to one region also picks that region.
+export const LANG_REGION = { it: 'italy', fr: 'canada' };
+
+// First visit: region from the browser locale (it → Italy, en-US / es → USA, everything else → Canada).
+export function detectRegion() {
+  const loc = (navigator.language || '').toLowerCase();
+  if (loc.startsWith('it')) return 'italy';
+  if (loc === 'en-us' || loc.startsWith('es')) return 'usa';
+  return DEFAULT_REGION;
+}
 
 export function getRegion(regionId) {
   return REGIONS[regionId] || REGIONS[DEFAULT_REGION];

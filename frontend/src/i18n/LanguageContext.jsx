@@ -3,7 +3,8 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 const LanguageContext = createContext();
 
 const STORAGE_KEY = "dnfc_lang";
-const SUPPORTED_LANGS = ["en", "it", "fr", "es", "ar"];
+// Arabic is hidden with the Gulf region (2026-10-11); its translations stay in the code.
+const SUPPORTED_LANGS = ["en", "it", "fr", "es"];
 
 function detectBrowserLang() {
   const nav = (navigator.language || navigator.userLanguage || "en").toLowerCase();
