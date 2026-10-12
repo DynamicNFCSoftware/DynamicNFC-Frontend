@@ -2,6 +2,7 @@
    en/ar here hold only the new "Made in Canada" keys; it/fr/es are full sets. */
 export const HOME_TR_EXTRA = {
   en: {
+    itPill: 'Designed in Canada · Now in Italy',
     heroBy1: ' — by ', heroBy2: ', by ',
     showTitle: 'This is what your sales team sees.',
     showSub: 'Every tap, every visit, every buying signal — in one dashboard.',
@@ -165,6 +166,7 @@ export const HOME_TR_EXTRA = {
     na3t: 'Gestito dal Canada', na3d: 'La nostra società canadese gestisce la parte nordamericana della tua campagna VIP. La vendita resta tua: forniamo tecnologia e campagna, non intermediazione immobiliare.',
   },
   fr: {
+    itPill: 'Conçu au Canada · Désormais en Italie',
     heroBy1: ' — par ', heroBy2: ', par ',
     showTitle: 'Voici ce que voit votre équipe de vente.',
     showSub: 'Chaque tap, chaque visite, chaque signal d\'achat — dans un seul tableau de bord.',
@@ -294,6 +296,7 @@ export const HOME_TR_EXTRA = {
     na3t: 'Géré depuis le Canada', na3d: 'Notre société canadienne gère le volet nord-américain de votre campagne VIP. La vente reste la vôtre : nous fournissons la technologie et la campagne, pas le courtage.',
   },
   es: {
+    itPill: 'Diseñado en Canadá · Ahora en Italia',
     heroBy1: ' — por ', heroBy2: ', por ',
     showTitle: 'Esto es lo que ve tu equipo de ventas.',
     showSub: 'Cada tap, cada visita, cada señal de compra — en un solo dashboard.',
