@@ -669,6 +669,7 @@ export default function OverviewTab() {
         onComplete={completeTutorial}
         regionId={regionId}
         lang={lang}
+        sector={config.id}
       />
 
       <TodaysBrief

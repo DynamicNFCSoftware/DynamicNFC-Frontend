@@ -29,6 +29,7 @@ export default function FiveMinuteProof({
   onComplete,
   regionId,
   lang,
+  sector = "real_estate",
 }) {
   const t = useTranslation("fiveMinuteProof");
   const [expanded, setExpanded] = useState(false);
@@ -92,6 +93,8 @@ export default function FiveMinuteProof({
                 stepNumber={currentStep}
                 totalSteps={totalSteps}
                 regionId={regionId}
+                sector={sector}
+                lang={lang}
               />
               <TutorialNav
                 currentStep={currentStep}

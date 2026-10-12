@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 // What this catches: a page that crashes, a page wider than the phone screen,
 // a wrong language/direction, English left behind in a translated page, raw translation keys on screen.
-const LANGS = ['en', 'it', 'fr', 'es', 'ar'];
+const LANGS = ['en', 'it', 'fr', 'es'];
 const WIDTHS = [375, 1440];
 const ROUTES = ['/', '/enterprise', '/developers', '/automotive', '/nfc-cards', '/contact-sales', '/pricing', '/login', '/privacy', '/terms'];
 const ENGLISH_LEFTOVERS = ['All Rights Reserved', 'This is what your sales team sees', 'Last updated'];

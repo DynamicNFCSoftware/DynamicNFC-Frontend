@@ -1,5 +1,14 @@
-export default function Step5Close({ className = "", personaName = "" }) {
-  const leftLabel = personaName ? `${personaName.toUpperCase()} · VIP` : "VIP · INVESTOR";
+export default function Step5Close({
+  className = "",
+  personaName = "",
+  roleLabel = "",
+  yourRep = "",
+  month = "",
+  day = "",
+  time = "",
+  booked = "",
+}) {
+  const leftLabel = [personaName, roleLabel].filter(Boolean).join(" · ");
 
   return (
     <svg className={`fmp-svg ${className}`} viewBox="0 0 480 240" role="img" aria-hidden="true">
@@ -24,7 +33,7 @@ export default function Step5Close({ className = "", personaName = "" }) {
         <path d="M392 90 L401 80" stroke="var(--fmp-brand-blue)" strokeWidth="1.8" strokeLinecap="round" />
         <circle cx="403.5" cy="78" r="2.5" fill="var(--fmp-brand-red)" />
         <rect x="342" y="184" width="80" height="20" rx="10" fill="#eef4fb" stroke="var(--fmp-brand-blue)" />
-        <text x="382" y="197" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-primary)">YOUR REP</text>
+        <text x="382" y="197" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-primary)">{yourRep}</text>
       </g>
 
       <path d="M134 124 C190 108 290 108 346 124" fill="none" stroke="var(--fmp-brand-blue)" strokeWidth="2.5" />
@@ -32,15 +41,15 @@ export default function Step5Close({ className = "", personaName = "" }) {
       <g>
         <rect x="214" y="98" width="52" height="52" rx="8" fill="#fff" stroke="var(--fmp-text-muted)" />
         <rect x="214" y="98" width="52" height="14" rx="8" fill="var(--fmp-brand-red)" />
-        <text x="240" y="108" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="#fff">MAY</text>
-        <text x="240" y="134" textAnchor="middle" fontSize="22" fill="var(--fmp-text-primary)">07</text>
+        <text x="240" y="108" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="#fff">{month}</text>
+        <text x="240" y="134" textAnchor="middle" fontSize="22" fill="var(--fmp-text-primary)">{day}</text>
         <circle cx="227" cy="143" r="4" fill="none" stroke="var(--fmp-brand-blue)" strokeWidth="1.2" />
         <path d="M227 143 L227 140 M227 143 L230 144.5" stroke="var(--fmp-brand-blue)" strokeWidth="1.1" strokeLinecap="round" />
-        <text x="236" y="146" fontFamily="monospace" fontSize="8" fill="var(--fmp-text-muted)">14:00</text>
+        <text x="236" y="146" fontFamily="monospace" fontSize="8" fill="var(--fmp-text-muted)">{time}</text>
       </g>
 
       <rect x="160" y="206" width="160" height="24" rx="12" fill="var(--fmp-accent)" className="fmp-svg__pulse" />
-      <text x="240" y="221" textAnchor="middle" fontFamily="monospace" fontSize="11" fontWeight="700" fill="#fff">BOOKED · TOMORROW 14:00</text>
+      <text x="240" y="221" textAnchor="middle" fontFamily="monospace" fontSize="11" fontWeight="700" fill="#fff">{booked}</text>
 
       <circle cx="218" cy="78" r="4" fill="var(--fmp-accent)" />
       <rect x="245" y="72" width="7" height="7" fill="var(--fmp-brand-red)" transform="rotate(12 248.5 75.5)" />

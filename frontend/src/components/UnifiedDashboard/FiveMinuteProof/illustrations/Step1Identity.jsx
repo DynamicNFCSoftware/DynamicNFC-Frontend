@@ -19,10 +19,15 @@
 export default function Step1Identity({
   className = "",
   personaName = "",
-  projectLabel = "VISTA · 2026",
-  locationLabel = "VANCOUVER · CANADA",
+  projectLabel = "",
+  locationLabel = "",
+  roleLabel = "",
+  identified = "",
+  firstEdition = "",
+  cornerLabel = "",
+  proofLabel = "",
 }) {
-  const personaUpper = (personaName || "MARC PATEL").toUpperCase();
+  const personaUpper = (personaName || "").toUpperCase();
   const longName = personaUpper.length > 14;
   const nameFontSize = longName ? 11 : 13.5;
   const nameLetterSpacing = longName ? 0.6 : 1.3;
@@ -104,10 +109,10 @@ export default function Step1Identity({
       <g className="fmp-s1-corner" transform="translate(24, 26)">
         <line x1="0" y1="0" x2="14" y2="0" stroke="var(--fmp-brand-red)" strokeWidth="1.2" />
         <text x="0" y="14" fontSize="6" fontWeight="700" fill="var(--fmp-brand-red)" letterSpacing="2.5">
-          01 · IDENTITY
+          {cornerLabel}
         </text>
         <text x="0" y="24" fontSize="5" fontWeight="500" fill="var(--fmp-text-muted)" letterSpacing="1.5">
-          FIVE-MINUTE PROOF
+          {proofLabel}
         </text>
       </g>
 
@@ -192,7 +197,7 @@ export default function Step1Identity({
           {projectLabel}
         </text>
         <text x="190" y="131" fontFamily="'JetBrains Mono', monospace" fontSize="3.8" fontWeight="500" fill="rgba(197, 164, 103, 0.55)" letterSpacing="1.2">
-          FIRST EDITION · 001
+          {firstEdition}
         </text>
       </g>
 
@@ -221,7 +226,7 @@ export default function Step1Identity({
           DynamicNFC
         </text>
         <text x="-8" y="29" textAnchor="middle" fontSize="4.2" fontWeight="500" fill="#9a8856" letterSpacing="2.8" opacity="0.78">
-          PREMIUM INVITATION
+          Premium Box
         </text>
       </g>
 
@@ -265,7 +270,7 @@ export default function Step1Identity({
           {personaUpper}
         </text>
         <text className="fmp-s1-role" x="60" y="34" textAnchor="middle" fontSize="6.5" fontWeight="600" fill="var(--fmp-accent)" letterSpacing="2">
-          VIP · INVESTOR
+          {roleLabel}
         </text>
         <line className="fmp-s1-line-bot" x1="0" y1="42" x2="120" y2="42" stroke="#1a1a1f" strokeWidth="0.9" />
         <text className="fmp-s1-loc" x="60" y="55" textAnchor="middle" fontSize="5.5" fontWeight="500" fill="var(--fmp-text-muted)" letterSpacing="1.5">
@@ -276,7 +281,7 @@ export default function Step1Identity({
         <g transform="translate(8, 70)">
           <circle className="fmp-s1-pip" cx="3" cy="-2" r="2" fill="#10b981" />
           <text className="fmp-s1-ts" x="9" y="1" fontFamily="'JetBrains Mono', monospace" fontSize="5.2" fill="#5a5f68" letterSpacing="1">
-            TAP REGISTERED · 00:00.4
+            {identified}
           </text>
         </g>
       </g>

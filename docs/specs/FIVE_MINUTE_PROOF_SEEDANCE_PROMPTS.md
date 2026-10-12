@@ -7,7 +7,7 @@ later by code on top of the video (5 languages, every region). So the clips must
 - Mode: Text-to-Video, or Reference mode when a reference image is listed.
 - Duration **8 s** · aspect **16:9** · **1080p** (we compress to 720p later) · no audio.
 - The tutorial frame is wider than 16:9 (2:1): keep the important action in the **middle 80 % of the height**.
-- Each clip must **loop cleanly**: the last second calms to a near-still frame that matches the first frame.
+- Clips play **once and hold the last frame** (no loop needed). Make the last 1–2 seconds a calm, near-still hero frame.
 - Add this line at the end of every prompt (negative / constraints):
   `No text, no letters, no numbers, no logos, no watermarks, no human faces. Hands only if people appear. No camera shake.`
 
@@ -25,7 +25,7 @@ In Reference mode write e.g. "Image 1 sets the look of the box and card."
 ---
 
 ## Clip 1 — Identity (all sectors) · file `step1-identity.mp4`
-Leave the **right third** calm and dark (the name plate is overlaid there).
+**Done (2026-10-09, take 120735):** approved. Final frame leaves the upper-left dark wall empty, so the name plate goes **upper-left**. Audio stripped, 1280×720 H.264 ≈ 460 KB.
 ```
 A navy linen presentation box rests on a dark stone surface under a single warm spotlight. The lid lifts slowly; warm
 champagne light spills out with fine gold dust. A brushed black metal card with a thin gold holographic stripe rises from
@@ -35,7 +35,7 @@ line of light travels from the card to the right side of the frame and fades int
 ```
 
 ## Clip 2 — Track (3 variants) · leave the **right half** calm (pipeline rows are overlaid there)
-**2a Real estate** · `step2-track-realestate.mp4`
+**2a Real estate** · `step2-track-realestate.mp4` — **Done (take 121922), approved.** For 2b and 2c keep the same composition: phone on the left, glowing slot low on the right where three glass beads (blue, gold, red) come to rest; the upper-right stays dark and empty.
 ```
 Close-up of a hand scrolling a smartphone showing an elegant abstract architectural floor plan drawn in thin light lines.
 The fingertip taps three times; with each tap a small glowing particle (blue, then gold, then red) lifts off the screen

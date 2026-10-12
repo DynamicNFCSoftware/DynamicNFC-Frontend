@@ -1,4 +1,4 @@
-export default function Step2Track({ className = "" }) {
+export default function Step2Track({ className = "", signals = [], times = [] }) {
   return (
     <svg className={`fmp-svg ${className}`} viewBox="0 0 480 240" role="img" aria-hidden="true">
       <defs>
@@ -13,11 +13,11 @@ export default function Step2Track({ className = "" }) {
         <rect x="56" y="54" width="72" height="130" rx="16" fill="#fff" stroke="var(--fmp-text-muted)" strokeWidth="1.8" />
         <rect x="84" y="62" width="16" height="4" rx="2" fill="var(--fmp-text-muted)" />
         <rect x="68" y="84" width="48" height="4" rx="2" fill="var(--fmp-accent)" />
-        <text x="68" y="100" fontFamily="monospace" fontSize="8" fill="var(--fmp-text-muted)">FLOOR PLAN</text>
+        <text x="68" y="100" fontFamily="monospace" fontSize="8" fill="var(--fmp-text-muted)">{signals[0]}</text>
         <rect x="68" y="114" width="38" height="4" rx="2" fill="var(--fmp-accent)" fillOpacity="0.6" />
-        <text x="68" y="130" fontFamily="monospace" fontSize="8" fill="var(--fmp-text-muted)">BROCHURE</text>
+        <text x="68" y="130" fontFamily="monospace" fontSize="8" fill="var(--fmp-text-muted)">{signals[1]}</text>
         <rect x="68" y="144" width="44" height="4" rx="2" fill="var(--fmp-accent)" fillOpacity="0.6" />
-        <text x="68" y="160" fontFamily="monospace" fontSize="8" fill="var(--fmp-text-muted)">PAYMENT PLAN</text>
+        <text x="68" y="160" fontFamily="monospace" fontSize="8" fill="var(--fmp-text-muted)">{signals[2]}</text>
       </g>
 
       <g fill="none" strokeWidth="2.2" strokeLinecap="round">
@@ -33,11 +33,11 @@ export default function Step2Track({ className = "" }) {
         <rect x="256" y="150" width="178" height="30" rx="8" fill="rgba(0,0,0,0.02)" stroke="var(--fmp-accent)" strokeWidth="1" />
 
         <circle cx="270" cy="89" r="4" fill="var(--fmp-brand-blue)" className="fmp-svg__pulse" />
-        <text x="282" y="92" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-primary)">VIEW · 2s ago</text>
+        <text x="282" y="92" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-primary)">{signals[0]} · {times[0]}</text>
         <circle cx="270" cy="127" r="4" fill="var(--fmp-accent)" className="fmp-svg__pulse" />
-        <text x="282" y="130" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-primary)">DOWNLOAD · 14s</text>
+        <text x="282" y="130" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-primary)">{signals[1]} · {times[1]}</text>
         <circle cx="270" cy="165" r="4" fill="var(--fmp-brand-red)" className="fmp-svg__pulse" />
-        <text x="282" y="168" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-primary)">CLICK · just now</text>
+        <text x="282" y="168" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-primary)">{signals[2]} · {times[2]}</text>
       </g>
 
       <use href="#fmp-nfc-card-mark-step2" x="414" y="52" width="24" height="16" />

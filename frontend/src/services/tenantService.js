@@ -19,7 +19,7 @@ import { buildRealEstateSeed } from "./seeds/realEstateSeed";
 import { buildAutomotiveSeed } from "./seeds/automotiveSeed";
 import { buildYachtSeed } from "./seeds/yachtSeed";
 
-export const SEED_VERSION = "2.3-italy";
+export const SEED_VERSION = "2.4-na-buyers";
 const SCHEMA_VERSION = 1;
 const REGIONS = ["canada", "italy", "usa", "mexico", "gulf"];
 const LAST_ACTIVITY_THROTTLE_MS = 60 * 60 * 1000;
