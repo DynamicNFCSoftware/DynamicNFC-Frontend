@@ -1,7 +1,31 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-11 — market focus Italy → North American buyers (step 1, uncommitted). Previous: 2026-10-08 — **Step A is LIVE** (Canada anchor + 5 public languages) via PR #19 and the new CI deploy. `main` is protected. Next: Step B (Italy region). Previous header (2026-07-20) is kept in the history below.
-**Author of this update:** Claude (Cowork), 2026-10-08.
+**Last updated:** 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 shipped together in PR #26 (`feat/italy-home`). Previous: 2026-10-11 — market focus Italy → North American buyers (step 1). Older headers in the history below.
+**Author of this update:** Claude (Cowork), 2026-10-12.
+
+---
+
+## DONE 2026-10-12 — PR #26 (`feat/italy-home` → `main`): FMP video + Italy home + NA-buyers step 1
+
+- **Five-Minute Proof video:** 9 Seedance clips final in `frontend/src/components/UnifiedDashboard/FiveMinuteProof/media/` (~2.1 MB, 854×480, no audio).
+  `clips.js` map, play once + hold last frame, RTL mirrors media only, reduced-motion → poster, SVG fallback. Overlays localized (en/it/fr/es/ar),
+  audit fixes applied (fonts, relative times, IDENTIFIED pip, booking-first step 5, Arabic pipeline label). Directives:
+  `docs/directives/CURSOR_DIRECTIVE_FMP_VIDEO_INTEGRATION.md` (v2) + `CURSOR_DIRECTIVE_FMP_VIDEO_FIXES.md`. Prompts: `docs/specs/FIVE_MINUTE_PROOF_SEEDANCE_PROMPTS.md` (v2 file in Claude outputs).
+- **Home colours:** Live Demos section → light sky (`#f1f6fa → #e3eef5 → #d3e4ef`, white cards). `--grad-brand-cta` → calm deep
+  (`#5f8eae → #4f7f9f → #46758f`) for final CTA + 2 buttons; final CTA subtitle 90% white; `.teal` rules use `var(--blue)`.
+- **Italian touch (only `lang = it`):** `data-lang` on `.hp`; tricolore scroll bar + headline underline; warm terracotta/sage hero glow;
+  pill "Progettato in Canada · Ora in Italia" (`itPill` in all 4 langs — translation parity test requires it).
+- **NA-buyers step 1** (see IN FLIGHT 2026-10-11 below) went into the same PR because it shared `Home.jsx`. **Its planned Cursor audit
+  (`CURSOR_AUDIT_ITALY_NA_BUYERS_STEP1.md`) was NOT run before commit → run it now against `main`.**
+- CI broke once on translation parity (`itPill` only in `it`) → fixed; local lint 0 errors, build OK, 146 tests OK.
+
+## ▶︎ RESUME HERE 2026-10-13
+1. Confirm PR #26 merged + deploy green; check live site: Overview → Five-Minute Proof (CA·EN, IT·IT, sector switch), home in EN + IT, 375px.
+2. Run the NA-buyers step-1 audit (Cursor, read-only) → Claude reviews.
+3. Step 2 — Italy demo portal tells the NA-buyer story (decide currency: EUR only or EUR + USD/CAD estimate).
+4. B3 — demo portals in Italian (raw codes in activity feed, AI-demo Gulf fallbacks, tutorial persona per sector, AED leftovers, Italian car images).
+5. Step 3 — ~80 Gulf mentions on Enterprise / RealEstate / Developers / card builder, page by page; then CLAUDE.md §3/§12 markets update.
+6. Open (Oguzhan): lawyer review (privacy/terms, CASL, "run by our Canadian company"), native Italian review, DynamicMED Cursor rules.
 
 ---
 
