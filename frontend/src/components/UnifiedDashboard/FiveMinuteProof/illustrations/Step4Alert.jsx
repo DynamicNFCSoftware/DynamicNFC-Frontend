@@ -1,4 +1,4 @@
-export default function Step4Alert({ className = "", personaName = "" }) {
+export default function Step4Alert({ className = "", personaName = "", hotLead = "", alert = "", item = "", times = [] }) {
   return (
     <svg className={`fmp-svg ${className}`} viewBox="0 0 480 240" role="img" aria-hidden="true">
       <defs>
@@ -27,11 +27,11 @@ export default function Step4Alert({ className = "", personaName = "" }) {
         <rect x="252" y="70" width="196" height="18" rx="6" fill="var(--fmp-accent)" className="fmp-svg__pulse" />
         <path d="M260 79 C260 76 262 74 265 74 C268 74 270 76 270 79 V83 H260 Z" fill="none" stroke="#fff" strokeWidth="1.2" />
         <circle cx="265" cy="84.5" r="1.8" fill="#fff" />
-        <text x="276" y="82.5" fontFamily="monospace" fontSize="9" fontWeight="700" fill="#fff">HOT LEAD</text>
-        <text x="254" y="107" fontSize="12" fontWeight="600" fill="var(--fmp-text-primary)">{personaName || "Khalid Al-Rashid"}</text>
-        <text x="254" y="128" fontSize="10" fill="var(--fmp-text-muted)">viewed Penthouse 4B</text>
+        <text x="276" y="82.5" fontFamily="monospace" fontSize="9" fontWeight="700" fill="#fff">{hotLead}</text>
+        <text x="254" y="107" fontSize="12" fontWeight="600" fill="var(--fmp-text-primary)">{personaName}</text>
+        <text x="254" y="128" fontSize="10" fill="var(--fmp-text-muted)">{alert} · {item}</text>
         <path d="M254 134 H446" stroke="var(--fmp-accent)" strokeOpacity="0.25" />
-        <text x="438" y="145" textAnchor="end" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-muted)">2 min ago</text>
+        <text x="438" y="145" textAnchor="end" fontFamily="monospace" fontSize="9" fill="var(--fmp-text-muted)">{times[0]}</text>
       </g>
 
       <use href="#fmp-nfc-card-mark-step4" x="430" y="158" width="20" height="12" />
