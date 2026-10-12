@@ -1,10 +1,11 @@
 # CURSOR DIRECTIVE — Audit: Italy → North American buyers, step 1
 
-**Branch:** `feat/italy-na-buyers` (uncommitted working tree)   **Type:** read-only audit
+**Branch:** `main` (already merged via PR #26, merge `8a348b3a`, 2026-10-12 — audit is post-merge)   **Type:** read-only audit
+**Note:** the same PR also carried the Five-Minute Proof video and the Home colour / Italian-touch changes; audit only the 12 files below, but report anything they broke.
 **Author of the work under audit:** Claude (Cowork), 2026-10-11
 **Your role:** independent auditor. **READ-ONLY. Do not fix, refactor, reformat, commit, push or deploy.**
 Report with `docs/AUDIT_REPORT_TEMPLATE.md`. A check you did not run is NOT RUN, never PASS.
-Read `CLAUDE.md` and the top entry of `CLAUDE_HANDOFF.md` (2026-10-11) first.
+Read `CLAUDE.md` and the entries of `CLAUDE_HANDOFF.md` dated 2026-10-12 and 2026-10-11 first.
 
 ## Decision behind the work (Oguzhan, 2026-10-11)
 Visible regions are now **Canada, Italy, USA**. Mexico and Gulf are **hidden, not deleted** (data, personas, seed and
