@@ -58,6 +58,7 @@ const RealEstate = lazy(() => import("./pages/RealEstate/RealEstate"));
 const ContactSales = lazy(() => import("./pages/ContactSales/ContactSales"));
 const OrderCardPage = lazy(() => import("./pages/OrderCardPage"));
 const Automotive = lazy(() => import("./pages/Automotive/Automotive"));
+const Yacht = lazy(() => import("./pages/Yacht/Yacht"));
 
 const CreateCard = lazy(() => import("./pages/CreateCard/CreateCard"));
 const EditCard = lazy(() => import("./pages/EditCard/EditCard"));
@@ -196,6 +197,7 @@ function AnimatedRoutes() {
           <Route path="/automotive/demo/showroom" element={<P><PublicShowroom /></P>} />
           <Route path="/automotive/demo/ai" element={<P><AutoAIDemo /></P>} />
           <Route path="/automotive/dashboard" element={<Navigate to="/unified" replace />} />
+          <Route path="/yacht" element={<P><Yacht /></P>} />
           <Route path="/yacht/demo" element={<P><YachtGateway /></P>} />
           <Route path="/yacht/demo/vip" element={<P><YachtVIPPortal /></P>} />
           <Route path="/yacht/demo/showroom" element={<P><YachtShowroom /></P>} />
