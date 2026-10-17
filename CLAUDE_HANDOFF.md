@@ -1,11 +1,44 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-17 — Home page defect pass audited and green on `fix/home-audit-2026-10-16`, not yet committed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26 (`feat/italy-home`). Older headers in the history below.
+**Last updated:** 2026-10-17 — Home defect pass (PR #29) and privacy wording (PR #30) merged and deployed; `/yacht` landing page audited and green on `feat/yacht-landing`, not yet committed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26 (`feat/italy-home`). Older headers in the history below.
 **Author of this update:** Claude (Cowork), 2026-10-17.
 
 ---
 
-## DONE 2026-10-17 — Home page defect pass (branch `fix/home-audit-2026-10-16`, NOT committed)
+## IN FLIGHT 2026-10-17 — `/yacht` landing page (branch `feat/yacht-landing`, NOT committed)
+
+Yacht was the only sector without a landing page: the Home Industries card said "Yacht Solutions →"
+and dropped the visitor straight into the demo. Oguzhan chose to build the page rather than relabel
+the card, scoped as gap-filling, so it is six sections instead of `/automotive`'s twelve.
+
+- **New:** `frontend/src/pages/Yacht/{Yacht.jsx (277L), Yacht.css (265L), yachtTranslations.js (178L)}`.
+  Hero · blind spot · how it works · what you see · live demo · FAQ · closing CTA.
+- **Wiring:** `App.jsx` lazy import + `<Route path="/yacht">` before `/yacht/demo`; Home `ind4` is now
+  `nav: '/yacht', demo: '/yacht/demo'` and the footer Yacht link points at `/yacht`.
+- **Deliberate choices:** CSS scope `.yc-page`, prefix `yc-` (new namespace, **not yet in CLAUDE.md §10**);
+  no Arabic set (the language is hidden from the public site, so it would be dead weight); no
+  `useRegion` / `useSector` / persona names / currency; the only number on the page is "90 days";
+  brand terms (`VIP Access Key`, `Private Buyer Experience`, `Premium Box`) stay English in all four
+  languages per §1.
+- **Audit (Claude):** all 49 keys in en/it/fr/es compared character-for-character against
+  `docs/directives/CURSOR_DIRECTIVE_YACHT_LANDING_2026_10_17.md` §5 — one drift found and fixed:
+  Spanish `step3d` had the Italian spelling "la flotta" instead of "la flota". Every CSS selector is
+  `yc-` scoped; no forbidden hook, import, console.log or `href="#"`; it/fr/es key sets identical.
+  `App.jsx` and `Home.jsx` diffs are minimal and exactly as directed.
+- Cursor verified lint 0 errors, 147 tests (the new file adds one parity check), build 19.9s.
+
+## DONE 2026-10-17 — Privacy FAQ wording, lawyer-approved (PR #30, merged)
+
+`faq2a` in five languages. The page no longer says only "data is stored in Canada (Montréal)": that
+describes demo data, and a live deployment stores data in the region where it is used, under local
+law. Lawyer also signed off on the Italy section's "run by our Canadian company" wording and CASL.
+
+**⚠ Open engineering commitment created by this sentence:** there is one Firestore instance and it
+is in `northamerica-northeast1` (Montréal). The first live EU client — Italy is the active pitch, so
+GDPR applies — needs an EU database, or the sentence stops being true. Not a problem today because
+there is no live client; it becomes a blocker the day a pilot signs.
+
+## DONE 2026-10-17 — Home page defect pass (PR #29, merged, deployed)
 
 Claude audited the live Home copy, wrote `docs/directives/CURSOR_DIRECTIVE_HOME_AUDIT_2026_10_16.md`
 (6 steps), Cursor implemented, Claude audited the diff line by line. **Diff matches the directive

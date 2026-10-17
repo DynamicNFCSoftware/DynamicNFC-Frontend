@@ -838,7 +838,7 @@ export default function Home() {
         {[
           { k: 'ind1', icon: ICONS.building, c: 'blue', nav: '/developers', demo: '/enterprise/crmdemo' },
           { k: 'ind3', icon: ICONS.car, c: 'red', nav: '/automotive', demo: '/automotive/demo' },
-          { k: 'ind4', icon: ICONS.anchor, c: 'teal', nav: '/yacht/demo' },
+          { k: 'ind4', icon: ICONS.anchor, c: 'teal', nav: '/yacht', demo: '/yacht/demo' },
           { k: 'ind2', icon: ICONS.card, c: 'gold', nav: '/nfc-cards', wide: true },
         ].map((ind, i) => (
           <div
@@ -959,7 +959,7 @@ export default function Home() {
               <h5>{t('footIndustries')}</h5>
               <Link to="/developers">{t('footDev')}</Link>
               <Link to="/automotive">{t('footAutomotive')}</Link>
-              <Link to="/yacht/demo">{t('ind4t')}</Link>
+              <Link to="/yacht">{t('ind4t')}</Link>
               <Link to="/nfc-cards">{t('footNfcCards')}</Link>
             </div>
             <div className="hp-footer-col">
