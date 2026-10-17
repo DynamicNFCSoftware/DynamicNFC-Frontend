@@ -225,8 +225,8 @@ EmailCapture:     300s (5 minutes) — hidden on demo URLs
 
 ### ⚠️ Firebase Deployment Notes
 - **Cross-region deployment:** Firestore in `northamerica-northeast1` + Functions in `us-central1` = egress cost + latency on every tap/read/write. Works fine at current scale; flag as **future optimization** (migrate functions to `northamerica-northeast1` when traffic scales).
-- **Point-in-Time Recovery: DISABLED** — no automatic backup window. Consider enabling before onboarding first paying client.
-- **Delete Protection: DISABLED** — Firestore database can be accidentally deleted. Enable via `gcloud firestore databases update` before production traffic.
+- **Point-in-Time Recovery: ENABLED** — 7-day window (`versionRetentionPeriod: 604800s`). Verified 2026-10-17.
+- **Delete Protection: ENABLED** — verified 2026-10-17 via `gcloud firestore databases describe`.
 - **Realtime updates:** ENABLED. Listeners work normally.
 
 ### Google Wallet
@@ -678,8 +678,8 @@ Real Estate, Automotive, and Yacht all must work in all five regions (Canada, It
 - **Tenant Mode implementation** — `TENANT_MODE_DIRECTIVE.md` ready for Cursor execution (Firestore rules, `useTenantData` hook, `TenantContext`, `tenantCleanup` Cloud Function for 22-day retention)
 
 ### Firebase Hardening
-- Enable Firestore **Delete Protection** before first paying client
-- Enable **Point-in-Time Recovery** for backup window
+- ✅ **Firestore Delete Protection** — DONE, verified enabled 2026-10-17
+- ✅ **Point-in-Time Recovery** — DONE, 7-day window, verified 2026-10-17
 - Plan Functions region migration to `northamerica-northeast1` to eliminate cross-region latency + egress
 
 ### Technical Debt (prioritized)
