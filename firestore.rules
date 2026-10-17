@@ -22,10 +22,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Tap logs — public create with validation, admin-only read
+    // Tap logs — public create (shape-capped), admin-only read.
+    // Cap exists because aggregateTaps fires onCreate: every doc costs a
+    // write + a function invocation. CardRedirect.jsx sends 7 fields; 25 is headroom.
     match /taps/{tapId} {
       allow read: if isAdmin();
-      allow create: if true;
+      allow create: if request.resource.data.keys().size() <= 25;
       allow update, delete: if false;
     }
 
@@ -45,9 +47,11 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Behavioral events — public create with validation, admin-only read
+    // Behavioral events — public create (shape-capped), admin-only read.
+    // firestoreTracking.js writes 16 fields, portalFirestoreBridge.js ~17.
+    // No per-field check: the bridge spreads {...ev}, shape varies by portal.
     match /behaviors/{behaviorId} {
-      allow create: if true;
+      allow create: if request.resource.data.keys().size() <= 30;
       allow read: if isAdmin();
       allow update, delete: if false;
     }
