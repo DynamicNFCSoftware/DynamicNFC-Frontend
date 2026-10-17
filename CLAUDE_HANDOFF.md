@@ -1,7 +1,58 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 shipped together in PR #26 (`feat/italy-home`). Previous: 2026-10-11 — market focus Italy → North American buyers (step 1). Older headers in the history below.
-**Author of this update:** Claude (Cowork), 2026-10-12.
+**Last updated:** 2026-10-17 — Home page defect pass audited and green on `fix/home-audit-2026-10-16`, not yet committed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26 (`feat/italy-home`). Older headers in the history below.
+**Author of this update:** Claude (Cowork), 2026-10-17.
+
+---
+
+## DONE 2026-10-17 — Home page defect pass (branch `fix/home-audit-2026-10-16`, NOT committed)
+
+Claude audited the live Home copy, wrote `docs/directives/CURSOR_DIRECTIVE_HOME_AUDIT_2026_10_16.md`
+(6 steps), Cursor implemented, Claude audited the diff line by line. **Diff matches the directive
+exactly, nothing out of scope.** Three files: `frontend/src/pages/Home/Home.jsx`,
+`frontend/src/pages/Home/homeTranslations.js`, `frontend/index.html`.
+
+- **Dead + duplicated Industries links.** `ind2` (Enterprise NFC Cards) carried no `demo` key, so
+  `<Link to={undefined}>` resolved to the current URL; `ind4` (Yacht) had `nav` and `demo` both
+  `/yacht/demo`, two CTAs to one place. Fixed with one `{ind.demo && (...)}` conditional plus
+  dropping `demo` from `ind4` — no per-card variant.
+- **"Six platforms" → "Four platforms"** in all 5 languages. The pipeline renders 4 cards (Canva,
+  Gmail, Calendar, DocuSign). Note: `aiTitle` / `aiSub` are **not rendered anywhere** — this was a
+  false claim sitting in the files, not a live defect.
+- **`cardCta` de-gendered.** EN said "when he taps", FR "lorsqu'il"; personas carry a `gender` field
+  and several are female, so it was wrong by construction. Now "after the tap" / "après le tap". The
+  Arabic string's hardcoded خالد became `{name}`.
+- **Privacy FAQ no longer asserts legal compliance.** "Is this compliant with privacy laws? / Yes."
+  → "How do you handle privacy and consent?" + mechanism, reusing the PIPEDA wording already live in
+  the `ca2d` card. 5 languages. **Still needs lawyer sign-off.**
+- **Localized `<title>` + `<meta name="description">`.** Home shipped hardcoded English to it/fr/es.
+  New `seoTitle` / `seoDesc` keys in en/it/fr/es (Arabic falls back to en by design).
+- **Duplicate description tag fixed.** `frontend/index.html` line 13 held a static description and
+  Helmet added a second one, so crawlers read the static English. Added `data-rh="true"` to the
+  static tag — `react-helmet-async@3.0.0` marks the tags it owns with that attribute, so it now
+  replaces instead of duplicating. The no-JS fallback stays in the raw HTML.
+
+**Verified:** lint 0 errors (95 pre-existing warnings, none in these files), 146 tests pass,
+build OK, `Home.jsx` 977 lines with clean closing, description count 1 in all four languages and
+changing per language, 375 px no overflow.
+
+**Open decisions (Oguzhan):**
+1. Lawyer review of the new privacy wording, and of "run by our Canadian company" in the Italy section.
+2. Yacht Industries card opens the demo because `/yacht` does not exist, while its CTA reads "Yacht
+   Solutions →" — relabel the CTA, or build the `/yacht` landing page.
+3. Unrendered Home copy still in the files, render or delete: `stat1v`–`stat4ctx` (the Named /
+   Intent / Real-Time / Zero strip), `testimonialLabel` + `testimonialQuote`, `demoCta`,
+   `footEnterprise`, `footRe`, `heroLine3`, `aiTitle` + `aiSub`.
+4. Italian copy pass — `badge` ('Sales Velocity Engine'), `trust1` ('Made in Canada'), `footRe`
+   ('Real Estate'), plus Premium Box / Sales Intelligence / Test Drive / Charter / Lead Capture /
+   Analytics / Powered by / Privacy by design, and "card" used where "tessera" belongs. The hero
+   sub-sentence reads as a literal translation in it and fr.
+
+**`CLAUDE.md` drift found while auditing (not edited):** §6 lists the Yacht demo routes as PLANNED,
+but `/yacht/demo`, `/yacht/demo/vip`, `/yacht/demo/showroom` and `/yacht/demo/ai` are live in
+`App.jsx`. §10 still describes Arabic in the public Navbar dropdown — `SUPPORTED_LANGS` in
+`i18n/LanguageContext.jsx` is `['en','it','fr','es']` and a stored `ar` value is rejected, so Arabic
+is unreachable and its stale Gulf strings are dormant, not live bugs.
 
 ---
 
