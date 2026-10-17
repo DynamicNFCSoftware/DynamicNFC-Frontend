@@ -26,7 +26,7 @@ const TR = {
     heroLine3: '',
     heroSub: 'NFC cards that show you exactly who your buyers are',
     heroSubWords: ['name', 'interest', 'intent'],
-    cardCta: 'See what {name} sees when he taps →',
+    cardCta: 'See what {name} sees after the tap →',
     cardHint: 'This is your VIP Access Key',
 
     /* Stats */
@@ -100,8 +100,8 @@ const TR = {
     faqTitle: 'FAQ',
     faq1q: 'Is this replacing our CRM?',
     faq1a: 'No. DynamicNFC sits on top of your existing CRM and enhances it with behavioral intelligence from VIP portals.',
-    faq2q: 'Is this compliant with privacy laws?',
-    faq2a: 'Yes. The physical NFC tap is the ultimate opt-in. Consent is explicit, invitations are intentional, and access is controlled.',
+    faq2q: 'How do you handle privacy and consent?',
+    faq2a: 'The physical NFC tap is the opt-in: consent is explicit, invitations are intentional, and access is controlled. The product is designed around PIPEDA principles and customer data is stored in Canada (Montréal).',
     faq3q: 'What\'s the pilot success metric?',
     faq3a: 'Increase in booked viewings among VIP invitees versus the control group. We measure decision speed, not just clicks.',
     faq4q: 'Do buyers need an app?',
@@ -121,8 +121,8 @@ const TR = {
 
     /* AI Section */
     aiBadge: 'WHAT FIRES AFTER THE TAP',
-    aiTitle: 'Six platforms. Zero manual work.',
-    aiSub: 'A VIP taps their NFC card. In under a minute, these six things happen without anyone lifting a finger.',
+    aiTitle: 'Four platforms. Zero manual work.',
+    aiSub: 'A VIP taps their NFC card. In under a minute, these four things happen without anyone lifting a finger.',
     aiCard1t: 'Canva', aiCard1d: 'A 7-page investment proposal gets designed on the spot — his name, his unit, ROI numbers, floor plans.',
     aiCard1ex: 'Your brand, the buyer\'s language, exported as PDF.',
     aiCard2t: 'Gmail', aiCard2d: 'The proposal gets attached to a personal invite email and lands in {name}\'s inbox automatically.',
@@ -163,7 +163,7 @@ const TR = {
     heroLine1: 'مشتريك القادم', heroLine2: 'لديه اسم بالفعل.', heroLine3: '',
     heroSub: 'بطاقات NFC تُظهر لك بالضبط من هم مشتروك',
     heroSubWords: ['الاسم', 'الاهتمام', 'النية'],
-    cardCta: 'شاهد ما يراه خالد عندما ينقر →', cardHint: 'هذا هو مفتاح وصول كبار الشخصيات',
+    cardCta: 'شاهد ما يراه {name} بعد النقر →', cardHint: 'هذا هو مفتاح وصول كبار الشخصيات',
 
     stat1v: 'زوار', stat1l: 'معرّفون', stat1ctx: 'كل نقرة مرتبطة بشخص حقيقي',
     stat2v: 'تقييم', stat2l: 'النية', stat2ctx: 'اعرف من مستعد للشراء، ليس فقط التصفح',
@@ -218,7 +218,8 @@ const TR = {
 
     faqTitle: 'الأسئلة الشائعة',
     faq1q: "هل هذا يحل محل إدارة علاقات العملاء؟", faq1a: "لا. DynamicNFC تعمل على تعزيز إدارة علاقات العملاء بالذكاء السلوكي من بوابات VIP.",
-    faq2q: "هل هذا متوافق مع قوانين الخصوصية؟", faq2a: "نعم. النقر الفعلي على بطاقة NFC هو الموافقة المطلقة.",
+    faq2q: 'كيف تتعاملون مع الخصوصية والموافقة؟',
+    faq2a: 'النقر الفعلي على بطاقة NFC هو الموافقة: موافقة صريحة، دعوات مقصودة، ووصول مضبوط. المنتج مصمَّم وفق مبادئ PIPEDA وتُخزَّن بيانات العملاء في كندا (مونتريال).',
     faq3q: "ما هو مقياس نجاح التجربة؟", faq3a: "زيادة في عدد الزيارات المحجوزة بين المدعوين من VIP مقارنة بالمجموعة الضابطة.",
     faq4q: "هل يحتاج المشترون لتطبيق؟", faq4a: "لا. النقر أو مسح QR يفتح البوابة مباشرة في متصفح الهاتف.",
     faq5q: "ما مدة التجربة؟", faq5a: "90 يوماً من تسليم صندوق VIP. يشمل إعداد البوابة وإنتاج البطاقات ومراجعة كاملة للأداء.",
@@ -229,8 +230,8 @@ const TR = {
     faq10q: 'ما المواد المتاحة للبطاقات؟', faq10a: 'PVC، معدن فاخر، ذهب 24 قيراط، بامبو، وألياف كربون. جميعها مزودة بـ NFC مع ترميز وعلامة تجارية مخصصة.',
 
     aiBadge: 'ماذا يحدث بعد النقرة',
-    aiTitle: 'ست منصات. بلا أي عمل يدوي.',
-    aiSub: 'عميل VIP ينقر بطاقة NFC. خلال أقل من دقيقة، هذه الأشياء الستة تحدث بدون أن يرفع أحد إصبعه.',
+    aiTitle: 'أربع منصات. بلا أي عمل يدوي.',
+    aiSub: 'عميل VIP ينقر بطاقة NFC. خلال أقل من دقيقة، هذه الأشياء الأربعة تحدث بدون أن يرفع أحد إصبعه.',
     aiCard1t: 'Canva', aiCard1d: 'عرض استثماري من 7 صفحات يُصمَّم فوراً — اسمه، وحدته، أرقام العائد، والمخططات.',
     aiCard1ex: 'تصميم فاخر خليجي، ثنائي اللغة، يُصدَّر كـ PDF.',
     aiCard2t: 'Gmail', aiCard2d: 'العرض يُرفق ببريد دعوة شخصي ويصل إلى بريد خالد تلقائياً.',
@@ -837,7 +838,7 @@ export default function Home() {
         {[
           { k: 'ind1', icon: ICONS.building, c: 'blue', nav: '/developers', demo: '/enterprise/crmdemo' },
           { k: 'ind3', icon: ICONS.car, c: 'red', nav: '/automotive', demo: '/automotive/demo' },
-          { k: 'ind4', icon: ICONS.anchor, c: 'teal', nav: '/yacht/demo', demo: '/yacht/demo' },
+          { k: 'ind4', icon: ICONS.anchor, c: 'teal', nav: '/yacht/demo' },
           { k: 'ind2', icon: ICONS.card, c: 'gold', nav: '/nfc-cards', wide: true },
         ].map((ind, i) => (
           <div
@@ -856,13 +857,11 @@ export default function Home() {
             </div>
             <div className="hp-ind-cta-row">
               <span className="hp-ind-cta">{t(ind.k + 'cta')}</span>
-              <Link
-                to={ind.demo}
-                className="hp-ind-demo-link"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {t('indDemoLink')}
-              </Link>
+              {ind.demo && (
+                <Link to={ind.demo} className="hp-ind-demo-link" onClick={(e) => e.stopPropagation()}>
+                  {t('indDemoLink')}
+                </Link>
+              )}
             </div>
           </div>
         ))}
@@ -918,7 +917,7 @@ export default function Home() {
 
   return (
     <div className="hp" dir={isRTL ? 'rtl' : 'ltr'} data-lang={lang}>
-      <SEO title="Home" description="DynamicNFC — Turn anonymous traffic into named buyers with NFC-powered private portals." path="/" />
+      <SEO title={t('seoTitle')} description={t('seoDesc')} path="/" />
       <div className="hp-scroll-progress" style={{ width: `${scrollPct}%` }} />
       <div className="hp-particles" aria-hidden="true">
         {bgParticles.map((p, i) => <div key={i} className="hp-particle" style={p} />)}

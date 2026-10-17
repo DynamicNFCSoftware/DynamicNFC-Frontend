@@ -35,5 +35,7 @@
    Do instead: add every new public string in en/it/fr/es/ar (sibling `*Translations.js`). Dashboard Italian lives in the portal dictionaries. Demo portals are still the open language gap.
 
 ## User Directives
-1. **[2026-04-24] Preserve existing dirty worktree changes**
+1. **[2026-10-16] Public pages are rewritten with Oguzhan, one page at a time**
+   Do instead: review the live copy first, wait for his brief, then edit that page in en/it/fr/es together. Arabic stays in the files but is hidden from the public menu.
+2. **[2026-04-24] Preserve existing dirty worktree changes**
    Do instead: implement targeted edits only and never revert unrelated modifications.
