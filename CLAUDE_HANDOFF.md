@@ -1,11 +1,69 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-17 — Home defect pass (PR #29) and privacy wording (PR #30) merged and deployed; `/yacht` landing page audited and green on `feat/yacht-landing`, not yet committed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26 (`feat/italy-home`). Older headers in the history below.
+**Last updated:** 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
 **Author of this update:** Claude (Cowork), 2026-10-17.
 
 ---
 
-## IN FLIGHT 2026-10-17 — `/yacht` landing page (branch `feat/yacht-landing`, NOT committed)
+## IN FLIGHT 2026-10-17 — Product front door + sales-led pricing (2 directives written, NOT executed)
+
+Claude extracted the full route map (`docs/SITEMAP_2026_10_17.md`, 54 routes from `App.jsx`) and found a
+positioning defect in the authenticated navigation.
+
+**The defect:** every authenticated path leads to the free digital business card, none to the product.
+`Login.jsx:198,207,240` — all three auth flows `navigate('/dashboard')`. `Navbar.jsx:105,173` — two
+"My Card" links, zero `/unified` links in either auth state. `CardDashboard.jsx` — no outbound link to
+`/unified`. The only doors to the Sales Velocity Engine are the featured 4th cards on three **public
+demo gateways** (`CRMGateway.jsx:274`, `AutoGateway.jsx:135`, `YachtGateway.jsx:172`), so a paying
+client must leave the app and walk through a sales demo to reach their own dashboard.
+
+**Oguzhan's decisions, 2026-10-17:**
+1. Free-card seekers are **not a customer segment**. The card is an included extra, not the main idea.
+   → no plan-tier branching anywhere; everyone lands on `/unified`.
+2. `CardDashboard` is **restyled** into the `ud-` design system, not ported as-is.
+3. **Yacht ships first** — both directives below are cut from `main` after `feat/yacht-landing` merges.
+4. Pricing goes **sales-led**: Starter removed, Pro + Enterprise only, card listed as *included*.
+
+**Directives ready for Cursor (neither executed):**
+- `docs/directives/CURSOR_DIRECTIVE_PRODUCT_FRONT_DOOR_2026_10_17.md` — branch `feat/product-front-door`.
+  Login → `/unified`; `/dashboard` → `Navigate` to `/unified/my-card`; new `MyCardTab.jsx` + `MyCardTab.css`
+  (prefix `udmc-`); Navbar gets one Dashboard link; `pages/CardDashboard/` deleted.
+- `docs/directives/CURSOR_DIRECTIVE_PRICING_SALES_LED_2026_10_17.md` — branch `feat/pricing-sales-led`.
+  Independent, no shared files. EN copy is canonical and written in the directive.
+
+**Findings worth keeping:**
+- `useDashboardData.js:182-189` auto-seeds a new tenant on first `/unified` load, so no account ever
+  sees an empty dashboard. This is what makes a single landing page safe.
+- ⚠ `UnifiedLayout.jsx` `TAB_GROUPS` indexes into `TABS` **by position** (`startIdx`/`endIdx`).
+  Inserting a tab anywhere but the end silently regroups the sidebar. New tab goes at index 8,
+  `system` group widens to `endIdx: 9`.
+- `CardDashboard.jsx` hardcodes 5 English strings (`"Delete this card?"`, `"My Cards"`,
+  `"Check out my digital business card"`, `"Copy this link:"`, `"Delete failed."`) — a live
+  quality-checklist violation, fixed by the restyle.
+- `CardDashboard` reads top-level `cards` (`where userId == uid`), **not** `tenants/{uid}/cards`.
+  Deliberately NOT migrated in that PR — would risk printed QR codes.
+- `UnifiedLayout.jsx` is **1063L**, not ~750L as `CLAUDE.md` §6 says.
+- Nothing in the app links to `/pricing` — only the route and an `EmailCapture` exclusion.
+- `Pricing.jsx` hardcodes `stroke="#4ecdc4"` on feature checkmarks; that teal is not in the brand palette.
+
+**Ownership + verification (2026-10-17, later):** two Claude sessions were writing to this working tree
+at once (this file, the site map and both directives came from a parallel session). Oguzhan handed the
+tree to one session; the other stays read-only. Rule from here: **one session owns the working tree at a
+time**, and anything the other learns goes into this file.
+The owning session re-checked the front-door directive against `main` 06679bd9: every anchor holds
+(`/dashboard` route, `Navigate` import, `TAB_GROUPS` consumed as `slice(startIdx, endIdx + 1)` so `endIdx` is
+inclusive, `ProtectedRoute` is auth-only with no admin gate, auto-seed in `useDashboardData`). Added §2b:
+13 other `/dashboard` references (`CreateCard` ×3, `EditCard` ×4, `Card` ×1, `Onboarding` ×5) are left
+alone because the redirect covers them, and `WhatsAppButton` hides on `/dashboard` but not on
+`/unified/my-card` — QA line 11 reports it. Pricing directive **not yet re-verified**; do that before it runs.
+
+**Open (Oguzhan):** does self-serve registration stay in `Login.jsx`? The pricing directive deliberately
+does not touch it — it only stops `/pricing` from routing there. And: should `/pricing` be linked from
+the Home footer, or stay unlinked?
+
+---
+
+## DONE 2026-10-17 — `/yacht` landing page (PR #31, merged)
 
 Yacht was the only sector without a landing page: the Home Industries card said "Yacht Solutions →"
 and dropped the visitor straight into the demo. Oguzhan chose to build the page rather than relabel
