@@ -1,11 +1,81 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
+**Last updated:** 2026-10-18 — follow-up audit on `feat/product-front-door`: 2 non-blocking fixes found, branch still uncommitted. Previous: 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
 **Author of this update:** Claude (Cowork), 2026-10-17.
 
 ---
 
-## IN FLIGHT 2026-10-17 — Product front door + sales-led pricing (2 directives written, NOT executed)
+## DONE 2026-10-17 — Product front door (branch `feat/product-front-door`; Claude audit PASS, logged-in QA by Oguzhan before merge)
+
+**Final shape — differs from the original directive.** Cursor first built the business card as a tab
+inside the Unified shell (`/unified/my-card`). Oguzhan saw it in the browser and rejected it: the shell's
+sector switcher, demo company, "Dealer Intelligence Center", region, Live/Demo, Readable and Export PDF
+mean nothing on a business card. Amendment directive:
+`docs/directives/CURSOR_DIRECTIVE_MY_CARD_STANDALONE_2026_10_17.md`.
+
+- **Login → `/unified`** (all three auth paths in `Login.jsx`). Site Navbar, logged in: one Dashboard link.
+- **Business card = standalone page `/my-card`** (`pages/MyCard/`, prefix `mc-`), under the normal site
+  Navbar, with "← Back to Dashboard" + title. Own token block on `.mc-page` from the brand palette; light
+  only; no `ud-` classes, no import of `UnifiedLayout.css`.
+- **`/dashboard` → `Navigate` to `/my-card`**, so the 13 internal links (`CreateCard`, `EditCard`, `Card`,
+  `Onboarding`) and bookmarks keep working untouched. `pages/CardDashboard/` deleted.
+- **Unified sidebar** keeps "My Business Card" under System (Oguzhan chose this over hiding it); its path is
+  absolute `/my-card`, so it leaves the shell. `TAB_GROUPS.system` is `{ startIdx: 8, endIdx: 9 }`.
+- **Latent bug fixed:** `.ud-nav { flex: 1; min-height: 0 }` let the tab list shrink below its content, so
+  the 10th tab painted over "Portal links". Now `flex: 1 0 auto`; the sidebar scrolls instead.
+- **Avatar fix:** the card info block is positioned with `z-index: 1`; the positioned cover used to paint
+  over the top of the avatar.
+- `WhatsAppButton` hides on `/my-card` as it did on `/dashboard`.
+- Claude audit: PASS. Cursor verified lint 0 errors, 147 tests, build, and the logged-out redirects.
+
+## FOLLOW-UP AUDIT 2026-10-18 — two items the first audit missed, BOTH NOW APPLIED (branch still uncommitted)
+
+Re-audited the `feat/product-front-door` working tree against the files, not the report. Everything in
+the DONE entry above holds: hex confined to the `.mc-page` token block and all five are real brand values
+(`--mc-accent: #457b9d`, not the `#365f8a` drift) · zero physical `left`/`right` · zero `console.log` ·
+no `MyCardTab` / `udmc-` / `CardDashboard` leftovers · `TAB_GROUPS` regrouping correct, Intelligence and
+Operations untouched · `ui = {...UI.en, ...UI[lang]}` cannot crash on key drift · EmailCapture's allow-list
+excludes `/my-card` · Breadcrumb returns null on a one-segment path, so no raw "My card" crumb.
+
+**1. APPLIED — the WhatsApp hide went into the wrong file.** `navigation/shellVisibility.js` opens with "Single
+source for which routes hide global chrome — update here once" and `App.jsx:140` gates on its
+`shouldHideWhatsApp()`. That function does **not** list `/my-card`. The edit went into
+`WhatsAppButton.jsx`'s own duplicate `hidePaths` array instead. Behaviour is right (both gates run, the
+inner one hides it) but the declared single source now contradicts actual behaviour. Fix: add `/my-card`
+to `shouldHideWhatsApp` and revert `WhatsAppButton.jsx` — same line count, correct file. The duplication
+itself is pre-existing: `/dashboard`, `/edit-card`, `/card`, `/create-card` sit in the component and not
+in shellVisibility. Collapsing the two lists is a separate cleanup.
+   *Applied by Claude 2026-10-18:* `shouldHideWhatsApp` now ends `|| pathname === '/my-card'` (comment
+   updated to match); `WhatsAppButton.jsx` reverted to HEAD and no longer appears in `git status`.
+   Net effect on behaviour: none — the outer gate in `App.jsx:140` now returns null on `/my-card`
+   instead of the component's inner gate doing it.
+
+**2. APPLIED — `MyCard.jsx` carried a dead Arabic block.** `SUPPORTED_LANGS` in `i18n/LanguageContext.jsx`
+is `["en","it","fr","es"]`, so `lang` is never `"ar"` and `UI.ar` is unreachable. `/my-card` is a
+public-Navbar page, so the Yacht landing precedent from the day before applies — "no Arabic set, the
+language is hidden from the public site, so it would be dead weight". Delete it, or keep it on purpose
+for the day Arabic returns.
+   *Applied by Claude 2026-10-18:* the `ar` block is gone (`MyCard.jsx` 422L → 389L) and so is the
+   `[dir="rtl"] .mc-title` Noto Kufi rule it existed for (`MyCard.css` 368L → 365L). `MyCard.jsx` now
+   holds en/it/fr/es only, matching `SUPPORTED_LANGS`. `ui = {...UI.en, ...(UI[lang] || {})}` is
+   unchanged, so an unknown `lang` still falls back to English rather than throwing.
+
+**Note, no action needed:** the new `TABS` entry uses an absolute `path: "/my-card"` while every sibling
+is a segment relative to `/unified`. `to={tab.path || "."}` handles it, but a future
+`TABS.find(t => pathname === "/unified/" + t.path)` would silently build `/unified//my-card`. One inline
+comment on the entry would prevent that.
+
+**Verification of the two fixes.** `node --check` passes on `shellVisibility.js`; `MyCard.jsx` braces
+balance (148/148) and the file closes cleanly. **lint / test / build were NOT re-run after the fixes** —
+`npm run build` cannot run from the Linux side of the Cowork bridge because `node_modules/rollup` holds
+the Windows native binary, and reinstalling would have rewritten Oguzhan's working `node_modules`.
+**Oguzhan runs `npm run lint`, `npm test`, `npm run build` in PowerShell before committing**, plus the
+logged-in browser QA (sidebar "My Business Card" → `/my-card` → "← Back to Dashboard" → `/unified`, and
+no WhatsApp bubble on `/my-card`).
+
+---
+
+## QUEUED 2026-10-17 — Sales-led pricing (directive written, NOT executed)
 
 Claude extracted the full route map (`docs/SITEMAP_2026_10_17.md`, 54 routes from `App.jsx`) and found a
 positioning defect in the authenticated navigation.

@@ -277,8 +277,7 @@
 
 
 .ud-nav {
-  flex: 1;
-  min-height: 0;
+  flex: 1 0 auto; /* never shrink below the tab list — overflow scrolls the sidebar instead */
   padding: 0 6px;
   display: flex;
   flex-direction: column;

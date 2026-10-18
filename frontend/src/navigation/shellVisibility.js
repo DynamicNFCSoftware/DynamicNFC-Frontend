@@ -31,7 +31,7 @@ export function shouldHideCookieBanner(pathname) {
   return pathname.startsWith('/card') || pathname.startsWith('/c/');
 }
 
-/** WhatsApp FAB: skip login + admin */
+/** WhatsApp FAB: skip login + admin + the standalone card page */
 export function shouldHideWhatsApp(pathname) {
-  return pathname === '/login' || isAdminPath(pathname) || pathname.startsWith('/unified');
+  return pathname === '/login' || isAdminPath(pathname) || pathname.startsWith('/unified') || pathname === '/my-card';
 }

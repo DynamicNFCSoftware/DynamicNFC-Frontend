@@ -60,9 +60,9 @@ const OrderCardPage = lazy(() => import("./pages/OrderCardPage"));
 const Automotive = lazy(() => import("./pages/Automotive/Automotive"));
 const Yacht = lazy(() => import("./pages/Yacht/Yacht"));
 
+const MyCard = lazy(() => import("./pages/MyCard/MyCard"));
 const CreateCard = lazy(() => import("./pages/CreateCard/CreateCard"));
 const EditCard = lazy(() => import("./pages/EditCard/EditCard"));
-const CardDashboard = lazy(() => import("./pages/CardDashboard/CardDashboard"));
 const CreatePhysicalCard = lazy(() => import("./pages/CreatePhysicalCard/CreatePhysicalCard"));
 const Card = lazy(() => import("./pages/Card/Card"));
 const LoginPortal = lazy(() => import("./pages/LoginPortal/LoginPortal"));
@@ -209,9 +209,10 @@ function AnimatedRoutes() {
           <Route path="/create-card" element={
             <ProtectedRoute><P><CreateCard /></P></ProtectedRoute>
           } />
-          <Route path="/dashboard" element={
-            <ProtectedRoute><P><CardDashboard /></P></ProtectedRoute>
+          <Route path="/my-card" element={
+            <ProtectedRoute><P><MyCard /></P></ProtectedRoute>
           } />
+          <Route path="/dashboard" element={<Navigate to="/my-card" replace />} />
           <Route path="/edit-card" element={
             <ProtectedRoute><P><EditCard /></P></ProtectedRoute>
           } />
