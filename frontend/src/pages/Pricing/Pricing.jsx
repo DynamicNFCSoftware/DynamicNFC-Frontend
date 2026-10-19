@@ -1,21 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
 import SEO from '../../components/SEO/SEO';
 import { PRICING_TR as TR } from './pricingTranslations';
 import './Pricing.css';
 
-/* Plan text (desc, features, cta, badge) lives in pricingTranslations.js under plans[id]. */
+/* Plan names and CTA targets live here; plan text lives in pricingTranslations.js. */
 const PLANS = [
-  { id: 'starter', name: 'Starter', price: { monthly: 0, annual: 0 }, ctaPath: '/login', highlight: false },
-  { id: 'pro', name: 'Pro', price: { monthly: 19, annual: 15 }, ctaPath: '/login', highlight: true },
-  { id: 'enterprise', name: 'Enterprise', price: { monthly: null, annual: null }, ctaPath: '/contact-sales', highlight: false },
+  { id: 'pro', name: 'Pro', ctaPath: '/contact-sales', highlight: false },
+  { id: 'enterprise', name: 'Enterprise', ctaPath: '/contact-sales', highlight: true },
 ];
 
 export default function Pricing() {
   const navigate = useNavigate();
   const { lang } = useLanguage();
-  const [annual, setAnnual] = useState(true);
   const t = (k) => TR[lang]?.[k] ?? TR.en[k] ?? k;
   const plansText = t('plans');
 
@@ -29,14 +27,6 @@ export default function Pricing() {
       <section className="pr-hero">
         <h1 className="pr-title">{t('title')}</h1>
         <p className="pr-subtitle">{t('subtitle')}</p>
-
-        <div className="pr-toggle">
-          <span className={!annual ? 'active' : ''}>{t('monthly')}</span>
-          <button className="pr-toggle-btn" onClick={() => setAnnual(!annual)}>
-            <div className={`pr-toggle-dot${annual ? ' right' : ''}`} />
-          </button>
-          <span className={annual ? 'active' : ''}>{t('annual')} <em>{t('save')}</em></span>
-        </div>
       </section>
 
       <section className="pr-plans">
@@ -45,18 +35,12 @@ export default function Pricing() {
             {plansText[plan.id].badge && <div className="pr-badge">{plansText[plan.id].badge}</div>}
             <h2 className="pr-plan-name">{plan.name}</h2>
             <div className="pr-price">
-              {plan.price.monthly === null ? (
-                <span className="pr-price-custom">{t('custom')}</span>
-              ) : plan.price.monthly === 0 ? (
-                <><span className="pr-price-amount">$0</span><span className="pr-price-period">{t('forever')}</span></>
-              ) : (
-                <><span className="pr-price-amount">${annual ? plan.price.annual : plan.price.monthly}</span><span className="pr-price-period">{t('perMonth')}</span></>
-              )}
+              <span className="pr-price-custom">{t('custom')}</span>
             </div>
             <p className="pr-plan-desc">{plansText[plan.id].desc}</p>
             <ul className="pr-features">
               {plansText[plan.id].features.map((f, i) => (
-                <li key={i}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{f}</li>
+                <li key={i}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{f}</li>
               ))}
             </ul>
             <button className={`pr-cta${plan.highlight ? ' pr-cta-primary' : ''}`} onClick={() => navigate(plan.ctaPath)}>
