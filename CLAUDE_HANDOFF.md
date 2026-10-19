@@ -1,6 +1,6 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-18 — follow-up audit on `feat/product-front-door`: 2 non-blocking fixes found, branch still uncommitted. Previous: 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
+**Last updated:** 2026-10-19 — pricing directive revised with Oguzhan's two decisions (signup stays open; footer link + no public prices), ready for Cursor. Front door committed as `6007ed8e` on `feat/product-front-door`, not pushed, lint/test/build not yet re-run after the last two fixes. Previous: 2026-10-18 — follow-up audit on `feat/product-front-door`: 2 non-blocking fixes found and applied. Previous: 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
 **Author of this update:** Claude (Cowork), 2026-10-17.
 
 ---
@@ -75,7 +75,7 @@ no WhatsApp bubble on `/my-card`).
 
 ---
 
-## QUEUED 2026-10-17 — Sales-led pricing (directive written, NOT executed)
+## QUEUED 2026-10-17 — Sales-led pricing (directive revised 2026-10-19, verified against `main` 3b4df215, ready for Cursor)
 
 Claude extracted the full route map (`docs/SITEMAP_2026_10_17.md`, 54 routes from `App.jsx`) and found a
 positioning defect in the authenticated navigation.
@@ -127,9 +127,26 @@ inclusive, `ProtectedRoute` is auth-only with no admin gate, auto-seed in `useDa
 alone because the redirect covers them, and `WhatsAppButton` hides on `/dashboard` but not on
 `/unified/my-card` — QA line 11 reports it. Pricing directive **not yet re-verified**; do that before it runs.
 
-**Open (Oguzhan):** does self-serve registration stay in `Login.jsx`? The pricing directive deliberately
-does not touch it — it only stops `/pricing` from routing there. And: should `/pricing` be linked from
-the Home footer, or stay unlinked?
+**Decided (Oguzhan, 2026-10-19) — both open items closed:**
+1. **Self-serve registration in `Login.jsx` stays open** until the first paying client. A stranger who
+   signs up sees only seeded demo data in an isolated tenant; 22-day retention cleans up abandoned ones;
+   the open door lets a prospect try the product during a demo. ⚠ When it does close: deleting the
+   email/password form is NOT enough — `signInWithPopup(GoogleAuthProvider)` creates a Firebase account
+   on first sign-in. The real gate is a post-auth allowlist check (e.g. an `invited` collection, else
+   `signOut` + "contact sales").
+2. **`/pricing` gets a Home-footer link** (Resources: Live Demo · Pricing · Contact Sales · Log in) —
+   **and Pro loses its $19.** Both plans show "Custom" / "Talk to Sales"; the monthly/annual toggle is
+   deleted. A public $19 would anchor a luxury developer before a pilot priced in thousands of euros a
+   month. With no numbers, the page is a scope page: builds trust and SEO, anchors nothing.
+
+**Directive revised** (`CURSOR_DIRECTIVE_PRICING_SALES_LED_2026_10_17.md`, now 7 steps): `price` field
+dropped from `PLANS`; toggle + `annual` state removed; dead CSS deleted (`.pr-toggle*` — which carries a
+second off-palette `#4ecdc4` — `.pr-price-amount`, `.pr-price-period`); dead keys `monthly / annual /
+save / perMonth / forever` deleted in all 5 languages; step 7 adds the footer link + `footPricing` in
+`Home.jsx` (en, ar) and `homeTranslations.js` (it, fr, es). `Home.jsx` is 977L → Large File Protocol.
+`.pr-plans` is already flex + centre + wrap, so no layout change is expected. Re-verified: Pricing and
+Home are byte-identical between `feat/product-front-door` and `origin/main` 3b4df215, so the line
+numbers in the directive hold on a fresh branch.
 
 ---
 
