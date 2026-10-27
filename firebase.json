@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "frontend/dist",
-    "predeploy": ["node -e \"process.env.GCLOUD_PROJECT==='dynamicnfc-prod-68b4e'||(console.error('Blocked: this repo deploys only to dynamicnfc-prod-68b4e'),process.exit(1))\""],
+    "predeploy": ["node scripts/guard-project.cjs dynamicnfc-prod-68b4e"],
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       { "source": "/api/**", "function": "api" },
@@ -13,7 +13,7 @@
     {
       "source": "functions",
       "codebase": "default",
-      "predeploy": ["node -e \"process.env.GCLOUD_PROJECT==='dynamicnfc-prod-68b4e'||(console.error('Blocked: this repo deploys only to dynamicnfc-prod-68b4e'),process.exit(1))\""],
+      "predeploy": ["node scripts/guard-project.cjs dynamicnfc-prod-68b4e"],
       "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.local"]
     }
   ],
