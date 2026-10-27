@@ -1,6 +1,7 @@
 {
   "hosting": {
     "public": "frontend/dist",
+    "predeploy": ["node scripts/guard-project.cjs dynamicnfc-prod-68b4e"],
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       { "source": "/api/**", "function": "api" },
@@ -12,6 +13,7 @@
     {
       "source": "functions",
       "codebase": "default",
+      "predeploy": ["node scripts/guard-project.cjs dynamicnfc-prod-68b4e"],
       "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.local"]
     }
   ],

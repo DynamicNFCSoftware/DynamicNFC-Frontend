@@ -1,8 +1,26 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-19 — pricing directive revised with Oguzhan's two decisions (signup stays open; footer link + no public prices), ready for Cursor. Front door committed as `6007ed8e` on `feat/product-front-door`, not pushed, lint/test/build not yet re-run after the last two fixes. Previous: 2026-10-18 — follow-up audit on `feat/product-front-door`: 2 non-blocking fixes found and applied. Previous: 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
-**Author of this update:** Claude (Cowork), 2026-10-17.
+**Last updated:** 2026-10-27 — About page live (PR #38); deploy incident closed; front door merged with `main`, awaiting QA. Previous: 2026-10-19 — pricing directive revised with Oguzhan's two decisions (signup stays open; footer link + no public prices), ready for Cursor. Front door committed as `6007ed8e` on `feat/product-front-door`, not pushed, lint/test/build not yet re-run after the last two fixes. Previous: 2026-10-18 — follow-up audit on `feat/product-front-door`: 2 non-blocking fixes found and applied. Previous: 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
+**Author of this update:** Claude (Cowork), 2026-10-27.
 
+---
+
+## DONE 2026-10-27 — About page live; deploy incident closed (Claude/Cowork)
+
+**About page — LIVE.** PR #38 (`e2c83195` + `b999c4b`, merge `1dd8b96`) deployed 2026-10-27 22:41 Berlin. `/about`, modelled on dynamiccrm.ca/about: hero with founder photo and four facts (Toronto · Keiretsu Forum · 3 sectors · 5 markets), How we work (3), Team (13, black-and-white, LinkedIn), Our group (map + DynamicNFC card on top with red border, then DynamicCRM, DynamicMED, DynamicASM), CTA. Prefix `ab-`. EN in `About.jsx`, it/fr/es in `aboutTranslations.js` (60 keys each). Images in `public/images/about/`. Navbar + Home footer link (`navAbout` in `common.js`), sitemap entry. Claude wrote page, CSS and copy; Cursor wired route, links, translations (directive `docs/directives/CURSOR_DIRECTIVE_ABOUT_PAGE_2026_10_27.md`). Claude audit: lint 0 errors, 148 tests, build PASS; live check 4 languages × 375/1024/1100/1440: 200, no overflow, 13 team cards, 0 broken images.
+- Team (Oguzhan, 2026-10-27): Ebru Güler, Bülent İlci, Sahirul Hoda Sheikh, Michael Bui are NOT on the DynamicNFC page. Added: Haytham Al-Khaldi (COO), Yeşim Öztekin (CMO), Murat Kandiharoğlu (CTO), Uğur Fırat (Sales Manager).
+- Legal (Oguzhan, 2026-10-27): NFC Software Systems Inc. has both BC1545283 and Ontario Corporation Number 1001581685. Public pages show the Ontario number and the Toronto address (`Toronto, ON M4R, Canada`).
+- **Navbar regression caught in audit, fixed:** the new About link made the menu overflow 901–1120 px in it/fr/es on every page (es: 109 px at 1024). Cursor's report said PASS (checked EN only). Fix: hamburger breakpoint `max-width: 900px` → `1199px` in `Navbar.css`. This also removed a pre-existing 901–1000 px overflow in fr/es on `main`. **Lesson: responsive checks run in every public language, not only EN.**
+
+**Deploy incident 2026-10-24 — CLOSED.** DynamicMED was deployed three times into `dynamicnfc-prod-68b4e` on 2026-10-24 (01:01, 10:59, 17:49 Berlin; 56–66 files) and dynamicnfc.ca served DynamicMED for ~3 days. Rolled back to `35bb31` on 2026-10-27. Firestore rules and functions were not hit. Root cause not proven; most likely a Cursor session in DynamicMED ran `firebase deploy --project dynamicnfc-prod-68b4e`.
+- **Guard:** `scripts/guard-project.cjs` + `firebase.json` `predeploy` (hosting + functions) in DynamicNFC (PR #36, #37), DynamicMED and DynamicCRM. A deploy to any other project stops before upload. Never put the check inline in `firebase.json`: Firebase runs hooks through cross-env, which treats `NAME=` as an env assignment and strips quotes, so the first inline version was a silent no-op.
+- **CI:** `npx firebase-tools@15` (15.34.1) checks API enablement first; `github-hosting-deploy@` got `roles/serviceusage.serviceUsageConsumer`. `deploy.yml` live check now also requires `<title>DynamicNFC`.
+- **Old service account** `github-action-1063756147`: `disable` blocked for the owner account (likely org policy), so all six project roles were removed 2026-10-27. Delete the account after a quiet week.
+- Full incident notes: the INCIDENT entry below.
+
+**Rule (2026-10-27):** no deploy and no merge to `main` without Oguzhan's local review (`npm run build; npm run preview`) and OK. See CLAUDE.md §16.
+
+**Front door merged with `main` (2026-10-27, Claude):** `feat/product-front-door` (login → `/unified`, card → `/my-card`) took `main` in. Code files merged without conflict; only this handoff conflicted (both versions kept). Claude ran lint/test/build on the merged tree; logged-in QA by Oguzhan before the PR is merged.
 ---
 
 ## INCIDENT 2026-10-24 → 2026-10-27 — DynamicMED deployed into the DynamicNFC Firebase project (Claude/Cowork, 2026-10-27)

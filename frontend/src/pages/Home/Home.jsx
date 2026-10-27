@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
+import { common } from '../../i18n/common';
 import { useRegion } from '../../hooks/useRegion';
 import { getPersonas } from '../../config/regionConfig';
 import { initRemoteConfig, getConfigValue } from '../../firebase';
@@ -152,7 +153,7 @@ const TR = {
 
     /* Footer */
     footIndustries: 'Industries', footEnterprise: 'Enterprise', footNfcCards: 'NFC Cards',
-    footContact: 'Contact Sales', footResources: 'Resources',
+    footContact: 'Contact Sales', footPricing: 'Pricing', footResources: 'Resources',
     footLogin: 'Log in', footDev: 'Developers & Agents', footRe: 'Real Estate',
     footAutomotive: 'Automotive', footLiveDemo: 'Live Demo',
     footCopy: '© 2026 NFC Software Systems Inc. All Rights Reserved.',
@@ -257,7 +258,7 @@ const TR = {
     ctaPrimary: 'ابدأ العرض المباشر', ctaSecondary: 'احجز جولة تعريفية',
 
     footIndustries: 'القطاعات', footEnterprise: 'المؤسسات', footNfcCards: 'بطاقات NFC',
-    footContact: 'تواصل مع المبيعات', footResources: 'الموارد',
+    footContact: 'تواصل مع المبيعات', footPricing: 'الأسعار', footResources: 'الموارد',
     footLogin: 'تسجيل الدخول', footDev: 'المطورين والوكلاء', footRe: 'العقارات',
     footAutomotive: 'السيارات', footLiveDemo: 'عرض تجريبي مباشر',
     footCopy: '© ٢٠٢٦ NFC Software Systems Inc. جميع الحقوق محفوظة.',
@@ -965,7 +966,9 @@ export default function Home() {
             <div className="hp-footer-col">
               <h5>{t('footResources')}</h5>
               <Link to="/enterprise/crmdemo">{t('footLiveDemo')}</Link>
+              <Link to="/pricing">{t('footPricing')}</Link>
               <Link to="/contact-sales">{t('footContact')}</Link>
+              <Link to="/about">{(common[lang] || common.en).navAbout}</Link>
               <Link to="/login">{t('footLogin')}</Link>
             </div>
           </div>
