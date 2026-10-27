@@ -11,6 +11,7 @@ const UI = {
   en: {
     pageTitle: "My Business Card",
     backToDashboard: "← Back to Dashboard",
+    showTour: "Show the tour",
     emptyTitle: "Your digital business card — included with your plan.",
     createCard: "Create card",
     preview: "Preview",
@@ -44,6 +45,7 @@ const UI = {
   it: {
     pageTitle: "Il mio biglietto",
     backToDashboard: "← Torna alla Dashboard",
+    showTour: "Mostra il tour",
     emptyTitle: "Il tuo biglietto da visita digitale — incluso nel piano.",
     createCard: "Crea biglietto",
     preview: "Anteprima",
@@ -77,6 +79,7 @@ const UI = {
   fr: {
     pageTitle: "Ma carte",
     backToDashboard: "← Retour au tableau de bord",
+    showTour: "Revoir la visite guidée",
     emptyTitle: "Votre carte de visite numérique — incluse dans votre forfait.",
     createCard: "Créer la carte",
     preview: "Aperçu",
@@ -110,6 +113,7 @@ const UI = {
   es: {
     pageTitle: "Mi tarjeta",
     backToDashboard: "← Volver al panel",
+    showTour: "Ver la guía otra vez",
     emptyTitle: "Tu tarjeta de visita digital — incluida en tu plan.",
     createCard: "Crear tarjeta",
     preview: "Vista previa",
@@ -249,7 +253,12 @@ export default function MyCard() {
     <main className="mc-page">
       <SEO title={ui.pageTitle} path="/my-card" />
       <div className="mc-container">
-        <Link to="/unified" className="mc-back">{ui.backToDashboard}</Link>
+        <div className="mc-top">
+          <Link to="/unified" className="mc-back">{ui.backToDashboard}</Link>
+          <button type="button" className="mc-tour" onClick={() => window.dispatchEvent(new Event('dnfc:show-tour'))}>
+            {ui.showTour}
+          </button>
+        </div>
         <h1 className="mc-title">{ui.pageTitle}</h1>
 
         {ready && cards.length === 0 && (
