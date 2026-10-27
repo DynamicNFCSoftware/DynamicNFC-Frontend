@@ -725,6 +725,8 @@ Before marking any task done:
 
 ## 16. DEPLOY PROTOCOL
 
+**No deploy without Oguzhan's OK (2026-10-27).** Hosting deploys run when a PR merges to `main`, so the merge is the deploy. Before merging, Oguzhan reviews the branch locally (`cd frontend; npm run build; npm run preview`, http://localhost:4173). Cursor and Claude never merge to `main`, run `npm run deploy`, or start the Deploy hosting workflow on their own.
+
 ```powershell
 # Hosting — manual route. Builds, checks the build output, deploys with the project named explicitly.
 # (Automatic route: `.github/workflows/deploy.yml` deploys from `main` once enabled — see docs/CI_DEPLOY_SETUP.md.)
