@@ -5,6 +5,27 @@
 
 ---
 
+## INCIDENT 2026-10-24 → 2026-10-27 — DynamicMED deployed into the DynamicNFC Firebase project (Claude/Cowork, 2026-10-27)
+
+**What happened.** On 2026-10-24 three DynamicMED builds were deployed to `dynamicnfc-prod-68b4e` hosting from Oguzhan's account: 01:01 (`883068`, 56 files), 10:59 (`9e8cef`, 66 files), 17:49 (`0d2cea`, 66 files), Berlin time. dynamicnfc.ca served DynamicMED for about three days. NFC taps (`/c/:cardId`) landed on DynamicMED, and the `/api/**` and `/contact-form` rewrites were gone. The same day the correct DynamicMED deploys went to `dynamicmed-prod` (last one 17:53, `index-o_wA21kJ.js`).
+
+**Damage check.** Firestore rules were not replaced: public read on `cards` still works, which DynamicMED's deny-all rules would block. DynamicMED functions were not created in the DynamicNFC project: `/api/snapshot` returned 404. Only hosting was hit.
+
+**Fix.** Oguzhan rolled back in Firebase Console to release `35bb31` (2026-10-19 07:18, GitHub Actions deploy of `main` f2fa07f8, 308 files). Verified live 2026-10-27: title "DynamicNFC — Sales Velocity Engine…", bundle `index-DIpTWhns.js`, last-modified 2026-10-19.
+
+**Root cause.** Not proven. Ruled out: `firebase use` in `C:\Users\oguzh\DynamicMED` shows `dynamicmed-prod`; there is no `firebase.json` or `.firebaserc` in `C:\Users\oguzh`; `GCLOUD_PROJECT` and `FIREBASE_PROJECT` are unset; DynamicNFC's `.firebase` cache was untouched since 2026-10-06. Most likely, a Cursor session working in DynamicMED ran `firebase deploy` with `--project dynamicnfc-prod-68b4e`. That flag is written into every DynamicNFC deploy command, and DynamicMED's napkin entry of 2026-10-24 records a bare `firebase deploy` that day. Cursor's 2 GB chat database (`globalStorage\state.vscdb`) was locked and not searched. DynamicCRM is not involved: its dist has 126 files and its 2026-10-24 deploy (06:29 UTC) went to `dynamiccrm-website`.
+
+**Guards added 2026-10-27 (uncommitted, on whatever branch was checked out):**
+- `firebase.json` in DynamicNFC, DynamicMED and DynamicCRM `website/`: a `predeploy` hook on hosting (and functions where present). It stops the deploy unless `$GCLOUD_PROJECT` is that repo's own project. Tested: right project exit 0, wrong or unset exit 1. Never remove these hooks.
+- DynamicNFC `.github/workflows/deploy.yml`: the live check also requires `<title>DynamicNFC`.
+- DynamicMED `CLAUDE.md` §8: deploy is `npm run deploy` only, never a hand-typed `firebase deploy`.
+- DynamicCRM `website/package.json`: `deploy` now passes `--project dynamiccrm-website`.
+
+**Still open (Oguzhan):**
+1. Commit the guard changes in each repo. In DynamicNFC, commit them on a small branch from `main`, not inside `feat/product-front-door`.
+2. The claude.ai DynamicMED Project instructions §7 still show a bare `firebase deploy --only hosting`. Edit them by hand in Project settings.
+3. The daily dynamicnfc.ca uptime task already checks for "DynamicNFC" in the title. Find out why it did not raise an alarm on 24–26 Oct. Check the email and push notifications from those runs.
+
 ## DONE 2026-10-17 — Product front door (branch `feat/product-front-door`; Claude audit PASS, logged-in QA by Oguzhan before merge)
 
 **Final shape — differs from the original directive.** Cursor first built the business card as a tab
