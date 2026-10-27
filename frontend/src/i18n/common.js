@@ -12,6 +12,7 @@ export const common = {
     developers: "Developers",
     realEstate: "Real Estate Developers & Agents",
     contactSales: "Contact Sales",
+    navAbout: "About",
     dashboard: "Dashboard",
 
     /* ── Buttons / Actions ── */
@@ -105,6 +106,7 @@ export const common = {
     developers: "Sviluppatori",
     realEstate: "Sviluppatori e agenti immobiliari",
     contactSales: "Contatta le vendite",
+    navAbout: "Chi siamo",
     dashboard: "Dashboard",
 
     /* ── Buttons / Actions ── */
@@ -198,6 +200,7 @@ export const common = {
     developers: "Promoteurs",
     realEstate: "Promoteurs et agents immobiliers",
     contactSales: "Contacter les ventes",
+    navAbout: "À propos",
     dashboard: "Dashboard",
 
     /* ── Buttons / Actions ── */
@@ -291,6 +294,7 @@ export const common = {
     developers: "Desarrolladores",
     realEstate: "Desarrolladores y agentes inmobiliarios",
     contactSales: "Contactar a ventas",
+    navAbout: "Quiénes somos",
     dashboard: "Dashboard",
 
     /* ── Buttons / Actions ── */
@@ -384,6 +388,7 @@ export const common = {
     developers: "المطورون",
     realEstate: "العقارات",
     contactSales: "تواصل مع المبيعات",
+    navAbout: "من نحن",
     dashboard: "لوحة التحكم",
 
     /* ── Buttons / Actions ── */

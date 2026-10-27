@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n';
+import { common } from '../../i18n/common';
 import { useRegion } from '../../hooks/useRegion';
 import { getPersonas } from '../../config/regionConfig';
 import { initRemoteConfig, getConfigValue } from '../../firebase';
@@ -967,6 +968,7 @@ export default function Home() {
               <Link to="/enterprise/crmdemo">{t('footLiveDemo')}</Link>
               <Link to="/pricing">{t('footPricing')}</Link>
               <Link to="/contact-sales">{t('footContact')}</Link>
+              <Link to="/about">{(common[lang] || common.en).navAbout}</Link>
               <Link to="/login">{t('footLogin')}</Link>
             </div>
           </div>
