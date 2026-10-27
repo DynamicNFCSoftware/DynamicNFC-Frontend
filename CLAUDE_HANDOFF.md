@@ -15,16 +15,16 @@
 
 **Root cause.** Not proven. Ruled out: `firebase use` in `C:\Users\oguzh\DynamicMED` shows `dynamicmed-prod`; there is no `firebase.json` or `.firebaserc` in `C:\Users\oguzh`; `GCLOUD_PROJECT` and `FIREBASE_PROJECT` are unset; DynamicNFC's `.firebase` cache was untouched since 2026-10-06. Most likely, a Cursor session working in DynamicMED ran `firebase deploy` with `--project dynamicnfc-prod-68b4e`. That flag is written into every DynamicNFC deploy command, and DynamicMED's napkin entry of 2026-10-24 records a bare `firebase deploy` that day. Cursor's 2 GB chat database (`globalStorage\state.vscdb`) was locked and not searched. DynamicCRM is not involved: its dist has 126 files and its 2026-10-24 deploy (06:29 UTC) went to `dynamiccrm-website`.
 
-**Guards added 2026-10-27 (uncommitted, on whatever branch was checked out):**
-- `firebase.json` in DynamicNFC, DynamicMED and DynamicCRM `website/`: a `predeploy` hook on hosting (and functions where present). It stops the deploy unless `$GCLOUD_PROJECT` is that repo's own project. Tested: right project exit 0, wrong or unset exit 1. Never remove these hooks.
+**Guards (final state, 2026-10-27 02:36):**
+- `scripts/guard-project.cjs` + `firebase.json` `predeploy` (hosting, and functions where present) in DynamicNFC, DynamicMED and DynamicCRM `website/`: `node scripts/guard-project.cjs <own-project-id>` stops the deploy unless `$GCLOUD_PROJECT` is that repo's own project. Never remove it.
+- **Do not put the check inline in `firebase.json`.** Firebase runs hooks through cross-env, and cross-env treats any argument containing `NAME=` as an env assignment and strips single quotes. The first inline `node -e "...==='...'..."` version was silently a no-op. It was replaced the same night and tested through Firebase's own runner: right project exit 0, wrong project "Blocked" exit 1.
 - DynamicNFC `.github/workflows/deploy.yml`: the live check also requires `<title>DynamicNFC`.
-- DynamicMED `CLAUDE.md` §8: deploy is `npm run deploy` only, never a hand-typed `firebase deploy`.
-- DynamicCRM `website/package.json`: `deploy` now passes `--project dynamiccrm-website`.
+- DynamicMED `CLAUDE.md` §8: deploy is `npm run deploy` only. DynamicCRM `package.json` `deploy` passes `--project dynamiccrm-website`.
+- Commits: DynamicNFC PR #36 (`d19fc58`) + PR #37 (`9ae76da`) on `main`; DynamicMED `aefdb0f` + guard v2; DynamicCRM `4ac4197` + guard v2.
 
-**Still open (Oguzhan):**
-1. Commit the guard changes in each repo. In DynamicNFC, commit them on a small branch from `main`, not inside `feat/product-front-door`.
-2. The claude.ai DynamicMED Project instructions §7 still show a bare `firebase deploy --only hosting`. Edit them by hand in Project settings.
-3. The daily dynamicnfc.ca uptime task already checks for "DynamicNFC" in the title. Find out why it did not raise an alarm on 24–26 Oct. Check the email and push notifications from those runs.
+**CI deploy fix.** Deploy hosting #18 (PR #36) failed: `serviceusage.googleapis.com ... 403 Permission denied to get service [firebasehosting.googleapis.com]`. `npx firebase-tools@15` pulled 15.34.1, which checks API enablement first. Fixed by granting `roles/serviceusage.serviceUsageConsumer` to `github-hosting-deploy@dynamicnfc-prod-68b4e.iam.gserviceaccount.com`. Deploy hosting #19 (PR #37) green, live 2026-10-27 02:36 Berlin, title DynamicNFC, `/unified` `/my-card` `/c/...` 200. The "git exit code 128" annotation in the deploy job is post-checkout noise and does not fail the run.
+
+**Still open:** claude.ai DynamicMED Project instructions §7 still show a bare `firebase deploy --only hosting`; edit by hand. Old service account `github-action-1063756147` (no workflow uses it): `disable` is blocked for the owner account (likely an org policy), so on 2026-10-27 all six of its project roles were removed instead (cloudfunctions.developer, firebaseauth.admin, firebasehosting.admin, run.viewer, serviceusage.apiKeysViewer, serviceusage.serviceUsageConsumer). It has no user-managed key; the only key is Google-managed and expires 2026-10-31. Re-add a role if something breaks; delete the account after a quiet week.
 
 ## DONE 2026-10-17 — Product front door (branch `feat/product-front-door`; Claude audit PASS, logged-in QA by Oguzhan before merge)
 
