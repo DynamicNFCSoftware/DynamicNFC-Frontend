@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAdmin } from '../../hooks/useAdmin';
 import { useLanguage } from '../../i18n';
+import { common } from '../../i18n/common';
 import { useRegion } from '../../hooks/useRegion';
 import { LANG_REGION } from '../../config/regionConfig';
 import IndustriesDropdown from '../IndustriesDropdown';
@@ -149,6 +150,14 @@ export default function Navbar() {
               title={t('contactSales')}
             >
               {t('contactSales')}
+            </Link>
+            <Link
+              to="/about"
+              className={`nav-link${isActive('/about') ? ' active' : ''}`}
+              onClick={closeMenu}
+              title={(common[lang] || common.en).navAbout}
+            >
+              {(common[lang] || common.en).navAbout}
             </Link>
             <Link
               to="/enterprise/crmdemo"

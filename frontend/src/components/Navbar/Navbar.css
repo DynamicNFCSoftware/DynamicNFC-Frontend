@@ -279,7 +279,8 @@
 }
 
 /* ═══════════ RESPONSIVE ═══════════ */
-@media (max-width: 900px) {
+/* Hamburger up to 1199px: the full menu does not fit below that in it/fr/es (2026-10-27). */
+@media (max-width: 1199px) {
   .nav-inner {
     padding: 0 1rem;
   }
