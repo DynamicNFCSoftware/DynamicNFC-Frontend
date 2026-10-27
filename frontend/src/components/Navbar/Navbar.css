@@ -259,7 +259,9 @@
 }
 
 /* User email */
+/* Hidden in the desktop bar (no room in fr/es); shown again in the hamburger menu below. */
 .nav-user-email {
+  display: none;
   font-size: 0.78rem;
   color: var(--muted, #6b7280);
   max-width: 180px;
@@ -362,6 +364,7 @@
   }
 
   .nav-user-email {
+    display: block;
     font-size: 0.72rem;
     max-width: none;
     order: -1;

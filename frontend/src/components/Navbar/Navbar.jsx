@@ -133,14 +133,17 @@ export default function Navbar() {
             >
               {t('nfcCards')}
             </Link>
-            <Link
-              to="/contact-sales"
-              className={`nav-link${isActive('/contact-sales') ? ' active' : ''}`}
-              onClick={closeMenu}
-              title={t('contactSales')}
-            >
-              {t('contactSales')}
-            </Link>
+            {/* Signed-in users are customers already; dropping this link keeps the menu inside 1200px in fr/es (2026-10-27). */}
+            {!isAuthenticated() && (
+              <Link
+                to="/contact-sales"
+                className={`nav-link${isActive('/contact-sales') ? ' active' : ''}`}
+                onClick={closeMenu}
+                title={t('contactSales')}
+              >
+                {t('contactSales')}
+              </Link>
+            )}
             <Link
               to="/about"
               className={`nav-link${isActive('/about') ? ' active' : ''}`}
