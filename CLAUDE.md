@@ -725,7 +725,7 @@ Before marking any task done:
 
 ## 16. DEPLOY PROTOCOL
 
-**No deploy without Oguzhan's OK (2026-10-27).** Hosting deploys run when a PR merges to `main`, so the merge is the deploy. Before merging, Oguzhan reviews the branch locally (`cd frontend; npm run build; npm run preview`, http://localhost:4173). Cursor and Claude never merge to `main`, run `npm run deploy`, or start the Deploy hosting workflow on their own.
+**No deploy without Oguzhan's OK (2026-10-27).** Hosting deploys run when a PR merges to `main`, so the merge is the deploy. Before merging, Oguzhan reviews the branch locally (`cd frontend; npm run build; npm run preview -- --port 5173`, http://localhost:5173). Use port 5173: the Firebase browser API key only allows that localhost port, so sign-in fails on the default preview port 4173 with "Network error". Cursor and Claude never merge to `main`, run `npm run deploy`, or start the Deploy hosting workflow on their own.
 
 ```powershell
 # Hosting — manual route. Builds, checks the build output, deploys with the project named explicitly.

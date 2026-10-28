@@ -20,7 +20,7 @@
 
 **Rule (2026-10-27):** no deploy and no merge to `main` without Oguzhan's local review (`npm run build; npm run preview`) and OK. See CLAUDE.md §16.
 
-**Front door merged with `main` (2026-10-27, Claude):** `feat/product-front-door` (login → `/unified`, card → `/my-card`) took `main` in. Code files merged without conflict; only this handoff conflicted (both versions kept). Claude ran lint/test/build on the merged tree; logged-in QA by Oguzhan before the PR is merged.
+**Front door merged with `main` (2026-10-27, Claude):** `feat/product-front-door` (login → `/unified`, card → `/my-card`) took `main` in. Code files merged without conflict; only this handoff conflicted (both versions kept). Claude ran lint/test/build on the merged tree. Two fixes on the branch after the merge: (1) `1c514b6` signed-in Navbar overflowed 1200–1440 px (es 257 px at 1200) — signed-in users no longer see Contact Sales, and the email shows only in the hamburger menu; (2) `f82a8dc` the old card-centred onboarding tour leaked onto `/unified` after login (it decided to open on `/login`, 800 ms before the redirect) — it now shows only on `/my-card`, and a "Show the tour" link there reopens it. Oguzhan's logged-in QA PASS 2026-10-28 (login → `/unified`, My Business Card, `/dashboard` → `/my-card`, tour, logout). **Local preview must use `--port 5173`**: the browser API key blocks `localhost:4173`, and Login shows that as "Network error".
 ---
 
 ## INCIDENT 2026-10-24 → 2026-10-27 — DynamicMED deployed into the DynamicNFC Firebase project (Claude/Cowork, 2026-10-27)
