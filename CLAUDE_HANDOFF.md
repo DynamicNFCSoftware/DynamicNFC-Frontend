@@ -1,6 +1,6 @@
 # CLAUDE_HANDOFF.md
 
-**Last updated:** 2026-10-27 — About page live (PR #38); deploy incident of 2026-10-24 closed (guards in 3 repos, CI IAM fix). Previous: 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
+**Last updated:** 2026-10-27 — About page live (PR #38); deploy incident closed; front door merged with `main`, awaiting QA. Previous: 2026-10-19 — pricing directive revised with Oguzhan's two decisions (signup stays open; footer link + no public prices), ready for Cursor. Front door committed as `6007ed8e` on `feat/product-front-door`, not pushed, lint/test/build not yet re-run after the last two fixes. Previous: 2026-10-18 — follow-up audit on `feat/product-front-door`: 2 non-blocking fixes found and applied. Previous: 2026-10-17 — Yacht (#31), Firestore rules (#32, #33) merged. Front-door directive verified against `main` 06679bd9 and ready for Cursor; pricing directive written, blocked on 2 decisions. Earlier same day: site map extracted; Home defect pass (#29) and privacy wording (#30) merged and deployed. Previous: 2026-10-12 — Five-Minute Proof video + Italy home + NA-buyers step 1 in PR #26. Older headers in the history below.
 **Author of this update:** Claude (Cowork), 2026-10-27.
 
 ---
@@ -16,15 +16,105 @@
 - **Guard:** `scripts/guard-project.cjs` + `firebase.json` `predeploy` (hosting + functions) in DynamicNFC (PR #36, #37), DynamicMED and DynamicCRM. A deploy to any other project stops before upload. Never put the check inline in `firebase.json`: Firebase runs hooks through cross-env, which treats `NAME=` as an env assignment and strips quotes, so the first inline version was a silent no-op.
 - **CI:** `npx firebase-tools@15` (15.34.1) checks API enablement first; `github-hosting-deploy@` got `roles/serviceusage.serviceUsageConsumer`. `deploy.yml` live check now also requires `<title>DynamicNFC`.
 - **Old service account** `github-action-1063756147`: `disable` blocked for the owner account (likely org policy), so all six project roles were removed 2026-10-27. Delete the account after a quiet week.
-- Full incident notes are in the handoff on `feat/product-front-door` (commits `0f88bdb8`, `54b88bf2`); that branch is not merged yet.
+- Full incident notes: the INCIDENT entry below.
 
 **Rule (2026-10-27):** no deploy and no merge to `main` without Oguzhan's local review (`npm run build; npm run preview`) and OK. See CLAUDE.md §16.
 
-**Waiting:** `feat/product-front-door` (login → `/unified`, card → `/my-card`) — local only, not pushed. lint/test/build not re-run since the 2026-10-18 fixes; logged-in QA by Oguzhan pending. Merging it will conflict with `main` in `App.jsx`, `Navbar.jsx`, `Navbar.css` (About page) and in `CLAUDE.md` / `CLAUDE_HANDOFF.md`. Resolve by merging `main` into the branch first, then lint/test/build, then QA.
+**Front door merged with `main` (2026-10-27, Claude):** `feat/product-front-door` (login → `/unified`, card → `/my-card`) took `main` in. Code files merged without conflict; only this handoff conflicted (both versions kept). Claude ran lint/test/build on the merged tree. Two fixes on the branch after the merge: (1) `1c514b6` signed-in Navbar overflowed 1200–1440 px (es 257 px at 1200) — signed-in users no longer see Contact Sales, and the email shows only in the hamburger menu; (2) `f82a8dc` the old card-centred onboarding tour leaked onto `/unified` after login (it decided to open on `/login`, 800 ms before the redirect) — it now shows only on `/my-card`, and a "Show the tour" link there reopens it. Oguzhan's logged-in QA PASS 2026-10-28 (login → `/unified`, My Business Card, `/dashboard` → `/my-card`, tour, logout). **Local preview must use `--port 5173`**: the browser API key blocks `localhost:4173`, and Login shows that as "Network error".
+---
+
+## INCIDENT 2026-10-24 → 2026-10-27 — DynamicMED deployed into the DynamicNFC Firebase project (Claude/Cowork, 2026-10-27)
+
+**What happened.** On 2026-10-24 three DynamicMED builds were deployed to `dynamicnfc-prod-68b4e` hosting from Oguzhan's account: 01:01 (`883068`, 56 files), 10:59 (`9e8cef`, 66 files), 17:49 (`0d2cea`, 66 files), Berlin time. dynamicnfc.ca served DynamicMED for about three days. NFC taps (`/c/:cardId`) landed on DynamicMED, and the `/api/**` and `/contact-form` rewrites were gone. The same day the correct DynamicMED deploys went to `dynamicmed-prod` (last one 17:53, `index-o_wA21kJ.js`).
+
+**Damage check.** Firestore rules were not replaced: public read on `cards` still works, which DynamicMED's deny-all rules would block. DynamicMED functions were not created in the DynamicNFC project: `/api/snapshot` returned 404. Only hosting was hit.
+
+**Fix.** Oguzhan rolled back in Firebase Console to release `35bb31` (2026-10-19 07:18, GitHub Actions deploy of `main` f2fa07f8, 308 files). Verified live 2026-10-27: title "DynamicNFC — Sales Velocity Engine…", bundle `index-DIpTWhns.js`, last-modified 2026-10-19.
+
+**Root cause.** Not proven. Ruled out: `firebase use` in `C:\Users\oguzh\DynamicMED` shows `dynamicmed-prod`; there is no `firebase.json` or `.firebaserc` in `C:\Users\oguzh`; `GCLOUD_PROJECT` and `FIREBASE_PROJECT` are unset; DynamicNFC's `.firebase` cache was untouched since 2026-10-06. Most likely, a Cursor session working in DynamicMED ran `firebase deploy` with `--project dynamicnfc-prod-68b4e`. That flag is written into every DynamicNFC deploy command, and DynamicMED's napkin entry of 2026-10-24 records a bare `firebase deploy` that day. Cursor's 2 GB chat database (`globalStorage\state.vscdb`) was locked and not searched. DynamicCRM is not involved: its dist has 126 files and its 2026-10-24 deploy (06:29 UTC) went to `dynamiccrm-website`.
+
+**Guards (final state, 2026-10-27 02:36):**
+- `scripts/guard-project.cjs` + `firebase.json` `predeploy` (hosting, and functions where present) in DynamicNFC, DynamicMED and DynamicCRM `website/`: `node scripts/guard-project.cjs <own-project-id>` stops the deploy unless `$GCLOUD_PROJECT` is that repo's own project. Never remove it.
+- **Do not put the check inline in `firebase.json`.** Firebase runs hooks through cross-env, and cross-env treats any argument containing `NAME=` as an env assignment and strips single quotes. The first inline `node -e "...==='...'..."` version was silently a no-op. It was replaced the same night and tested through Firebase's own runner: right project exit 0, wrong project "Blocked" exit 1.
+- DynamicNFC `.github/workflows/deploy.yml`: the live check also requires `<title>DynamicNFC`.
+- DynamicMED `CLAUDE.md` §8: deploy is `npm run deploy` only. DynamicCRM `package.json` `deploy` passes `--project dynamiccrm-website`.
+- Commits: DynamicNFC PR #36 (`d19fc58`) + PR #37 (`9ae76da`) on `main`; DynamicMED `aefdb0f` + guard v2; DynamicCRM `4ac4197` + guard v2.
+
+**CI deploy fix.** Deploy hosting #18 (PR #36) failed: `serviceusage.googleapis.com ... 403 Permission denied to get service [firebasehosting.googleapis.com]`. `npx firebase-tools@15` pulled 15.34.1, which checks API enablement first. Fixed by granting `roles/serviceusage.serviceUsageConsumer` to `github-hosting-deploy@dynamicnfc-prod-68b4e.iam.gserviceaccount.com`. Deploy hosting #19 (PR #37) green, live 2026-10-27 02:36 Berlin, title DynamicNFC, `/unified` `/my-card` `/c/...` 200. The "git exit code 128" annotation in the deploy job is post-checkout noise and does not fail the run.
+
+**Still open:** claude.ai DynamicMED Project instructions §7 still show a bare `firebase deploy --only hosting`; edit by hand. Old service account `github-action-1063756147` (no workflow uses it): `disable` is blocked for the owner account (likely an org policy), so on 2026-10-27 all six of its project roles were removed instead (cloudfunctions.developer, firebaseauth.admin, firebasehosting.admin, run.viewer, serviceusage.apiKeysViewer, serviceusage.serviceUsageConsumer). It has no user-managed key; the only key is Google-managed and expires 2026-10-31. Re-add a role if something breaks; delete the account after a quiet week.
+
+## DONE 2026-10-17 — Product front door (branch `feat/product-front-door`; Claude audit PASS, logged-in QA by Oguzhan before merge)
+
+**Final shape — differs from the original directive.** Cursor first built the business card as a tab
+inside the Unified shell (`/unified/my-card`). Oguzhan saw it in the browser and rejected it: the shell's
+sector switcher, demo company, "Dealer Intelligence Center", region, Live/Demo, Readable and Export PDF
+mean nothing on a business card. Amendment directive:
+`docs/directives/CURSOR_DIRECTIVE_MY_CARD_STANDALONE_2026_10_17.md`.
+
+- **Login → `/unified`** (all three auth paths in `Login.jsx`). Site Navbar, logged in: one Dashboard link.
+- **Business card = standalone page `/my-card`** (`pages/MyCard/`, prefix `mc-`), under the normal site
+  Navbar, with "← Back to Dashboard" + title. Own token block on `.mc-page` from the brand palette; light
+  only; no `ud-` classes, no import of `UnifiedLayout.css`.
+- **`/dashboard` → `Navigate` to `/my-card`**, so the 13 internal links (`CreateCard`, `EditCard`, `Card`,
+  `Onboarding`) and bookmarks keep working untouched. `pages/CardDashboard/` deleted.
+- **Unified sidebar** keeps "My Business Card" under System (Oguzhan chose this over hiding it); its path is
+  absolute `/my-card`, so it leaves the shell. `TAB_GROUPS.system` is `{ startIdx: 8, endIdx: 9 }`.
+- **Latent bug fixed:** `.ud-nav { flex: 1; min-height: 0 }` let the tab list shrink below its content, so
+  the 10th tab painted over "Portal links". Now `flex: 1 0 auto`; the sidebar scrolls instead.
+- **Avatar fix:** the card info block is positioned with `z-index: 1`; the positioned cover used to paint
+  over the top of the avatar.
+- `WhatsAppButton` hides on `/my-card` as it did on `/dashboard`.
+- Claude audit: PASS. Cursor verified lint 0 errors, 147 tests, build, and the logged-out redirects.
+
+## FOLLOW-UP AUDIT 2026-10-18 — two items the first audit missed, BOTH NOW APPLIED (branch still uncommitted)
+
+Re-audited the `feat/product-front-door` working tree against the files, not the report. Everything in
+the DONE entry above holds: hex confined to the `.mc-page` token block and all five are real brand values
+(`--mc-accent: #457b9d`, not the `#365f8a` drift) · zero physical `left`/`right` · zero `console.log` ·
+no `MyCardTab` / `udmc-` / `CardDashboard` leftovers · `TAB_GROUPS` regrouping correct, Intelligence and
+Operations untouched · `ui = {...UI.en, ...UI[lang]}` cannot crash on key drift · EmailCapture's allow-list
+excludes `/my-card` · Breadcrumb returns null on a one-segment path, so no raw "My card" crumb.
+
+**1. APPLIED — the WhatsApp hide went into the wrong file.** `navigation/shellVisibility.js` opens with "Single
+source for which routes hide global chrome — update here once" and `App.jsx:140` gates on its
+`shouldHideWhatsApp()`. That function does **not** list `/my-card`. The edit went into
+`WhatsAppButton.jsx`'s own duplicate `hidePaths` array instead. Behaviour is right (both gates run, the
+inner one hides it) but the declared single source now contradicts actual behaviour. Fix: add `/my-card`
+to `shouldHideWhatsApp` and revert `WhatsAppButton.jsx` — same line count, correct file. The duplication
+itself is pre-existing: `/dashboard`, `/edit-card`, `/card`, `/create-card` sit in the component and not
+in shellVisibility. Collapsing the two lists is a separate cleanup.
+   *Applied by Claude 2026-10-18:* `shouldHideWhatsApp` now ends `|| pathname === '/my-card'` (comment
+   updated to match); `WhatsAppButton.jsx` reverted to HEAD and no longer appears in `git status`.
+   Net effect on behaviour: none — the outer gate in `App.jsx:140` now returns null on `/my-card`
+   instead of the component's inner gate doing it.
+
+**2. APPLIED — `MyCard.jsx` carried a dead Arabic block.** `SUPPORTED_LANGS` in `i18n/LanguageContext.jsx`
+is `["en","it","fr","es"]`, so `lang` is never `"ar"` and `UI.ar` is unreachable. `/my-card` is a
+public-Navbar page, so the Yacht landing precedent from the day before applies — "no Arabic set, the
+language is hidden from the public site, so it would be dead weight". Delete it, or keep it on purpose
+for the day Arabic returns.
+   *Applied by Claude 2026-10-18:* the `ar` block is gone (`MyCard.jsx` 422L → 389L) and so is the
+   `[dir="rtl"] .mc-title` Noto Kufi rule it existed for (`MyCard.css` 368L → 365L). `MyCard.jsx` now
+   holds en/it/fr/es only, matching `SUPPORTED_LANGS`. `ui = {...UI.en, ...(UI[lang] || {})}` is
+   unchanged, so an unknown `lang` still falls back to English rather than throwing.
+
+**Note, no action needed:** the new `TABS` entry uses an absolute `path: "/my-card"` while every sibling
+is a segment relative to `/unified`. `to={tab.path || "."}` handles it, but a future
+`TABS.find(t => pathname === "/unified/" + t.path)` would silently build `/unified//my-card`. One inline
+comment on the entry would prevent that.
+
+**Verification of the two fixes.** `node --check` passes on `shellVisibility.js`; `MyCard.jsx` braces
+balance (148/148) and the file closes cleanly. **lint / test / build were NOT re-run after the fixes** —
+`npm run build` cannot run from the Linux side of the Cowork bridge because `node_modules/rollup` holds
+the Windows native binary, and reinstalling would have rewritten Oguzhan's working `node_modules`.
+**Oguzhan runs `npm run lint`, `npm test`, `npm run build` in PowerShell before committing**, plus the
+logged-in browser QA (sidebar "My Business Card" → `/my-card` → "← Back to Dashboard" → `/unified`, and
+no WhatsApp bubble on `/my-card`).
 
 ---
 
-## IN FLIGHT 2026-10-17 — Product front door + sales-led pricing (2 directives written, NOT executed)
+## QUEUED 2026-10-17 — Sales-led pricing (directive revised 2026-10-19, verified against `main` 3b4df215, ready for Cursor)
 
 Claude extracted the full route map (`docs/SITEMAP_2026_10_17.md`, 54 routes from `App.jsx`) and found a
 positioning defect in the authenticated navigation.
@@ -76,9 +166,26 @@ inclusive, `ProtectedRoute` is auth-only with no admin gate, auto-seed in `useDa
 alone because the redirect covers them, and `WhatsAppButton` hides on `/dashboard` but not on
 `/unified/my-card` — QA line 11 reports it. Pricing directive **not yet re-verified**; do that before it runs.
 
-**Open (Oguzhan):** does self-serve registration stay in `Login.jsx`? The pricing directive deliberately
-does not touch it — it only stops `/pricing` from routing there. And: should `/pricing` be linked from
-the Home footer, or stay unlinked?
+**Decided (Oguzhan, 2026-10-19) — both open items closed:**
+1. **Self-serve registration in `Login.jsx` stays open** until the first paying client. A stranger who
+   signs up sees only seeded demo data in an isolated tenant; 22-day retention cleans up abandoned ones;
+   the open door lets a prospect try the product during a demo. ⚠ When it does close: deleting the
+   email/password form is NOT enough — `signInWithPopup(GoogleAuthProvider)` creates a Firebase account
+   on first sign-in. The real gate is a post-auth allowlist check (e.g. an `invited` collection, else
+   `signOut` + "contact sales").
+2. **`/pricing` gets a Home-footer link** (Resources: Live Demo · Pricing · Contact Sales · Log in) —
+   **and Pro loses its $19.** Both plans show "Custom" / "Talk to Sales"; the monthly/annual toggle is
+   deleted. A public $19 would anchor a luxury developer before a pilot priced in thousands of euros a
+   month. With no numbers, the page is a scope page: builds trust and SEO, anchors nothing.
+
+**Directive revised** (`CURSOR_DIRECTIVE_PRICING_SALES_LED_2026_10_17.md`, now 7 steps): `price` field
+dropped from `PLANS`; toggle + `annual` state removed; dead CSS deleted (`.pr-toggle*` — which carries a
+second off-palette `#4ecdc4` — `.pr-price-amount`, `.pr-price-period`); dead keys `monthly / annual /
+save / perMonth / forever` deleted in all 5 languages; step 7 adds the footer link + `footPricing` in
+`Home.jsx` (en, ar) and `homeTranslations.js` (it, fr, es). `Home.jsx` is 977L → Large File Protocol.
+`.pr-plans` is already flex + centre + wrap, so no layout change is expected. Re-verified: Pricing and
+Home are byte-identical between `feat/product-front-door` and `origin/main` 3b4df215, so the line
+numbers in the directive hold on a fresh branch.
 
 ---
 

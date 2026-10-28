@@ -195,7 +195,7 @@ const Login = () => {
         login({ sessionId: user.uid, email: user.email, accountId: user.uid });
         setLoginSuccess(true);
         toast.success(t('signedIn'));
-        setTimeout(() => navigate('/dashboard'), 800);
+        setTimeout(() => navigate('/unified'), 800);
       } else {
         /* ── FIREBASE REGISTER ── */
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
@@ -204,7 +204,7 @@ const Login = () => {
         login({ sessionId: user.uid, email: user.email, accountId: user.uid });
         setLoginSuccess(true);
         toast.success(t('accountCreated'));
-        setTimeout(() => navigate('/dashboard'), 800);
+        setTimeout(() => navigate('/unified'), 800);
       }
     } catch (err) {
       console.error("Auth Error:", err);
@@ -237,7 +237,7 @@ const Login = () => {
       login({ sessionId: user.uid, email: user.email, accountId: user.uid });
       setLoginSuccess(true);
       toast.success(t('googleSignedIn'));
-      setTimeout(() => navigate('/dashboard'), 800);
+      setTimeout(() => navigate('/unified'), 800);
 
     } catch (err) {
       console.error("Google Auth Error:", err);

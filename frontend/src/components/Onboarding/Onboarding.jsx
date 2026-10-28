@@ -170,17 +170,25 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [visible, setVisible] = useState(false);
 
+  // Only on the business-card page, where these card steps make sense (2026-10-27). The render below also
+  // checks the path, so the tour can no longer carry over from /login onto /unified.
+  const onCardPage = location.pathname === '/my-card';
   useEffect(() => {
-    const path = location.pathname || '';
-    if (path.startsWith('/unified') || path.startsWith('/enterprise/')) return;
-    if (!isAuthenticated()) return;
+    if (!onCardPage || !isAuthenticated()) return;
     try {
       if (localStorage.getItem(STORAGE_KEY)) return;
     } catch { /* storage unavailable */ }
-    // Small delay so dashboard loads first
+    // Small delay so the page loads first
     const timer = setTimeout(() => setVisible(true), 800);
     return () => clearTimeout(timer);
-  }, [isAuthenticated, location.pathname]);
+  }, [isAuthenticated, onCardPage]);
+
+  // "Show the tour" on /my-card reopens it from the first step.
+  useEffect(() => {
+    const show = () => { setStep(0); setVisible(true); };
+    window.addEventListener('dnfc:show-tour', show);
+    return () => window.removeEventListener('dnfc:show-tour', show);
+  }, []);
 
   const steps = STEPS[lang] || STEPS.en;
   const t = (k) => UI[lang]?.[k] ?? UI.en[k] ?? k;
@@ -209,7 +217,7 @@ export default function Onboarding() {
     navigate(path);
   }, [finish, navigate]);
 
-  if (!visible) return null;
+  if (!visible || !onCardPage) return null;
 
   return (
     <>

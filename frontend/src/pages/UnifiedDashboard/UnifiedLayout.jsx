@@ -294,7 +294,7 @@ const NAVBAR_LOGO_PATH = "/assets/images/logo.png";
 const TAB_GROUPS = [
   { id: "intelligence", label: { en: "Intelligence", it: "Intelligence", ar: "الذكاء", es: "Inteligencia", fr: "Intelligence" }, startIdx: 0, endIdx: 3 },
   { id: "operations", label: { en: "Operations", it: "Operazioni", ar: "العمليات", es: "Operaciones", fr: "Operations" }, startIdx: 4, endIdx: 7 },
-  { id: "system", label: { en: "System", it: "Sistema", ar: "النظام", es: "Sistema", fr: "Systeme" }, startIdx: 8, endIdx: 8 },
+  { id: "system", label: { en: "System", it: "Sistema", ar: "النظام", es: "Sistema", fr: "Systeme" }, startIdx: 8, endIdx: 9 },
 ];
 
 const TABS = [
@@ -381,6 +381,17 @@ const TABS = [
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
         <polyline points="22,6 12,13 2,6" />
+      </svg>
+    ),
+  },
+  {
+    path: "/my-card",
+    label: { en: "My Business Card", it: "Il mio biglietto", ar: "بطاقتي", es: "Mi tarjeta", fr: "Ma carte" },
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="2" y="5" width="20" height="14" rx="2" />
+        <circle cx="8" cy="11" r="2" />
+        <path d="M14 10h4M14 14h4M5 16c.8-1.5 4.2-1.5 5 0" />
       </svg>
     ),
   },
