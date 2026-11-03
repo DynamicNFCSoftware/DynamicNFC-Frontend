@@ -59,6 +59,12 @@ The project operates with two AI collaborators. The roles are not interchangeabl
 
 **Memory folder:** `memory/` holds persistent decisions — `MEMORY.md` (index), `project_*.md` (ongoing work state), `feedback_*.md` (behavioral rules). When asked "why do we do X?", memory files are the source of truth.
 
+**Memory discipline (2026-11-03):**
+- `CLAUDE_HANDOFF.md` is a snapshot, ≤150 lines, three sections: `Deployed` / `In flight` / `Last 5 changes`. Closed work moves to `docs/handoff-archive/`, never deleted.
+- Every `memory/*.md` starts with front matter (`name`, `description`, `read-when`). Read `MEMORY.md` first; open a file only when its `read-when` matches the task.
+- A lesson is filed in `memory/feedback_*.md` once it has bitten twice or cost a deploy; session noise stays out.
+- Monthly consolidation: promote repeated HANDOFF lessons into `memory/` or this file, then drop them from HANDOFF.
+
 ---
 
 ## 3. PRODUCT KNOWLEDGE

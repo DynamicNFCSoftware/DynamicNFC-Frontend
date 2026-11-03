@@ -1,3 +1,9 @@
+---
+name: project_decisions_2026_10
+description: October 2026 decisions — legal entity, Canada home base, visible regions, site claims, legal-text status, open questions
+read-when: writing public copy, legal lines, region/language lists, team or about sections, or answering 'why do we say X'
+---
+
 # Decisions — October 2026 (Oguzhan)
 
 ## Legal entity
