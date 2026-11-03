@@ -7,7 +7,7 @@ This file is a snapshot, not a log. Three sections only. When `Last 5 changes` o
 
 - **Live:** https://dynamicnfc.ca · last deploy 2026-10-27 22:41 Berlin — PR #38 About page (merge `1dd8b96`) via `deploy.yml` (Deploy hosting run green, live check requires `<title>DynamicNFC`)
 - **`main`:** protected (`protect-main`); merge = deploy. Merge method "Create a merge commit" only. Confirm head with `git log -3` before building on it.
-- **Branch `feat/product-front-door`:** merged with `main` 2026-10-27, Oguzhan's logged-in QA PASS 2026-10-28 (login → `/unified`, `/my-card`, `/dashboard` → `/my-card`, tour, logout). **Status to confirm: has it been merged into `main` as a PR yet?** If not, that is the next merge.
+- **Branch `feat/product-front-door`:** took `main` in on 2026-10-27, Oguzhan's logged-in QA PASS 2026-10-28 (login → `/unified`, `/my-card`, `/dashboard` → `/my-card`, tour, logout). **First pushed to origin 2026-11-03 — no PR existed before; not in `main`, not live.** PR → `main` is the next merge (merge = deploy).
 - **Functions:** 9 deployed, Node 22, us-central1 — unchanged (CLAUDE.md §9). Firestore rules PRs #32/#33 merged 2026-10-17.
 - **Local preview:** `npm run preview -- --port 5173` (browser API key blocks 4173 → Login "Network error").
 - **Old SA `github-action-1063756147`:** all roles removed 2026-10-27; Google-managed key expired 2026-10-31. Delete the account now if nothing broke.
@@ -16,7 +16,7 @@ This file is a snapshot, not a log. Three sections only. When `Last 5 changes` o
 
 Priority order (Decision framework: revenue-blocking → live bugs → sales enablement → debt → features):
 
-1. **Front-door PR to `main`** (if not merged — see Deployed). Then: CLAUDE.md §6 routes table needs `/my-card`, `/about`, `/dashboard` redirect.
+1. **Open the PR `feat/product-front-door` → `main`**, CI green, merge with "Create a merge commit". This ships the front door AND the memory restructure. Then: CLAUDE.md §6 routes table needs `/my-card`, `/about`, `/dashboard` redirect.
 2. **Sales-led pricing** — directive revised 2026-10-19, verified against `main` `3b4df215`, ready for Cursor. Decisions baked in: signup stays open, footer link, no public prices, Starter removed, Pro + Enterprise, card listed as included.
 3. **Italy → North American buyers:** step 1 is in `main` (PR #26) but its read-only audit `docs/directives/CURSOR_AUDIT_ITALY_NA_BUYERS_STEP1.md` was **never run** → run it. Step 2: Italy demo portal tells the NA-buyer story (currency EUR only vs EUR + USD/CAD — undecided). Step 3: ~80 Gulf mentions on Enterprise / RealEstate / Developers / card builder, page by page.
 4. **CLAUDE.md drift:** §3/§12 still describe 5 visible regions and Arabic in the public selector; decision 2026-10-11 is **Canada, Italy, USA visible; Mexico + Gulf hidden (not deleted), Arabic hidden with them** (`memory/project_decisions_2026_10.md`). Update §3, §10 i18n, §12 together with step 3.
